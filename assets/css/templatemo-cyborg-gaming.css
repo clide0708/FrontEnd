@@ -26,15 +26,70 @@ font & reset css
 --------------------------------------------- 
 */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900");
+
 /* 
 ---------------------------------------------
 reset
 --------------------------------------------- 
 */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, div
-pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q,
-s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
-figure, header, nav, section, article, aside, footer, figcaption {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+div pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+figure,
+header,
+nav,
+section,
+article,
+aside,
+footer,
+figcaption {
   margin: 0;
   padding: 0;
   border: 0;
@@ -62,13 +117,20 @@ html[xmlns] .clearfix {
   height: 1%;
 }
 
-ul, li {
+ul,
+li {
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
-header, nav, section, article, aside, footer, hgroup {
+header,
+nav,
+section,
+article,
+aside,
+footer,
+hgroup {
   display: block;
 }
 
@@ -76,7 +138,8 @@ header, nav, section, article, aside, footer, hgroup {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
   background-color: #1e1e1e;
@@ -87,17 +150,35 @@ html, body {
 }
 
 a {
-	color: #CCC;
+  color: #CCC;
   text-decoration: none !important;
 }
+
 a:hover {
-	color: #F99;
+  color: #F99;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-top: 0px;
   margin-bottom: 0px;
-  color: #fff;
+  color: #1f2122;
+  font-weight: 700;
+}
+
+.toma h1,
+.toma h2,
+.toma h3,
+.toma h4,
+.toma h5,
+.toma h6 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: #337fd6;
   font-weight: 700;
 }
 
@@ -108,7 +189,7 @@ ul {
 p {
   font-size: 15px;
   line-height: 30px;
-  color: #fff;
+  color: #1f2122;
 }
 
 img {
@@ -143,22 +224,22 @@ p {
 
 ::selection {
   background: #337fd6;
-  color: #fff;
+  color: #1f2122;
 }
 
 ::-moz-selection {
   background: #337fd6;
-  color: #fff;
+  color: #1f2122;
 }
 
 .templatemo-item {
-	max-width: 80px; 
-	border-radius: 23px;
+  max-width: 80px;
+  border-radius: 23px;
 }
 
 .main-button a {
   font-size: 14px;
-  color: #fff;
+  color: #1f2122;
   background-color: #337fd6;
   padding: 12px 30px;
   display: inline-block;
@@ -172,7 +253,7 @@ p {
 }
 
 .main-button a:hover {
-  background-color: #fff;
+  background-color: #1f2122;
   color: #337fd6;
 }
 
@@ -193,8 +274,8 @@ p {
 }
 
 .main-border-button a:hover {
-  border-color: #fff;
-  background-color: #fff;
+  border-color: #1f2122;
+  background-color: #1f2122;
   color: #337fd6;
 }
 
@@ -203,7 +284,7 @@ p {
   color: #666;
 }
 
-.border-no-active a:hover{
+.border-no-active a:hover {
   border-color: #666;
   color: #666;
   background-color: transparent;
@@ -221,7 +302,7 @@ section {
 }
 
 .heading-section h4 em {
-  color: #fff;
+  color: #337fd6;
   font-style: normal;
   text-decoration: underline;
 }
@@ -238,7 +319,7 @@ Pre-loader Style
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.99);
+  background-color: rgba(0, 0, 0, 0.99);
   display: -webkit-box;
   display: flex;
   -webkit-box-align: center;
@@ -260,29 +341,29 @@ Pre-loader Style
 
 @-webkit-keyframes dot {
   50% {
-      -webkit-transform: translateX(96px);
-      transform: translateX(96px);
+    -webkit-transform: translateX(96px);
+    transform: translateX(96px);
   }
 }
 
 @keyframes dot {
   50% {
-      -webkit-transform: translateX(96px);
-      transform: translateX(96px);
+    -webkit-transform: translateX(96px);
+    transform: translateX(96px);
   }
 }
 
 @-webkit-keyframes dots {
   50% {
-      -webkit-transform: translateX(-31px);
-      transform: translateX(-31px);
+    -webkit-transform: translateX(-31px);
+    transform: translateX(-31px);
   }
 }
 
 @keyframes dots {
   50% {
-      -webkit-transform: translateX(-31px);
-      transform: translateX(-31px);
+    -webkit-transform: translateX(-31px);
+    transform: translateX(-31px);
   }
 }
 
@@ -335,13 +416,13 @@ Header Style
 */
 
 .background-header {
-  background-color: #fff !important;
-  height: 70px!important;
-  position: fixed!important;
-  top: 0!important;
+  background-color: #1f2122 !important;
+  height: 70px !important;
+  position: fixed !important;
+  top: 0 !important;
   left: 0;
   right: 0;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.15)!important;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15) !important;
   -webkit-transition: all .5s ease 0s;
   -moz-transition: all .5s ease 0s;
   -o-transition: all .5s ease 0s;
@@ -424,7 +505,7 @@ Header Style
 
 .header-area .main-nav .nav {
   display: inline-flex;
-  flex-basis: 70%;
+  flex-basis: 100%;
   justify-content: flex-end;
   vertical-align: middle;
   text-align: right;
@@ -484,13 +565,13 @@ Header Style
 
 .header-area .main-nav .nav li:last-child:hover a,
 .header-area .main-nav .nav li:last-child a.active {
-  color: #fff !important;
+  color: #1f2122 !important;
   background-color: #337fd6 !important;
 }
 
 .background-header .main-nav .nav li:hover a,
 .background-header .main-nav .nav li a.active {
-  color: #fff;
+  color: #1f2122;
   opacity: 1;
 }
 
@@ -619,14 +700,16 @@ Header Style
 }
 
 .header-area.header-sticky .nav li a.active {
-  color: #fff;
+  color: #1f2122;
 }
 
 @media (max-width: 1200px) {
   .header-area .main-nav .nav li {
     padding-left: 10px;
     padding-right: 10px;
+    color: #666;
   }
+
   .header-area .main-nav:before {
     display: none;
   }
@@ -636,57 +719,72 @@ Header Style
   .header-area {
     top: 0;
   }
+
   .header-area .main-nav {
     background-color: transparent;
     border-radius: 0px;
   }
+
   .header-area .main-nav .nav {
     height: auto;
     flex-basis: 100%;
   }
+
   .header-area .main-nav .logo {
     position: absolute;
     left: 30px;
     top: 15px;
   }
+
   .background-header .main-nav .logo {
     top: 0px;
   }
+
   .background-header .main-nav .border-button {
     top: 0px !important;
   }
+
   .header-area .main-nav .border-button {
     position: absolute;
     top: 15px;
     right: 70px;
   }
+
   .header-area.header-sticky .nav li a:hover,
   .header-area.header-sticky .nav li a.active {
-    color: #337fd6!important;
+    color: #337fd6 !important;
     opacity: 1;
   }
+
   .header-area.header-sticky .nav li.search-icon a {
     width: 100%;
   }
+
   .header-area {
-    background-color: #f7f7f7;
+    color: #666;
+    background-color: #1f2122;
     padding: 0px 15px;
     height: 80px;
     box-shadow: none;
     text-align: center;
   }
+
   .header-area .container {
     padding: 0px;
   }
+
   .header-area .logo {
     margin-left: 0px;
   }
+
   .header-area .menu-trigger {
     display: block !important;
   }
+
   .header-area .main-nav {
     overflow: hidden;
   }
+
   .header-area .main-nav .nav {
     float: none;
     width: 100%;
@@ -697,42 +795,52 @@ Header Style
     transition: all 0s ease 0s;
     margin-left: 0px;
   }
+
   .header-area.header-sticky .nav {
     margin-top: 65px !important;
     text-align: center;
   }
+
   .background-header.header-sticky .nav {
     margin-top: 70px !important;
   }
+
   .header-area .main-nav .nav li:first-child {
-    border-top: 1px solid #eee;
+    border-top: 1px solid #1f2122;
   }
+
   .header-area .main-nav .nav li {
     width: 100%;
-    background: #fff;
-    border-bottom: 1px solid #eee;
+    color: #666;
+    background: #1f2122;
+    border-bottom: 1px solid #1f2122;
     padding-left: 0px !important;
     padding-right: 0px !important;
   }
+
   .header-area .main-nav .nav li a {
     height: 50px !important;
     line-height: 50px !important;
     padding: 0px !important;
     border: none !important;
-    background: #fff !important;
-    color: #1e1e1e !important;
+    background: #1f2122 !important;
+    color: #666 !important;
   }
+
   .header-area .main-nav .nav li a:hover {
-    background: #fff !important;
-    color: #337fd6!important;
+    background: #1f2122 !important;
+    color: #337fd6 !important;
   }
+
   .header-area .main-nav .nav li:last-child a img {
     display: none;
   }
+
   .header-area .main-nav .nav li:last-child a:hover {
     color: #2d74c4 !important;
     background-color: transparent !important;
   }
+
   .header-area .main-nav .nav li.has-sub ul.sub-menu {
     position: relative;
     visibility: inherit;
@@ -745,23 +853,29 @@ Header Style
     height: 0px;
     transition: all 0s;
   }
+
   .header-area .main-nav .nav li.submenu ul li a {
     font-size: 12px;
     font-weight: 400;
   }
+
   .header-area .main-nav .nav li.submenu ul li a:hover:before {
     width: 0px;
   }
+
   .header-area .main-nav .nav li.has-sub ul.sub-menu {
     height: auto;
   }
+
   .header-area .main-nav .nav li.has-sub:after {
     color: #3B566E;
     right: 30px;
     font-size: 14px;
     top: 15px;
   }
-  .header-area .main-nav .nav li.submenu:hover ul, .header-area .main-nav .nav li.submenu:focus ul {
+
+  .header-area .main-nav .nav li.submenu:hover ul,
+  .header-area .main-nav .nav li.submenu:focus ul {
     height: 0px;
   }
 }
@@ -773,7 +887,7 @@ Banner Style
 */
 
 .main-banner {
-  background-image: url(../images/banner-bg.jpg);
+  background-image: url(../images/banner.jpg);
   background-position: center center;
   background-size: cover;
   min-height: 380px;
@@ -783,7 +897,7 @@ Banner Style
 
 .main-banner h6 {
   font-size: 20px;
-  color: #fff;
+  color: #1f2122;
   font-weight: 400;
   margin-bottom: 25px;
 }
@@ -851,7 +965,7 @@ Most Popular Style
 
 .most-popular .item ul li {
   text-align: right;
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
 }
 
@@ -943,12 +1057,12 @@ Footer Style
 footer p {
   text-align: center;
   padding: 30px 0px;
-  color: #fff;
+  color: #1f2122;
   font-weight: 300;
 }
 
 footer p a {
-  color: #fff;
+  color: #1f2122;
   transition: all .3s;
 }
 
@@ -990,7 +1104,7 @@ Featured Games Style
 }
 
 .featured-games .item .thumb .hover-effect h6 {
-  background-color: rgba(31,33,34,0.95);
+  background-color: rgba(31, 33, 34, 0.95);
   display: inline-block;
   color: #2d74c4;
   font-weight: 600;
@@ -1023,9 +1137,10 @@ Featured Games Style
 }
 
 .featured-games .item ul li {
-  text-align: right;
-  color: #fff;
+  text-align: left;
+  color: #ffffff;
   font-size: 14px;
+  padding: 7px;
 }
 
 .featured-games .item ul li:first-child i {
@@ -1052,7 +1167,7 @@ Featured Games Style
 }
 
 .featured-games .owl-nav .owl-prev span,
-.featured-games .owl-nav .owl-next span  {
+.featured-games .owl-nav .owl-next span {
   font-size: 36px;
   display: inline-block;
   color: #666;
@@ -1099,7 +1214,7 @@ Featured Games Style
 }
 
 .top-downloaded ul li span {
-  color: #fff;
+  color: #1f2122;
   font-size: 15px;
   margin-right: 10px;
 }
@@ -1124,7 +1239,7 @@ Featured Games Style
   padding-bottom: 28px;
 }
 
-.top-downloaded .text-button  {
+.top-downloaded .text-button {
   text-align: center;
 }
 
@@ -1188,7 +1303,7 @@ Live Stream Style
 }
 
 .live-stream .thumb img {
-  border-radius: 23px; 
+  border-radius: 23px;
 }
 
 .live-stream .thumb:hover .hover-effect {
@@ -1202,12 +1317,12 @@ Live Stream Style
   transition: all .4s;
 }
 
-.live-stream .hover-effect .live a { 
+.live-stream .hover-effect .live a {
   position: absolute;
   background-color: rgba(236, 96, 144, 0.9);
   padding: 5px 10px;
   border-radius: 23px;
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
   right: 15px;
   top: 15px;
@@ -1229,7 +1344,7 @@ Live Stream Style
   background-color: rgba(236, 96, 144, 0.9);
   padding: 5px 10px;
   border-radius: 23px;
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
 }
 
@@ -1238,7 +1353,7 @@ Live Stream Style
 }
 
 .live-stream span i {
-  color: #fff;
+  color: #1f2122;
   background-color: #2d74c4;
   border-radius: 50%;
   font-size: 12px;
@@ -1277,7 +1392,8 @@ Featured Banner Style
   position: relative;
   max-height: 305px;
   overflow: hidden;
-  border-radius: 23px;;
+  border-radius: 23px;
+  ;
 }
 
 .feature-banner .thumb a {
@@ -1287,7 +1403,7 @@ Featured Banner Style
   transform: translate(-23px, -23px);
   width: 46px;
   height: 46px;
-  background-color: #fff;
+  background-color: #1f2122;
   border-radius: 50%;
   display: inline-block;
   text-align: center;
@@ -1342,7 +1458,7 @@ Game Details Style
 }
 
 .game-details .content .left-info ul li {
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
   margin-bottom: 3px;
 }
@@ -1367,7 +1483,7 @@ Game Details Style
   width: 23%;
   text-align: center;
   font-size: 14px;
-  color: #fff;
+  color: #1f2122;
 }
 
 .game-details .content .right-info ul li i {
@@ -1377,7 +1493,7 @@ Game Details Style
 
 .game-details .content .right-info ul li:first-child i {
   color: yellow;
-} 
+}
 
 .game-details .content .right-info ul li i {
   color: #2d74c4;
@@ -1390,7 +1506,7 @@ Game Details Style
 .game-details .main-border-button a {
   text-align: center;
   width: 100%;
-} 
+}
 
 /* 
 ---------------------------------------------
@@ -1437,7 +1553,7 @@ Other Related Style
 }
 
 .other-games ul li {
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
   margin-bottom: 3px;
 }
@@ -1481,7 +1597,7 @@ Top Streamers Style
 .top-streamers ul li span {
   float: left;
   font-size: 15px;
-  color: #fff;
+  color: #1f2122;
   font-weight: 700;
   padding-top: 12px;
   margin-right: 10px;
@@ -1495,7 +1611,7 @@ Top Streamers Style
 }
 
 .top-streamers ul li h6 i {
-  color: #fff;
+  color: #1f2122;
   background-color: #2d74c4;
   border-radius: 50%;
   font-size: 12px;
@@ -1529,7 +1645,7 @@ Profile Style
 
 .main-profile .main-info span {
   font-size: 14px;
-  color: #fff;
+  color: #1f2122;
   background-color: #337fd6;
   padding: 8px 20px;
   display: inline-block;
@@ -1584,7 +1700,7 @@ Profile Style
   margin-top: 30px;
 }
 
-.clips .item  {
+.clips .item {
   border-radius: 23px;
   padding: 30px 15px;
   background-color: #27292a;
@@ -1598,17 +1714,17 @@ Profile Style
 
 .clips .item .thumb a {
   position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-23px, -23px);
-    width: 46px;
-    height: 46px;
-    background-color: #fff;
-    border-radius: 50%;
-    display: inline-block;
-    text-align: center;
-    line-height: 46px;
-    color: #2d74c4;
+  left: 50%;
+  top: 50%;
+  transform: translate(-23px, -23px);
+  width: 46px;
+  height: 46px;
+  background-color: #1f2122;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: center;
+  line-height: 46px;
+  color: #2d74c4;
 }
 
 .clips .item h4 {
@@ -1622,7 +1738,7 @@ Profile Style
 
 .clips .item span {
   float: right;
-  color: #fff;
+  color: #1f2122;
   font-size: 14px;
 }
 
@@ -1645,46 +1761,57 @@ body {
   body .page-content {
     padding: 0px 30px;
   }
+
   .main-banner {
     text-align: center;
   }
+
   .main-banner h4 {
     font-size: 35px;
   }
+
   .gaming-library .item ul li,
   .gaming-library .item ul li:first-child,
   .gaming-library .item ul li:last-child {
     width: 100% !important;
     text-align: center !important;
   }
+
   .gaming-library .item ul li {
     margin-top: 30px;
   }
+
   .top-downloaded ul li .download i {
     top: 20px;
     width: 30px;
     height: 30px;
     line-height: 30px;
   }
+
   .top-downloaded ul li img {
     margin-right: 10px;
   }
+
   .top-downloaded ul li span {
     font-size: 14px;
   }
+
   .top-streamers ul li .main-button {
     float: none;
     margin-top: 10px;
   }
+
   .top-streamers ul li .main-button a {
     width: 100%;
     text-align: center;
   }
+
   .top-streamers,
   .top-downloaded {
     max-height: 100%;
     min-height: 100%;
   }
+
   .most-popular .item .inner-item {
     margin-bottom: 20px;
   }
@@ -1692,29 +1819,37 @@ body {
 
 @media (max-width: 992px) {
   .background-header {
-  display: inline-block;
+    display: inline-block;
   }
+
   .header-area .main-nav #search {
     display: none;
   }
+
   .heading-section h4 {
     font-size: 20px;
   }
+
   .gaming-library .item ul li {
     width: 48% !important;
   }
+
   .gaming-library .item ul li:last-child {
     text-align: left;
   }
+
   .featured-games {
     margin-bottom: 60px;
   }
+
   .start-stream .item {
     margin: 15px 0px;
   }
+
   .feature-banner .thumb {
     margin-top: 30px;
   }
+
   .main-profile .main-info {
     margin: 45px 0px;
   }
@@ -1725,10 +1860,12 @@ body {
     padding-right: 5px;
     padding-left: 5px;
   }
+
   .header-area .main-nav .logo {
     margin-right: 30px;
     border-right: none;
   }
+
   .gaming-library .item ul li {
     width: 16%;
   }
