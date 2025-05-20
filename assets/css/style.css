@@ -1,4 +1,5 @@
-.cores{ /*só para salvar as cores que vou usar*/
+.cores {
+    /*só para salvar as cores que vou usar*/
     color: #BF2C71;
     color: #7055DF;
     color: #020659;
@@ -8,27 +9,50 @@
 
 /* Geral -------------------------------------------------------------------------- */
 
-.logo h1{ /*é a logo no header*/
-    color:#BF2C71;
+.logo h1 {
+    /*é a logo no header*/
+    color: #BF2C71;
     margin: 0;
 }
 
 
 /* perfil.html -------------------------------------------------------------------- */
 
-.chicagofire h4{ /*é a classe de cada bloquinho*/
-    margin-top: 2rem;;
+.chicagofire h4 {
+    /*é a classe de cada bloquinho*/
+    margin-top: 2rem;
+    ;
 }
 
-.chicagofire ul{
+.chicagofire ul {
     padding: 0;
 }
 
-.pinguim{ /*é o botão ver plano do usuário*/
+.pinguim {
+    /*é o botão ver plano do usuário*/
     font-style: italic;
     padding-left: 0.5rem;
 }
 
-.pinguim:hover{
+.pinguim:hover {
     color: #368DD9;
 }
+
+
+/* alunos.html --------------------------------------------------------------------- */
+
+#calendar {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.fc-day-today { /*id do calendario*/
+    background-color: #ffc6e4 !important; /* cor de fundo do dia de hoje */
+    border: 2px solid #DD5FA3 !important; /* borda douradinha */
+  }
+
+  .fc-day-today a {
+    color: #BF2C71 !important; /* cor do número do dia de hoje */
+    font-weight: bold;
+  }
