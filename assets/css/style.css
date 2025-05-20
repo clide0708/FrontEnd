@@ -1,0 +1,34 @@
+.cores{ /*só para salvar as cores que vou usar*/
+    color: #BF2C71;
+    color: #7055DF;
+    color: #020659;
+    color: #368DD9;
+    color: #DD5FA3;
+}
+
+/* Geral -------------------------------------------------------------------------- */
+
+.logo h1{ /*é a logo no header*/
+    color:#BF2C71;
+    margin: 0;
+}
+
+
+/* perfil.html -------------------------------------------------------------------- */
+
+.chicagofire h4{ /*é a classe de cada bloquinho*/
+    margin-top: 2rem;;
+}
+
+.chicagofire ul{
+    padding: 0;
+}
+
+.pinguim{ /*é o botão ver plano do usuário*/
+    font-style: italic;
+    padding-left: 0.5rem;
+}
+
+.pinguim:hover{
+    color: #368DD9;
+}
