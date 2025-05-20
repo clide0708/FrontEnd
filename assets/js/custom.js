@@ -29,9 +29,9 @@
 	  var header = $('header').height();
 
 	  if (scroll >= box - header) {
-	    $("header").addClass("background-header");
+	    $("header").addClass("header");
 	  } else {
-	    $("header").removeClass("background-header");
+	    $("header").removeClass("header");
 	  }
 	});
 	
