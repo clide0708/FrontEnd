@@ -7,11 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
     editable: true,
     selectable: true,
     buttonText: {
-      today: 'hoje',
-      month: 'mês',
-      week: 'semana',
-      day: 'dia',
-      list: 'lista'
+      today: 'Hoje',
+      month: 'Mês',
+      week: 'Semana',
+      day: 'Dia',
+      list: 'Lista'
     },
     select: function (info) {
       var title = prompt('Digite um lembrete:');
