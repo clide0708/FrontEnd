@@ -47,41 +47,9 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <header class="header-area header-sticky">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="main-nav">
-            <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
-              <h1>ClideFit</h1>
-            </a>
-            <!-- ***** Logo End ***** -->
-            <!-- ***** Search End ***** -->
-            <!-- <div class="search-input">
-                      <form id="search" action="#">
-                        <input type="text" placeholder="Pesquisar" id='searchText' name="searchKeyword" onkeypress="handle" />
-                        <i class="fa fa-search"></i>
-                      </form>
-                    </div> -->
-            <!-- ***** Search End ***** -->
-            <!-- ***** Menu Start ***** -->
-            <ul class="nav">
-              <li><a href="index.html" class="active">Inicio</a></li>
-              <li><a href="meustreinos.html">Meus treinos</a></li>
-              <li><a href="detalhes.html">Detalhes</a></li>
-              <li><a href="alunos.html">Alunos</a></li>
-              <li><a href="perfil.html">Perfil <img src="assets/images/profilefoto.png" alt=""></a>
-            </ul>
-            <a class='menu-trigger'>
-              <span>Menu</span>
-            </a>
-            <!-- ***** Menu End ***** -->
-          </nav>
-        </div>
-      </div>
-    </div>
-  </header>
+
+  <?php include 'header.php'; ?>
+
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
@@ -169,7 +137,7 @@ https://templatemo.com/tm-579-cyborg-gaming
           <div class="form-group mt-3">
             <h5 class="churrasqueira">Nome do Treino</h5>
             <input type="text" id="nomeTreino" placeholder="Ex: Treino A" required>
-            <button class="bigmac" onclick="window.location.href='veraluno.html'" style="cursor: pointer">Enviar
+            <button class="bigmac" onclick="window.location.href='veraluno.php'" style="cursor: pointer">Enviar
               Treino</button>
           </div>
 
@@ -247,7 +215,7 @@ https://templatemo.com/tm-579-cyborg-gaming
             </div>
             <div class="col-lg-12">
               <div class="main-button">
-                <a href="perfil.html">Mais</a>
+                <a href="perfil.php">Mais</a>
               </div>
             </div>
           </div> -->

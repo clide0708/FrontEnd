@@ -15,6 +15,10 @@
     margin: 0;
 }
 
+h4 {
+    color: white;
+}
+
 
 /* perfil.html -------------------------------------------------------------------- */
 
@@ -47,12 +51,21 @@
     border-radius: 10px;
 }
 
-.fc-day-today { /*id do calendario*/
-    background-color: #ffc6e4 !important; /* cor de fundo do dia de hoje */
-    border: 2px solid #DD5FA3 !important; /* borda douradinha */
-  }
+.fc-day-today {
+    /*id do calendario*/
+    background-color: #368DD9 !important;
+    /* cor de fundo do dia de hoje */
+    border: 2px solid #444ac2 !important;
+    /* borda douradinha */
+}
 
-  .fc-day-today a {
-    color: #BF2C71 !important; /* cor do número do dia de hoje */
+.fc-day-today a {
+    color: #c7caff !important;
+    /* cor do número do dia de hoje */
     font-weight: bold;
-  }
+}
+
+.alunospage h6{
+    color: white;
+    padding-bottom: 2%;
+}

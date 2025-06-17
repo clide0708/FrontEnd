@@ -47,41 +47,9 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <header class="header-area header-sticky">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="main-nav">
-            <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
-              <h1>ClideFit</h1>
-            </a>
-            <!-- ***** Logo End ***** -->
-            <!-- ***** Search End ***** -->
-            <!-- <div class="search-input">
-                      <form id="search" action="#">
-                        <input type="text" placeholder="Pesquisar" id='searchText' name="searchKeyword" onkeypress="handle" />
-                        <i class="fa fa-search"></i>
-                      </form>
-                    </div> -->
-            <!-- ***** Search End ***** -->
-            <!-- ***** Menu Start ***** -->
-            <ul class="nav">
-              <li><a href="index.html" class="active">Inicio</a></li>
-              <li><a href="meustreinos.html">Meus treinos</a></li>
-              <li><a href="detalhes.html">Detalhes</a></li>
-              <li><a href="alunos.html">Alunos</a></li>
-              <li><a href="perfil.html">Perfil <img src="assets/images/profilefoto.png" alt=""></a>
-            </ul>
-            <a class='menu-trigger'>
-              <span>Menu</span>
-            </a>
-            <!-- ***** Menu End ***** -->
-          </nav>
-        </div>
-      </div>
-    </div>
-  </header>
+
+  <?php include 'header.php'; ?>
+
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
@@ -90,9 +58,9 @@ https://templatemo.com/tm-579-cyborg-gaming
         <div class="page-content">
 
           <!-- ***** Banner Start ***** -->
-                <div class="heading-section">
-                  <h4><em>Atribuir seus treinos</em></h4>
-                </div>
+          <div class="heading-section">
+            <h4><em>Atribuir seus treinos</em></h4>
+          </div>
           <!-- ***** Banner End ***** -->
 
           <!-- ***** Most Popular Start ***** -->
@@ -100,24 +68,24 @@ https://templatemo.com/tm-579-cyborg-gaming
             <div class="row">
               <div class="col-lg-12">
                 <div class="row">
-                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.html'" style="cursor: pointer;">
+                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.php'" style="cursor: pointer;">
                     <div class="item">
                       <h4>Treino 1<br><span>Pulldown, Remada curvada, Remada baixa</span></h4>
                     </div>
                   </div>
-                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.html'" style="cursor: pointer;">
+                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.php'" style="cursor: pointer;">
                     <div class="item">
                       <h4>Treino 2<br><span>LegPress, Mesa flexora, Mesa extensora</span></h4>
                     </div>
                   </div>
-                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.html'" style="cursor: pointer;">
+                  <div class="col-lg-3 col-sm-6" onclick="window.location.href='criatreino.php'" style="cursor: pointer;">
                     <div class="item">
                       <h4>Treino 3<br><span>Supino, Peckdeck, Crucifixo</span></h4>
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="main-button">
-                      <a href="criatreino.html">Criar um novo</a>
+                      <a href="criatreino.php">Criar um novo</a>
                     </div>
                   </div>
                 </div>
@@ -195,7 +163,7 @@ https://templatemo.com/tm-579-cyborg-gaming
             </div>
             <div class="col-lg-12">
               <div class="main-button">
-                <a href="perfil.html">Mais</a>
+                <a href="perfil.php">Mais</a>
               </div>
             </div>
           </div> -->

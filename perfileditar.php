@@ -47,41 +47,7 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <header class="header-area header-sticky">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="main-nav">
-            <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
-              <h1>ClideFit</h1>
-            </a>
-            <!-- ***** Logo End ***** -->
-            <!-- ***** Search End ***** -->
-            <!-- <div class="search-input">
-                      <form id="search" action="#">
-                        <input type="text" placeholder="Type Something" id='searchText' name="searchKeyword" onkeypress="handle" />
-                        <i class="fa fa-search"></i>
-                      </form>
-                    </div> -->
-            <!-- ***** Search End ***** -->
-            <!-- ***** Menu Start ***** -->
-            <ul class="nav">
-              <li><a href="index.html"">Inicio</a></li>
-              <li><a href=" meustreinos.html">Meus treinos</a></li>
-              <li><a href="detalhes.html">Detalhes</a></li>
-              <li><a href="alunos.html">Alunos</a></li>
-              <li><a class="active" href="perfil.html">Perfil <img src="assets/images/profilefoto.png" alt=""></a> </li>
-            </ul>
-            <a class='menu-trigger'>
-              <span>Menu</span>
-            </a>
-            <!-- ***** Menu End ***** -->
-          </nav>
-        </div>
-      </div>
-    </div>
-  </header>
+  <?php include 'header.php'; ?>
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
@@ -110,7 +76,7 @@ https://templatemo.com/tm-579-cyborg-gaming
                         <textarea id="bio" class="form-control mb-2" rows="3">Algo sobre você.</textarea>
                         <div class="main-border-button">
                           <div class="main-border-button">
-                            <a href="perfil.html" id="btn-salvar">Salvar perfil</a>
+                            <a href="perfil.php" id="btn-salvar">Salvar perfil</a>
                           </div>
                         </div>
                       </form>

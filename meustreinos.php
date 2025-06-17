@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-BR" lang="pt-BR">
 
 <head>
 
@@ -9,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
     rel="stylesheet">
 
-  <title>CF - Alunos</title>
+  <title>CLIDE Fit - Meus Treinos</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -21,9 +22,6 @@
   <link rel="stylesheet" href="assets/css/owl.css">
   <link rel="stylesheet" href="assets/css/animate.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <!--
 
 TemplateMo 579 Cyborg Gaming
@@ -49,41 +47,7 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <header class="header-area header-sticky">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="main-nav">
-            <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
-              <h1>ClideFit</h1>
-            </a>
-            <!-- ***** Logo End ***** -->
-            <!-- ***** Search End ***** -->
-            <!-- <div class="search-input">
-                      <form id="search" action="#">
-                        <input type="text" placeholder="Pesquisar" id='searchText' name="searchKeyword" onkeypress="handle" />
-                        <i class="fa fa-search"></i>
-                      </form>
-                    </div> -->
-            <!-- ***** Search End ***** -->
-            <!-- ***** Menu Start ***** -->
-            <ul class="nav">
-              <li><a href="index.html">Inicio</a></li>
-              <li><a href="meustreinos.html">Meus treinos</a></li>
-              <li><a href="detalhes.html">Detalhes</a></li>
-              <li><a href="alunos.html" class="active">Alunos</a></li>
-              <li><a href="perfil.html">Perfil <img src="assets/images/profilefoto.png" alt=""></a>
-            </ul>
-            <a class='menu-trigger'>
-              <span>Menu</span>
-            </a>
-            <!-- ***** Menu End ***** -->
-          </nav>
-        </div>
-      </div>
-    </div>
-  </header>
+  <?php include 'header.php'; ?>
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
@@ -91,64 +55,8 @@ https://templatemo.com/tm-579-cyborg-gaming
       <div class="col-lg-12">
         <div class="page-content">
 
-          <!-- ***** Featured Games Start ***** -->
-          <!-- DENTRO DO HTML ONDE TEM OS ALUNOS, SUBSTITUA ESTA PARTE -->
-
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="top-streamers">
-                <div class="heading-section ">
-                  <h4><em>Seus</em> Alunos</h4>
-                </div>
-                <ul>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Felipe</h6>
-                    <div class="main-button"><a href="veraluno.html">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Julia</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Marcelo</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Ronaldo</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Coutinho</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="col-lg-6">
-              <div class="heading-section fonegamer">
-                <h4><em>Seu</em> Calendário</h4>
-                <h6>Clique para adicionar um lembrete, arraste para fora para apaga-lo.</h6>
-              </div>
-              <div id="calendar"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ***** Featured Games End ***** -->
-
-        <!-- ***** Live Stream Start ***** -->
-        <!-- <div class="live-stream">
+          <!-- ***** Live Stream Start ***** -->
+          <div class="live-stream">
             <div class="col-lg-12">
               <div class="heading-section">
                 <h4><em>Most Popular</em> Live Stream</h4>
@@ -162,11 +70,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -191,8 +99,8 @@ https://templatemo.com/tm-579-cyborg-gaming
                           <a href="#">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -214,11 +122,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -240,11 +148,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -266,11 +174,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -292,11 +200,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -318,11 +226,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -344,11 +252,11 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="hover-effect">
                       <div class="content">
                         <div class="live">
-                          <a href="#">Live</a>
+                          <a href="">Live</a>
                         </div>
                         <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
+                          <li><a href=""><i class="fa fa-eye"></i> 1.2K</a></li>
+                          <li><a href=""><i class="fa fa-gamepad"></i> CS-GO</a></li>
                         </ul>
                       </div>
                     </div>
@@ -365,23 +273,22 @@ https://templatemo.com/tm-579-cyborg-gaming
               </div>
               <div class="col-lg-12">
                 <div class="main-button">
-                  <a href="streams.html">Load More Streams</a>
                 </div>
               </div>
             </div>
-          </div> -->
-        <!-- ***** Live Stream End ***** -->
+          </div>
+          <!-- ***** Live Stream End ***** -->
 
+        </div>
       </div>
     </div>
-  </div>
   </div>
 
   <footer>
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <p>Copyright © 2036 <a href="#">Cyborg Gaming</a> Company. All rights reserved.
+          <p>Copyright © 2025 <a href="#">CLIDE Fit</a> Todos os direitos reservados.
 
             <br>Design: <a href="https://templatemo.com" target="_blank" title="free CSS templates">TemplateMo</a>
           </p>
@@ -393,22 +300,14 @@ https://templatemo.com/tm-579-cyborg-gaming
 
   <!-- Scripts -->
   <!-- Bootstrap core JavaScript -->
-
-
-
-
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
   <script src="assets/js/isotope.min.js"></script>
   <script src="assets/js/owl-carousel.js"></script>
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/popup.js"></script>
   <script src="assets/js/custom.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
-  <script src="assets/js/script.js"></script>
-
 
 </body>
 
