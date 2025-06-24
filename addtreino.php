@@ -48,7 +48,7 @@ https://templatemo.com/tm-579-cyborg-gaming
 
   <!-- ***** Header Area Start ***** -->
 
-  <?php include 'header.php'; ?>
+  <?php include 'btnvoltar.php'; ?>
 
   <!-- ***** Header Area End ***** -->
 
