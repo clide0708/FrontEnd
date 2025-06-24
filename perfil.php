@@ -14,18 +14,18 @@ $stmt->execute([$_SESSION['user_id']]);
 $usuario = $stmt->fetch();
 
 // Buscar treinos recentes (para alunos)
-$treinosRecentes = [];
-if (isAluno()) {
-    $stmt = $conn->prepare("
-        SELECT t.* FROM treinos t
-        JOIN tem te ON t.idtreinos = te.idtreinos
-        WHERE te.idalunos = ? AND t.concluido = 1
-        ORDER BY t.data_conclusao DESC
-        LIMIT 4
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $treinosRecentes = $stmt->fetchAll();
-}
+// $treinosRecentes = [];
+// if (isAluno()) {
+//     $stmt = $conn->prepare("
+//         SELECT t.* FROM treinos t
+//         JOIN tem te ON t.idtreinos = te.idtreinos
+//         WHERE te.idalunos = ? AND t.concluido = 1
+//         ORDER BY t.data_conclusao DESC
+//         LIMIT 4
+//     ");
+//     $stmt->execute([$_SESSION['user_id']]);
+//     $treinosRecentes = $stmt->fetchAll();
+// }
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +92,7 @@ https://templatemo.com/tm-579-cyborg-gaming
                                         <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
                                     </div>
                                     <div class="col-lg-4 align-self-center">
-                                        <div class="main-info header-text">
+                                        <div class="main-info header-text Bancro">
                                             <h4><?php echo htmlspecialchars($usuario['nome']); ?></h4>
                                             <p><?php echo htmlspecialchars($usuario['bio'] ?? 'Nenhuma biografia fornecida.'); ?></p>
                                             <div class="main-border-button">

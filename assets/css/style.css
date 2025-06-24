@@ -222,6 +222,10 @@ body {
 
 /* perfil.html -------------------------------------------------------------------- */
 
+ .Bancro h4{
+    color: white;
+}
+
 .chicagofire h4 {
     /*é a classe de cada bloquinho*/
     margin-top: 2rem;
@@ -276,6 +280,10 @@ body {
     border-radius: 12px;
     color: #fff;
     box-shadow: 0 0 20px #020659
+}
+
+#emailAluno{
+    color: white;
 }
 
 .modal-header {

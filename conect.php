@@ -4,7 +4,7 @@ session_start();
 $host = "localhost";
 $username = "root";
 $password = "";  // senha vazia
-$dbname = "bd_tcc";
+$dbname = "banco_tcc";
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
