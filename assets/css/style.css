@@ -31,8 +31,9 @@ h4 {
 
 /* Header --------------------------------------------------------------------------- */
 .voltahead {
-    width: 100%;
+    width: 90%;
     display: flex;
+    margin: auto;
 }
 
 .botao-voltar {
