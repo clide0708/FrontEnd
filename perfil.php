@@ -1,3 +1,33 @@
+<?php 
+include 'conect.php';
+// if (!isLoggedIn()) {
+//     redirect('login.php');
+// }
+
+// Buscar dados do usuário
+if (isPersonalTrainer()) {
+    $stmt = $conn->prepare("SELECT * FROM proprietarios WHERE idproprietario = ?");
+} else {
+    $stmt = $conn->prepare("SELECT * FROM alunos WHERE idalunos = ?");
+}
+$stmt->execute([$_SESSION['user_id']]);
+$usuario = $stmt->fetch();
+
+// Buscar treinos recentes (para alunos)
+$treinosRecentes = [];
+if (isAluno()) {
+    $stmt = $conn->prepare("
+        SELECT t.* FROM treinos t
+        JOIN tem te ON t.idtreinos = te.idtreinos
+        WHERE te.idalunos = ? AND t.concluido = 1
+        ORDER BY t.data_conclusao DESC
+        LIMIT 4
+    ");
+    $stmt->execute([$_SESSION['user_id']]);
+    $treinosRecentes = $stmt->fetchAll();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -50,173 +80,107 @@ https://templatemo.com/tm-579-cyborg-gaming
   <?php include 'header.php'; ?>
   <!-- ***** Header Area End ***** -->
 
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="page-content">
-
-          <!-- ***** Banner Start ***** -->
-          <div class="row">
+   <div class="container">
+        <div class="row">
             <div class="col-lg-12">
-              <div class="main-profile ">
-                <div class="row">
-                  <div class="col-lg-4">
-                    <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
-                  </div>
-                  <div class="col-lg-4 align-self-center">
-                    <div class="main-info header-text">
-                      <!-- <span>Editar</span> -->
-                      <h4>Nome Sobrenome</h4>
-                      <p>Algo sobre você.</p>
-                      <div class="main-border-button">
-                        <a href="perfileditar.php">Editar perfil</a>
-                      </div>
-                      <a class="pinguim" href="#"><u>Ver meu plano</u></a>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 align-self-center">
-                    <ul>
-                      <li>Treinos concluidos <span>21</span></li>
-                      <li>Horas de treino<span>16</span></li>
-                      <li>Consumo de água por dia<span>2,42 litros</span></li>
-                      <li>Nível<span>Intermediário</span></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="clips">
-                      <div class="row">
+                <div class="page-content">
+                    <div class="row">
                         <div class="col-lg-12">
-                          <div class="heading-section">
-                            <h4>Treinos recentes<br></h4>
-                          </div>
+                            <div class="main-profile">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
+                                    </div>
+                                    <div class="col-lg-4 align-self-center">
+                                        <div class="main-info header-text">
+                                            <h4><?php echo htmlspecialchars($usuario['nome']); ?></h4>
+                                            <p><?php echo htmlspecialchars($usuario['bio'] ?? 'Nenhuma biografia fornecida.'); ?></p>
+                                            <div class="main-border-button">
+                                                <a href="perfileditar.php">Editar perfil</a>
+                                            </div>
+                                            <?php if (isAluno()): ?>
+                                                <a class="pinguim" href="treinos.php"><u>Ver meu plano</u></a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 align-self-center">
+                                        <ul>
+                                            <?php if (isAluno()): ?>
+                                                <li>Treinos concluídos <span><?php 
+                                                    $stmt = $conn->prepare("SELECT COUNT(*) FROM tem t JOIN treinos tr ON t.idtreinos = tr.idtreinos WHERE t.idalunos = ? AND tr.concluido = 1");
+                                                    $stmt->execute([$_SESSION['user_id']]);
+                                                    echo $stmt->fetchColumn();
+                                                ?></span></li>
+                                                <li>Horas de treino<span>16</span></li>
+                                                <li>Consumo de água por dia<span>2,42 litros</span></li>
+                                                <li>Nível<span>Intermediário</span></li>
+                                            <?php else: ?>
+                                                <li>Alunos ativos<span><?php 
+                                                    $stmt = $conn->prepare("SELECT COUNT(*) FROM solicitacoes WHERE id_personal = ? AND status = 'aceito'");
+                                                    $stmt->execute([$_SESSION['user_id']]);
+                                                    echo $stmt->fetchColumn();
+                                                ?></span></li>
+                                                <li>Treinos criados<span><?php 
+                                                    $stmt = $conn->prepare("SELECT COUNT(*) FROM treinos t JOIN tem te ON t.idtreinos = te.idtreinos JOIN solicitacoes s ON te.idalunos = s.id_aluno WHERE s.id_personal = ?");
+                                                    $stmt->execute([$_SESSION['user_id']]);
+                                                    echo $stmt->fetchColumn();
+                                                ?></span></li>
+                                                <li>Membro desde<span><?php 
+                                                    $data = new DateTime($usuario['datacadastro']);
+                                                    echo $data->format('d/m/Y');
+                                                ?></span></li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <?php if (isAluno() && !empty($treinosRecentes)): ?>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="clips">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="heading-section">
+                                                        <h4>Treinos recentes<br></h4>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <?php foreach ($treinosRecentes as $treino): ?>
+                                                        <div class="col-lg-3 col-sm-6 chicagofire">
+                                                            <div class="item">
+                                                                <img src="assets/images/<?php 
+                                                                    $imgMap = [
+                                                                        'Costas' => 'costasbiceps.webp',
+                                                                        'Pernas' => 'pernas.webp',
+                                                                        'Peito' => 'peitotriceps.jpg',
+                                                                        'Ombros' => 'ombrotrapezio.webp'
+                                                                    ];
+                                                                    echo $imgMap[$treino['grupo_principal']] ?? 'default.jpg';
+                                                                ?>" alt="">
+                                                                <h4>Concluído<br></h4>
+                                                                <ul>
+                                                                    <li><?php echo htmlspecialchars($treino['nome']); ?></li>
+                                                                    <li><?php 
+                                                                        $data = new DateTime($treino['data_conclusao']);
+                                                                        echo $data->format('d/m');
+                                                                    ?></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="row">
-                          <div class="col-lg-3 col-sm-6 chicagofire">
-                            <div class="item">
-                              <img src="assets/images/costasbiceps.webp" alt="">
-                              <h4>Concluido<br></h4>
-                              <ul>
-                                <li>Costas e bíceps</li>
-                                <li>20/05</li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="col-lg-3 col-sm-6 chicagofire">
-                            <div class="item">
-                              <img src="assets/images/pernas.webp" alt="">
-                              <h4>Concluido<br></h4>
-                              <ul>
-                                <li>Pernas conjunto</li>
-                                <li>19/05</li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="col-lg-3 col-sm-6 chicagofire">
-                            <div class="item">
-                              <img src="assets/images/ombrotrapezio.webp" alt="">
-                              <h4>Concluido<br></h4>
-                              <ul>
-                                <li>Ombros e trapézio</li>
-                                <li>17/05</li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="col-lg-3 col-sm-6 chicagofire">
-                            <div class="item">
-                              <img src="assets/images/peitotriceps.jpg" alt="">
-                              <h4>Concluido<br></h4>
-                              <ul>
-                                <li>Peito e tríceps</li>
-                                <li>16/05</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <!-- ***** Banner End ***** -->
-
-              <!-- ***** Gaming Library Start ***** -->
-              <!-- <div class="gaming-library profile-library">
-                <div class="col-lg-12">
-                  <div class="heading-section">
-                    <h4><em>Your Gaming</em> Library</h4>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-01.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Dota 2</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>24/08/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>634 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-02.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Fortnite</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>22/06/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>745 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item last-item">
-                    <ul>
-                      <li><img src="assets/images/game-03.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>CS-GO</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>21/04/2022</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>632 H 46 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
-              <!-- ***** Gaming Library End ***** -->
-
-
-
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
       <footer>
         <div class="container">

@@ -1,3 +1,41 @@
+<?php 
+include 'conect.php';
+// if (!isLoggedIn()) {
+//     redirect('login.php');
+// }
+
+// Buscar dados do usuário
+if (isPersonalTrainer()) {
+    $stmt = $conn->prepare("SELECT * FROM proprietarios WHERE idproprietario = ?");
+} else {
+    $stmt = $conn->prepare("SELECT * FROM alunos WHERE idalunos = ?");
+}
+$stmt->execute([$_SESSION['user_id']]);
+$usuario = $stmt->fetch();
+
+// Atualizar perfil
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome = $_POST['nome'] ?? $usuario['nome'];
+    $bio = $_POST['bio'] ?? $usuario['bio'] ?? '';
+    
+    try {
+        if (isPersonalTrainer()) {
+            $stmt = $conn->prepare("UPDATE proprietarios SET nome = ?, bio = ? WHERE idproprietario = ?");
+        } else {
+            $stmt = $conn->prepare("UPDATE alunos SET nome = ?, bio = ? WHERE idalunos = ?");
+        }
+        $stmt->execute([$nome, $bio, $_SESSION['user_id']]);
+        
+        $_SESSION['user_name'] = $nome;
+        $_SESSION['success'] = "Perfil atualizado com sucesso!";
+        redirect('perfil.php');
+    } catch (PDOException $e) {
+        $_SESSION['error'] = "Erro ao atualizar perfil: " . $e->getMessage();
+        redirect('perfileditar.php');
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,124 +89,42 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="page-content">
-
-          <!-- ***** Banner Start ***** -->
-          <div class="row">
+        <div class="row">
             <div class="col-lg-12">
-              <div class="main-profile ">
-                <div class="row">
-                  <div class="col-lg-4">
-                    <<label for="foto-perfil">
-                      <img id="preview-foto" src="assets/images/profilefoto.png" alt=""
-                        style="border-radius: 23px; cursor: pointer;">
-                      <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
-                      </label>
-                  </div>
-                  <div class="col-lg-4 align-self-center">
-                    <div class="main-info header-text">
-                      <!-- <span>Editar</span> -->
-                      <form id="form-editar-perfil">
-                        <input type="text" id="nome" class="form-control mb-2" value="Nome Sobrenome"
-                          style="font-weight: bold; font-size: 20px;">
-                        <textarea id="bio" class="form-control mb-2" rows="3">Algo sobre você.</textarea>
-                        <div class="main-border-button">
-                          <div class="main-border-button">
-                            <a href="perfil.php" id="btn-salvar">Salvar perfil</a>
-                          </div>
+                <div class="page-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="main-profile">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label for="foto-perfil">
+                                            <img id="preview-foto" src="assets/images/profilefoto.png" alt="" style="border-radius: 23px; cursor: pointer;">
+                                            <input type="file" id="foto-perfil" accept="image/*" style="display: none;">
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-4 align-self-center">
+                                        <div class="main-info header-text">
+                                            <form id="form-editar-perfil" method="POST">
+                                                <input type="text" id="nome" class="form-control mb-2" name="nome" 
+                                                    value="<?php echo htmlspecialchars($usuario['nome']); ?>" 
+                                                    style="font-weight: bold; font-size: 20px;">
+                                                <textarea id="bio" class="form-control mb-2" name="bio" rows="3"><?php 
+                                                    echo htmlspecialchars($usuario['bio'] ?? 'Algo sobre você.');
+                                                ?></textarea>
+                                                <div class="main-border-button">
+                                                    <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar perfil</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </form>
                     </div>
-                  </div>
                 </div>
-                <div class="row">
-                  <div class="col-lg-12">
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-        <!-- ***** Banner End ***** -->
-
-        <!-- ***** Gaming Library Start ***** -->
-        <!-- <div class="gaming-library profile-library">
-                <div class="col-lg-12">
-                  <div class="heading-section">
-                    <h4><em>Your Gaming</em> Library</h4>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-01.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Dota 2</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>24/08/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>634 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-02.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Fortnite</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>22/06/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>745 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item last-item">
-                    <ul>
-                      <li><img src="assets/images/game-03.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>CS-GO</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>21/04/2022</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>632 H 46 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
-        <!-- ***** Gaming Library End ***** -->
-
-
-
-      </div>
     </div>
-  </div>
-  </div>
 
   <footer>
     <div class="container">
@@ -194,7 +150,20 @@ https://templatemo.com/tm-579-cyborg-gaming
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/popup.js"></script>
   <script src="assets/js/custom.js"></script>
-
+<script>
+        // Preview da foto de perfil
+        document.getElementById('foto-perfil').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('preview-foto').src = e.target.result;
+                }
+                
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    </script>
 
 </body>
 

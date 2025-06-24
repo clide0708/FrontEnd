@@ -1,3 +1,70 @@
+<?php 
+include 'conect.php';
+// if (!isLoggedIn() || !isPersonalTrainer()) {
+//     redirect('index.php');
+// }
+
+$treinoId = $_GET['treino_id'] ?? 0;
+$alunoId = $_GET['aluno_id'] ?? 0;
+
+// Verificar se o treino pertence ao aluno e o personal tem acesso
+$stmt = $conn->prepare("
+    SELECT t.* FROM treinos t
+    JOIN tem te ON t.idtreinos = te.idtreinos
+    JOIN solicitacoes s ON te.idalunos = s.id_aluno
+    WHERE t.idtreinos = ? AND te.idalunos = ? AND s.id_personal = ? AND s.status = 'aceito'
+");
+$stmt->execute([$treinoId, $alunoId, $_SESSION['user_id']]);
+$treino = $stmt->fetch();
+
+if (!$treino) {
+    $_SESSION['error'] = "Treino não encontrado ou você não tem permissão para editá-lo.";
+    redirect('alunos.php');
+}
+
+// Buscar exercícios do treino
+$stmt = $conn->prepare("
+    SELECT e.* FROM exercicios e
+    JOIN exertreinos et ON e.idexercicio = et.idexercicio
+    WHERE et.idtreinos = ?
+");
+$stmt->execute([$treinoId]);
+$exercicios = $stmt->fetchAll();
+
+// Adicionar novo exercício
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['grupo_muscular'])) {
+    $grupoMuscular = $_POST['grupo_muscular'];
+    $nomeExercicio = $_POST['nome_exercicio'];
+    $series = $_POST['series'];
+    $repeticoes = $_POST['repeticoes'];
+    $descricao = $_POST['descricao'] ?? '';
+    
+    try {
+        $conn->beginTransaction();
+        
+        // Criar exercício
+        $stmt = $conn->prepare("
+            INSERT INTO exercicios (grupo_muscular, nome, descricao, concluido, idproprietario) 
+            VALUES (?, ?, ?, 0, ?)
+        ");
+        $stmt->execute([$grupoMuscular, $nomeExercicio, $descricao, $_SESSION['user_id']]);
+        $exercicioId = $conn->lastInsertId();
+        
+        // Associar ao treino
+        $stmt = $conn->prepare("INSERT INTO exertreinos (idexercicio, idtreinos) VALUES (?, ?)");
+        $stmt->execute([$exercicioId, $treinoId]);
+        
+        $conn->commit();
+        $_SESSION['success'] = "Exercício adicionado com sucesso!";
+        redirect("criatreino.php?treino_id=$treinoId&aluno_id=$alunoId");
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        $_SESSION['error'] = "Erro ao adicionar exercício: " . $e->getMessage();
+        redirect("criatreino.php?treino_id=$treinoId&aluno_id=$alunoId");
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,177 +120,85 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="page-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-content">
+                    <h4 class="churrasqueira">Montar treino: <?php echo htmlspecialchars($treino['nome']); ?></h4>
+                    
+                    <div class="most-popular">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form class="form-treino" method="POST">
+                                    <div class="form-group">
+                                        <label for="grupo_muscular">Grupo Muscular</label>
+                                        <input type="text" id="grupo_muscular" name="grupo_muscular" placeholder="Ex: Peito" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="nome_exercicio">Exercício</label>
+                                        <input type="text" id="nome_exercicio" name="nome_exercicio" placeholder="Ex: Supino" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="series">Séries</label>
+                                        <input type="number" id="series" name="series" min="1" placeholder="0" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="repeticoes">Repetições</label>
+                                        <input type="number" id="repeticoes" name="repeticoes" min="1" placeholder="0" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição (opcional)</label>
+                                        <textarea id="descricao" name="descricao" placeholder="Instruções adicionais"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit">Adicionar ao treino</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- ***** Banner Start ***** -->
-          <h4 class="churrasqueira">Montar treino</h4>
-          <!-- ***** Banner End ***** -->
+                    <div class="tabela-container">
+                        <table class="farofa" id="tabela-treinos">
+                            <thead>
+                                <tr>
+                                    <th>Grupo Muscular</th>
+                                    <th>Exercício</th>
+                                    <th>Séries</th>
+                                    <th>Repetições</th>
+                                    <th>Descrição</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($exercicios as $exercicio): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($exercicio['grupo_muscular']); ?></td>
+                                        <td><?php echo htmlspecialchars($exercicio['nome']); ?></td>
+                                        <td><?php echo htmlspecialchars($exercicio['series'] ?? '-'); ?></td>
+                                        <td><?php echo htmlspecialchars($exercicio['repeticoes'] ?? '-'); ?></td>
+                                        <td><?php echo htmlspecialchars($exercicio['descricao'] ?? 'Nenhuma descrição'); ?></td>
+                                        <td>
+                                            <a href="#" onclick="editarExercicio(<?php echo $exercicio['idexercicio']; ?>)">Editar</a> | 
+                                            <a href="#" onclick="excluirExercicio(<?php echo $exercicio['idexercicio']; ?>)">Excluir</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-          <!-- ***** Most Popular Start ***** -->
-
-          <div class="most-popular">
-            <div class="row">
-              <div class="col-lg-12">
-                <form class="form-treino">
-                  <!-- Selecionar Músculos -->
-                  <div class="form-group">
-                    <label for="Músculoss">Músculos</label>
-                    <input type="text" id="Músculoss" name="Músculoss" placeholder="--" required>
-                  </div>
-
-                  <!-- Selecionar Exercício -->
-                  <div class="form-group">
-                    <label for="exercicio">Exercício</label>
-                    <select id="exercicio" name="exercicio">
-                      <option value="">Selecione</option>
-                      <option value="agachamento">Agachamento</option>
-                      <option value="supino">Supino</option>
-                      <option value="abdominal">Abdominal</option>
-                    </select>
-                  </div>
-
-                  <!-- Número de Séries -->
-                  <div class="form-group">
-                    <label for="series">Séries</label>
-                    <input type="number" id="series" name="series" min="1" placeholder="0">
-                  </div>
-
-                  <!-- Número de Repetições -->
-                  <div class="form-group">
-                    <label for="repeticoes">Repetições</label>
-                    <input type="number" id="repeticoes" name="repeticoes" min="1" placeholder="0">
-                  </div>
-
-                  <!-- Botão -->
-                  <div class="form-group">
-                    <button type="submit">Adicionar ao treino</button>
-                  </div>
-                </form>
-              </div>
+                    <div class="form-group mt-3">
+                        <button class="bigmac" onclick="window.location.href='veraluno.php?id=<?php echo $alunoId; ?>'" style="cursor: pointer">Voltar</button>
+                    </div>
+                </div>
             </div>
-          </div>
-
-
-          <div class="tabela-container">
-            <table class="farofa" id="tabela-treinos">
-              <thead>
-                <tr>
-                  <th>Músculos</th>
-                  <th>Exercício</th>
-                  <th>Séries</th>
-                  <th>Repetições</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Peito</td>
-                  <td>Supino</td>
-                  <td>3</td>
-                  <td>10</td>
-                </tr>
-                <tr>
-                  <td>Quadríceps</td>
-                  <td>Agachamento</td>
-                  <td>4</td>
-                  <td>12</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- NOME DO TREINO E BOTÃO DE ENVIAR -->
-          <div class="form-group mt-3">
-            <h5 class="churrasqueira">Nome do Treino</h5>
-            <input type="text" id="nomeTreino" placeholder="Ex: Treino A" required>
-            <button class="bigmac" onclick="window.location.href='veraluno.php'" style="cursor: pointer">Enviar
-              Treino</button>
-          </div>
-
         </div>
-      </div>
     </div>
-    <!-- ***** Most Popular End ***** -->
-
-    <!-- ***** Gaming Library Start ***** -->
-    <!-- <div class="gaming-library">
-            <div class="col-lg-12">
-              <div class="heading-section">
-                <h4><em>Treinos acessíveis</em> -- </h4>
-              </div>
-              <div class="item">
-                <ul>
-                  <li><img src="assets/images/game-01.jpg" alt="" class="templatemo-item"></li>
-                  <li>
-                    <h4>Dota 2</h4><span>Sandbox</span>
-                  </li>
-                  <li>
-                    <h4>Date Added</h4><span>24/08/2036</span>
-                  </li>
-                  <li>
-                    <h4>Hours Played</h4><span>634 H 22 Mins</span>
-                  </li>
-                  <li>
-                    <h4>Currently</h4><span>Downloaded</span>
-                  </li>
-                  <li>
-                    <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                  </li>
-                </ul>
-              </div>
-              <div class="item">
-                <ul>
-                  <li><img src="assets/images/game-02.jpg" alt="" class="templatemo-item"></li>
-                  <li>
-                    <h4>Fortnite</h4><span>Sandbox</span>
-                  </li>
-                  <li>
-                    <h4>Date Added</h4><span>22/06/2036</span>
-                  </li>
-                  <li>
-                    <h4>Hours Played</h4><span>740 H 52 Mins</span>
-                  </li>
-                  <li>
-                    <h4>Currently</h4><span>Downloaded</span>
-                  </li>
-                  <li>
-                    <div class="main-border-button"><a href="#">Donwload</a></div>
-                  </li>
-                </ul>
-              </div>
-              <div class="item last-item">
-                <ul>
-                  <li><img src="assets/images/game-03.jpg" alt="" class="templatemo-item"></li>
-                  <li>
-                    <h4>CS-GO</h4><span>Sandbox</span>
-                  </li>
-                  <li>
-                    <h4>Date Added</h4><span>21/04/2036</span>
-                  </li>
-                  <li>
-                    <h4>Hours Played</h4><span>892 H 14 Mins</span>
-                  </li>
-                  <li>
-                    <h4>Currently</h4><span>Downloaded</span>
-                  </li>
-                  <li>
-                    <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-12">
-              <div class="main-button">
-                <a href="perfil.php">Mais</a>
-              </div>
-            </div>
-          </div> -->
-    <!-- ***** Gaming Library End ***** -->
-  </div>
-  </div>
-  </div>
-  </div>
 
   <footer>
     <div class="container">
@@ -251,6 +226,17 @@ https://templatemo.com/tm-579-cyborg-gaming
   <script src="assets/js/popup.js"></script>
   <script src="assets/js/custom.js"></script>
 
+  <script>
+        function editarExercicio(exercicioId) {
+            window.location.href = 'editar_exercicio.php?exercicio_id=' + exercicioId + '&treino_id=<?php echo $treinoId; ?>&aluno_id=<?php echo $alunoId; ?>';
+        }
+        
+        function excluirExercicio(exercicioId) {
+            if (confirm('Tem certeza que deseja excluir este exercício?')) {
+                window.location.href = 'excluir_exercicio.php?exercicio_id=' + exercicioId + '&treino_id=<?php echo $treinoId; ?>&aluno_id=<?php echo $alunoId; ?>';
+            }
+        }
+    </script>
 
 </body>
 

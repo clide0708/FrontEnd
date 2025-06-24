@@ -1,3 +1,62 @@
+<?php 
+include 'conect.php';
+// if (!isLoggedIn() || !isPersonalTrainer()) {
+//     redirect('index.php');
+// }
+
+$alunoId = $_GET['id'] ?? 0;
+
+// Verificar se o personal tem permissão para ver este aluno
+$stmt = $conn->prepare("
+    SELECT a.* FROM alunos a
+    JOIN solicitacoes s ON a.idalunos = s.id_aluno
+    WHERE s.id_personal = ? AND s.id_aluno = ? AND s.status = 'aceito'
+");
+$stmt->execute([$_SESSION['user_id'], $alunoId]);
+$aluno = $stmt->fetch();
+
+if (!$aluno) {
+    $_SESSION['error'] = "Aluno não encontrado ou você não tem permissão para acessar este aluno.";
+    redirect('alunos.php');
+}
+
+// Buscar treinos do aluno
+$stmt = $conn->prepare("
+    SELECT t.* FROM treinos t
+    JOIN tem te ON t.idtreinos = te.idtreinos
+    WHERE te.idalunos = ?
+");
+$stmt->execute([$alunoId]);
+$treinos = $stmt->fetchAll();
+
+// Adicionar novo treino
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome_treino'])) {
+    $nomeTreino = $_POST['nome_treino'];
+    $descricao = $_POST['descricao'] ?? '';
+    
+    try {
+        $conn->beginTransaction();
+        
+        // Criar treino
+        $stmt = $conn->prepare("INSERT INTO treinos (nome, descricao, concluido) VALUES (?, ?, 0)");
+        $stmt->execute([$nomeTreino, $descricao]);
+        $treinoId = $conn->lastInsertId();
+        
+        // Associar ao aluno
+        $stmt = $conn->prepare("INSERT INTO tem (idalunos, idtreinos) VALUES (?, ?)");
+        $stmt->execute([$alunoId, $treinoId]);
+        
+        $conn->commit();
+        $_SESSION['success'] = "Treino criado com sucesso!";
+        redirect("criatreino.php?treino_id=$treinoId&aluno_id=$alunoId");
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        $_SESSION['error'] = "Erro ao criar treino: " . $e->getMessage();
+        redirect("veraluno.php?id=$alunoId");
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,173 +117,117 @@ https://templatemo.com/tm-579-cyborg-gaming
 
   <!-- ***** Header Area End ***** -->
 
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <!-- <div class="page-content"> -->
-
-        <!-- ***** Banner Start ***** -->
+      <div class="container">
         <div class="row">
-          <div class="col-lg-12">
-            <div class="main-profile ">
-              <div class="row">
-                <div class="col-lg-4">
-                  <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
-                </div>
-                <div class="col-lg-4 align-self-center">
-                  <div class="main-info header-text">
-                    <!-- <span>Editar</span> -->
-                    <h4>Felipe Andrade</h4>
-                    <p>Gosto de jogar volei e dançar samba.</p>
-                    <!-- <div class="main-border-button">
-                        <a href="#">Editar perfil</a>
-                      </div>
-                      <a class="pinguim" href="#"><u>Ver meu plano</u></a> -->
-                  </div>
-                </div>
-                <div class="col-lg-4 align-self-center">
-                  <ul>
-                    <li>Treinos solicitados<span>21</span></li>
-                    <li>Treinos concluidos<span>15</span></li>
-                    <li>Sexo<span>Masculino</span></li>
-                    <li>Enfermidades<span>N/A</span></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="clips">
-                    <div class="row">
-                      <div class="col-lg-12">
-                        <div class="heading-section">
-                          <h4>Treinos solicitados<br></h4>
-                          <div class="main-border-button espacin">
-                            <a href="addtreino.php">Criar novo treino</a>
-                          </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="main-profile">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
+                                </div>
+                                <div class="col-lg-4 align-self-center">
+                                    <div class="main-info header-text">
+                                        <h4><?php echo htmlspecialchars($aluno['nome']); ?></h4>
+                                        <p><?php echo htmlspecialchars($aluno['bio'] ?? 'Nenhuma biografia fornecida.'); ?></p>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 align-self-center">
+                                    <ul>
+                                        <li>Treinos solicitados<span><?php echo count($treinos); ?></span></li>
+                                        <li>Treinos concluídos<span><?php 
+                                            $concluidos = array_reduce($treinos, function($carry, $item) {
+                                                return $carry + ($item['concluido'] ? 1 : 0);
+                                            }, 0);
+                                            echo $concluidos;
+                                        ?></span></li>
+                                        <li>Email<span><?php echo htmlspecialchars($aluno['email']); ?></span></li>
+                                        <li>Data cadastro<span><?php 
+                                            $data = new DateTime($aluno['data_cadastro']);
+                                            echo $data->format('d/m/Y');
+                                        ?></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="clips">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="heading-section">
+                                                    <h4>Treinos solicitados<br></h4>
+                                                    <div class="main-border-button espacin">
+                                                        <a href="#" data-toggle="modal" data-target="#novoTreinoModal">Criar novo treino</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                            <div class="col-lg-12">
+                                                <table class="farofa">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>Descrição</th>
+                                                            <th>Status</th>
+                                                            <th>Ações</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($treinos as $treino): ?>
+                                                            <tr>
+                                                                <td><?php echo htmlspecialchars($treino['nome']); ?></td>
+                                                                <td><?php echo htmlspecialchars($treino['descricao'] ?? 'Nenhuma descrição'); ?></td>
+                                                                <td><?php echo $treino['concluido'] ? 'Concluído' : 'Pendente'; ?></td>
+                                                                <td>
+                                                                    <a href="criatreino.php?treino_id=<?php echo $treino['idtreinos']; ?>&aluno_id=<?php echo $alunoId; ?>">Editar</a> | 
+                                                                    <a href="#" onclick="confirmarExclusao(<?php echo $treino['idtreinos']; ?>)">Excluir</a>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
                     </div>
-
-                    <!-- TABELA SEM PLANO DE FUNDO -->
-                    <div class="row mt-3">
-                      <div class="col-lg-12">
-                        <table class="farofa">
-                          <thead>
-                            <tr>
-                              <th>Músculos</th>
-                              <th>Séries</th>
-                              <th>Data</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>Pernas completo</td>
-                              <td>15</td>
-                              <td>Segunda-feira - 19/05</td>
-                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                            </tr>
-                            <tr>
-                              <td>Costas e bíceps</td>
-                              <td>18</td>
-                              <td>Terça-feira - 20/05</td>
-                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                            </tr>
-                            <tr>
-                              <td>Peito e tríceps</td>
-                              <td>18</td>
-                              <td>Quarta-feira - 21/05</td>
-                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-                      </div>
-                    </div>
-                    <!-- FIM DA TABELA -->
-
-                  </div>
                 </div>
-              </div>
-
-              <!-- ***** Banner End ***** -->
-
-              <!-- ***** Gaming Library Start ***** -->
-              <!-- <div class="gaming-library profile-library">
-                <div class="col-lg-12">
-                  <div class="heading-section">
-                    <h4><em>Your Gaming</em> Library</h4>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-01.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Dota 2</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>24/08/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>634 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item">
-                    <ul>
-                      <li><img src="assets/images/game-02.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>Fortnite</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>22/06/2036</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>745 H 22 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="item last-item">
-                    <ul>
-                      <li><img src="assets/images/game-03.jpg" alt="" class="templatemo-item"></li>
-                      <li>
-                        <h4>CS-GO</h4><span>Sandbox</span>
-                      </li>
-                      <li>
-                        <h4>Date Added</h4><span>21/04/2022</span>
-                      </li>
-                      <li>
-                        <h4>Hours Played</h4><span>632 H 46 Mins</span>
-                      </li>
-                      <li>
-                        <h4>Currently</h4><span>Downloaded</span>
-                      </li>
-                      <li>
-                        <div class="main-border-button border-no-active"><a href="#">Donwloaded</a></div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> -->
-              <!-- ***** Gaming Library End ***** -->
-
-
-
             </div>
-          </div>
         </div>
-      </div>
+    </div>
+
+    <!-- Modal para novo treino -->
+    <div class="modal fade" id="novoTreinoModal" tabindex="-1" role="dialog" aria-labelledby="novoTreinoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="novoTreinoModalLabel">Novo Treino</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="veraluno.php?id=<?php echo $alunoId; ?>">
+                        <div class="form-group">
+                            <label for="nome_treino">Nome do Treino</label>
+                            <input type="text" class="form-control" id="nome_treino" name="nome_treino" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição (opcional)</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Criar Treino</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
       <footer>
         <div class="container">
@@ -250,7 +253,13 @@ https://templatemo.com/tm-579-cyborg-gaming
       <script src="assets/js/tabs.js"></script>
       <script src="assets/js/popup.js"></script>
       <script src="assets/js/custom.js"></script>
-
+      <script>
+        function confirmarExclusao(treinoId) {
+            if (confirm('Tem certeza que deseja excluir este treino?')) {
+                window.location.href = 'excluir_treino.php?treino_id=' + treinoId + '&aluno_id=<?php echo $alunoId; ?>';
+            }
+        }
+    </script>
 
 </body>
 
