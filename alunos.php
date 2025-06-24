@@ -33,6 +33,34 @@ https://templatemo.com/tm-579-cyborg-gaming
 -->
 </head>
 
+<!-- Modal para adicionar aluno -->
+<div class="modal fade" id="adicionarAlunoModal" tabindex="-1" role="dialog" aria-labelledby="adicionarAlunoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adicionarAlunoModalLabel">Adicionar Aluno</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <form id="formAdicionarAluno">
+          <div class="form-group">
+            <label for="emailAluno">Email do Aluno</label>
+            <input type="email" class="form-control" id="emailAluno" required>
+          </div>
+          <!-- Adicione mais campos se quiser -->
+          <button type="submit" class="btn btn-primary btnsalvar">Enviar solicitação</button>
+          <button type="button" class="btn btn-primary btnsalvar close" data-dismiss="modal" aria-label="Fechar">
+            Calcelar</span>
+          </button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <body class="alunospage">
 
   <!-- ***** Preloader Start ***** -->
@@ -64,9 +92,11 @@ https://templatemo.com/tm-579-cyborg-gaming
 
           <div class="row">
             <div class="col-lg-6">
+              <div class="heading-section fonegamer">
+                <h4>Seus alunos</h4>
+              </div>
               <div class="top-streamers">
                 <div class="heading-section ">
-                  <h4>Seus Alunos</h4>
                 </div>
                 <ul>
                   <li>
@@ -76,28 +106,9 @@ https://templatemo.com/tm-579-cyborg-gaming
                     <div class="main-button"><a href="veraluno.php">Ver</a></div>
                   </li>
                   <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Julia</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Marcelo</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Ronaldo</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
-                  </li>
-                  <li>
-                    <img src="assets/images/profilefoto.png" alt=""
-                      style="max-width: 46px; border-radius: 50%; margin-right: 15px;">
-                    <h6>Coutinho</h6>
-                    <div class="main-button"><a href="#">Ver</a></div>
+                    <div class="main-button">
+                      <a href="#" data-toggle="modal" data-target="#adicionarAlunoModal">Adicionar aluno</a>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -112,234 +123,6 @@ https://templatemo.com/tm-579-cyborg-gaming
             </div>
           </div>
         </div>
-
-        <!-- ***** Featured Games End ***** -->
-
-        <!-- ***** Live Stream Start ***** -->
-        <!-- <div class="live-stream">
-            <div class="col-lg-12">
-              <div class="heading-section">
-                <h4>Most Popular Live Stream</h4>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-05.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-01.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> Kengan Omeg</span>
-                    <h4>Just Talking With Fans</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-06.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-02.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> LahutaMalc</span>
-                    <h4>CS-GO 36 Hours Live Stream</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-07.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-03.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> Areluwa</span>
-                    <h4>Maybe Nathej Allnight Chillin'</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-08.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-04.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> NewGangTeam</span>
-                    <h4>Live Streaming Till Morning</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-07.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-01.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> Kengan Omeg</span>
-                    <h4>Just Talking With Fans</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-08.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-02.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> LahutaMalc</span>
-                    <h4>CS-GO 36 Hours Live Stream</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-05.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-03.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> Areluwa</span>
-                    <h4>Maybe Nathej Allnight Chillin'</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-3 col-sm-6">
-                <div class="item">
-                  <div class="thumb">
-                    <img src="assets/images/stream-06.jpg" alt="">
-                    <div class="hover-effect">
-                      <div class="content">
-                        <div class="live">
-                          <a href="#">Live</a>
-                        </div>
-                        <ul>
-                          <li><a href="#"><i class="fa fa-eye"></i> 1.2K</a></li>
-                          <li><a href="#"><i class="fa fa-gamepad"></i> CS-GO</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="down-content">
-                    <div class="avatar">
-                      <img src="assets/images/avatar-04.jpg" alt=""
-                        style="max-width: 46px; border-radius: 50%; float: left;">
-                    </div>
-                    <span><i class="fa fa-check"></i> NewGangTeam</span>
-                    <h4>Live Streaming Till Morning</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <div class="main-button">
-                  <a href="streams.php">Load More Streams</a>
-                </div>
-              </div>
-            </div>
-          </div> -->
-        <!-- ***** Live Stream End ***** -->
-
       </div>
     </div>
   </div>
@@ -365,10 +148,12 @@ https://templatemo.com/tm-579-cyborg-gaming
 
 
 
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-  <script src="assets/js/isotope.min.js"></script>
+  <!-- <script src="assets/js/isotope.min.js"></script> -->
   <script src="assets/js/owl-carousel.js"></script>
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/popup.js"></script>

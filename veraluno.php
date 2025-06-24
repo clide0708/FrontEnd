@@ -31,7 +31,7 @@ https://templatemo.com/tm-579-cyborg-gaming
 -->
 </head>
 
-<body>
+<body class="veralunopage">
 
   <!-- ***** Preloader Start ***** -->
   <div id="js-preloader" class="js-preloader">
@@ -47,102 +47,110 @@ https://templatemo.com/tm-579-cyborg-gaming
   <!-- ***** Preloader End ***** -->
 
   <!-- ***** Header Area Start ***** -->
-  <?php include 'header.php'; ?>
+  <div class="voltahead">
+    <button class="botao-voltar" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M15 8a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.498.498 0 0 1-.106-.163.498.498 0 0 1 0-.382.498.498 0 0 1 .106-.163l4-4a.5.5 0 1 1 .708.708L2.707 7.5H14.5A.5.5 0 0 1 15 8z" />
+      </svg>
+      Voltar
+    </button>
+  </div>
+
   <!-- ***** Header Area End ***** -->
 
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
-        <div class="page-content">
+        <!-- <div class="page-content"> -->
 
-          <!-- ***** Banner Start ***** -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="main-profile ">
-                <div class="row">
-                  <div class="col-lg-4">
-                    <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
-                  </div>
-                  <div class="col-lg-4 align-self-center">
-                    <div class="main-info header-text">
-                      <!-- <span>Editar</span> -->
-                      <h4>Felipe Andrade</h4>
-                      <p>Gosto de jogar volei e dançar samba.</p>
-                      <!-- <div class="main-border-button">
+        <!-- ***** Banner Start ***** -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="main-profile ">
+              <div class="row">
+                <div class="col-lg-4">
+                  <img src="assets/images/profilefoto.png" alt="" style="border-radius: 23px;">
+                </div>
+                <div class="col-lg-4 align-self-center">
+                  <div class="main-info header-text">
+                    <!-- <span>Editar</span> -->
+                    <h4>Felipe Andrade</h4>
+                    <p>Gosto de jogar volei e dançar samba.</p>
+                    <!-- <div class="main-border-button">
                         <a href="#">Editar perfil</a>
                       </div>
                       <a class="pinguim" href="#"><u>Ver meu plano</u></a> -->
-                    </div>
-                  </div>
-                  <div class="col-lg-4 align-self-center">
-                    <ul>
-                      <li>Treinos solicitados<span>21</span></li>
-                      <li>Treinos concluidos<span>15</span></li>
-                      <li>Sexo<span>Masculino</span></li>
-                      <li>Enfermidades<span>N/A</span></li>
-                    </ul>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="clips">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="heading-section">
-                            <h4>Treinos solicitados<br></h4>
-                            <div class="main-border-button espacin">
-                              <a href="addtreino.php">Criar novo treino</a>
-                            </div>
+                <div class="col-lg-4 align-self-center">
+                  <ul>
+                    <li>Treinos solicitados<span>21</span></li>
+                    <li>Treinos concluidos<span>15</span></li>
+                    <li>Sexo<span>Masculino</span></li>
+                    <li>Enfermidades<span>N/A</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="clips">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="heading-section">
+                          <h4>Treinos solicitados<br></h4>
+                          <div class="main-border-button espacin">
+                            <a href="addtreino.php">Criar novo treino</a>
                           </div>
                         </div>
                       </div>
-
-                      <!-- TABELA SEM PLANO DE FUNDO -->
-                      <div class="row mt-3">
-                        <div class="col-lg-12">
-                          <table class="farofa">
-                            <thead>
-                              <tr>
-                                <th>Músculos</th>
-                                <th>Séries</th>
-                                <th>Data</th>
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>Pernas completo</td>
-                                <td>15</td>
-                                <td>Segunda-feira - 19/05</td>
-                                <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                              </tr>
-                              <tr>
-                                <td>Costas e bíceps</td>
-                                <td>18</td>
-                                <td>Terça-feira - 20/05</td>
-                                <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                              </tr>
-                              <tr>
-                                <td>Peito e tríceps de Pernas</td>
-                                <td>18</td>
-                                <td>Quarta-feira - 21/05</td>
-                                <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
-                              </tr>
-                            </tbody>
-                          </table>
-
-                        </div>
-                      </div>
-                      <!-- FIM DA TABELA -->
-
                     </div>
+
+                    <!-- TABELA SEM PLANO DE FUNDO -->
+                    <div class="row mt-3">
+                      <div class="col-lg-12">
+                        <table class="farofa">
+                          <thead>
+                            <tr>
+                              <th>Músculos</th>
+                              <th>Séries</th>
+                              <th>Data</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Pernas completo</td>
+                              <td>15</td>
+                              <td>Segunda-feira - 19/05</td>
+                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
+                            </tr>
+                            <tr>
+                              <td>Costas e bíceps</td>
+                              <td>18</td>
+                              <td>Terça-feira - 20/05</td>
+                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
+                            </tr>
+                            <tr>
+                              <td>Peito e tríceps</td>
+                              <td>18</td>
+                              <td>Quarta-feira - 21/05</td>
+                              <td><a href="#">Editar</a> | <a href="#">Excluir</a></td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                      </div>
+                    </div>
+                    <!-- FIM DA TABELA -->
+
                   </div>
                 </div>
+              </div>
 
-                <!-- ***** Banner End ***** -->
+              <!-- ***** Banner End ***** -->
 
-                <!-- ***** Gaming Library Start ***** -->
-                <!-- <div class="gaming-library profile-library">
+              <!-- ***** Gaming Library Start ***** -->
+              <!-- <div class="gaming-library profile-library">
                 <div class="col-lg-12">
                   <div class="heading-section">
                     <h4><em>Your Gaming</em> Library</h4>
@@ -209,39 +217,39 @@ https://templatemo.com/tm-579-cyborg-gaming
                   </div>
                 </div>
               </div> -->
-                <!-- ***** Gaming Library End ***** -->
+              <!-- ***** Gaming Library End ***** -->
 
 
 
-              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <footer>
-          <div class="container">
-            <div class="row">
-              <div class="col-lg-12">
-                <p>Copyright © 2036 <a href="#">Cyborg Gaming</a> Company. All rights reserved.
+      <footer>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <p>Copyright © 2036 <a>Cyborg Gaming</a> Company. All rights reserved.
 
-                  <br>Design: <a href="https://templatemo.com" target="_blank" title="free CSS templates">TemplateMo</a>
-                </p>
-              </div>
+                <br>Design: <a href="https://templatemo.com" target="_blank" title="free CSS templates">TemplateMo</a>
+              </p>
             </div>
           </div>
-        </footer>
+        </div>
+      </footer>
 
 
-        <!-- Scripts -->
-        <!-- Bootstrap core JavaScript -->
-        <script src="vendor/jquery/jquery.min.js"></script>
-        <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+      <!-- Scripts -->
+      <!-- Bootstrap core JavaScript -->
+      <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
-        <script src="assets/js/isotope.min.js"></script>
-        <script src="assets/js/owl-carousel.js"></script>
-        <script src="assets/js/tabs.js"></script>
-        <script src="assets/js/popup.js"></script>
-        <script src="assets/js/custom.js"></script>
+      <script src="assets/js/isotope.min.js"></script>
+      <script src="assets/js/owl-carousel.js"></script>
+      <script src="assets/js/tabs.js"></script>
+      <script src="assets/js/popup.js"></script>
+      <script src="assets/js/custom.js"></script>
 
 
 </body>

@@ -17,6 +17,7 @@
 
 
   <!-- Additional CSS Files -->
+   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/fontawesome.css">
   <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
   <link rel="stylesheet" href="assets/css/owl.css">
@@ -303,7 +304,7 @@ https://templatemo.com/tm-579-cyborg-gaming
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
-  <script src="assets/js/isotope.min.js"></script>
+  <!-- <script src="assets/js/isotope.min.js"></script> -->
   <script src="assets/js/owl-carousel.js"></script>
   <script src="assets/js/tabs.js"></script>
   <script src="assets/js/popup.js"></script>
