@@ -74,11 +74,12 @@ h4 {
 }
 
 .nav-CF {
-    color: #368DD9;
+    color: white;
+
 }
 
 .nav-CF:hover {
-    color: white;
+    color: #368DD9;
 }
 
 

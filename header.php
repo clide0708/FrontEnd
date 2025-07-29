@@ -16,7 +16,7 @@
       <ul class="nav-menu" id="navMenu">
         <li><a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Início</a></li>
         <li><a href="treinos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'treinos.php' ? 'active' : '' ?>">Planos Personalizados</a></li>
-        <li><a href="alimentacao.php" class="<?= basename($_SERVER['PHP_SELF']) == 'alimentacao.php' ? 'active' : '' ?>">Alimentação</a></li>
+        <li><a href="Alimentacao/alimentacao.php?lista=cafe" class="<?= basename($_SERVER['PHP_SELF']) == 'alimentacao.php' ? 'active' : '' ?>">Alimentação</a></li>
         <li><a href="meustreinos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'meustreinos.php' ? 'active' : '' ?>">Meus Treinos</a></li>
         <li><a href="alunos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'alunos.php' ? 'active' : '' ?>">Alunos</a></li>
         <li>
