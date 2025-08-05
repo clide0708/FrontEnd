@@ -1,7 +1,7 @@
 <header class="nav-header">
   <div class="container">
     <div class="nav-bar">
-      
+
       <!-- Logo -->
       <h1> <a class="nav-CF" href="index.php">ClideFit</a></h1>
 
@@ -15,9 +15,9 @@
       <!-- Menu -->
       <ul class="nav-menu" id="navMenu">
         <li><a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Início</a></li>
-        <li><a href="treinos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'treinos.php' ? 'active' : '' ?>">Planos Personalizados</a></li>
+        <li><a href="planos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'planos.php' ? 'active' : '' ?>">Planos Personalizados</a></li>
         <li><a href="Alimentacao/alimentacao.php?lista=cafe" class="<?= basename($_SERVER['PHP_SELF']) == 'alimentacao.php' ? 'active' : '' ?>">Alimentação</a></li>
-        <li><a href="meustreinos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'meustreinos.php' ? 'active' : '' ?>">Meus Treinos</a></li>
+        <li><a href="Treinos/treinos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'treinos.php' ? 'active' : '' ?>">Treinos</a></li>
         <li><a href="alunos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'alunos.php' ? 'active' : '' ?>">Alunos</a></li>
         <li>
           <a href="perfil.php" class="profile-link <?= basename($_SERVER['PHP_SELF']) == 'perfil.php' ? 'active' : '' ?>">
@@ -36,4 +36,3 @@
     navMenu.classList.toggle('show')
   }
 </script>
-
