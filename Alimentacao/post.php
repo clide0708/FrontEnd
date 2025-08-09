@@ -19,7 +19,6 @@ try {
     $pdo = connectDB();
     $pdo->beginTransaction();
 
-    // 1. Obter o ID do tipo de refeição
     $stmt = $pdo->prepare("SELECT id FROM refeicoes_tipos WHERE nome_tipo = :lista");
     $stmt->execute([':lista' => $lista]);
     $tipo_refeicao_id = $stmt->fetchColumn();
@@ -28,7 +27,7 @@ try {
         die('Tipo de refeição inválido.');
     }
 
-    // 2. Inserir o novo item na tabela itens_refeicao
+    // insere o bagulho nas refeições
     $stmt = $pdo->prepare("INSERT INTO itens_refeicao (id_tipo_refeicao, nome, especificacao) VALUES (:id_tipo, :nome, :especificacao)");
     $stmt->execute([
         ':id_tipo' => $tipo_refeicao_id,

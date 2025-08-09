@@ -13,7 +13,7 @@ try {
     $pdo = connectDB();
     $pdo->beginTransaction();
 
-    // 1. pega a especificacao antiga
+    // pega as info antigas
     $stmt = $pdo->prepare("SELECT especificacao FROM itens_refeicao WHERE id = :id");
     $stmt->execute([':id' => $index]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,7 +29,6 @@ try {
         throw new Exception("Especificação antiga inválida (zero).");
     }
 
-    // 2. pega os nutrientes atuais
     $stmt = $pdo->prepare("SELECT calorias, proteinas, carboidratos, gorduras FROM nutrientes WHERE alimento_id = :id");
     $stmt->execute([':id' => $index]);
     $nutrientes = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,7 +37,7 @@ try {
         throw new Exception("Nutrientes não encontrados para este item.");
     }
 
-    // 3. calcula nutrientes por grama
+    // calcula os nutrientes por grama (acho que tá dando erro em algumas, e o problema provavelmente está referente à essa manipulação)
     $porGrama = [
         'calorias' => $nutrientes['calorias'] / $especificacao_antiga,
         'proteinas' => $nutrientes['proteinas'] / $especificacao_antiga,
@@ -46,7 +45,6 @@ try {
         'gorduras' => $nutrientes['gorduras'] / $especificacao_antiga,
     ];
 
-    // 4. calcula novos nutrientes
     $novosNutrientes = [
         'calorias' => $porGrama['calorias'] * $especificacao_nova,
         'proteinas' => $porGrama['proteinas'] * $especificacao_nova,
@@ -54,14 +52,14 @@ try {
         'gorduras' => $porGrama['gorduras'] * $especificacao_nova,
     ];
 
-    // 5. atualiza a especificacao no item
+    // update gramas
     $stmt = $pdo->prepare("UPDATE itens_refeicao SET especificacao = :especificacao WHERE id = :id");
     $stmt->execute([
         ':especificacao' => $especificacao_nova,
         ':id' => $index
     ]);
 
-    // 6. atualiza os nutrientes
+    // update nutrientes
     $stmt = $pdo->prepare("UPDATE nutrientes SET 
         calorias = :calorias,
         proteinas = :proteinas,

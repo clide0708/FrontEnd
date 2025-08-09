@@ -4,7 +4,7 @@ require_once 'conect.php';
 try {
     $pdo = connectDB();
 
-    function getItemsAndTotalsByMealType($pdo, $mealType)
+    function davizindasfuncao($pdo, $mealType)
     {
         $stmt = $pdo->prepare("
             SELECT 
@@ -46,10 +46,10 @@ try {
         return ['items' => $items, 'totais' => $totais];
     }
 
-    $cafe = getItemsAndTotalsByMealType($pdo, 'cafe');
-    $almoco = getItemsAndTotalsByMealType($pdo, 'almoco');
-    $janta = getItemsAndTotalsByMealType($pdo, 'janta');
-    $outros = getItemsAndTotalsByMealType($pdo, 'outros');
+    $cafe = davizindasfuncao($pdo, 'cafe');
+    $almoco = davizindasfuncao($pdo, 'almoco');
+    $janta = davizindasfuncao($pdo, 'janta');
+    $outros = davizindasfuncao($pdo, 'outros');
 } catch (PDOException $e) {
     die("Erro ao carregar refeições: " . $e->getMessage());
 }
@@ -68,13 +68,11 @@ $itens = [];
 try {
     $pdo = connectDB();
 
-    // Busca o ID do tipo de refeição
     $stmtTipo = $pdo->prepare("SELECT id FROM refeicoes_tipos WHERE nome_tipo = :lista");
     $stmtTipo->execute([':lista' => $lista]);
     $tipo_refeicao_id = $stmtTipo->fetchColumn();
 
     if ($tipo_refeicao_id) {
-        // Busca os itens para o tipo de refeição
         $stmtItens = $pdo->prepare("SELECT id, nome, especificacao FROM itens_refeicao WHERE id_tipo_refeicao = :id_tipo ORDER BY id ASC");
         $stmtItens->execute([':id_tipo' => $tipo_refeicao_id]);
         $itens = $stmtItens->fetchAll();

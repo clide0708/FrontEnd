@@ -12,7 +12,6 @@ if (empty($lista)) {
 try {
     $pdo = connectDB();
 
-    // Busca diretamente os alimentos sem verificar tipo de refeição primeiro
     $stmt = $pdo->prepare("
         SELECT 
             ir.id,

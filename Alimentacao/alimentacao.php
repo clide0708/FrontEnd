@@ -49,10 +49,8 @@
                 <h3>fazer scan com IA</h3>
             </div>
             <div class="almadd">
-                <!-- Adicionado um novo div para exibir os itens já adicionados -->
                 <div class="existing-items" id="existing-items-list">
                     <div class="tbladdmdl" id="tbladdmdl">
-                        <!-- Itens já adicionados serão carregados dinamicamente aqui -->
                     </div>
                 </div>
                 <div class="addalmbtn">
@@ -100,46 +98,6 @@
         </div>
     </div>
     <!-- MODAL DE DETALHES DO ALIMENTO END -->
-
-
-    <!-- MODAL DE ADD ALIMENTO -->
-    <!-- <div class="modalalimento3 modal-stack" id="modalalimento3">
-        <div class="modalalm2-content">
-            <div class="addalm">
-                <h4>Detalhes do Alimento</h4>
-            </div>
-            <div class="infnm">
-                <h2 id="modalNome">Nome</h2>
-                <div class="select">
-                    <input maxlength="4" minlength="1" type="number" id="modalGramas" step="0.1" value="100"> g/ml
-                </div>
-            </div>
-            <div class="infnt">
-                <div class="header">
-                    <h1 class="cal">Cal</h1>
-                    <h1>Prot</h1>
-                    <h1>Carb</h1>
-                    <h1>Gord</h1>
-                </div>
-                <div class="valores">
-                    <h1 class="cal" id="modalCal">0</h1>
-                    <h1 id="modalProt">0g</h1>
-                    <h1 id="modalCarb">0g</h1>
-                    <h1 id="modalGord">0g</h1>
-                </div>
-                <div class="btndv">
-                    <form id="modalFormRemover">
-                        <input type="hidden" name="lista" id="modalListaRemover">
-                        <input type="hidden" name="index" id="modalIndexRemover">
-                        <button type="submit" class="btn1"><img src="assets/images/lata-de-lixo.png" alt=""></button>
-                    </form>
-                    <button class="btn2" onclick="fecharModalDetalhes()">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <!-- MODAL DE ADD ALIMENTO END -->
-
 
 
     <div class="container">

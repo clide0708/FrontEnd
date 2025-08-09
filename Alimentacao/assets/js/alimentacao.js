@@ -1,4 +1,4 @@
-//Só a data msm
+//só a data msm
 
 const hoje = new Date();
 const dia = String(hoje.getDate()).padStart(2, "0");
@@ -6,7 +6,7 @@ const mes = String(hoje.getMonth() + 1).padStart(2, "0");
 const data1 = `${dia}/${mes}`;
 document.getElementById("data").innerText = data1;
 
-//Modal de adicionar
+//modal de adicionar
 
 const cards = document.querySelectorAll(".ref");
 const btnOpen = document.querySelectorAll(".add-btn");
@@ -29,7 +29,7 @@ const nomesRefeicoes = {
   outros: "Outros",
 };
 
-// Abrir e fechar cards
+// abrir as refeições
 cards.forEach((card) => {
   const conteudo = card.querySelector(".contalm");
 
@@ -67,7 +67,7 @@ cards.forEach((card) => {
   });
 });
 
-// Abrir modal de adicionar alimentos
+// modal add alimentos
 btnOpen.forEach((button) => {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -83,7 +83,7 @@ btnOpen.forEach((button) => {
   });
 });
 
-// Carregar alimentos existentes para o modal de adicionar
+// modal de add
 function carregarAlimentos(lista) {
   fetch(`get.php?lista=${lista}`)
     .then((response) => response.json())
@@ -129,7 +129,7 @@ function carregarAlimentos(lista) {
     });
 }
 
-// Fechar modal de adicionar
+// fechar modal add
 if (btnCloseModal) {
   btnCloseModal.addEventListener("click", () => {
     modalOverlay.classList.remove("show");
@@ -142,12 +142,12 @@ modalOverlay.addEventListener("click", (e) => {
   }
 });
 
-// Evita que clique nas sugestões feche tudo
+// evitar cliques aleatórios
 sugestoesModal.addEventListener("mousedown", (e) => {
   e.preventDefault();
 });
 
-// Buscar itens na API
+// API para adicionar os ingrediente (tem que traduzir isso daqui ou trocar por outra API)
 async function buscarIngredientes(termo) {
   if (termo.length < 2) {
     sugestoesModal.innerHTML = "";
@@ -234,12 +234,10 @@ async function buscarIngredientes(termo) {
   }
 }
 
-// Input do campo de busca do modal de adicionar
 buscaModal.addEventListener("input", (event) => {
   buscarIngredientes(event.target.value);
 });
 
-// Botão confirmar do modal de adicionar
 btnConfirmModal.addEventListener("click", () => {
   modalOverlay.classList.remove("show");
 });
@@ -262,7 +260,7 @@ buscaModal.addEventListener("focus", () => {
   }
 });
 
-// Lógica do Modal de Detalhes do Alimento
+// modal dos detalhes
 const modalDetalhes = document.getElementById("modalalimento2");
 const modalNome = document.getElementById("modalNome");
 const modalGramas = document.getElementById("modalGramas");
@@ -275,12 +273,12 @@ const inputIndexRemover = document.getElementById("modalIndexRemover");
 
 let currentLista = "";
 let currentItemId = "";
-let originalNutrients = {}; // Para armazenar os nutrientes base por 100g
+let originalNutrients = {};
 let hasChanges = false;
 
 async function abrirModalDetalhes(lista, index) {
   try {
-    // Fetch the details from get.php
+    // get
     const response = await fetch(`get.php?lista=${lista}`);
     const data = await response.json();
 
@@ -320,7 +318,7 @@ async function abrirModalDetalhes(lista, index) {
 
     modalDetalhes.style.display = "flex";
     modalDetalhes.classList.add("show");
-    // modalOverlay.classList.add('show'); // Mantém o primeiro modal aberto
+    // modalOverlay.classList.add('show'); tirei pq tava feio
   } catch (e) {
     console.error("Erro ao carregar detalhes do alimento:", e);
     alert("Erro ao carregar detalhes do alimento.");
@@ -376,7 +374,7 @@ document
     }
   });
 
-function salvarAlteracoesAntesDeFechar() {
+function salvarAlteracoesAntesDeFechar() { // o nome é meio auto explicativo
   if (hasChanges) {
     const formData = new FormData();
     formData.append("lista", currentLista);
@@ -392,7 +390,7 @@ function salvarAlteracoesAntesDeFechar() {
     })
       .then((response) => {
         if (response.ok) {
-          location.reload(); // Recarrega a página para atualizar as listas
+          location.reload();
         } else {
           console.error("Erro ao atualizar alimento");
         }

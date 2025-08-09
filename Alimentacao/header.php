@@ -5,14 +5,6 @@
       <!-- Logo -->
       <h1> <a class="nav-CF" href="../index.php">ClideFit</a></h1>
 
-      <!-- Botão mobile -->
-      <div class="menu-icon" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-
-      <!-- Menu -->
       <ul class="nav-menu" id="navMenu">
         <li><a href="../index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Início</a></li>
         <li><a href="../planos.php" class="<?= basename($_SERVER['PHP_SELF']) == 'planos.php' ? 'active' : '' ?>">Planos Personalizados</a></li>

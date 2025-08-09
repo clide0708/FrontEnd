@@ -1,5 +1,5 @@
-<?php
-function connectDB() {
+<?php //se tu tá lendo isso daqui provavelmente algo deu errado, espero que não seja eu kkkkkkkkkk
+function connectDB() { //NÃO ESTÁ EM MYSQL, ESTÁ EM PDO PELO AMOR DE DEUS
     $host = 'localhost';
     $db   = 'testealm'; 
     $user = 'root';

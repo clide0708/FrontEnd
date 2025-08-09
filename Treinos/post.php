@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo = connectDB();
             $stmt = $pdo->prepare("INSERT INTO Treinos (nome, data_ultima_modificacao, especialidades) VALUES (?, ?, ?)");
             $stmt->execute([$nome, $data, $especialidades]);
-            header("Location: Treinos/academia.php");
+            header("Location: academia.php");
             exit;
         } catch (PDOException $e) {
             die("Erro ao adicionar treino: " . $e->getMessage());

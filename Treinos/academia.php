@@ -12,15 +12,15 @@ try {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Clide Fit - Treinos</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
 </head>
+
 <body class="treinos">
 
-    <?php include 'header.php'; ?>
+    <?php include 'btnvoltar.php'; ?>
 
     <div class="container">
         <h1>Academia</h1>
@@ -39,21 +39,30 @@ try {
         <!-- Listagem dos treinos -->
         <div class="tablescrollref">
             <?php foreach ($treinos as $treino): ?>
-                <a href="vertreino.php?treino=<?= urlencode($treino['nome']) ?>">
-                    <table class="tableref">
-                        <tbody>
-                            <tr>
-                                <td><?= htmlspecialchars($treino['nome']) ?></td>
-                                <td><?= htmlspecialchars($treino['data_ultima_modificacao']) ?></td>
-                                <td>?</td> <!-- quantidade de exercícios ainda não implementado -->
-                                <td><?= htmlspecialchars($treino['especialidades']) ?></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </a>
+                <table class="tableref">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="vertreino.php?id=<?= urlencode($treino['id']) ?>">
+                                    <?= htmlspecialchars($treino['nome']) ?>
+                                </a>
+                            </td>
+                            <td><?= htmlspecialchars($treino['data_ultima_modificacao']) ?></td>
+                            <td>?</td>
+                            <td><?= htmlspecialchars($treino['especialidades']) ?></td>
+                            <td>
+                                <a href="delete.php?id=<?= urlencode($treino['id']) ?>" onclick="return confirm('Tem certeza que deseja deletar o treino <?= htmlspecialchars(addslashes($treino['nome'])) ?>?')">
+                                    [deletar]
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             <?php endforeach; ?>
         </div>
+
     </div>
 
 </body>
+
 </html>
