@@ -83,6 +83,8 @@ try {
                 <h4>Adicionar Novo Exercício</h4>
                 <button onclick="abrirModal()">+ Adicionar Exercício</button>
             </div>
+
+            <a href="treinando.php?id=<?= urlencode($treino['id']) ?>">Iniciar Treino</a>
         </div>
 
         <!-- Modal para Adicionar Exercício -->
