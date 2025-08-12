@@ -24,8 +24,6 @@ try {
 
     <div class="container">
         <h1>Academia</h1>
-
-        <!-- Formulário para adicionar novo treino -->
         <form action="post.php" method="POST" style="margin-bottom: 30px;">
             <label>Nome do Treino:</label><br>
             <input type="text" name="nome" required><br><br>
@@ -36,7 +34,6 @@ try {
             <button type="submit">Adicionar Treino</button>
         </form>
 
-        <!-- Listagem dos treinos -->
         <div class="tablescrollref">
             <?php foreach ($treinos as $treino): ?>
                 <table class="tableref">

@@ -1,35 +1,35 @@
-const exercicios = raw.map(e => ({
+const exercicios = raw.map((e) => ({
   id: parseInt(e.id),
   nome: e.nome,
   num_series: parseInt(e.num_series) || 1,
   num_repeticoes: parseInt(e.num_repeticoes) || 0,
   tempo_descanso: parseInt(e.tempo_descanso) || 0,
   peso: parseInt(e.peso) || 0,
-  informacoes: e.informacoes || '',
-  url: e.url || '',
-  cover: e.cover || '',
-  grupo: e.grupo || '',
-  concluido: false
+  informacoes: e.informacoes || "",
+  url: e.url || "",
+  cover: e.cover || "",
+  grupo: e.grupo || "",
+  concluido: false,
 }));
 
 let exIndex = 0;
 let serieAtual = 1;
-let estado = 'execucao';
+let estado = "execucao";
 let timerInterval = null;
 let timerRemaining = 0;
 
-const listaEl = document.getElementById('lista');
-const viewExecucao = document.getElementById('view-execucao');
-const viewDescanso = document.getElementById('view-descanso');
-const viewFinalizado = document.getElementById('view-finalizado');
+const listaEl = document.getElementById("lista");
+const viewExecucao = document.getElementById("view-execucao");
+const viewDescanso = document.getElementById("view-descanso");
+const viewFinalizado = document.getElementById("view-finalizado");
 
-const btnAvancar = document.getElementById('btn-avancar');
-const btnVoltar = document.getElementById('btn-voltar');
+const btnAvancar = document.getElementById("btn-avancar");
+const btnVoltar = document.getElementById("btn-voltar");
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
-  return `${m}:${s.toString().padStart(2,'0')}`;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 function clearTimer() {
@@ -41,107 +41,114 @@ function clearTimer() {
 
 function renderLista() {
   if (exercicios.length === 0) {
-    listaEl.innerHTML = '<p>Nenhum exercício encontrado</p>';
+    listaEl.innerHTML = "<p>Nenhum exercício encontrado</p>";
     return;
   }
-  let html = '';
+  let html = "";
   exercicios.forEach((ex, i) => {
-    let classe = 'ex-item';
-    if (i === exIndex) classe += ' active';
-    if (ex.concluido) classe += ' concluido';
+    let classe = "ex-item";
+    if (i === exIndex) classe += " active";
+    if (ex.concluido) classe += " concluido";
     html += `<div class="${classe}" data-i="${i}">
-      <strong>${i+1}. ${ex.nome}</strong>
-      <div class="small-muted">${ex.num_series}x • ${ex.num_repeticoes} reps • ${ex.peso} kg</div>
+      <strong>${i + 1}. ${ex.nome}</strong>
+      <div class="small-muted">${ex.num_series}x • ${
+      ex.num_repeticoes
+    } reps • ${ex.peso} kg</div>
     </div>`;
   });
   listaEl.innerHTML = html;
-  document.querySelectorAll('.ex-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const i = parseInt(el.getAttribute('data-i'));
+  document.querySelectorAll(".ex-item").forEach((el) => {
+    el.addEventListener("click", () => {
+      const i = parseInt(el.getAttribute("data-i"));
       if (isNaN(i)) return;
       clearTimer();
       exIndex = i;
       serieAtual = 1;
-      estado = 'execucao';
+      estado = "execucao";
       renderTudo();
     });
   });
 }
 
 function esconderTodasViews() {
-  viewExecucao.style.display = 'none';
-  viewDescanso.style.display = 'none';
-  viewFinalizado.style.display = 'none';
+  viewExecucao.style.display = "none";
+  viewDescanso.style.display = "none";
+  viewFinalizado.style.display = "none";
 }
 
 function stopVideo() {
-  const videoContainer = document.getElementById('video-container');
-  videoContainer.innerHTML = ''; // limpa o container e para o vídeo
+  const videoContainer = document.getElementById("video-container");
+  videoContainer.innerHTML = ""; // limpa o container e para o vídeo
 }
 
 function showCover() {
+  //mudar caso vá mudar a capa
   const ex = exercicios[exIndex];
-  const videoContainer = document.getElementById('video-container');
-  
+  const videoContainer = document.getElementById("video-container");
+
   videoContainer.innerHTML = `
-    <img id="ex-cover" src="${ex.cover || ''}" alt="Capa do exercício" style="width:100%; height:315px; object-fit:cover; display:block; border-radius:6px; cursor:pointer;" />
+    <img id="ex-cover" src="${
+      ex.cover || ""
+    }" alt="Capa do exercício" style="width:100%; height:315px; object-fit:cover; display:block; border-radius:6px; cursor:pointer;" />
     <div id="play-button" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:48px; color:#fff; opacity:0.8; pointer-events:none;">▶</div>
   `;
-  
-  const coverImg = videoContainer.querySelector('#ex-cover');
-  coverImg.addEventListener('click', () => {
+
+  const coverImg = videoContainer.querySelector("#ex-cover");
+  coverImg.addEventListener("click", () => {
     const id = getYoutubeId(ex.url);
     if (!id) return;
     videoContainer.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:315px;border:0;border-radius:6px"></iframe>`;
   });
 }
 
+// execução
+
 function renderExecucao() {
   clearTimer();
-  estado = 'execucao';
+  estado = "execucao";
   esconderTodasViews();
-  viewExecucao.style.display = 'block';
+  viewExecucao.style.display = "block";
 
   const ex = exercicios[exIndex];
-  document.getElementById('ex-nome').textContent = ex.nome;
-  document.getElementById('ex-serie').textContent = `${serieAtual} / ${ex.num_series}`;
-  document.getElementById('ex-reps').textContent = ex.num_repeticoes;
-  document.getElementById('ex-peso').textContent = ex.peso;
-  document.getElementById('ex-info').textContent = ex.informacoes || '';
+  document.getElementById("ex-nome").textContent = ex.nome;
+  document.getElementById(
+    "ex-serie"
+  ).textContent = `${serieAtual} / ${ex.num_series}`;
+  document.getElementById("ex-reps").textContent = ex.num_repeticoes;
+  document.getElementById("ex-peso").textContent = ex.peso;
+  document.getElementById("ex-info").textContent = ex.informacoes || "";
 
   stopVideo();
   showCover();
   updateButtons();
 }
 
+// descanso
+
 function renderDescansoView() {
   clearTimer();
-  estado = 'descanso';
+  estado = "descanso";
   esconderTodasViews();
-  viewDescanso.style.display = 'block';
+  viewDescanso.style.display = "block";
 
   const ex = exercicios[exIndex];
-  document.getElementById('descanso-titulo').textContent = `Descanso — ${ex.nome}`;
-  document.getElementById('timer').textContent = formatTime(ex.tempo_descanso);
-  document.getElementById('descanso-info').textContent = `Série ${serieAtual} / ${ex.num_series} • ${ex.tempo_descanso}s de descanso`;
+  document.getElementById(
+    "descanso-titulo"
+  ).textContent = `Descanso — ${ex.nome}`;
+  document.getElementById("timer").textContent = formatTime(ex.tempo_descanso);
+  document.getElementById(
+    "descanso-info"
+  ).textContent = `Série ${serieAtual} / ${ex.num_series} • ${ex.tempo_descanso}s de descanso`;
 
   stopVideo(); // para o áudio no descanso
   startDescanso(ex.tempo_descanso);
   updateButtons();
 }
 
-function renderFinalizado() {
-  clearTimer();
-  estado = 'finalizado';
-  esconderTodasViews();
-  viewFinalizado.style.display = 'block';
-  updateButtons();
-}
-
 function startDescanso(segundos) {
   clearTimer();
   timerRemaining = Math.max(0, parseInt(segundos) || 0);
-  const timerEl = () => document.getElementById('timer');
+  const timerEl = () => document.getElementById("timer");
   btnAvancar.disabled = true;
 
   if (timerRemaining === 0) {
@@ -155,7 +162,7 @@ function startDescanso(segundos) {
     if (timerEl()) timerEl().textContent = formatTime(timerRemaining);
     if (timerRemaining <= 0) {
       clearTimer();
-      if (timerEl()) timerEl().textContent = '0:00';
+      if (timerEl()) timerEl().textContent = "0:00";
       avancarDepoisDescanso();
     }
   }, 1000);
@@ -165,14 +172,14 @@ function avancarDepoisDescanso() {
   const ex = exercicios[exIndex];
   if (serieAtual < ex.num_series) {
     serieAtual++;
-    estado = 'execucao';
+    estado = "execucao";
     renderTudo();
   } else {
     exercicios[exIndex].concluido = true;
     if (exIndex < exercicios.length - 1) {
       exIndex++;
       serieAtual = 1;
-      estado = 'execucao';
+      estado = "execucao";
       renderTudo();
     } else {
       renderFinalizado();
@@ -180,70 +187,80 @@ function avancarDepoisDescanso() {
   }
 }
 
-btnAvancar.addEventListener('click', () => {
-  if (estado === 'execucao') {
-    estado = 'descanso';
+// Finalizado
+
+function renderFinalizado() {
+  clearTimer();
+  estado = "finalizado";
+  esconderTodasViews();
+  viewFinalizado.style.display = "block";
+  updateButtons();
+}
+
+btnAvancar.addEventListener("click", () => {
+  if (estado === "execucao") {
+    estado = "descanso";
     renderDescansoView();
-  } else if (estado === 'descanso') {
+  } else if (estado === "descanso") {
     clearTimer();
     avancarDepoisDescanso();
   }
 });
 
-btnVoltar.addEventListener('click', () => {
-  if (estado === 'descanso') {
+btnVoltar.addEventListener("click", () => {
+  if (estado === "descanso") {
     clearTimer();
-    estado = 'execucao';
+    estado = "execucao";
     renderExecucao();
     return;
   }
-  if (estado === 'execucao') {
+  if (estado === "execucao") {
     if (serieAtual > 1) {
       serieAtual--;
       renderExecucao();
     } else if (exIndex > 0) {
       exIndex--;
       serieAtual = exercicios[exIndex].num_series || 1;
-      estado = 'execucao';
+      estado = "execucao";
       renderExecucao();
     }
   }
 });
 
 function updateButtons() {
-  if (estado === 'execucao') {
-    btnAvancar.textContent = 'Concluir série';
+  if (estado === "execucao") {
+    btnAvancar.textContent = "Concluir série";
     btnAvancar.disabled = false;
-  } else if (estado === 'descanso') {
-    btnAvancar.textContent = 'Pular descanso';
+  } else if (estado === "descanso") {
+    btnAvancar.textContent = "Pular descanso";
     btnAvancar.disabled = false;
   } else {
-    btnAvancar.textContent = 'Fim';
+    btnAvancar.textContent = "Fim";
     btnAvancar.disabled = true;
   }
-  const atStart = (exIndex === 0 && serieAtual === 1 && estado === 'execucao');
+  const atStart = exIndex === 0 && serieAtual === 1 && estado === "execucao";
   btnVoltar.disabled = atStart;
 }
 
 function getYoutubeId(url) {
   try {
     const u = new URL(url);
-    if (u.hostname.includes('youtube.com')) {
-      return u.searchParams.get('v') || '';
+    if (u.hostname.includes("youtube.com")) {
+      return u.searchParams.get("v") || "";
     }
-    if (u.hostname.includes('youtu.be')) {
+    if (u.hostname.includes("youtu.be")) {
       return u.pathname.slice(1);
     }
-  } catch(e) {}
-  return '';
+  } catch (e) {}
+  return "";
 }
 
 function renderTudo() {
   renderLista();
-  if (estado === 'execucao') renderExecucao();
-  else if (estado === 'descanso') renderDescansoView();
+  if (estado === "execucao") renderExecucao();
+  else if (estado === "descanso") renderDescansoView();
   else renderFinalizado();
 }
 
 renderTudo();
-window.addEventListener('beforeunload', () => clearTimer());
+window.addEventListener("beforeunload", () => clearTimer());

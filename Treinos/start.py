@@ -5,7 +5,7 @@ playlist_url = "https://www.youtube.com/playlist?list=PLqfBMglaerTxLsfr2HlJXm68D
 ydl_opts = {
     'ignoreerrors': True,
     'quiet': True,
-    'extract_flat': True,  # só pega info, não baixa
+    'extract_flat': True,
 }
 
 with YoutubeDL(ydl_opts) as ydl:
@@ -17,6 +17,7 @@ with YoutubeDL(ydl_opts) as ydl:
     for i, video in enumerate(entries, start=1):
         title = video.get('title')
         url = video.get('url')
-        # monta o link completo do YouTube
         link = f"{url}"
         print(f"{i}. {title} - {link}")
+        
+        # socorro

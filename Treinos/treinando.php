@@ -39,7 +39,7 @@ try {
         </div>
 
         <div id="conteudo">
-            <!-- view geral que vai mostrar as 3 telas: execução, descanso ou finalizado -->
+            <!-- não sei pq fui fazer em ajax dnv, mas vai mostrar execução, descanso e finalizado, só tem q arrumar a validação de conclusão -->
             <div id="view">
 
                 <!-- EXECUÇÃO -->

@@ -51,15 +51,14 @@ try {
         }
     }
 
-    function pegarCoverYoutube(string $url): ?string
+    function pegarCoverYoutube(string $url): ?string // se a gente for usar a nossa capa personalizada, apaga isso daqui e bota o cover do json pra mandar pro BD
     {
         $id = null;
 
-        // tenta pegar id padrão youtube
+        //pegar id essas parada
         if (preg_match('/v=([^&]+)/', $url, $matches)) {
             $id = $matches[1];
         }
-        // tenta pegar id do link curto youtu.be
         elseif (preg_match('/youtu\.be\/([^?&]+)/', $url, $matches)) {
             $id = $matches[1];
         }
@@ -77,7 +76,9 @@ try {
         exit;
     }
 
-    $sql = "INSERT INTO Exercicios 
+    //manda os vídeos pro BD
+
+    $sql = "INSERT INTO Exercicios  
         (treino_id, nome, num_series, num_repeticoes, tempo_descanso, peso, informacoes, url, cover, grupo) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 

@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
+//filtra os ex pelos musculos (grupo)
+
 $muscle = isset($_GET['grupo']) ? strtolower(trim($_GET['grupo'])) : '';
 
 if (!$muscle) {

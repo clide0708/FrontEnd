@@ -7,16 +7,16 @@ if (!$treino_id) die("Treino não especificado");
 try {
     $pdo = connectDB();
 
-    // Buscar dados do treino
+    // select dos treinos
     $stmtTreino = $pdo->prepare("SELECT * FROM Treinos WHERE id = ?");
     $stmtTreino->execute([$treino_id]);
     $treino = $stmtTreino->fetch();
 
     if (!$treino) die("Treino não encontrado");
 
-    $treino_id = $treino['id']; // Garante que $treino_id está definido para o formulário do modal
+    $treino_id = $treino['id'];
 
-    // Buscar exercícios do treino
+    // select dos exercícios dos treinos
     $stmtExercicios = $pdo->prepare("SELECT * FROM Exercicios WHERE treino_id = ?");
     $stmtExercicios->execute([$treino_id]);
     $exercicios = $stmtExercicios->fetchAll();
@@ -66,7 +66,7 @@ try {
                 </form>
             </div>
 
-            <!-- Lista de Exercícios -->
+            <!-- lista exercícios  -->
             <div style="flex: 1;">
                 <h3>Exercícios</h3>
                 <ul id="listaExercicios">
@@ -87,7 +87,7 @@ try {
             <a href="treinando.php?id=<?= urlencode($treino['id']) ?>">Iniciar Treino</a>
         </div>
 
-        <!-- Modal para Adicionar Exercício -->
+        <!-- modal add exercício  -->
         <div id="modal" class="modal" style="display:none;">
             <div class="modal-content">
                 <span class="close-button" onclick="fecharModal()">&times;</span>
@@ -141,6 +141,8 @@ try {
     </div>
 
     <script>
+        //ainda vo tira o script daqui
+
         function carregarExercicio(id) {
             fetch('get2.php?id=' + id)
                 .then(response => {
@@ -152,15 +154,13 @@ try {
                         alert('Erro: ' + data.error);
                         return;
                     }
-                    // Preenche os campos
+                    // pega os bagui pra fazer ajax
                     document.getElementById('titulo-exercicio').innerText = 'Editar: ' + data.nome;
                     document.getElementById('exercicio-id').value = data.id;
                     document.getElementById('num_series').value = data.num_series;
                     document.getElementById('num_repeticoes').value = data.num_repeticoes;
                     document.getElementById('tempo_descanso').value = data.tempo_descanso ?? '';
                     document.getElementById('peso').value = data.peso ?? '';
-
-                    // Mostrar o painel
                     document.getElementById('painel-edicao').style.display = 'block';
                 })
                 .catch(err => {
@@ -246,7 +246,7 @@ try {
     </script>
 
     <style>
-        /* Estilos básicos para o modal */
+        /* css bucha só pra teste, mas não apaga */
         .modal {
             display: none;
             position: fixed;
