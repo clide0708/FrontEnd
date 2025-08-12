@@ -98,21 +98,20 @@ try {
                     <div class="form-group">
                         <label for="muscle-select">Escolha o Músculo:</label>
                         <select id="muscle-select" name="grupo">
-                            <option value="">-- Selecione o Músculo --</option>
-                            <option value="abdomen">Abdominais</option>
-                            <option value="biceps">Bíceps</option>
-                            <option value="peitoral">Peito</option>
+                            <option value="abdomen">Abdomen</option>
+                            <option value="abdutores">Abdutores</option>
+                            <option value="adutores">Adutores</option>
                             <option value="antebraco">Antebraços</option>
+                            <option value="biceps">Bíceps</option>
+                            <option value="costas">Costas</option>
                             <option value="gluteos">Glúteos</option>
-                            <option value="posteriorcoxa">Posterior da Coxa</option>
-                            <option value="dorsais">Dorsais</option>
-                            <option value="inferiordascostas">Parte Inferior das Costas</option>
-                            <option value="meiodascostas">Meio das Costas</option>
+                            <option value="ombros">Ombros</option>
+                            <option value="panturrilha">Panturrilhas</option>
+                            <option value="peitoral">Peitos</option>
+                            <option value="posteriordecoxa">Posterior da Coxa</option>
                             <option value="quadriceps">Quadríceps</option>
                             <option value="trapezio">Trapézio</option>
                             <option value="triceps">Tríceps</option>
-                            <option value="ombros">Ombros</option>
-                            <option value="panturrilhas">Panturrilhas</option>
                         </select>
                     </div>
                     <div class="form-group">
