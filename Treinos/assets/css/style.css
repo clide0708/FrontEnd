@@ -242,8 +242,11 @@ body {
 }
 
 .ex-item.concluido {
-  background: #d4edda;
-  border-color: #28a745;
+color: black;
+}
+
+.ex-item.concluido strong{
+  
 }
 
 .cover {
@@ -263,4 +266,36 @@ body {
 .small-muted {
   color: #666;
   font-size: 0.9rem;
+}
+
+.treinando{
+  background-color: red;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+#lista-exercicios{
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+#lista-exercicios h3{
+  background-color: green;
+  padding: 2%;
+  margin-bottom: 10%;
+  margin-top: 10%;
+}
+#lista{
+  background-color: yellow;
+  padding-bottom: 4%;
+  padding-left: 2%;
+  padding-right: 2%;
+  padding-top: 4%;
 }

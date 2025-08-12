@@ -28,14 +28,16 @@ try {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css"> -->
 </head>
 
 <body>
 
-    <div id="container">
+    <div class="treinando">
         <div id="lista-exercicios">
             <h3><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></h3>
             <div id="lista"></div>
+            <h3>Sair</h3>
         </div>
 
         <div id="conteudo">

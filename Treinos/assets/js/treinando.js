@@ -50,10 +50,7 @@ function renderLista() {
     if (i === exIndex) classe += " active";
     if (ex.concluido) classe += " concluido";
     html += `<div class="${classe}" data-i="${i}">
-      <strong>${i + 1}. ${ex.nome}</strong>
-      <div class="small-muted">${ex.num_series}x • ${
-      ex.num_repeticoes
-    } reps • ${ex.peso} kg</div>
+      <strong>${ex.nome}</strong>
     </div>`;
   });
   listaEl.innerHTML = html;
