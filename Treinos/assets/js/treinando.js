@@ -23,8 +23,8 @@ const viewExecucao = document.getElementById("view-execucao");
 const viewDescanso = document.getElementById("view-descanso");
 const viewFinalizado = document.getElementById("view-finalizado");
 
-const btnAvancar = document.getElementById("btn-avancar");
-const btnVoltar = document.getElementById("btn-voltar");
+const btnAvancar = document.querySelectorAll("#btn-avancar");
+const btnVoltar = document.querySelectorAll("#btn-voltar");
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
@@ -84,17 +84,15 @@ function showCover() {
   const videoContainer = document.getElementById("video-container");
 
   videoContainer.innerHTML = `
-    <img id="ex-cover" src="${
-      ex.cover || ""
-    }" alt="Capa do exercício" style="width:100%; height:315px; object-fit:cover; display:block; border-radius:6px; cursor:pointer;" />
-    <div id="play-button" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:48px; color:#fff; opacity:0.8; pointer-events:none;">▶</div>
+    <img id="ex-cover" src="${ex.cover || ""}" alt="Capa do exercício" />
+
   `;
 
   const coverImg = videoContainer.querySelector("#ex-cover");
   coverImg.addEventListener("click", () => {
     const id = getYoutubeId(ex.url);
     if (!id) return;
-    videoContainer.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:100%;height:315px;border:0;border-radius:6px"></iframe>`;
+    videoContainer.innerHTML = `<iframe id="playerex" src="https://www.youtube.com/embed/${id}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
   });
 }
 
@@ -194,49 +192,62 @@ function renderFinalizado() {
   updateButtons();
 }
 
-btnAvancar.addEventListener("click", () => {
-  if (estado === "execucao") {
-    estado = "descanso";
-    renderDescansoView();
-  } else if (estado === "descanso") {
-    clearTimer();
-    avancarDepoisDescanso();
-  }
+btnAvancar.forEach((btn) => {
+  updateButtons();
+  btn.addEventListener("click", () => {
+    if (estado === "execucao") {
+      estado = "descanso";
+      renderDescansoView();
+    } else if (estado === "descanso") {
+      clearTimer();
+      avancarDepoisDescanso();
+    }
+  });
 });
 
-btnVoltar.addEventListener("click", () => {
-  if (estado === "descanso") {
-    clearTimer();
-    estado = "execucao";
-    renderExecucao();
-    return;
-  }
-  if (estado === "execucao") {
-    if (serieAtual > 1) {
-      serieAtual--;
-      renderExecucao();
-    } else if (exIndex > 0) {
-      exIndex--;
-      serieAtual = exercicios[exIndex].num_series || 1;
+btnVoltar.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (estado === "descanso") {
+      clearTimer();
       estado = "execucao";
       renderExecucao();
+      return;
     }
-  }
+    if (estado === "execucao") {
+      if (serieAtual > 1) {
+        serieAtual--;
+        renderExecucao();
+      } else if (exIndex > 0) {
+        exIndex--;
+        serieAtual = exercicios[exIndex].num_series || 1;
+        estado = "execucao";
+        renderExecucao();
+      }
+    }
+  });
 });
 
 function updateButtons() {
-  if (estado === "execucao") {
-    btnAvancar.textContent = "Concluir série";
-    btnAvancar.disabled = false;
-  } else if (estado === "descanso") {
-    btnAvancar.textContent = "Pular descanso";
-    btnAvancar.disabled = false;
-  } else {
-    btnAvancar.textContent = "Fim";
-    btnAvancar.disabled = true;
-  }
+  const btnAvancarList = document.querySelectorAll("#btn-avancar");
+  const btnVoltarList = document.querySelectorAll("#btn-voltar");
+
+  btnAvancarList.forEach(btn => {
+    if (estado === "execucao") {
+      btn.textContent = "⮞";
+      btn.disabled = false;
+    } else if (estado === "descanso") {
+      btn.textContent = "Pular descanso";
+      btn.disabled = false;
+    } else {
+      btn.textContent = "Fim";
+      btn.disabled = true;
+    }
+  });
+
   const atStart = exIndex === 0 && serieAtual === 1 && estado === "execucao";
-  btnVoltar.disabled = atStart;
+  btnVoltarList.forEach(btn => {
+    btn.disabled = atStart;
+  });
 }
 
 function getYoutubeId(url) {

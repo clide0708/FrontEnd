@@ -28,10 +28,12 @@ try {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css"> -->
+    <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
 </head>
 
 <body>
+
+    <?php include 'header.php'; ?>
 
     <div class="treinando">
         <div id="lista-exercicios">
@@ -46,17 +48,26 @@ try {
 
                 <!-- EXECUÇÃO -->
                 <div id="view-execucao" style="display:none;">
-                    <h2 id="ex-nome"></h2>
-
-                    <div id="video-container" style="position:relative; width:560px; max-width:100%; cursor:pointer; border-radius:6px; overflow:hidden;">
-                        <img id="ex-cover" src="" alt="Capa do exercício" style="width:100%; height:315px; object-fit:cover; display:block; border-radius:6px;" />
-                        <div id="play-button" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:48px; color:#fff; opacity:0.8; pointer-events:none;">▶</div>
+                    <div class="titulo">
+                        <h2 id="ex-nome"></h2>
+                        <div class="series"><strong></strong> <span id="ex-serie"></span></div>
                     </div>
 
-                    <div class="info-row"><strong>Série:</strong> <span id="ex-serie"></span></div>
-                    <div class="info-row"><strong>Repetições:</strong> <span id="ex-reps"></span></div>
-                    <div class="info-row"><strong>Peso:</strong> <span id="ex-peso"></span> kg</div>
-                    <div class="info-row small-muted" id="ex-info"></div>
+                    <div id="video-container">
+                        <img id="ex-cover" src="" alt="Capa do exercício" />
+                    </div>
+
+                    <div class="infos">
+                        <div class="controls">
+                            <button id="btn-voltar" class="btn btn-voltar b1">⮜</button>
+                        </div>
+                        <div class="reps"><strong>X</strong> <span id="ex-reps"></span><h1>repetições</h1></div>
+                        <div class="peso"><span id="ex-peso"></span> kg</div>
+                        <div class="info-row small-muted" id="ex-info"></div>
+                        <div class="controls">
+                            <button id="btn-avancar" class="btn btn-avancar b2">⮞</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- DESCANSO -->
@@ -64,6 +75,10 @@ try {
                     <h2 id="descanso-titulo"></h2>
                     <div class="timer" id="timer"></div>
                     <div class="small-muted" id="descanso-info"></div>
+                    <div id="controles">
+                        <button id="btn-voltar">Voltar</button>
+                        <button id="btn-avancar">Avançar</button>
+                    </div>
                 </div>
 
                 <!-- FINALIZADO -->
@@ -73,15 +88,6 @@ try {
                 </div>
 
             </div>
-
-            <div class="controls" style="position:fixed; left:24px; bottom:24px;">
-                <button id="btn-voltar" class="btn btn-voltar">Voltar</button>
-            </div>
-
-            <div class="controls" style="right:24px; bottom:24px;">
-                <button id="btn-avancar" class="btn btn-avancar">Avançar</button>
-            </div>
-
         </div>
     </div>
 

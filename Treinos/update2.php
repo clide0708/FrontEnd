@@ -8,15 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $num_repeticoes = $_POST['num_repeticoes'];
     $tempo_descanso = $_POST['tempo_descanso'];
     $peso = $_POST['peso'];
-    $informacoes = $_POST['informacoes'];
 
     //atualizar info dos exercícios
     try {
         $pdo = connectDB();
         $stmt = $pdo->prepare("UPDATE Exercicios 
-            SET num_series=?, num_repeticoes=?, tempo_descanso=?, peso=?, informacoes=? 
+            SET num_series=?, num_repeticoes=?, tempo_descanso=?, peso=?,
             WHERE id=?");
-        $stmt->execute([$num_series, $num_repeticoes, $tempo_descanso, $peso, $informacoes, $id]);
+        $stmt->execute([$num_series, $num_repeticoes, $tempo_descanso, $peso, $id]);
 
         header("Location: vertreino.php?id=" . urlencode($treino_id));
     } catch (PDOException $e) {
