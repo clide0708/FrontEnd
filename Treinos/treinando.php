@@ -29,6 +29,10 @@ try {
     <title><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -37,9 +41,9 @@ try {
 
     <div class="treinando">
         <div id="lista-exercicios">
-            <h3><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></h3>
+            <h3 class="exnm"><?php echo htmlspecialchars($treino['nome'] ?? 'Treino'); ?></h3>
             <div id="lista"></div>
-            <h3>Sair</h3>
+            <button class="ext">Sair</button>
         </div>
 
         <div id="conteudo">
@@ -61,9 +65,10 @@ try {
                         <div class="controls">
                             <button id="btn-voltar" class="btn btn-voltar b1">⮜</button>
                         </div>
-                        <div class="reps"><strong>X</strong> <span id="ex-reps"></span><h1>repetições</h1></div>
+                        <div class="reps"><strong>X</strong> <span id="ex-reps"></span>
+                            <h1>repetições</h1>
+                        </div>
                         <div class="peso"><span id="ex-peso"></span> kg</div>
-                        <div class="info-row small-muted" id="ex-info"></div>
                         <div class="controls">
                             <button id="btn-avancar" class="btn btn-avancar b2">⮞</button>
                         </div>

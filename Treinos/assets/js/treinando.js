@@ -111,7 +111,7 @@ function renderExecucao() {
   ).textContent = `${serieAtual} / ${ex.num_series}`;
   document.getElementById("ex-reps").textContent = ex.num_repeticoes;
   document.getElementById("ex-peso").textContent = ex.peso;
-  document.getElementById("ex-info").textContent = ex.informacoes || "";
+  // document.getElementById("ex-info").textContent = ex.informacoes || "";
 
   stopVideo();
   showCover();
