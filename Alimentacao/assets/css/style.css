@@ -960,13 +960,13 @@ body {
   display: flex;
   flex-direction: column;
   font-weight: bold;
-  box-shadow: 0 0.5px 20px #111111;
 }
 
 .sts ul {
   border-radius: 30px;
   padding: 30px;
   background-color: #27292a;
+  box-shadow: 0 0.5px 20px #111111;
 }
 
 .sts ul li {
