@@ -31,13 +31,13 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Treino: <?= htmlspecialchars($treino['nome']) ?></title>
-    <!-- <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css"> -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
 </head>
 
 <body class="treinos">
 
-    <?php include 'btnvoltar.php'; ?>
+    <?php include 'header.php'; ?>
 
     <div class="container">
         <h1>Treino: <?= htmlspecialchars($treino['nome']) ?></h1>
@@ -61,6 +61,8 @@ try {
 
                     <label>Peso (kg):</label><br>
                     <input type="number" step="0.01" name="peso" id="peso"><br><br>
+
+                    <h2 id="info"></h2>
 
                     <button type="submit">Salvar Alterações</button>
                 </form>
@@ -162,6 +164,7 @@ try {
                     document.getElementById('tempo_descanso').value = data.tempo_descanso ?? '';
                     document.getElementById('peso').value = data.peso ?? '';
                     document.getElementById('painel-edicao').style.display = 'block';
+                    document.getElementById('info').innerText = data.informacoes ?? '';
                 })
                 .catch(err => {
                     alert(err.message);

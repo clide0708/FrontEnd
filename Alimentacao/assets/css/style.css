@@ -743,6 +743,7 @@ body {
   padding: 20px;
   border-radius: 30px;
   width: 50%;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .alimentacao .nav-header {
@@ -959,6 +960,7 @@ body {
   display: flex;
   flex-direction: column;
   font-weight: bold;
+  box-shadow: 0 0.5px 20px #111111;
 }
 
 .sts ul {
@@ -1024,6 +1026,7 @@ body {
   padding-bottom: 5%;
   border-radius: 30px;
   font-weight: bold;
+  box-shadow: 0 0.5px 20px #111111;
 }
 
 .pflidc li {
@@ -1243,6 +1246,7 @@ body {
 
 .alim-content {
   position: relative;
+  box-shadow: 0 0.5px 20px #111111;
 }
 
 .metas {

@@ -13,9 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo = connectDB();
         $stmt = $pdo->prepare("UPDATE Exercicios 
-            SET num_series=?, num_repeticoes=?, tempo_descanso=?, peso=?,
-            WHERE id=?");
+    SET num_series=?, num_repeticoes=?, tempo_descanso=?, peso=?
+    WHERE id=?");
+
         $stmt->execute([$num_series, $num_repeticoes, $tempo_descanso, $peso, $id]);
+
 
         header("Location: vertreino.php?id=" . urlencode($treino_id));
     } catch (PDOException $e) {
