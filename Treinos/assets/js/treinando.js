@@ -231,7 +231,7 @@ function updateButtons() {
   const btnAvancarList = document.querySelectorAll("#btn-avancar");
   const btnVoltarList = document.querySelectorAll("#btn-voltar");
 
-  btnAvancarList.forEach(btn => {
+  btnAvancarList.forEach((btn) => {
     if (estado === "execucao") {
       btn.textContent = "⮞";
       btn.disabled = false;
@@ -245,7 +245,7 @@ function updateButtons() {
   });
 
   const atStart = exIndex === 0 && serieAtual === 1 && estado === "execucao";
-  btnVoltarList.forEach(btn => {
+  btnVoltarList.forEach((btn) => {
     btn.disabled = atStart;
   });
 }
@@ -272,3 +272,52 @@ function renderTudo() {
 
 renderTudo();
 window.addEventListener("beforeunload", () => clearTimer());
+
+let totalTime = 0;
+
+const circle = document.querySelector(".progress-ring__circle");
+const radius = circle.r.baseVal.value;
+const circumference = 2 * Math.PI * radius;
+
+circle.style.strokeDasharray = circumference;
+circle.style.strokeDashoffset = circumference;
+
+function setProgress(percent) {
+  const offset = circumference - (percent / 100) * circumference;
+  circle.style.strokeDashoffset = offset;
+}
+
+document.getElementById("btnAdd30").addEventListener("click", () => {
+  timerRemaining += 10;
+  totalTime += 10;
+  updateUI();
+});
+
+let startTime;
+
+function startDescanso(segundos) {
+  clearTimer();
+  timerRemaining = Math.max(0, parseInt(segundos) || 0);
+  totalTime = timerRemaining;
+
+  updateUI(); // mostra o valor inicial sem atraso
+
+  timerInterval = setInterval(() => {
+    if (timerRemaining <= 0) {
+      clearTimer();
+      avancarDepoisDescanso();
+      return;
+    }
+
+    timerRemaining--; // decrementa **depois** de atualizar
+    updateUI(); // agora atualiza o círculo e o número
+  }, 1000);
+}
+
+function updateUI() {
+  const timerEl = document.getElementById("timer");
+  if (timerEl) timerEl.textContent = formatTime(timerRemaining);
+
+  const percent = ((totalTime - timerRemaining) / totalTime) * 100;
+  setProgress(percent);
+}
