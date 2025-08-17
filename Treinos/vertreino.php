@@ -33,61 +33,75 @@ try {
     <title>Treino: <?= htmlspecialchars($treino['nome']) ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+
 </head>
 
 <body class="treinos">
 
     <?php include 'header.php'; ?>
 
-    <div class="container">
-        <h1>Treino: <?= htmlspecialchars($treino['nome']) ?></h1>
+    <div class="vertreinopt">
+        <div class="cbctt">
+            <h1 class="ttltrn"><?= htmlspecialchars($treino['nome']) ?></h1>
 
-        <div style="display: flex; gap: 20px;">
+        </div>
+        <div class="vertreinopt2">
 
-            <div id="painel-edicao" style="flex: 2; display: none;">
-                <h2 id="titulo-exercicio">Selecione um exercício para editar</h2>
-                <form id="form-exercicio" method="POST" action="update2.php">
-                    <input type="hidden" name="id" id="exercicio-id">
-                    <input type="hidden" name="treino_id" value="<?= $treino_id ?>">
 
-                    <label>Séries:</label><br>
-                    <input type="number" name="num_series" id="num_series" min="1"><br><br>
+            <div class="painel" style="display: flex; gap: 20px;">
+                <h2 id="titulo-exercicio">Selecione um exercício</h2>
+                <div id="painel-edicao" style="flex: 2; display: none;">
+                    <form id="form-exercicio" method="POST" action="update2.php">
+                        <div class="formedit">
+                            <div class="form1">
+                                <input type="hidden" name="id" id="exercicio-id">
+                                <input type="hidden" name="treino_id" value="<?= $treino_id ?>">
 
-                    <label>Repetições:</label><br>
-                    <input type="number" name="num_repeticoes" id="num_repeticoes" min="1"><br><br>
+                                <label>Séries*</label><br>
+                                <input type="number" name="num_series" id="num_series" min="1"><br><br>
 
-                    <label>Descanso (segundos):</label><br>
-                    <input type="number" name="tempo_descanso" id="tempo_descanso"><br><br>
+                                <label>Repetições*</label><br>
+                                <input type="number" name="num_repeticoes" id="num_repeticoes" min="1"><br><br>
 
-                    <label>Peso (kg):</label><br>
-                    <input type="number" step="0.01" name="peso" id="peso"><br><br>
-
-                    <h2 id="info"></h2>
-
-                    <button type="submit">Salvar Alterações</button>
-                </form>
+                                <label>Peso (kg)</label><br>
+                                <input type="number" step="0.01" name="peso" id="peso"><br><br>
+                            </div>
+                            <div class="form2">
+                                <label>Descanso (segundos):</label><br>
+                                <input type="number" name="tempo_descanso" id="tempo_descanso"><br><br>
+                            </div>
+                        </div>
+                        <h2 id="info"></h2>
+                        <button type="submit" class="slvex">Salvar</button>
+                    </form>
+                </div>
             </div>
 
             <!-- lista exercícios  -->
-            <div style="flex: 1;">
-                <h3>Exercícios</h3>
+            <div class="p2" style="flex: 1;">
+                <h3> Exercícios</h3>
                 <ul id="listaExercicios">
                     <?php foreach ($exercicios as $ex): ?>
-                        <li>
-                            <a href="#" onclick="carregarExercicio(<?= $ex['id'] ?>); return false;">
+                        <li class="exitem">
+                            <a class="nmextt" href="#" onclick="carregarExercicio(<?= $ex['id'] ?>); return false;">
                                 <?= htmlspecialchars($ex['nome']) ?>
                             </a>
-                            <a href="delete2.php?id=<?= $ex['id'] ?>&treino_id=<?= $treino_id ?>" onclick="return confirm('Tem certeza que deseja remover este exercício?')">[remover]</a>
+                            <a class="exdlt" href="delete2.php?id=<?= $ex['id'] ?>&treino_id=<?= $treino_id ?>" onclick="return confirm('Tem certeza que deseja remover este exercício?')">X</a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
-
-                <h4>Adicionar Novo Exercício</h4>
                 <button onclick="abrirModal()">+ Adicionar Exercício</button>
             </div>
 
-            <a href="treinando.php?id=<?= urlencode($treino['id']) ?>">Iniciar Treino</a>
+
         </div>
+
+        <a href="treinando.php?id=<?= urlencode($treino['id']) ?>">Iniciar Treino</a>
 
         <!-- modal add exercício  -->
         <div id="modal" class="modal" style="display:none;">
@@ -142,111 +156,8 @@ try {
         </div>
     </div>
 
-    <script>
-        //ainda vo tira o script daqui
+    <script src="assets/js/vertreino.js"></script>
 
-        function carregarExercicio(id) {
-            fetch('get2.php?id=' + id)
-                .then(response => {
-                    if (!response.ok) throw new Error('Erro ao buscar exercício');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.error) {
-                        alert('Erro: ' + data.error);
-                        return;
-                    }
-                    // pega os bagui pra fazer ajax
-                    document.getElementById('titulo-exercicio').innerText = 'Editar: ' + data.nome;
-                    document.getElementById('exercicio-id').value = data.id;
-                    document.getElementById('num_series').value = data.num_series;
-                    document.getElementById('num_repeticoes').value = data.num_repeticoes;
-                    document.getElementById('tempo_descanso').value = data.tempo_descanso ?? '';
-                    document.getElementById('peso').value = data.peso ?? '';
-                    document.getElementById('painel-edicao').style.display = 'block';
-                    document.getElementById('info').innerText = data.informacoes ?? '';
-                })
-                .catch(err => {
-                    alert(err.message);
-                });
-        }
-
-
-        function abrirModal() {
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function fecharModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('formAddExercicio').reset();
-        }
-
-        document.getElementById('formAddExercicio').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            fetch('post2.php', {
-                    method: 'POST',
-                    body: new FormData(this)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else if (data.error) {
-                        alert('Erro: ' + data.error);
-                    } else {
-                        alert('Resposta inesperada do servidor');
-                    }
-                })
-                .catch(err => {
-                    alert('Erro ao adicionar exercício: ' + err.message);
-                });
-        });
-
-
-        // isso daqui vai filtrar para os exercícios só aparecerem conforme o maluco botar o músculo, e vai pegar do json
-
-        const muscleSelect = document.getElementById('muscle-select');
-        const exerciseSelect = document.getElementById('exercise-select');
-
-        muscleSelect.addEventListener('change', () => {
-            const muscle = muscleSelect.value.trim();
-            exerciseSelect.innerHTML = '';
-
-            if (!muscle) {
-                exerciseSelect.innerHTML = '<option value="">Selecione um músculo primeiro</option>';
-                exerciseSelect.disabled = true;
-                return;
-            }
-
-            exerciseSelect.disabled = false;
-            exerciseSelect.innerHTML = '<option>Carregando...</option>';
-
-            fetch('fetch_exercises.php?grupo=' + encodeURIComponent(muscle))
-                .then(res => {
-                    if (!res.ok) throw new Error('Erro na resposta do servidor');
-                    return res.json();
-                })
-                .then(data => {
-                    exerciseSelect.innerHTML = '';
-                    if (!Array.isArray(data) || data.length === 0) {
-                        exerciseSelect.innerHTML = '<option>Nenhum exercício encontrado</option>';
-                        return;
-                    }
-
-                    exerciseSelect.innerHTML = '<option value="">-- Selecione o Exercício --</option>';
-                    data.forEach(ex => {
-                        const opt = document.createElement('option');
-                        opt.value = ex.nome;
-                        opt.textContent = ex.nome;
-                        exerciseSelect.appendChild(opt);
-                    });
-                })
-                .catch(() => {
-                    exerciseSelect.innerHTML = '<option>Erro ao carregar exercícios</option>';
-                });
-        });
-    </script>
 
     <style>
         /* css bucha só pra teste, mas não apaga */
