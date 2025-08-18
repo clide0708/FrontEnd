@@ -95,7 +95,7 @@ try {
                         </li>
                     <?php endforeach; ?>
                 </ul>
-                <button onclick="abrirModal()">+ Adicionar Exercício</button>
+                <button class="btnaddex" onclick="abrirModal()">+ Adicionar Exercício</button>
             </div>
 
 
@@ -138,67 +138,39 @@ try {
                     </div>
 
                     <label>Nº de Séries*</label>
-                    <input type="number" name="num_series" required min="1"><br><br>
+                    <div class="number-input">
+                        <button type="button" onclick="this.nextElementSibling.stepDown()">◀</button>
+                        <input type="number" name="num_series" required min="1" value="1">
+                        <button type="button" onclick="this.previousElementSibling.stepUp()">▶</button>
+                    </div>
 
                     <label>Nº de Repetições*</label>
-                    <input type="number" name="num_repeticoes" required min="1"><br><br>
+                    <div class="number-input">
+                        <button type="button" onclick="this.nextElementSibling.stepDown()">◀</button>
+                        <input type="number" name="num_repeticoes" required min="1" value="1">
+                        <button type="button" onclick="this.previousElementSibling.stepUp()">▶</button>
+                    </div>
 
-                    <label>Tempo de Descanso (segundos - opcional)</label>
-                    <input type="number" name="tempo_descanso"><br><br>
 
-                    <label>Peso (kg - opcional)</label>
-                    <input type="number" step="0.01" name="peso"><br><br>
+                    <div class="form-group">
+                        <label>Tempo de Descanso (segundos - opcional)</label>
+                        <input type="number" name="tempo_descanso">
+                    </div>
 
-                    <button type="submit">Adicionar Exercício</button>
-                    <button type="button" onclick="fecharModal()">Cancelar</button>
+                    <div class="form-group">
+                        <label>Peso (kg - opcional)</label>
+                        <input type="number" step="0.01" name="peso">
+                    </div>
+
+
+                    <button class="mdnbt" type="submit">Adicionar</button>
+                    <button class="clcbt" type="button" onclick="fecharModal()">Cancelar</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script src="assets/js/vertreino.js"></script>
-
-
-    <style>
-        /* css bucha só pra teste, mas não apaga */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            position: relative;
-            border-radius: 8px;
-        }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
 
 </body>
 
