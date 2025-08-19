@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../Controllers/TesteController.php';
 require_once __DIR__ . '/../Controllers/AlimentosController.php';
-
+require_once __DIR__ . '/../Controllers/TreinosController.php';
+require_once __DIR__ . '/../Controllers/ExerciciosController.php';
 
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -11,16 +12,21 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 
 
-
 $testeController = new TesteController();
 $alimentosController = new AlimentosController();
+$treinosController = new TreinosController();
+$exercicioController = new ExercicioController();
 
 
-
+//Teste
 
 if ($uri == '/api' && $method == 'GET') {
     $testeController->index();
-} elseif ($uri == '/alimentos' && $method == 'GET') {
+}
+
+//Alimentacao
+
+elseif ($uri == '/alimentos' && $method == 'GET') {
     $alimentosController->listarAlimentos();
 } elseif ($uri == '/addAlimento' && $method == 'POST') {
     $alimentosController->addAlimento();
@@ -30,6 +36,22 @@ if ($uri == '/api' && $method == 'GET') {
     $alimentosController->rmvAlimento();
 } elseif ($uri == '/totalRefeicoes' && $method == 'GET') {
     $alimentosController->listarTotais();
+}
+
+//Treinos
+
+elseif ($uri == '/treinos' && $method == 'GET') {
+    $treinosController->listarTreinos();
+} elseif ($uri == '/getTreino' && $method == 'GET') {
+    $treinosController->selectTreino();
+} elseif ($uri == '/rmvTreinos' && $method == 'DELETE') {
+    $treinosController->rmvTreino();
+} elseif ($uri == '/addTreinos' && $method == 'POST') {
+    $treinosController->addTreino();
+} elseif ($uri == '/getExercicio' && $method == 'GET') {
+    $exercicioController->getExercicio();
+} elseif ($uri == '/addExercicios' && $method == 'POST') {
+    $exerciciosController->postExercicio();
 } else {
     header('Content-Type: application/json');
     http_response_code(404);
