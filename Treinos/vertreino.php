@@ -112,8 +112,9 @@ try {
                     <input type="hidden" name="treino_id" value="<?= $treino_id ?>">
 
                     <div class="form-group">
-                        <label for="muscle-select">Escolha o Músculo:</label>
+                        <label for="muscle-select" >Escolha o Músculo:</label>
                         <select id="muscle-select" name="grupo">
+                            <option value="" selected disabled hidden>...</option>
                             <option value="abdomen">Abdomen</option>
                             <option value="abdutores">Abdutores</option>
                             <option value="adutores">Adutores</option>
@@ -133,7 +134,7 @@ try {
                     <div class="form-group">
                         <label for="exercise-select">Exercises:</label>
                         <select id="exercise-select" name="nome" disabled>
-                            <option value="">Selecione um músculo primeiro</option>
+                            <option value="" selected disabled hidden>Selecione um músculo primeiro</option>
                         </select>
                     </div>
 
@@ -162,9 +163,8 @@ try {
                         <input type="number" step="0.01" name="peso">
                     </div>
 
-
-                    <button class="mdnbt" type="submit">Adicionar</button>
                     <button class="clcbt" type="button" onclick="fecharModal()">Cancelar</button>
+                    <button class="mdnbt" type="submit">Adicionar</button>
                 </form>
             </div>
         </div>

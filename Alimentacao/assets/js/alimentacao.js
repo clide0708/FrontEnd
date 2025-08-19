@@ -301,7 +301,6 @@ async function abrirModalDetalhes(lista, index) {
     modalNome.textContent = item.nome;
     modalGramas.value = item.especificacao;
 
-    // Store original nutrients for calculation
     originalNutrients = {
       calorias: item.calorias !== null ? item.calorias : 0,
       proteinas: item.proteinas !== null ? item.proteinas : 0,
@@ -310,7 +309,6 @@ async function abrirModalDetalhes(lista, index) {
       especificacao: item.especificacao !== null ? item.especificacao : 0,
     };
 
-    // Display initial nutrients
     atualizarNutrientesModal(item.especificacao);
 
     inputListaRemover.value = lista;
@@ -318,7 +316,6 @@ async function abrirModalDetalhes(lista, index) {
 
     modalDetalhes.style.display = "flex";
     modalDetalhes.classList.add("show");
-    // modalOverlay.classList.add('show'); tirei pq tava feio
   } catch (e) {
     console.error("Erro ao carregar detalhes do alimento:", e);
     alert("Erro ao carregar detalhes do alimento.");
@@ -327,7 +324,7 @@ async function abrirModalDetalhes(lista, index) {
 
 function atualizarNutrientesModal(qtd) {
   const quantidadeBase =
-    originalNutrients.especificacao > 0 ? originalNutrients.especificacao : 100; // Evitar divisão por zero
+    originalNutrients.especificacao > 0 ? originalNutrients.especificacao : 100;
   const fator = qtd / quantidadeBase;
 
   modalCal.textContent = (originalNutrients.calorias * fator).toFixed(1);
@@ -362,7 +359,7 @@ document
         .then((response) => {
           if (response.ok) {
             alert("Alimento removido com sucesso!");
-            location.reload(); // Recarrega a página para atualizar as listas
+            location.reload(); // recarrega as paginas, tem q fazer ajax nesse carai
           } else {
             alert("Erro ao remover alimento.");
           }
@@ -420,7 +417,7 @@ function fecharModalDetalhes() {
           location.reload();
           // alert("Item atualizado com sucesso!");
 
-          // Atualiza apenas os dados necessários sem recarregar a página
+    
           atualizarDadosRefeicao(currentLista);
         } else {
           alert("Erro ao atualizar item.");

@@ -34,7 +34,7 @@ fetch("assets/js/user.json")
   })
   .catch((error) => console.error("Erro ao carregar os dados:", error));
 
-// Função para calcular o IMC
+// função para calcular o IMC
 function IMC() {
   let IMC = peso / ((altura / 100) * (altura / 100));
   let textoResultado;
@@ -97,7 +97,7 @@ function IDR() {
   document.getElementById("resultIDR").innerText = IDR.toFixed(0) + " Kcal";
 }
 
-//Consumo de agua
+//consumo de agua
 
 function Agua() {
   let Consumo = peso * 0.037;
@@ -105,7 +105,7 @@ function Agua() {
     Consumo.toFixed(1) + " L/dia";
 }
 
-//Metas
+//metas
 
 function MetasCalc() {
   let caltotal = parseInt(document.getElementById("caltotal").innerText, 10);

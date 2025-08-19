@@ -79,7 +79,9 @@ try {
                     <!-- DESCANSO -->
                     <div id="view-descanso" style="display:none;">
                         <div class="descansano">
-                            <h2 id="descanso-titulo"></h2>
+                            <div class="titulo">
+                                <h2 id="descanso-titulo"></h2>
+                            </div>
                             <div class="circulozin">
                                 <div class="timer-wrapper">
                                     <svg class="progress-ring" width="120" height="120">

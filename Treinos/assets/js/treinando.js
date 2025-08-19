@@ -129,7 +129,7 @@ function renderDescansoView() {
   const ex = exercicios[exIndex];
   document.getElementById(
     "descanso-titulo"
-  ).textContent = `Descanso — ${ex.nome}`;
+  ).textContent = `${ex.nome}`;
   document.getElementById("timer").textContent = formatTime(ex.tempo_descanso);
   document.getElementById(
     "descanso-info"
