@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../Config/conect.php';
 
-class ExercicioController
+class ExerciciosController
 {
 
     public function getExercicio()
@@ -37,9 +37,10 @@ class ExercicioController
         }
     }
 
-    public function postExercicio()
+    public function addExercicios()
     {
-        require_once 'conect.php';
+        require_once __DIR__ . '/../Config/conect.php';
+
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -71,7 +72,7 @@ class ExercicioController
             $descanso = ($descanso === '' ? null : (int)$descanso);
             $peso = ($peso === '' ? null : (float)$peso);
 
-            $jsonPath = __DIR__ . '/exercicios.json';
+            $jsonPath = __DIR__ . '/../Data/exercicios.json';
             if (!file_exists($jsonPath)) {
                 http_response_code(500);
                 echo json_encode(['error' => 'Arquivo de exercícios não encontrado']);
@@ -128,6 +129,89 @@ class ExercicioController
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erro no banco: ' . $e->getMessage()]);
+        }
+    }
+
+    public function fetchExercicios()
+    {
+        header('Content-Type: application/json');
+
+        $muscle = isset($_GET['grupo']) ? strtolower(trim($_GET['grupo'])) : '';
+
+        if (!$muscle) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $jsonPath = __DIR__ . '/../Data/exercicios.json';
+
+        if (!file_exists($jsonPath)) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents($jsonPath), true);
+
+        if (!is_array($data)) {
+            echo json_encode([]);
+            exit;
+        }
+
+        $filtered = array_values(array_filter($data, function ($ex) use ($muscle) {
+            return strtolower($ex['grupo']) === $muscle;
+        }));
+
+        echo json_encode($filtered);
+    }
+
+    public function rmvExercicios()
+    {
+        header('Content-Type: application/json');
+
+        $id = $_GET['id'] ?? null;
+        $treino_id = $_GET['treino_id'] ?? null;
+
+        if (!$id || !$treino_id) {
+            echo json_encode(['success' => false, 'error' => 'ID do exercício ou treino não informado']);
+            return;
+        }
+
+        try {
+            $pdo = connectDB();
+            $stmt = $pdo->prepare("DELETE FROM Exercicios WHERE id = ?");
+            $stmt->execute([$id]);
+
+            echo json_encode(['success' => true, 'treino_id' => $treino_id]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function updExercicio()
+    {
+        header('Content-Type: application/json');
+
+        $id = $_POST['id'] ?? null;
+        $num_series = $_POST['num_series'] ?? null;
+        $num_repeticoes = $_POST['num_repeticoes'] ?? null;
+        $tempo_descanso = $_POST['tempo_descanso'] ?? null;
+        $peso = $_POST['peso'] ?? null;
+
+        if (!$id || !$num_series || !$num_repeticoes) {
+            echo json_encode(['success' => false, 'error' => 'Campos obrigatórios faltando']);
+            return;
+        }
+
+        try {
+            $pdo = connectDB();
+            $stmt = $pdo->prepare("UPDATE Exercicios 
+                SET num_series=?, num_repeticoes=?, tempo_descanso=?, peso=?
+                WHERE id=?");
+            $stmt->execute([$num_series, $num_repeticoes, $tempo_descanso, $peso, $id]);
+
+            echo json_encode(['success' => true]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
     }
 }

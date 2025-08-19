@@ -15,7 +15,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $testeController = new TesteController();
 $alimentosController = new AlimentosController();
 $treinosController = new TreinosController();
-$exercicioController = new ExercicioController();
+$exerciciosController = new ExerciciosController();
 
 
 //Teste
@@ -49,10 +49,20 @@ elseif ($uri == '/treinos' && $method == 'GET') {
 } elseif ($uri == '/addTreinos' && $method == 'POST') {
     $treinosController->addTreino();
 } elseif ($uri == '/getExercicio' && $method == 'GET') {
-    $exercicioController->getExercicio();
+    $exerciciosController->getExercicio();
 } elseif ($uri == '/addExercicios' && $method == 'POST') {
-    $exerciciosController->postExercicio();
-} else {
+    $exerciciosController->addExercicios();
+} elseif ($uri == '/fetchExercicios' && $method == 'GET') {
+    $exerciciosController->fetchExercicios();
+} elseif ($uri == '/rmvExercicios' && $method == 'DELETE') {
+    $exerciciosController->rmvExercicios();
+} elseif ($uri == '/updExercicio' && $method == 'POST') {
+    $exerciciosController->updExercicio();
+}
+
+
+//erro de rota
+else {
     header('Content-Type: application/json');
     http_response_code(404);
     echo json_encode(["erro" => "Rota não encontrada"]);
