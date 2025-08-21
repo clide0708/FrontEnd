@@ -10,8 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <title>CLIDE Fit</title>
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="../../assets/vendor/css/templatemo-cyborg-gaming.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/templatemo-cyborg-gaming.css">
 </head>
 
 <body class="alimentacao">
@@ -291,8 +291,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="calculos.js"></script>
-    <script src="alimentacao.js"></script>
+    <script src="assets/js/calculos.js"></script>
+    <script src="assets/js/alimentacao.js"></script>
 </body>
 
 </html>

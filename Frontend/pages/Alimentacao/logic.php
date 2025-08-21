@@ -1,5 +1,5 @@
 <?php
-require_once '../../Backend/Config/conect.php';
+require_once 'conect.php';
 
 try {
     $pdo = connectDB();
