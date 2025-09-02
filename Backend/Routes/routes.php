@@ -40,6 +40,11 @@ elseif ($uri == '/alimentos' && $method == 'GET') {
 
 //Treinos
 
+
+elseif ($uri == 'Backend/Controllers/gruposMusculares' && $method == 'GET') {
+    ->listarGruposMusculares();
+}
+
 elseif ($uri == '/treinos' && $method == 'GET') {
     $treinosController->listarTreinos();
 } elseif ($uri == '/getTreino' && $method == 'GET') {

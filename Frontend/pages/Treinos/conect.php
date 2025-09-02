@@ -1,7 +1,7 @@
 <?php
 function connectDB() {
     $host = 'localhost';
-    $db   = 'testetreino'; 
+    $db   = 'testegeral'; 
     $user = 'root';
     $pass = ''; 
     $charset = 'utf8mb4';

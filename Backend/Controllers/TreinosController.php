@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Config/conect.php';
+require_once __DIR__ . '/../Config/connect.php';
 require_once __DIR__ . '/../Repositories/TreinosRepository.php';
 require_once __DIR__ . '/../Services/TreinosService.php';
 
