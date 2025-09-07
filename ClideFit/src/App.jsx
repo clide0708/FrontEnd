@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./containers/Home";
-import Alimentacao from "./containers/Alimentação";
+import Alimentacao from "./containers/Alimentacao/alimentacao";
 import Personal from "./containers/Personal";
 
 export default function App() {

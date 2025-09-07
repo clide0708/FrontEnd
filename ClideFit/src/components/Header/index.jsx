@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import profileImg from "../../assets/images/profilefoto.png"
+import profileImg from "/assets/images/profilefoto.png"
 import '../../assets/css/templatemo-cyborg-gaming.css'
 import '../../assets/css/style.css'
 

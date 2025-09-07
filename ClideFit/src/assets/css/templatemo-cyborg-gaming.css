@@ -165,7 +165,7 @@ h5,
 h6 {
   margin-top: 0px;
   margin-bottom: 0px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-weight: 700;
 }
 
@@ -188,7 +188,7 @@ ul {
 p {
   font-size: 15px;
   line-height: 30px;
-  color: #1f2122;
+  color: #1e1e1e;
 }
 
 img {
@@ -223,12 +223,12 @@ p {
 
 ::selection {
   background: #337fd6;
-  color: #1f2122;
+  color: #1e1e1e;
 }
 
 ::-moz-selection {
   background: #337fd6;
-  color: #1f2122;
+  color: #1e1e1e;
 }
 
 .templatemo-item {
@@ -238,7 +238,7 @@ p {
 
 .main-button a {
   font-size: 14px;
-  color: #1f2122;
+  color: #1e1e1e;
   background-color: #337fd6;
   padding: 12px 30px;
   display: inline-block;
@@ -252,7 +252,7 @@ p {
 }
 
 .main-button a:hover {
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   color: #337fd6;
 }
 
@@ -273,8 +273,8 @@ p {
 }
 
 .main-border-button a:hover {
-  border-color: #1f2122;
-  background-color: #1f2122;
+  border-color: #1e1e1e;
+  background-color: #1e1e1e;
   color: #337fd6;
 }
 
@@ -415,7 +415,7 @@ Header Style
 */
 
 .background-header {
-  background-color: #1f2122 !important;
+  background-color: #1e1e1e !important;
   height: 70px !important;
   position: fixed !important;
   top: 0 !important;
@@ -564,13 +564,13 @@ Header Style
 
 .header-area .main-nav .nav li:last-child:hover a,
 .header-area .main-nav .nav li:last-child a.active {
-  color: #1f2122 !important;
+  color: #1e1e1e !important;
   background-color: #337fd6 !important;
 }
 
 .background-header .main-nav .nav li:hover a,
 .background-header .main-nav .nav li a.active {
-  color: #1f2122;
+  color: #1e1e1e;
   opacity: 1;
 }
 
@@ -699,7 +699,7 @@ Header Style
 }
 
 .header-area.header-sticky .nav li a.active {
-  color: #1f2122;
+  color: #1e1e1e;
 }
 
 @media (max-width: 1200px) {
@@ -761,7 +761,7 @@ Header Style
 
   .header-area {
     color: #666;
-    background-color: #1f2122;
+    background-color: #1e1e1e;
     padding: 0px 15px;
     height: 80px;
     box-shadow: none;
@@ -805,14 +805,14 @@ Header Style
   }
 
   .header-area .main-nav .nav li:first-child {
-    border-top: 1px solid #1f2122;
+    border-top: 1px solid #1e1e1e;
   }
 
   .header-area .main-nav .nav li {
     width: 100%;
     color: #666;
-    background: #1f2122;
-    border-bottom: 1px solid #1f2122;
+    background: #1e1e1e;
+    border-bottom: 1px solid #1e1e1e;
     padding-left: 0px !important;
     padding-right: 0px !important;
   }
@@ -822,12 +822,12 @@ Header Style
     line-height: 50px !important;
     padding: 0px !important;
     border: none !important;
-    background: #1f2122 !important;
+    background: #1e1e1e !important;
     color: #666 !important;
   }
 
   .header-area .main-nav .nav li a:hover {
-    background: #1f2122 !important;
+    background: #1e1e1e !important;
     color: #337fd6 !important;
   }
 
@@ -896,7 +896,7 @@ Banner Style
 
 .main-banner h6 {
   font-size: 20px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-weight: 400;
   margin-bottom: 25px;
 }
@@ -921,7 +921,7 @@ Most Popular Style
 .most-popular {
   margin-top: 60px;
   padding: 30px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   border-radius: 23px;
 }
 
@@ -964,7 +964,7 @@ Most Popular Style
 
 .most-popular .item ul li {
   text-align: right;
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
 }
 
@@ -990,7 +990,7 @@ Gaming Library Style
 .gaming-library {
   margin-top: 60px;
   padding: 30px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   border-radius: 23px;
 }
 
@@ -1056,12 +1056,12 @@ Footer Style
 footer p {
   text-align: center;
   padding: 30px 0px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-weight: 300;
 }
 
 footer p a {
-  color: #1f2122;
+  color: #1e1e1e;
   transition: all .3s;
 }
 
@@ -1077,7 +1077,7 @@ Featured Games Style
 
 .featured-games {
   border-radius: 23px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   padding: 30px;
 }
 
@@ -1182,7 +1182,7 @@ Featured Games Style
 
 .top-downloaded {
   border-radius: 23px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   padding: 30px;
   max-height: 567px;
   min-height: 567px;
@@ -1213,7 +1213,7 @@ Featured Games Style
 }
 
 .top-downloaded ul li span {
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 15px;
   margin-right: 10px;
 }
@@ -1287,7 +1287,7 @@ Live Stream Style
 .live-stream {
   margin-top: 60px;
   border-radius: 23px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   padding: 30px;
 }
 
@@ -1321,7 +1321,7 @@ Live Stream Style
   background-color: rgba(236, 96, 144, 0.9);
   padding: 5px 10px;
   border-radius: 23px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
   right: 15px;
   top: 15px;
@@ -1343,7 +1343,7 @@ Live Stream Style
   background-color: rgba(236, 96, 144, 0.9);
   padding: 5px 10px;
   border-radius: 23px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
 }
 
@@ -1352,7 +1352,7 @@ Live Stream Style
 }
 
 .live-stream span i {
-  color: #1f2122;
+  color: #1e1e1e;
   background-color: #2d74c4;
   border-radius: 50%;
   font-size: 12px;
@@ -1402,7 +1402,7 @@ Featured Banner Style
   transform: translate(-23px, -23px);
   width: 46px;
   height: 46px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   border-radius: 50%;
   display: inline-block;
   text-align: center;
@@ -1426,7 +1426,7 @@ Game Details Style
 .game-details .content {
   border-radius: 23px;
   padding: 30px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
 }
 
 .game-details .content .left-info {
@@ -1457,7 +1457,7 @@ Game Details Style
 }
 
 .game-details .content .left-info ul li {
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
   margin-bottom: 3px;
 }
@@ -1482,7 +1482,7 @@ Game Details Style
   width: 23%;
   text-align: center;
   font-size: 14px;
-  color: #1f2122;
+  color: #1e1e1e;
 }
 
 .game-details .content .right-info ul li i {
@@ -1516,7 +1516,7 @@ Other Related Style
 .other-games {
   border-radius: 23px;
   padding: 30px 30px 0px 30px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   margin-top: 60px;
 }
 
@@ -1552,7 +1552,7 @@ Other Related Style
 }
 
 .other-games ul li {
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
   margin-bottom: 3px;
 }
@@ -1573,7 +1573,7 @@ Top Streamers Style
 
 .top-streamers {
   border-radius: 23px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   padding: 30px;
 }
 
@@ -1594,7 +1594,7 @@ Top Streamers Style
 .top-streamers ul li span {
   float: left;
   font-size: 15px;
-  color: #1f2122;
+  color: #1e1e1e;
   font-weight: 700;
   padding-top: 12px;
   margin-right: 10px;
@@ -1608,7 +1608,7 @@ Top Streamers Style
 }
 
 .top-streamers ul li h6 i {
-  color: #1f2122;
+  color: #1e1e1e;
   background-color: #2d74c4;
   border-radius: 50%;
   font-size: 12px;
@@ -1637,12 +1637,12 @@ Profile Style
 .main-profile {
   border-radius: 23px;
   padding: 30px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
 }
 
 .main-profile .main-info span {
   font-size: 14px;
-  color: #1f2122;
+  color: #1e1e1e;
   background-color: #337fd6;
   padding: 8px 20px;
   display: inline-block;
@@ -1716,7 +1716,7 @@ Profile Style
   transform: translate(-23px, -23px);
   width: 46px;
   height: 46px;
-  background-color: #1f2122;
+  background-color: #1e1e1e;
   border-radius: 50%;
   display: inline-block;
   text-align: center;
@@ -1735,7 +1735,7 @@ Profile Style
 
 .clips .item span {
   float: right;
-  color: #1f2122;
+  color: #1e1e1e;
   font-size: 14px;
 }
 
