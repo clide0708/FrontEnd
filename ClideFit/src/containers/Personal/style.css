@@ -1,43 +1,48 @@
-.containerPS{
-    background-color: red;
+.containerPS {
     width: 1500px;
     height: 800px;
     display: flex;
 }
 
-.Personal{
+.Personal {
     display: flex;
     justify-content: center;
 }
 
-.SC1{
+.SC1 {
     background-color: blue;
     width: 900px;
-
+    background: #27292a;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     margin: 20px;
 }
 
-.SC2{
+.SC2 {
     display: flex;
     flex-direction: column;
-    background-color: green;
     width: 500px;
     margin: 20px;
+    padding: 0px;
 }
 
-.SC2p1{
-    background-color: yellow;
-    height: 300px;
-    margin: 20px;
+.SC2p1 {
+    background: #27292a;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    height: 350px;
+    margin-bottom: 20px;
 }
 
-.SC2p2{
-    background-color: orange;
-    height: 400px;
-    margin: 20px;
+.SC2p2 {
+    background: #27292a;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    height: 500px;
+    margin-top: 20px;
 }
 
-.Titulo{
+.Titulo {
     color: white;
     font-size: 30px;
     margin-left: 3%;
@@ -45,4 +50,41 @@
     border-left: solid 8px #368dd9;
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+.ftCliente {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.lnCliente {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 30px;
+}
+
+.Clientestrong {
+    color: #368dd9;
+}
+
+.infCliente p {
+    color: white;
+}
+
+.ClienteEX{
+    margin: 30px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: solid 1px white;
+}
+
+.ClienteEX h1{
+    color: white;
 }
