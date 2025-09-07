@@ -8,6 +8,9 @@
     // Define o fuso horário para São Paulo
     date_default_timezone_set('America/Sao_Paulo');
    
+    // CARREGAR COMPOSER - ADICIONAR NO TOPO DO ARQUIVO
+    require_once __DIR__ . '/vendor/autoload.php';
+
     // Obtém a base do acesso da requisição
     $script_name = $_SERVER['SCRIPT_NAME']; 
 

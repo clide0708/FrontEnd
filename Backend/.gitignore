@@ -1,0 +1,24 @@
+# Ignorar arquivos de ambiente
+/Config/.env
+
+# Ignorar diretório de dependências do Composer
+/vendor/
+
+# Ignorar arquivos de log
+*.log
+/logs/
+
+# Ignorar arquivos de cache
+.cache/
+tmp/
+
+# Ignorar arquivos de IDE (ex: PhpStorm, VS Code)
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Ignorar arquivos de teste ou temporários
+*.bak
+*.tmp
+*.swp

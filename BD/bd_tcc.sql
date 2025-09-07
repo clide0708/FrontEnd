@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 02-Set-2025 às 06:45
+-- Tempo de geração: 07-Set-2025 às 19:03
 -- Versão do servidor: 8.0.31
 -- versão do PHP: 8.0.26
 
@@ -40,13 +40,8 @@ CREATE TABLE IF NOT EXISTS `agendamentos` (
   PRIMARY KEY (`idAgendamento`),
   KEY `FK_Agend_Aluno` (`idAluno`),
   KEY `FK_Agend_Personal` (`idPersonal`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `agendamentos`
---
-
-TRUNCATE TABLE `agendamentos`;
 -- --------------------------------------------------------
 
 --
@@ -63,11 +58,6 @@ CREATE TABLE IF NOT EXISTS `agua` (
   KEY `FK_Agua_Aluno` (`idaluno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `agua`
---
-
-TRUNCATE TABLE `agua`;
 -- --------------------------------------------------------
 
 --
@@ -79,21 +69,21 @@ CREATE TABLE IF NOT EXISTS `alunos` (
   `idAluno` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `cpf` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `rg` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `senha` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `data_cadastro` datetime DEFAULT NULL,
+  `senha` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `numTel` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `data_cadastro` datetime NOT NULL,
   `statusPlano` enum('Ativo','Pendente','Desativado','Cancelado','A verificar') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'A verificar',
   `idPersonal` int DEFAULT NULL,
   PRIMARY KEY (`idAluno`),
   UNIQUE KEY `cpf` (`cpf`),
+  UNIQUE KEY `uq_numTel` (`numTel`),
+  UNIQUE KEY `uq_rg` (`rg`),
+  UNIQUE KEY `uq_email` (`email`),
   KEY `FK_Alunos_Personal` (`idPersonal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `alunos`
---
-
-TRUNCATE TABLE `alunos`;
 -- --------------------------------------------------------
 
 --
@@ -108,13 +98,8 @@ CREATE TABLE IF NOT EXISTS `exercadaptados` (
   `descricao` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `cadastradoPor` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`idExercAdaptado`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `exercadaptados`
---
-
-TRUNCATE TABLE `exercadaptados`;
 -- --------------------------------------------------------
 
 --
@@ -129,13 +114,8 @@ CREATE TABLE IF NOT EXISTS `exercicios` (
   `descricao` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `cadastradoPor` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`idExercicio`)
-) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `exercicios`
---
-
-TRUNCATE TABLE `exercicios`;
 --
 -- Extraindo dados da tabela `exercicios`
 --
@@ -272,11 +252,6 @@ CREATE TABLE IF NOT EXISTS `itens_refeicao` (
   KEY `id_tipo_refeicao` (`id_tipo_refeicao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `itens_refeicao`
---
-
-TRUNCATE TABLE `itens_refeicao`;
 -- --------------------------------------------------------
 
 --
@@ -296,11 +271,6 @@ CREATE TABLE IF NOT EXISTS `nutrientes` (
   UNIQUE KEY `alimento_id` (`alimento_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `nutrientes`
---
-
-TRUNCATE TABLE `nutrientes`;
 -- --------------------------------------------------------
 
 --
@@ -312,18 +282,23 @@ CREATE TABLE IF NOT EXISTS `personal` (
   `idPersonal` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `cpf` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `rg` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cref_numero` varchar(9) COLLATE utf8mb4_general_ci NOT NULL,
+  `cref_categoria` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cref_regional` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `senha` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `senha` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `data_cadastro` datetime NOT NULL,
+  `numTel` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `statusPlano` enum('Ativo','Pendente','Desativado','Cancelado','A verificar') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'A verificar',
   PRIMARY KEY (`idPersonal`),
-  UNIQUE KEY `cpf` (`cpf`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  UNIQUE KEY `cpf` (`cpf`) USING BTREE,
+  UNIQUE KEY `uq_cref_numero` (`cref_numero`),
+  UNIQUE KEY `uq_email` (`email`),
+  UNIQUE KEY `uq_numTel` (`numTel`),
+  UNIQUE KEY `uq_rg` (`rg`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `personal`
---
-
-TRUNCATE TABLE `personal`;
 -- --------------------------------------------------------
 
 --
@@ -338,11 +313,6 @@ CREATE TABLE IF NOT EXISTS `refeicoes_tipos` (
   UNIQUE KEY `nome_tipo` (`nome_tipo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `refeicoes_tipos`
---
-
-TRUNCATE TABLE `refeicoes_tipos`;
 -- --------------------------------------------------------
 
 --
@@ -361,11 +331,6 @@ CREATE TABLE IF NOT EXISTS `solicitacoes` (
   KEY `FK_Aluno_Solicit` (`idAluno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `solicitacoes`
---
-
-TRUNCATE TABLE `solicitacoes`;
 -- --------------------------------------------------------
 
 --
@@ -383,11 +348,6 @@ CREATE TABLE IF NOT EXISTS `treinos` (
   PRIMARY KEY (`idTreino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `treinos`
---
-
-TRUNCATE TABLE `treinos`;
 -- --------------------------------------------------------
 
 --
@@ -403,13 +363,8 @@ CREATE TABLE IF NOT EXISTS `treinospersonal` (
   PRIMARY KEY (`idTreinosP`),
   KEY `FK_Treino_Personal` (`idPersonal`),
   KEY `FK_Treino_nomePersonal` (`nomePersonal`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `treinospersonal`
---
-
-TRUNCATE TABLE `treinospersonal`;
 -- --------------------------------------------------------
 
 --
@@ -433,13 +388,8 @@ CREATE TABLE IF NOT EXISTS `treino_exercicio` (
   KEY `FK_Treino_TreinosP` (`idTreinosP`),
   KEY `FK_Treino_Exercicio` (`idExercicio`),
   KEY `FK_Treino_ExercAdaptado` (`idExercAdaptado`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `treino_exercicio`
---
-
-TRUNCATE TABLE `treino_exercicio`;
 -- --------------------------------------------------------
 
 --
@@ -458,11 +408,6 @@ CREATE TABLE IF NOT EXISTS `videos` (
   KEY `FK_Video_ExercAdaptado` (`idExercAdaptado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Truncar tabela antes do insert `videos`
---
-
-TRUNCATE TABLE `videos`;
 --
 -- Extraindo dados da tabela `videos`
 --

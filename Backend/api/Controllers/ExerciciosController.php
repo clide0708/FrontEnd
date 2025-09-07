@@ -20,9 +20,21 @@
             }
         }
 
+        // Buscar exercício por ID, exemplo: /exercicios/buscarPorId=1
         public function buscarPorID($id) {
             try {
-                $stmt = $this->db->prepare("SELECT * FROM exercicios WHERE id = ?");
+                // Se o ID veio como array (pode acontecer com alguns tipos de parâmetros)
+                if (is_array($id)) {
+                    $id = $id['id'] ?? $id[0] ?? null;
+                }
+                
+                if (!$id) {
+                    http_response_code(400);
+                    echo json_encode(["error" => "ID não fornecido"]);
+                    return;
+                }
+
+                $stmt = $this->db->prepare("SELECT * FROM exercicios WHERE idExercicio = ?");
                 $stmt->execute([$id]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 
@@ -61,18 +73,24 @@
         public function cadastrarExercicio($data) {
             try {
                 // Validação básica
-                if (!isset($data['nome']) || !isset($data['descricao']) || !isset($data['duracao'])) {
+                if (!isset($data['nome']) || !isset($data['descricao']) || !isset($data['grupoMuscular']) || !isset($data['cadastradoPor'])) {
                     http_response_code(400);
                     echo json_encode(['success' => false, 'error' => 'Dados incompletos']);
                     return;
                 }
 
-                $stmt = $this->db->prepare("INSERT INTO exercicios (nome, descricao, duracao) VALUES (?, ?, ?)");
-                $success = $stmt->execute([$data['nome'], $data['descricao'], $data['duracao']]);
+                // CORREÇÃO: Adicionar o quarto placeholder para cadastradoPor
+                $stmt = $this->db->prepare("INSERT INTO exercicios (nome, grupoMuscular, descricao, cadastradoPor) VALUES (?, ?, ?, ?)");
+                $success = $stmt->execute([
+                    $data['nome'], 
+                    $data['grupoMuscular'], 
+                    $data['descricao'], 
+                    $data['cadastradoPor']
+                ]);
                 
                 if ($success) {
                     http_response_code(201);
-                    echo json_encode(['success' => true, 'id' => $this->db->lastInsertId()]);
+                    echo json_encode(['success' => true, 'idExercicio' => $this->db->lastInsertId()]);
                 } else {
                     http_response_code(400);
                     echo json_encode(['success' => false, 'error' => 'Falha ao cadastrar exercício']);
@@ -85,8 +103,25 @@
 
         public function atualizarExercicio($id, $data) {
             try {
-                $stmt = $this->db->prepare("UPDATE exercicios SET nome = ?, descricao = ?, duracao = ? WHERE id = ?");
-                $success = $stmt->execute([$data['nome'], $data['descricao'], $data['duracao'], $id]);
+                // Se o ID veio como array (pode acontecer com alguns tipos de parâmetros)
+                if (is_array($id)) {
+                    $id = $id['id'] ?? $id[0] ?? null;
+                }
+                
+                if (!$id) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'ID não fornecido']);
+                    return;
+                }
+
+                $stmt = $this->db->prepare("UPDATE exercicios SET nome = ?, grupoMuscular = ?, descricao = ?, cadastradoPor = ? WHERE idExercicio = ?");
+                $success = $stmt->execute([
+                    $data['nome'], 
+                    $data['grupoMuscular'], 
+                    $data['descricao'], 
+                    $data['cadastradoPor'],
+                    $id // CORREÇÃO: Adicionar o ID como quinto parâmetro
+                ]);
                 
                 if ($success && $stmt->rowCount() > 0) {
                     http_response_code(200);
@@ -103,7 +138,18 @@
 
         public function deletarExercicio($id) {
             try {
-                $stmt = $this->db->prepare("DELETE FROM exercicios WHERE id = ?");
+                // Se o ID veio como array (pode acontecer com alguns tipos de parâmetros)
+                if (is_array($id)) {
+                    $id = $id['id'] ?? $id[0] ?? null;
+                }
+                
+                if (!$id) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'ID não fornecido']);
+                    return;
+                }
+
+                $stmt = $this->db->prepare("DELETE FROM exercicios WHERE idExercicio = ?");
                 $success = $stmt->execute([$id]);
                 
                 if ($success && $stmt->rowCount() > 0) {
