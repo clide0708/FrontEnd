@@ -4,6 +4,46 @@
 
     // Define as rotas do sistema
     $routes = [
+        // Rotas para Cadastro
+        'cadastro/aluno' => [
+            'controller' => 'CadastroController',
+            'method' => 'cadastrarAluno'
+        ],
+        'cadastro/personal' => [
+            'controller' => 'CadastroController',
+            'method' => 'cadastrarPersonal'
+        ],
+        'cadastro/verificar-email' => [
+            'controller' => 'CadastroController',
+            'method' => 'verificarEmail'
+        ],
+        'cadastro/verificar-cpf' => [
+            'controller' => 'CadastroController',
+            'method' => 'verificarCpf'
+        ],
+
+        // Rotas para Autenticação
+        'auth/login' => [
+            'controller' => 'AuthController',
+            'method' => 'login'
+        ],
+        'auth/logout' => [
+            'controller' => 'AuthController',
+            'method' => 'logout'
+        ],
+        'auth/verificar-token' => [
+            'controller' => 'AuthController',
+            'method' => 'verificarToken'
+        ],
+        'auth/obter-usuario' => [
+            'controller' => 'AuthController',
+            'method' => 'obterUsuarioToken'
+        ],
+        'auth/verificar-autenticacao' => [
+            'controller' => 'AuthController',
+            'method' => 'verificarAutenticacao'
+        ],
+
         // Rotas para ExercíciosController
         'exercicios/buscarTodos' => [
             'controller' => 'ExerciciosController',
@@ -33,7 +73,7 @@
             'controller' => 'ExerciciosController',
             'method' => 'atualizarExercicio'
         ],
-        'exercicios/atualizar/(\d+)' => [ // NOVA ROTA PARA ATUALIZAR COM ID
+        'exercicios/atualizar/(\d+)' => [
             'controller' => 'ExerciciosController',
             'method' => 'atualizarExercicio'
         ],
@@ -55,11 +95,13 @@
 
     // Mapeamento de controladores
     $controller_paths = [
+        'CadastroController' => __DIR__ . '/../Controllers/CadastroController.php',
+        'AuthController' => __DIR__ . '/../Controllers/AuthController.php',
         'ExerciciosController' => __DIR__ . '/../Controllers/ExerciciosController.php',
         'ConfigController' => __DIR__ . '/../Config/ConfigController.php',
     ];
 
-    // Função para despachar a requisição - CORRIGIDA
+    // Função para despachar a requisição
     function dispatch($path, $routes, $controller_paths, $method_http) {
         // Remove 'api/' do início do path, se existir
         $path_segments = explode('/', $path);
@@ -126,6 +168,16 @@
                                             $params[] = $query_params['id'];
                                         }
                                         break;
+                                    case 'verificarEmail':
+                                        if (isset($query_params['email'])) {
+                                            $params[] = ['email' => $query_params['email']];
+                                        }
+                                        break;
+                                    case 'verificarCpf':
+                                        if (isset($query_params['cpf'])) {
+                                            $params[] = ['cpf' => $query_params['cpf']];
+                                        }
+                                        break;
                                 }
                             }
                         }
@@ -133,8 +185,14 @@
                         // Captura os dados do corpo da requisição para POST, PUT
                         $data = [];
                         if (in_array($method_http, ['POST', 'PUT'])) {
-                            $data = json_decode(file_get_contents('php://input'), true);
-                            if ($data === null) {
+                            $content_type = $_SERVER['CONTENT_TYPE'] ?? '';
+                            
+                            if (strpos($content_type, 'application/json') !== false) {
+                                $data = json_decode(file_get_contents('php://input'), true);
+                                if ($data === null) {
+                                    $data = [];
+                                }
+                            } else {
                                 $data = $_POST;
                             }
                         }
@@ -160,8 +218,13 @@
                             // Chama o método do controlador com os parâmetros
                             call_user_func_array([$controller_instance, $method_name], $method_params);
                         } else {
-                            http_response_code(400);
-                            echo json_encode(["error" => "Parâmetros insuficientes para o método '$method_name'"]);
+                            // Para métodos sem parâmetros obrigatórios, chama sem parâmetros
+                            if ($required_params === 0) {
+                                call_user_func([$controller_instance, $method_name]);
+                            } else {
+                                http_response_code(400);
+                                echo json_encode(["error" => "Parâmetros insuficientes para o método '$method_name'"]);
+                            }
                         }
                         
                     } else {
@@ -181,5 +244,4 @@
             echo json_encode(["error" => "Rota '$clean_path' não encontrada"]);
         }
     }
-
 ?>
