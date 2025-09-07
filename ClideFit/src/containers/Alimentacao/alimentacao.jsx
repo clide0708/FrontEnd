@@ -285,25 +285,29 @@ function Alimentacao() {
               <ul>
                 <li>
                   IDR{" "}
-                  {user.peso > 0 && user.altura > 0 && user.idade > 0
-                    ? calcularIDR(
-                        user.peso,
-                        user.altura,
-                        user.idade,
-                        user.genero,
-                        user.treino
-                      )
-                    : "-"}
+                  <span>
+                    {user.peso > 0 && user.altura > 0 && user.idade > 0
+                      ? calcularIDR(
+                          user.peso,
+                          user.altura,
+                          user.idade,
+                          user.genero,
+                          user.treino
+                        )
+                      : "-"}
+                  </span>
                 </li>
                 <li>
                   IMC{" "}
-                  {user.peso > 0 && user.altura > 0
-                    ? calcularIMC(user.peso, user.altura, user.genero)
-                    : "-"}
+                  <span>
+                    {user.peso > 0 && user.altura > 0
+                      ? calcularIMC(user.peso, user.altura, user.genero)
+                      : "-"}
+                  </span>
                 </li>
                 <li>
                   Consumo de água ideal{" "}
-                  {user.peso > 0 ? consumoAgua(user.peso) : "-"}
+                  <span>{user.peso > 0 ? consumoAgua(user.peso) : "-"}</span>
                 </li>
               </ul>
             </div>
