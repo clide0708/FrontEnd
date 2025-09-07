@@ -1,0 +1,29 @@
+{
+  "cafe": {
+    "totais": { "calorias": 320, "proteinas": 12, "carboidratos": 45, "gorduras": 10 },
+    "items": [
+      { "id": 1, "nome": "Pão integral", "especificacao": 50, "calorias": 130, "proteinas": 5, "carboidratos": 22, "gorduras": 2 },
+      { "id": 2, "nome": "Café preto", "especificacao": 200, "calorias": 5, "proteinas": 0, "carboidratos": 1, "gorduras": 0 }
+    ]
+  },
+  "almoco": {
+    "totais": { "calorias": 600, "proteinas": 35, "carboidratos": 70, "gorduras": 20 },
+    "items": [
+      { "id": 1, "nome": "Arroz", "especificacao": 150, "calorias": 200, "proteinas": 4, "carboidratos": 45, "gorduras": 0 },
+      { "id": 2, "nome": "Frango grelhado", "especificacao": 200, "calorias": 300, "proteinas": 30, "carboidratos": 0, "gorduras": 15 }
+    ]
+  },
+  "janta": {
+    "totais": { "calorias": 500, "proteinas": 25, "carboidratos": 50, "gorduras": 15 },
+    "items": [
+      { "id": 1, "nome": "Salada", "especificacao": 100, "calorias": 50, "proteinas": 2, "carboidratos": 5, "gorduras": 1 },
+      { "id": 2, "nome": "Peixe", "especificacao": 150, "calorias": 200, "proteinas": 20, "carboidratos": 0, "gorduras": 10 }
+    ]
+  },
+  "outros": {
+    "totais": { "calorias": 150, "proteinas": 5, "carboidratos": 20, "gorduras": 5 },
+    "items": [
+      { "id": 1, "nome": "Fruta", "especificacao": 100, "calorias": 50, "proteinas": 0, "carboidratos": 13, "gorduras": 0 }
+    ]
+  }
+}
