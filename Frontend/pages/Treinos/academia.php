@@ -3,7 +3,7 @@ require_once 'conect.php';
 
 try {
     $pdo = connectDB();
-    $stmt = $pdo->query("SELECT * FROM treinos ORDER BY data_ultima_modificacao DESC");
+    $stmt = $pdo->query("SELECT * FROM Treinos ORDER BY data_ultima_modificacao DESC");
     $treinos = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Erro ao carregar treinos: " . $e->getMessage());
