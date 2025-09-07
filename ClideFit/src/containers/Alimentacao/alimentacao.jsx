@@ -252,7 +252,7 @@ function Alimentacao() {
                 <div className="metadt">
                   <h3>Ganho de massa</h3>
                   <h5>60kg - 80kg</h5>
-                  <button className="btnperfil">Alterar meta</button>
+                  {/* <button className="btnperfil">Alterar meta</button> */}
                 </div>
               </div>
             </div>
@@ -278,7 +278,7 @@ function Alimentacao() {
               </div>
               <div className="pflft">
                 <img src={user.img || "/default-profile.png"} alt="Perfil" />
-                <button className="btnperfil2">Editar perfil</button>
+                {/* <button className="btnperfil2">Editar perfil</button> */}
               </div>
             </div>
             <div className="pflidc">

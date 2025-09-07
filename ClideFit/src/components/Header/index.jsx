@@ -25,7 +25,6 @@ export default function Header() {
 
           <ul className={`nav-menu ${menuOpen ? "show" : ""}`}>
             <li><Link to="/" className={location.pathname === "/" ? "active" : ""}>Início</Link></li>
-            <li><Link to="/planos" className={location.pathname === "/planos" ? "active" : ""}>Planos Personalizados</Link></li>
             <li><Link to="/alimentacao" className={location.pathname === "/alimentacao" ? "active" : ""}>Alimentação</Link></li>
             <li><Link to="/treinos" className={location.pathname === "/treinos" ? "active" : ""}>Treinos</Link></li>
             <li><Link to="/personal" className={location.pathname === "/personal" ? "active" : ""}>Personal</Link></li>

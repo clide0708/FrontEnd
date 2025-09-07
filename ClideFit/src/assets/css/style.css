@@ -120,6 +120,10 @@ body {
   background-color: transparent;
 }
 
+.nav-menu li:last-child {
+  padding-left: 250px;
+}
+
 /* Logo */
 .nav-logo {
   font-size: 28px;
