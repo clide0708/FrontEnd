@@ -1,5 +1,6 @@
 # Ignorar arquivos de ambiente
-/Config/.env
+Backend/api/Config/.env
+
 
 # Ignorar diretório de dependências do Composer
 /vendor/
