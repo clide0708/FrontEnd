@@ -118,8 +118,12 @@ function Personal() {
               {clienteSelecionado.treinos.map((treino) => (
                 <li key={treino.id} style={{ marginBottom: "5px" }}>
                   {treino.nome}{" "}
-                  <button onClick={() => editarTreino(treino.id)}>Editar</button>{" "}
-                  <button onClick={() => apagarTreino(treino.id)}>Apagar</button>
+                  <button onClick={() => editarTreino(treino.id)}>
+                    Editar
+                  </button>{" "}
+                  <button onClick={() => apagarTreino(treino.id)}>
+                    Apagar
+                  </button>
                 </li>
               ))}
             </ul>
@@ -132,13 +136,15 @@ function Personal() {
           </div>
 
           <div className="SC2p2">
-            <h4 style={{ textAlign: "center" }}>Clientes</h4>
+            <h4 style={{ textAlign: "center" }}>Alunos</h4>
             <ul>
               {clientes.map((cliente) => (
                 <li
                   key={cliente.id}
                   onClick={() => setClienteSelecionado(cliente)}
-                  style={{ cursor: "pointer", marginBottom: "5px" }}
+                  className={
+                    clienteSelecionado.id === cliente.id ? "selecionado" : ""
+                  }
                 >
                   {cliente.nome}
                 </li>
