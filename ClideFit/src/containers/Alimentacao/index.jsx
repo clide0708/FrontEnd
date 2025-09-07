@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import ModalAdd from "./ModalAdd";
-import ModalDetalhes from "./ModalDetalhes";
+import ModalAdd from "./modalAdd";
+import ModalDetalhes from "./modalDetalhes";
 import "./style.css";
 import { calcularIMC, calcularIDR, consumoAgua } from "../../utils/calculos";
 
