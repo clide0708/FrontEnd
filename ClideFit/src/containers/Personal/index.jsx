@@ -132,7 +132,8 @@ function Personal() {
 
         <div className="SC2">
           <div className="SC2p1">
-            <h4 style={{ textAlign: "center" }}>Calendário de Tarefas</h4>
+            <h4 style={{ textAlign: "center" }}>Seu link de convite</h4>
+              <h1>{`📄 https://clidefit.com/invite/${clienteSelecionado.id}`}</h1>
           </div>
 
           <div className="SC2p2">
@@ -146,6 +147,10 @@ function Personal() {
                     clienteSelecionado.id === cliente.id ? "selecionado" : ""
                   }
                 >
+                  <img className="imgpflpqn"
+                    src={cliente.img || "/default-profile.png"}
+                    alt="Perfil"
+                  />
                   {cliente.nome}
                 </li>
               ))}

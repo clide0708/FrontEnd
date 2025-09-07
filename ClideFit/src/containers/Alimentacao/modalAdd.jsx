@@ -1,26 +1,18 @@
-// ModalAdd.jsx
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./style.css";
 
-export default function ModalAdd({
-  fechar,
-  currentMealList,
-  abrirModalDetalhes,
-}) {
+export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }) {
   const [sugestoes, setSugestoes] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const [dropdownAberto, setDropdownAberto] = useState(false);
   const [termoPesquisa, setTermoPesquisa] = useState("");
-
+  const [itensAdicionados, setItensAdicionados] = useState([]);
   const containerRef = useRef(null);
 
   // fecha dropdown ao clicar fora
   useEffect(() => {
     function handleClickFora(event) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
         setDropdownAberto(false);
       }
     }
@@ -28,6 +20,24 @@ export default function ModalAdd({
     return () => document.removeEventListener("mousedown", handleClickFora);
   }, []);
 
+  // carrega itens da refeição atual do JSON
+  useEffect(() => {
+    async function carregarAlimentos() {
+      try {
+        const response = await fetch("/dados.json"); // pega do public
+        const data = await response.json();
+        const listaAtual = data[currentMealList]?.items || [];
+        setItensAdicionados(listaAtual);
+      } catch (err) {
+        console.error("Erro ao carregar alimentos:", err);
+        setItensAdicionados([]);
+      }
+    }
+
+    carregarAlimentos();
+  }, [currentMealList]);
+
+  // busca ingredientes na API externa
   async function buscarIngredientes(termo) {
     setTermoPesquisa(termo);
 
@@ -51,39 +61,26 @@ export default function ModalAdd({
     }
   }
 
-  async function adicionarItem(item) {
+  // adiciona item novo na lista local
+  function adicionarItem(item) {
     if (loadingId) return;
     setLoadingId(item.id);
     document.body.style.cursor = "wait";
 
-    try {
-      const response = await fetch("post.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          lista: currentMealList,
-          nome: item.name,
-          especificacao: 100,
-        }),
-      });
+    const novoItem = {
+      id: Date.now(), // id único
+      nome: item.name,
+      especificacao: 100,
+      calorias: 0,
+      proteinas: 0,
+      carboidratos: 0,
+      gorduras: 0,
+    };
 
-      if (!response.ok) throw new Error("Erro ao adicionar alimento.");
-
-      const result = await response.json();
-
-      if (result.success && result.id) {
-        abrirModalDetalhes(currentMealList, result.id);
-      } else {
-        alert("Erro ao adicionar alimento.");
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar alimento:", error);
-      alert("Erro ao adicionar alimento.");
-    } finally {
-      setLoadingId(null);
-      document.body.style.cursor = "default";
-      setDropdownAberto(false);
-    }
+    setItensAdicionados((prev) => [...prev, novoItem]);
+    setLoadingId(null);
+    setDropdownAberto(false);
+    document.body.style.cursor = "default";
   }
 
   return (
@@ -128,7 +125,26 @@ export default function ModalAdd({
         </div>
 
         <div className="almadd existing-items">
-          {/* renderiza os itens já adicionados aqui */}
+          {itensAdicionados.length === 0 && (
+            <div className="no-items">Nenhum alimento adicionado ainda</div>
+          )}
+
+          {itensAdicionados.map((item) => (
+            <div
+              key={item.id}
+              className="itemadd"
+              onClick={() => abrirModalDetalhes(currentMealList, item.id)}
+            >
+              <div className="nm">
+                <h1>{item.nome}</h1>
+                <h2>{item.calorias || 0} cal</h2>
+              </div>
+              <div className="gm">
+                <h1>{item.especificacao || 0} g/ml</h1>
+              </div>
+            </div>
+          ))}
+
           <div className="addalmbtn">
             <button className="mdlcl" onClick={fechar}>
               Confirmar

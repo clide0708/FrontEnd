@@ -315,7 +315,13 @@ function Alimentacao() {
         </div>
       </div>
 
-      {modalAdd && <ModalAdd fechar={() => setModalAdd(false)} />}
+      {modalAdd && (
+        <ModalAdd
+          fechar={() => setModalAdd(false)}
+          currentMealList={currentMealList} // ⬅️ importante
+          abrirModalDetalhes={abrirModalDetalhes} // ⬅️ importante
+        />
+      )}
       {modalDetalhes && currentItem && (
         <ModalDetalhes
           item={currentItem}

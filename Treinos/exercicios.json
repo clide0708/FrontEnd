@@ -1,0 +1,794 @@
+[
+    {
+        "nome": "Chest Press",
+        "grupo": "peitoral",
+        "informacoes": "Sente-se na máquina com as costas apoiadas, segure as alças na altura do peito e empurre controladamente até estender os braços; retorne devagar.",
+        "url": "https://www.youtube.com/watch?v=DrIZblSimW8",
+        "cover": ""
+    },
+    {
+        "nome": "Máquina Declinada Supino e Crucifixo",
+        "grupo": "peitoral",
+        "informacoes": "Deite-se em banco declinado; no supino empurre a barra/pegada para cima até estender os braços; no crucifixo abra os braços com leve flexão nos cotovelos e retorne controlado.",
+        "url": "https://www.youtube.com/watch?v=kIFCWmiBOpo",
+        "cover": ""
+    },
+    {
+        "nome": "Supino com Halteres",
+        "grupo": "peitoral",
+        "informacoes": "Deite-se no banco, segure halteres alinhados ao peito, empurre para cima até braços estendidos e desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=MzKobWFCmtk",
+        "cover": ""
+    },
+    {
+        "nome": "Crucifixo com Halteres",
+        "grupo": "peitoral",
+        "informacoes": "Deite-se, braços semiflexionados; abra lateralmente até sentir alongamento no peitoral e traga os halteres de volta com controle.",
+        "url": "https://www.youtube.com/watch?v=HwpcEMHePJ8",
+        "cover": ""
+    },
+    {
+        "nome": "Flexão de Braço",
+        "grupo": "peitoral",
+        "informacoes": "Posição de prancha com mãos alinhadas ao peito; flexione os cotovelos até o peito quase tocar o chão e empurre de volta até estender os braços.",
+        "url": "https://www.youtube.com/watch?v=D2ta8xvURwo",
+        "cover": ""
+    },
+    {
+        "nome": "Fly",
+        "grupo": "peitoral",
+        "informacoes": "Em banco reto ou inclinado, com leve flexão nos cotovelos abra os braços lateralmente e junte-os à frente contraindo o peitoral.",
+        "url": "https://www.youtube.com/watch?v=P36j7gLzEZY",
+        "cover": ""
+    },
+    {
+        "nome": "Paralela",
+        "grupo": "peitoral",
+        "informacoes": "Suspenda-se nas barras paralelas, incline o tronco levemente à frente, desça flexionando os cotovelos e empurre até estender os braços.",
+        "url": "https://www.youtube.com/watch?v=nQ6DyydhAIo",
+        "cover": ""
+    },
+    {
+        "nome": "Máquina de Crucifixo Inclinada",
+        "grupo": "peitoral",
+        "informacoes": "Sente-se na máquina inclinada, segure as alças e junte-as à frente do peito com movimento controlado e ênfase na contração.",
+        "url": "https://www.youtube.com/watch?v=F9nNOp8Rfoo",
+        "cover": ""
+    },
+    {
+        "nome": "Supino com Barra",
+        "grupo": "peitoral",
+        "informacoes": "Deite-se no banco, segure a barra à largura dos ombros, desça ao peito mantendo controle e empurre até estender os braços.",
+        "url": "https://www.youtube.com/watch?v=TVrxH3UJjfs",
+        "cover": ""
+    },
+    {
+        "nome": "Cross Over",
+        "grupo": "peitoral",
+        "informacoes": "Em pé entre os cabos, segure as alças e leve-as à frente do corpo com leve arco no tronco, cruzando as mãos se desejar foco na parte inferior do peitoral.",
+        "url": "https://www.youtube.com/watch?v=bJdvab9uVUc",
+        "cover": ""
+    },
+    {
+        "nome": "Voador para Peitoral",
+        "grupo": "peitoral",
+        "informacoes": "Sente-se no peck-deck, apoie os braços/antebraços e junte as alças concentrando a contração no centro do peitoral.",
+        "url": "https://www.youtube.com/watch?v=bxM8uWGrP0E",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Pulley",
+        "grupo": "triceps",
+        "informacoes": "Em pé, segure a barra no pulley alto e estenda os cotovelos até travá-los; controle na volta para manter tensão no tríceps.",
+        "url": "https://www.youtube.com/watch?v=Qo2qqimmdFw",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Corda",
+        "grupo": "triceps",
+        "informacoes": "No pulley alto com corda, estenda os antebraços separando as pontas da corda no final da extensão para maior amplitude.",
+        "url": "https://www.youtube.com/watch?v=ahOm8a3oncs",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Unilateral",
+        "grupo": "triceps",
+        "informacoes": "Segure o acessório com uma mão no pulley e estenda o braço mantendo o cotovelo imóvel; faça o movimento controlado e simétrico no outro lado.",
+        "url": "https://www.youtube.com/watch?v=hFb0YL6pPhY",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Francesa no Cross",
+        "grupo": "triceps",
+        "informacoes": "De pé no cross, segure a barra/pegada e flexione os cotovelos levando a carga em direção à testa ou têmpora; estenda até travar os braços.",
+        "url": "https://www.youtube.com/watch?v=TnK4DsvAts4",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Coice Unilateral no Cross",
+        "grupo": "triceps",
+        "informacoes": "Incline-se com tronco estável, segure o cabo e estenda o antebraço para trás mantendo o cotovelo fixo.",
+        "url": "https://www.youtube.com/watch?v=4DapiJicioo",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Francesa Unilateral com Halter",
+        "grupo": "triceps",
+        "informacoes": "Sentado ou deitado, segure um halter com uma mão e faça a extensão do antebraço até estender totalmente o braço.",
+        "url": "https://www.youtube.com/watch?v=srgDQ6ie7qk",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Francesa Unilateral no Cross",
+        "grupo": "triceps",
+        "informacoes": "No cross, use pegada unilateral para flexionar o cotovelo e estender o antebraço, mantendo o tronco firme.",
+        "url": "https://www.youtube.com/watch?v=hZB7xezXbMM",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Coice Unilateral com Halter",
+        "grupo": "triceps",
+        "informacoes": "Apoie o tronco (banco ou inclinação), mantenha o cotovelo fixo e estenda o antebraço para trás até contrair o tríceps.",
+        "url": "https://www.youtube.com/watch?v=CCLW6lekNTw",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Banco",
+        "grupo": "triceps",
+        "informacoes": "Mãos apoiadas no banco atrás do quadril, flexione os cotovelos descendo o corpo e empurre até estender os braços.",
+        "url": "https://www.youtube.com/watch?v=YgcwPqxibnE",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Garganta",
+        "grupo": "triceps",
+        "informacoes": "Variação de extensão de tríceps com barra/pegada levando a carga em direção à garganta/peito alto e estendendo os cotovelos com controle.",
+        "url": "https://www.youtube.com/watch?v=DMPDjQdwhkA",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Testa no Cross",
+        "grupo": "triceps",
+        "informacoes": "De pé no cross, segure a barra e flexione os cotovelos levando a barra em direção à testa; estenda controladamente.",
+        "url": "https://www.youtube.com/watch?v=BTEkru3wrfg",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Testa com Barra",
+        "grupo": "triceps",
+        "informacoes": "Deitado no banco, segure a barra com pegada pronada, flexione os cotovelos até a barra quase tocar a testa e estenda os braços.",
+        "url": "https://www.youtube.com/watch?v=uFOs6zI883o",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Máquina Articulada",
+        "grupo": "triceps",
+        "informacoes": "Sente-se e ajuste o aparelho; empurre as alças até estender totalmente os braços e retorne com controle.",
+        "url": "https://www.youtube.com/watch?v=z3fMvMyql8A",
+        "cover": ""
+    },
+    {
+        "nome": "Tríceps Coice Bilateral no Cross",
+        "grupo": "triceps",
+        "informacoes": "Incline o tronco, segure as alças e estenda ambos os braços simultaneamente para trás, mantendo os cotovelos quase fixos.",
+        "url": "https://www.youtube.com/watch?v=mnOcntB2QE0",
+        "cover": ""
+    },
+    {
+        "nome": "Desenvolvimento com Halteres e Barra",
+        "grupo": "ombros",
+        "informacoes": "Sentado ou em pé, empurre halteres ou barra acima da cabeça até extensão total dos braços e desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=t3Uu11HfaNQ",
+        "cover": ""
+    },
+    {
+        "nome": "Desenvolvimento na Máquina Pegada Tradicional e Convergente",
+        "grupo": "ombros",
+        "informacoes": "Sente-se na máquina, alinhe a pegada e empurre as alças acima da cabeça até estender os braços; controle na descida.",
+        "url": "https://www.youtube.com/watch?v=Lsn4LVvtm44",
+        "cover": ""
+    },
+    {
+        "nome": "Desenvolvimento Arnold",
+        "grupo": "ombros",
+        "informacoes": "Sente-se com halteres à frente (palmas voltadas para você) e, ao subir, faça a rotação do pulso finalizando com palmas para frente.",
+        "url": "https://www.youtube.com/watch?v=9w4pFCQvKg4",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Lateral com Halteres",
+        "grupo": "ombros",
+        "informacoes": "Em pé, levante os halteres lateralmente até a altura dos ombros com leve flexão no cotovelo; mantenha movimento controlado.",
+        "url": "https://www.youtube.com/watch?v=m8J4xGmVXRA",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Lateral no Cross",
+        "grupo": "ombros",
+        "informacoes": "Segure o cabo em posição baixa e eleve o braço lateralmente até a altura do ombro, controlando a descida.",
+        "url": "https://www.youtube.com/watch?v=637o04QCWs0",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Frontal com Halteres",
+        "grupo": "ombros",
+        "informacoes": "Em pé, levante os halteres à frente do corpo até a altura dos ombros com os braços estendidos e movimento controlado.",
+        "url": "https://www.youtube.com/watch?v=fNYeFdgR6Gs",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Frontal no Cross",
+        "grupo": "ombros",
+        "informacoes": "Segure o cabo em posição baixa e eleve o braço à frente até a altura do ombro, mantendo o controle na descida.",
+        "url": "https://www.youtube.com/watch?v=5gmwbzepi7E",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Alta com Barra",
+        "grupo": "ombros",
+        "informacoes": "Segure a barra com pegada pronada, puxe-a até a altura do peito mantendo os cotovelos altos e desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=xkmxQaz6M3c",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Alta no Cross",
+        "grupo": "ombros",
+        "informacoes": "Segure as alças no cross, puxe-as para cima até o nível do peito com os cotovelos elevados, controlando o movimento de volta.",
+        "url": "https://www.youtube.com/watch?v=V4m_uE1M0TM",
+        "cover": ""
+    },
+    {
+        "nome": "Crucifixo Invertido no Cross",
+        "grupo": "ombros",
+        "informacoes": "Segure os cabos em posição baixa, abra os braços para trás com leve flexão nos cotovelos, contraindo a parte posterior dos ombros.",
+        "url": "https://www.youtube.com/watch?v=LHyYmMSTbj8",
+        "cover": ""
+    },
+    {
+        "nome": "Crucifixo Invertido com Halteres",
+        "grupo": "ombros",
+        "informacoes": "Incline o tronco para frente segurando halteres, abra os braços lateralmente com leve flexão no cotovelo e retorne controlado.",
+        "url": "https://www.youtube.com/watch?v=QL1uD2E_xpg",
+        "cover": ""
+    },
+    {
+        "nome": "Face Pull",
+        "grupo": "ombros",
+        "informacoes": "Segure a corda no pulley alto, puxe em direção ao rosto com cotovelos abertos para ativar o deltoide posterior e trapézio.",
+        "url": "https://www.youtube.com/watch?v=zpHgB1srbJA",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Francesa com Halter e Anilha",
+        "grupo": "triceps",
+        "informacoes": "Segure o halter/anilha com as duas mãos acima da cabeça e flexione os cotovelos para trás, estendendo-os novamente com controle.",
+        "url": "https://www.youtube.com/watch?v=2Sb2_atoD2c",
+        "cover": ""
+    },
+    {
+        "nome": "Voador Costas ou Crucifixo Invertido na Máquina",
+        "grupo": "ombros",
+        "informacoes": "Sente-se na máquina, abra os braços para trás contraindo a musculatura posterior dos ombros e retorne devagar.",
+        "url": "https://www.youtube.com/watch?v=rhlwE-J37x8",
+        "cover": ""
+    },
+    {
+        "nome": "Rotação Interna e Externa de Ombro (Manguito Rotador)",
+        "grupo": "ombros",
+        "informacoes": "Use o cabo para girar o braço internamente e externamente mantendo o cotovelo fixo, fortalecendo o manguito rotador.",
+        "url": "https://www.youtube.com/watch?v=EjiH-RcOR2U",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Direta com Barra",
+        "grupo": "biceps",
+        "informacoes": "Segure a barra com pegada supinada e flexione os cotovelos levando a barra até a altura dos ombros; desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=Q3motWl8P4w",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Direta no Cross",
+        "grupo": "biceps",
+        "informacoes": "Segure o cabo com pegada supinada e flexione o cotovelo puxando o cabo até o bíceps contrair; controle a descida.",
+        "url": "https://www.youtube.com/watch?v=LoWCU2Yb4AY",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Direta com Halteres",
+        "grupo": "biceps",
+        "informacoes": "Com halteres em mãos, flexione os cotovelos levantando os pesos até a altura dos ombros e desça lentamente.",
+        "url": "https://www.youtube.com/watch?v=_3Mihov5a24",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Martelo no Cross",
+        "grupo": "biceps",
+        "informacoes": "Segure o cabo com pegada neutra e flexione o cotovelo puxando o cabo em direção ao ombro; controle o movimento de volta.",
+        "url": "https://www.youtube.com/watch?v=OuEJB34uSKI",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca no Banco Scott",
+        "grupo": "biceps",
+        "informacoes": "Sentado no banco scott, flexione os cotovelos levando a barra/halteres até contrair os bíceps e desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=jl2m6ch53NU",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Alternada",
+        "grupo": "biceps",
+        "informacoes": "Com halteres em cada mão, flexione um cotovelo de cada vez, girando o pulso ao subir; desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=gVC2jMVZVfE",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Inversa na Barra e no Cross Over",
+        "grupo": "antebraco",
+        "informacoes": "Com pegada pronada, flexione os cotovelos levantando a barra ou puxando o cabo, focando no fortalecimento do antebraço.",
+        "url": "https://www.youtube.com/watch?v=bCUMKcOefUU",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Punho com Barra e no Cross Over",
+        "grupo": "antebraco",
+        "informacoes": "Segure barra ou cabo e realize flexão e extensão dos punhos para fortalecer os músculos do antebraço.",
+        "url": "https://www.youtube.com/watch?v=bKPmruztS8g",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Punho Invertido",
+        "grupo": "antebraco",
+        "informacoes": "Segure a barra com pegada pronada e flexione os punhos para fortalecer os músculos extensores do antebraço.",
+        "url": "https://www.youtube.com/watch?v=1l7icabk0mo",
+        "cover": ""
+    },
+    {
+        "nome": "Rolo de Pulso Wrist Roller",
+        "grupo": "antebraco",
+        "informacoes": "Segure o rolo com pesos suspensos e enrole a corda movendo os punhos para cima e para baixo, fortalecendo o antebraço.",
+        "url": "https://www.youtube.com/watch?v=j7a4_SjM8ZM",
+        "cover": ""
+    },
+    {
+        "nome": "Barra Fixa",
+        "grupo": "costas",
+        "informacoes": "Pendure-se na barra com pegada pronada e puxe o corpo até o queixo ultrapassar a barra; desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=PXiJKmAyLR8",
+        "cover": ""
+    },
+    {
+        "nome": "Puxador Frente e Costas",
+        "grupo": "costas",
+        "informacoes": "Sentado no puxador, puxe a barra em direção ao peito ou atrás da nuca, mantendo as costas retas; controle a volta.",
+        "url": "https://www.youtube.com/watch?v=OXH8gKrYzig",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Sentado no Puxador",
+        "grupo": "costas",
+        "informacoes": "Sentado, puxe o cabo em direção ao abdômen, mantendo tronco estável e controle na extensão dos braços.",
+        "url": "https://www.youtube.com/watch?v=toQuzSgZm8E",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Sentado no Cross",
+        "grupo": "costas",
+        "informacoes": "Similar à remada no puxador, puxe os cabos em direção ao tronco mantendo os cotovelos próximos ao corpo.",
+        "url": "https://www.youtube.com/watch?v=P2HPQuUHMsQ",
+        "cover": ""
+    },
+    {
+        "nome": "Puxador no Cross Bilateral e Unilateral",
+        "grupo": "costas",
+        "informacoes": "Segure um ou ambos os cabos e puxe em direção ao peito, controlando a extensão dos braços.",
+        "url": "https://www.youtube.com/watch?v=-7OxAps9mvk",
+        "cover": ""
+    },
+    {
+        "nome": "Remada na Máquina",
+        "grupo": "costas",
+        "informacoes": "Sente-se na máquina e puxe as alças em direção ao corpo, concentrando na contração dos músculos das costas.",
+        "url": "https://www.youtube.com/watch?v=3H5Kw5-_Lw8",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Cavalo Livre",
+        "grupo": "costas",
+        "informacoes": "Com barra, incline o tronco, puxe a barra em direção ao abdômen mantendo os cotovelos próximos ao corpo.",
+        "url": "https://www.youtube.com/watch?v=vMXNqjcc21c",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Cavalo Máquina",
+        "grupo": "costas",
+        "informacoes": "Sente-se e puxe a alavanca da máquina em direção ao corpo focando na contração dos músculos das costas.",
+        "url": "https://www.youtube.com/watch?v=4O_9NktinIw",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Curvada com Barra Livre",
+        "grupo": "costas",
+        "informacoes": "Incline o tronco com barra e puxe em direção ao abdômen com cotovelos para trás; desça controladamente.",
+        "url": "https://www.youtube.com/watch?v=wtcZa02D5-c",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Curvada no Cross Over",
+        "grupo": "costas",
+        "informacoes": "Segure os cabos baixos e puxe-os em direção ao tronco com cotovelos próximos ao corpo; controle a volta.",
+        "url": "https://www.youtube.com/watch?v=zqvKtQippnA",
+        "cover": ""
+    },
+    {
+        "nome": "Remada Unilateral com Halter (Serrote)",
+        "grupo": "costas",
+        "informacoes": "Apoie um joelho e mão no banco, puxe o halter com a outra mão em direção ao tronco, mantendo o cotovelo próximo ao corpo.",
+        "url": "https://www.youtube.com/watch?v=69JIUT2q6lU",
+        "cover": ""
+    },
+    {
+        "nome": "Hiperextensão Lombar",
+        "grupo": "costas",
+        "informacoes": "Posicione-se no banco para hiperextensão, flexione o tronco para frente e estenda-o para trabalhar a lombar.",
+        "url": "https://www.youtube.com/watch?v=mahiVOFUv14",
+        "cover": ""
+    },
+    {
+        "nome": "Pull Over com Halter",
+        "grupo": "costas",
+        "informacoes": "Deitado no banco, segure o halter acima do peito e leve-o para trás da cabeça, alongando o peitoral e costas.",
+        "url": "https://www.youtube.com/watch?v=gvbWkKYP0VY",
+        "cover": ""
+    },
+    {
+        "nome": "Pulldown no Cross",
+        "grupo": "costas",
+        "informacoes": "Puxe a barra do pulley alto até o peito, mantendo as costas retas e cotovelos alinhados ao tronco.",
+        "url": "https://www.youtube.com/watch?v=1EQU0jBpcds",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Supra",
+        "grupo": "abdomen",
+        "informacoes": "Deitado, eleve o tronco em direção aos joelhos, contraindo o abdômen superior.",
+        "url": "https://www.youtube.com/watch?v=zEgL8MSaSs8",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Infra",
+        "grupo": "abdomen",
+        "informacoes": "Deitado, eleve as pernas estendidas em direção ao tronco, focando no abdômen inferior.",
+        "url": "https://www.youtube.com/watch?v=gh7fXWsPKaM",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Infra na Máquina",
+        "grupo": "abdomen",
+        "informacoes": "Sente-se na máquina e eleve os joelhos em direção ao peito, ativando o abdômen inferior.",
+        "url": "https://www.youtube.com/watch?v=fCqyKmIVH00",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Oblíquo",
+        "grupo": "abdomen",
+        "informacoes": "Deitado, realize a flexão lateral do tronco para ativar os músculos oblíquos.",
+        "url": "https://www.youtube.com/watch?v=QYF8YgU8few",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Prancha",
+        "grupo": "abdomen",
+        "informacoes": "Mantenha o corpo alinhado apoiado nos antebraços e ponta dos pés, contraindo o core por tempo determinado.",
+        "url": "https://www.youtube.com/watch?v=PJMPwGvDxaQ",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Remador",
+        "grupo": "abdomen",
+        "informacoes": "Deitado, eleve o tronco alternando o toque do cotovelo direito no joelho esquerdo e vice-versa.",
+        "url": "https://www.youtube.com/watch?v=NjE50Vz5Lkc",
+        "cover": ""
+    },
+    {
+        "nome": "Abdominal Lateral",
+        "grupo": "abdomen",
+        "informacoes": "Deitado, flexione o tronco lateralmente para ativar os músculos do abdômen lateral.",
+        "url": "https://www.youtube.com/watch?v=I30xMS5gyPw",
+        "cover": ""
+    },
+    {
+        "nome": "Concha Abdominal ou Abdominal Canoa",
+        "grupo": "abdomen",
+        "informacoes": "Sentado, incline o tronco para trás em V mantendo o equilíbrio para trabalhar o core.",
+        "url": "https://www.youtube.com/watch?v=QmIpJ498RNA",
+        "cover": ""
+    },
+    {
+        "nome": "Roda Abdominal",
+        "grupo": "abdomen",
+        "informacoes": "Apoie as mãos na roda e estenda o corpo para frente, contraindo o abdômen para retornar.",
+        "url": "https://www.youtube.com/watch?v=u1DPdaxLMcw",
+        "cover": ""
+    },
+    {
+        "nome": "Panturrilha Sentado na Máquina",
+        "grupo": "panturrilha",
+        "informacoes": "Sente-se na máquina e eleve os calcanhares para trabalhar a panturrilha, controlando a descida.",
+        "url": "https://www.youtube.com/watch?v=kWGRm-IDMQ4",
+        "cover": ""
+    },
+    {
+        "nome": "Panturrilha em Pé",
+        "grupo": "panturrilha",
+        "informacoes": "Em pé, eleve os calcanhares mantendo o equilíbrio para fortalecer a panturrilha.",
+        "url": "https://www.youtube.com/watch?v=GKbh4fNX2gM",
+        "cover": ""
+    },
+    {
+        "nome": "Panturrilha no Leg Horizontal",
+        "grupo": "panturrilha",
+        "informacoes": "Na máquina leg press horizontal, empurre a plataforma usando somente os dedos dos pés para ativar a panturrilha.",
+        "url": "https://www.youtube.com/watch?v=uCgSv-4-S0A",
+        "cover": ""
+    },
+    {
+        "nome": "Panturrilha no Leg 45°",
+        "grupo": "panturrilha",
+        "informacoes": "No leg press 45°, faça a extensão plantar elevando os calcanhares para ativar a panturrilha.",
+        "url": "https://www.youtube.com/watch?v=-OmMnWC4iT4",
+        "cover": ""
+    },
+    {
+        "nome": "Panturrilha no Smith",
+        "grupo": "panturrilha",
+        "informacoes": "Com barra no smith, faça a extensão plantar para fortalecer a panturrilha com carga adicional.",
+        "url": "https://www.youtube.com/watch?v=w5xVs3hCvfg",
+        "cover": ""
+    },
+    {
+        "nome": "Agachamento Livre",
+        "grupo": "quadriceps",
+        "informacoes": "Com barra apoiada nos ombros, flexione os joelhos e quadris descendo o corpo e volte à posição inicial.",
+        "url": "https://www.youtube.com/watch?v=PxsKGxKsDL0",
+        "cover": ""
+    },
+    {
+        "nome": "Agachamento Sumô",
+        "grupo": "quadriceps",
+        "informacoes": "Com pernas afastadas e pés virados para fora, agache mantendo a postura ereta e volte controladamente.",
+        "url": "https://www.youtube.com/watch?v=_UfEXzV5Yf4",
+        "cover": ""
+    },
+    {
+        "nome": "Agachamento no Hack Machine",
+        "grupo": "quadriceps",
+        "informacoes": "Na máquina hack, execute o agachamento controlando o movimento para fortalecer as pernas.",
+        "url": "https://www.youtube.com/watch?v=u41-6ZMC528",
+        "cover": ""
+    },
+    {
+        "nome": "Leg Press 45°",
+        "grupo": "quadriceps",
+        "informacoes": "Empurre a plataforma inclinada usando os pés, estendendo os joelhos para ativar o quadríceps.",
+        "url": "https://www.youtube.com/watch?v=HY8i_j-wvys",
+        "cover": ""
+    },
+    {
+        "nome": "Cadeira Extensora",
+        "grupo": "quadriceps",
+        "informacoes": "Sente-se e estenda os joelhos contra a resistência da máquina para trabalhar o quadríceps.",
+        "url": "https://www.youtube.com/watch?v=idOLAV3JGDc",
+        "cover": ""
+    },
+    {
+        "nome": "Afundo",
+        "grupo": "quadriceps",
+        "informacoes": "Dê um passo à frente e flexione ambos os joelhos até o ângulo de 90°, suba controladamente.",
+        "url": "https://www.youtube.com/watch?v=YILZe3FfIw8",
+        "cover": ""
+    },
+    {
+        "nome": "Agachamento Búlgaro",
+        "grupo": "quadriceps",
+        "informacoes": "Com um pé apoiado atrás em banco, agache com o outro mantendo o equilíbrio e volte à posição inicial.",
+        "url": "https://www.youtube.com/watch?v=aKRVoiOQK3Y",
+        "cover": ""
+    },
+    {
+        "nome": "Flexão de Quadril com Caneleira",
+        "grupo": "quadriceps",
+        "informacoes": "De pé, flexione o quadril levantando a perna com caneleira para frente, trabalhando o quadríceps.",
+        "url": "https://www.youtube.com/watch?v=0M0i4jD5CGw",
+        "cover": ""
+    },
+    {
+        "nome": "Passada e Avanço",
+        "grupo": "quadriceps",
+        "informacoes": "Dê um passo largo à frente, flexione o joelho e volte para trás, alternando as pernas.",
+        "url": "https://www.youtube.com/watch?v=FaGtwve4s-E",
+        "cover": ""
+    },
+    {
+        "nome": "Cadeira Adutora",
+        "grupo": "adutores",
+        "informacoes": "Sente-se e pressione as coxas para dentro contra a resistência da máquina para trabalhar os adutores.",
+        "url": "https://www.youtube.com/watch?v=OpkKv88HzR8",
+        "cover": ""
+    },
+    {
+        "nome": "Adução no Cross Over",
+        "grupo": "adutores",
+        "informacoes": "Com cabos baixos, puxe as pernas para dentro cruzando na frente do corpo para ativar os adutores.",
+        "url": "https://www.youtube.com/watch?v=HbLx5f5vnhY",
+        "cover": ""
+    },
+    {
+        "nome": "Mesa Flexora",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Deitado na máquina, flexione os joelhos contra a resistência para trabalhar os músculos posteriores da coxa.",
+        "url": "https://www.youtube.com/watch?v=jMnDwCn72ws",
+        "cover": ""
+    },
+    {
+        "nome": "Cadeira Flexora",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Sentado, flexione os joelhos para trás contra a resistência da máquina para fortalecer o posterior da coxa.",
+        "url": "https://www.youtube.com/watch?v=DKD0id35rgU",
+        "cover": ""
+    },
+    {
+        "nome": "Flexor Apoio",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Apoiado na máquina, flexione os joelhos elevando os calcanhares para trabalhar o posterior da coxa.",
+        "url": "https://www.youtube.com/watch?v=Tux6Q2AW0eA",
+        "cover": ""
+    },
+    {
+        "nome": "Stiff com Barra",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Com barra, incline o tronco à frente mantendo as pernas quase estendidas para alongar e fortalecer o posterior da coxa.",
+        "url": "https://www.youtube.com/watch?v=ZEdksboBtg4",
+        "cover": ""
+    },
+    {
+        "nome": "Leg Press Horizontal",
+        "grupo": "quadriceps",
+        "informacoes": "Empurre a plataforma horizontalmente com os pés, estendendo os joelhos para ativar o quadríceps.",
+        "url": "https://www.youtube.com/watch?v=5MOa-_qdw9s",
+        "cover": ""
+    },
+    {
+        "nome": "Cadeira Extensora Unilateral",
+        "grupo": "quadriceps",
+        "informacoes": "Sente-se e estenda um joelho de cada vez contra a resistência da máquina para trabalhar o quadríceps unilateralmente.",
+        "url": "https://www.youtube.com/watch?v=RqOJkeiET5Q",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Concentrada com Halteres",
+        "grupo": "biceps",
+        "informacoes": "Sentado, apoie o braço e faça a flexão do cotovelo para concentrar o trabalho no bíceps.",
+        "url": "https://www.youtube.com/watch?v=iAKisU13ypU",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Martelo com Halteres",
+        "grupo": "biceps",
+        "informacoes": "Com halteres, faça a flexão dos cotovelos mantendo as palmas voltadas para dentro, ativando o braquial.",
+        "url": "https://www.youtube.com/watch?v=WFAvShrNgiw",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca Martelo com Barra",
+        "grupo": "biceps",
+        "informacoes": "Com barra, faça a flexão dos cotovelos com pegada neutra para fortalecer o bíceps e antebraço.",
+        "url": "https://www.youtube.com/watch?v=6E5soH4kpL8",
+        "cover": ""
+    },
+    {
+        "nome": "Rosca 21",
+        "grupo": "biceps",
+        "informacoes": "Execute 7 repetições na metade inferior, 7 na metade superior e 7 completas para estimular o bíceps.",
+        "url": "https://www.youtube.com/watch?v=DmqaUQaskwo",
+        "cover": ""
+    },
+    {
+        "nome": "Encolhimento de Trapézio com Halteres",
+        "grupo": "trapezio",
+        "informacoes": "Com halteres nas mãos, eleve os ombros em direção às orelhas contraindo o trapézio.",
+        "url": "https://www.youtube.com/watch?v=0NES5nQ7tnw",
+        "cover": ""
+    },
+    {
+        "nome": "Encolhimento de Trapézio no Cross Over",
+        "grupo": "trapezio",
+        "informacoes": "Segure os cabos e eleve os ombros contraindo o trapézio mantendo o movimento controlado.",
+        "url": "https://www.youtube.com/watch?v=bc6X06OWyPk",
+        "cover": ""
+    },
+    {
+        "nome": "Encolhimento de Trapézio no Smith",
+        "grupo": "trapezio",
+        "informacoes": "Com barra no smith, eleve os ombros para trabalhar o trapézio mantendo postura ereta.",
+        "url": "https://www.youtube.com/watch?v=rreRO8-pPYg",
+        "cover": ""
+    },
+    {
+        "nome": "Leg Press 90°",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Empurre a plataforma inclinada a 90° para ativar os músculos posteriores das pernas.",
+        "url": "https://www.youtube.com/watch?v=cJ4J7XoPo6E",
+        "cover": ""
+    },
+    {
+        "nome": "Levantamento Terra",
+        "grupo": "posteriordecoxa",
+        "informacoes": "Com barra no chão, levante mantendo a coluna neutra e usando força dos posteriores e glúteos.",
+        "url": "https://www.youtube.com/watch?v=CC7fg3SEof8",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Pélvica com Barra",
+        "grupo": "gluteos",
+        "informacoes": "Deitado, eleve o quadril com a barra apoiada para ativar os glúteos e posteriores.",
+        "url": "https://www.youtube.com/watch?v=7CaF6Rsw_SA",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Pélvica na Máquina",
+        "grupo": "gluteos",
+        "informacoes": "Na máquina, eleve o quadril contra a resistência para fortalecer glúteos e posterior de coxa.",
+        "url": "https://www.youtube.com/watch?v=tATrzTP56_M",
+        "cover": ""
+    },
+    {
+        "nome": "Elevação Pélvica Apoiado no Solo",
+        "grupo": "gluteos",
+        "informacoes": "Deitado no chão, eleve o quadril contraindo os glúteos mantendo os pés apoiados.",
+        "url": "https://www.youtube.com/watch?v=HqWvQkwr_Zk",
+        "cover": ""
+    },
+    {
+        "nome": "Coice para Glúteos no Cross Over",
+        "grupo": "gluteos",
+        "informacoes": "Com caneleira, realize o movimento de coice para trás, ativando os glúteos no cross over.",
+        "url": "https://www.youtube.com/watch?v=lBRDG-psDdE",
+        "cover": ""
+    },
+    {
+        "nome": "Extensão de Glúteo com Caneleira",
+        "grupo": "gluteos",
+        "informacoes": "De joelhos, estenda a perna com caneleira para trás contraindo o glúteo máximo.",
+        "url": "https://www.youtube.com/watch?v=7hebjw6AGGM",
+        "cover": ""
+    },
+    {
+        "nome": "Glúteo 4 Apoios ou Coice com Caneleira",
+        "grupo": "gluteos",
+        "informacoes": "Em posição de 4 apoios, eleve a perna para trás com caneleira ativando os glúteos.",
+        "url": "https://www.youtube.com/watch?v=cRWpZBMJZrw",
+        "cover": ""
+    },
+    {
+        "nome": "Cadeira Abdutora",
+        "grupo": "abdutores",
+        "informacoes": "Sente-se e abra as pernas contra a resistência da máquina para trabalhar abdutores e glúteos.",
+        "url": "https://www.youtube.com/watch?v=EgbM4kXE-2s",
+        "cover": ""
+    },
+    {
+        "nome": "Abdução no Cross Over",
+        "grupo": "abdutores",
+        "informacoes": "Com cabos baixos, afaste as pernas para o lado contraindo abdutores e glúteos.",
+        "url": "https://www.youtube.com/watch?v=A7BzMkvbGSY",
+        "cover": ""
+    },
+    {
+        "nome": "Abdução com Caneleira",
+        "grupo": "abdutores",
+        "informacoes": "De pé ou de lado, eleve a perna lateralmente com caneleira para ativar abdutores e glúteos.",
+        "url": "https://www.youtube.com/watch?v=KSjVpHvJhLo",
+        "cover": ""
+    }
+]
+

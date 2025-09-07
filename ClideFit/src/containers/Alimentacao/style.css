@@ -1037,12 +1037,10 @@ body {
 }
 
 .addalmbtn button {
-  background-color: white;
   border-radius: 6px;
   padding: 4%;
   padding-bottom: 2%;
   padding-top: 2%;
-  border: none;
   font-weight: bold;
 }
 
@@ -1394,4 +1392,18 @@ body {
 
 .sugestao-item.loading {
   opacity: 0.5;
+}
+
+.addalmbtn button{
+  cursor: pointer;
+  border: #ffffff solid 1px;
+  color: #ffffff;
+  background-color: #1e1e1e;
+}
+
+.addalmbtn button:hover {
+  cursor: pointer;
+  border: #ffffff solid 1px;
+  color: #1e1e1e;
+  background-color: #ffffff;
 }
