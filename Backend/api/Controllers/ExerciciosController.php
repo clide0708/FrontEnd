@@ -164,5 +164,67 @@
                 echo json_encode(['success' => false, 'error' => 'Erro ao deletar exercício: ' . $e->getMessage()]);
             }
         }
+
+        // Novo método para buscar exercício com vídeos
+        public function buscarExercicioComVideos($tipo, $id) {
+            /*
+            $tipo: 'normal' ou 'adaptado'
+            $id: idExercicio ou idExercAdaptado
+            Retorna dados do exercício + array de vídeos associados
+            */
+
+            try {
+                if ($tipo === 'normal') {
+                    // Busca exercício normal
+                    $stmtEx = $this->db->prepare("SELECT * FROM exercicios WHERE idExercicio = ?");
+                    $stmtEx->execute([$id]);
+                    $exercicio = $stmtEx->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$exercicio) {
+                        http_response_code(404);
+                        echo json_encode(['success' => false, 'error' => 'Exercício não encontrado']);
+                        return;
+                    }
+
+                    // Busca vídeos associados
+                    $stmtVid = $this->db->prepare("SELECT * FROM videos WHERE idExercicio = ?");
+                    $stmtVid->execute([$id]);
+                    $videos = $stmtVid->fetchAll(PDO::FETCH_ASSOC);
+
+                } elseif ($tipo === 'adaptado') {
+                    // Busca exercício adaptado
+                    $stmtEx = $this->db->prepare("SELECT * FROM exercadaptados WHERE idExercAdaptado = ?");
+                    $stmtEx->execute([$id]);
+                    $exercicio = $stmtEx->fetch(PDO::FETCH_ASSOC);
+
+                    if (!$exercicio) {
+                        http_response_code(404);
+                        echo json_encode(['success' => false, 'error' => 'Exercício adaptado não encontrado']);
+                        return;
+                    }
+
+                    // Busca vídeos associados
+                    $stmtVid = $this->db->prepare("SELECT * FROM videos WHERE idExercAdaptado = ?");
+                    $stmtVid->execute([$id]);
+                    $videos = $stmtVid->fetchAll(PDO::FETCH_ASSOC);
+
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'Tipo inválido. Use "normal" ou "adaptado".']);
+                    return;
+                }
+
+                // Retorna exercício + vídeos
+                http_response_code(200);
+                echo json_encode([
+                    'success' => true,
+                    'exercicio' => $exercicio,
+                    'videos' => $videos
+                ]);
+            } catch (PDOException $e) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Erro ao buscar exercício com vídeos: ' . $e->getMessage()]);
+            }
+        }
     }
 ?>

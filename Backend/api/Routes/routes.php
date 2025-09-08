@@ -4,6 +4,7 @@
 
     // Define as rotas do sistema
     $routes = [
+
         // Rotas para Cadastro
         'cadastro/aluno' => [
             'controller' => 'CadastroController',
@@ -85,6 +86,149 @@
             'controller' => 'ExerciciosController',
             'method' => 'deletarExercicio'
         ],
+        'exercicios/listarGruposMusculares' => [
+            'controller' => 'ExerciciosController',
+            'method' => 'listarGruposMusculares'
+        ],        
+
+        // Rota para buscar exercício com vídeos
+        'exercicios/exercicioComVideos/(\w+)/(\d+)' => [
+            'controller' => 'ExerciciosController',
+            'method' => 'buscarExercicioComVideos'
+        ],
+        // Exemplo de chamada exercícios normais: GET /exercicios/exercicioComVideos/normal/1
+        // Exemplo de chamada exercícios adaptados: GET /exercicios/exercicioComVideos/adaptado/2
+
+        // Rotas para TreinosController
+        'treinos/criar' => [
+            'controller' => 'TreinosController',
+            'method' => 'criarTreino'
+        ],
+        // Exemplo de chamada:
+        // POST /treinos/criar
+        // {
+        //     "nome": "Treino de Peito",
+        //     "tipo": "Musculação",
+        //     "criadoPor": "personal@example.com",
+        //     "idAluno": 1,
+        //     "idPersonal": 1,
+        //     "descricao": "Treino focado em peitoral",
+        //     "exercicios": [
+        //         {
+        //             "idExercicio": 1,
+        //             "series": 3,
+        //             "repeticoes": 12,
+        //             "carga": 40.5,
+        //             "ordem": 1,
+        //             "observacoes": "Fazer com controle"
+        //         },
+        //         {
+        //             "idExercAdaptado": 2,
+        //             "series": 4,
+        //             "repeticoes": 10,
+        //             "carga": 0,
+        //             "ordem": 2,
+        //             "observacoes": "Adaptado para lesão"
+        //         }
+        //     ]
+        // }
+
+        'treinos/atualizar/(\d+)' => [
+            'controller' => 'TreinosController',
+            'method' => 'atualizarTreino'
+        ],
+        // Exemplo de chamada: PUT /treinos/atualizar/123
+        // Corpo:  {
+        //             "nome": "Treino de Peito Atualizado",
+        //             "tipo": "Musculação",
+        //             "descricao": "Treino revisado",
+        //             "exercicios": [
+        //                 {
+        //                     "idExercicio": 1,
+        //                     "series": 4,
+        //                     "repeticoes": 10,
+        //                     "carga": 45.0,
+        //                     "ordem": 1,
+        //                     "observacoes": "Aumentar carga"
+        //                 }
+        //             ]
+        //         }
+        
+        'treinos/buscarExercicios' => [
+            'controller' => 'TreinosController',
+            'method' => 'buscarExercicios'
+        ],
+        // Exemplo de chamada: POST /treinos/buscarExercicios
+        // Corpo: {
+        //              "nome": "supino",
+        //              "grupoMuscular": "peitoral"
+        //         }
+
+        // Rota para listar treinos do usuário autenticado
+        'treinos/listarUsuario' => [
+            'controller' => 'TreinosController',
+            'method' => 'listarTreinosUsuario'
+        ],
+        // Exemplo de chamada: 
+        // POST /treinos/listarUsuario
+        // Corpo: {
+        //              "tipo": "aluno",
+        //              "id": 1,
+        //              "email": "aluno@example.com"
+        //         }
+
+        
+        'treinos/atribuirAluno' => [
+            'controller' => 'TreinosController',
+            'method' => 'atribuirTreinoAluno'
+        ],
+        // Exemplo de chamada:
+        // POST /treinos/atribuirAluno
+        // {
+        //     "idTreino": 123,
+        //     "idAluno": 2
+        // }
+
+        'treinos/excluir/(\d+)' => [
+            'controller' => 'TreinosController',
+            'method' => 'excluirTreino'
+        ],
+        // Exemplo de chamada:
+        // DELETE /treinos/excluir/123
+        // {
+        //     "tipo": "personal",
+        //     "id": 1,
+        //     "email": "personal@example.com"
+        // }
+
+        // Rota para buscar treino completo com exercícios e vídeos
+        'treinos/buscarCompleto/(\d+)' => [
+            'controller' => 'TreinosController',
+            'method' => 'buscarTreinoCompleto'
+        ],
+        // Exemplo de chamada: GET /treinos/buscarCompleto/123
+
+        // Rotas para Alimentos
+        'alimentos/listar' => [
+            'controller' => 'AlimentosController',
+            'method' => 'listarAlimentos'
+        ],
+        'alimentos/adicionar' => [
+            'controller' => 'AlimentosController',
+            'method' => 'addAlimento'
+        ],
+        'alimentos/remover' => [
+            'controller' => 'AlimentosController',
+            'method' => 'rmvAlimento'
+        ],
+        'alimentos/atualizar' => [
+            'controller' => 'AlimentosController',
+            'method' => 'updAlimento'
+        ],
+        'alimentos/totais' => [
+            'controller' => 'AlimentosController',
+            'method' => 'listarTotais'
+        ],
 
         // Rota para testar conexão
         'config/testarConexao' => [
@@ -99,6 +243,8 @@
         'AuthController' => __DIR__ . '/../Controllers/AuthController.php',
         'ExerciciosController' => __DIR__ . '/../Controllers/ExerciciosController.php',
         'ConfigController' => __DIR__ . '/../Config/ConfigController.php',
+        'AlimentosController' => __DIR__ . '/../Controllers/AlimentosController.php',
+        'TreinosController' => __DIR__ . '/../Controllers/TreinosController.php',
     ];
 
     // Função para despachar a requisição
