@@ -233,13 +233,12 @@
   width: 800px;
   margin: auto;
   margin-top: 0px;
-  height: 692px;
+  height: 620px;
   padding: 30px;
   padding-bottom: 0px;
 }
 
 .lista-exercicios {
-  margin: auto;
   position: block;
   width: 100%;
   height: 500px;
@@ -261,7 +260,7 @@
   width: 100%;
   padding-right: 10px;
   font-size: 120%;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .editor-exercicio {
@@ -269,7 +268,7 @@
   padding: 60px;
   display: flex;
   flex-direction: column;
-  width: 700px;
+  width: 500px;
   background-color: #27292a;
   box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
 }
@@ -311,16 +310,17 @@
 }
 
 .lista-exercicios ul {
-  justify-content: center;
   display: flex;
   flex-direction: column;
   min-height: 350px;
   max-height: 350px;
   overflow-y: auto;
   padding: 4px;
+  padding-top: 40px;
   margin: 4px;
   width: 90%;
   margin-left: 10%;
+  border-top: 3px solid white;
 }
 
 .treino-detalhes button {
@@ -413,13 +413,79 @@
   cursor: pointer;
 }
 
-.popopoptata p{
+.popopoptata p {
   margin-left: 20px;
   margin-bottom: 10px;
   font-size: 100%;
 }
 
-.popopoptata h3{
-  margin-left: 20px;;
+.popopoptata h3 {
+  margin-left: 20px;
+  ;
   margin-top: 10px;
+}
+
+.lista-exercicios h2 {
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+
+.editor-exercicio {
+  width: 700px;
+}
+
+.treino-content {
+  width: 1000px;
+}
+
+.lista-exercicios {
+  width: 500px;
+}
+
+.headertrn h3 {
+  color: white;
+  text-align: left;
+  padding-left: 7px;
+  font-size: 250%;
+  border-left: 8px solid #368DD9;
+  margin-top: 0px;
+  width: 580px;
+}
+
+.headertrn h2 {
+  color: white;
+  width: 420px;
+  text-align: center;
+  font-size: 200%;
+}
+
+.headertrn {
+  width: 1000px;
+  display: flex;
+}
+
+.lista-exercicios ul li {
+  width: 100%;
+  font-size: 150%;
+  font-weight: bold;
+}
+
+.editar-treino-container button {
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  padding: 10px;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 150px;
+}
+
+.editar-treino-container button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
 }
