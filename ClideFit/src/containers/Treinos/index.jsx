@@ -16,6 +16,7 @@ const treinosJSON = {
           repeticoes: 12,
           peso: 20,
           descanso: 60,
+          desc: "galilili",
         },
         {
           id: 2,
@@ -24,6 +25,7 @@ const treinosJSON = {
           repeticoes: 10,
           peso: 40,
           descanso: 90,
+          desc: "galilili",
         },
         {
           id: 3,
@@ -32,6 +34,7 @@ const treinosJSON = {
           repeticoes: 15,
           peso: 15,
           descanso: 45,
+          desc: "galilili",
         },
       ],
     },
@@ -47,6 +50,7 @@ const treinosJSON = {
           repeticoes: 12,
           peso: 30,
           descanso: 60,
+          desc: "galilili",
         },
         {
           id: 2,
@@ -55,6 +59,7 @@ const treinosJSON = {
           repeticoes: 8,
           peso: 50,
           descanso: 120,
+          desc: "galilili",
         },
       ],
     },
@@ -84,6 +89,7 @@ const treinosJSON = {
           repeticoes: 20,
           peso: 0,
           descanso: 30,
+          desc: "galilili",
         },
         {
           id: 2,
@@ -92,6 +98,7 @@ const treinosJSON = {
           repeticoes: 15,
           peso: 0,
           descanso: 60,
+          desc: "galilili",
         },
       ],
     },
@@ -109,6 +116,7 @@ const treinosJSON = {
           repeticoes: 20,
           peso: 0,
           descanso: 120,
+          desc: "galilili",
         },
         {
           id: 2,
@@ -117,6 +125,7 @@ const treinosJSON = {
           repeticoes: 25,
           peso: 0,
           descanso: 45,
+          desc: "galilili",
         },
       ],
     },
@@ -146,7 +155,7 @@ function Treinos() {
     <div className="treinos-container">
       {/* coluna da esquerda */}
       <div className="PT1">
-        <h1>Treinos</h1>
+        <h2>{activeTab}</h2>
         <div className="navlinktn">
           {["Meus Treinos", "Personal", "MarketPlace"].map((tab) => (
             <a
@@ -165,20 +174,19 @@ function Treinos() {
           ))}
         </div>
         <div className="ststn">
-          <div className="pflidc fufufa">
-            <ul>
-              <li>
-                Personal <span>Gustavo</span>
-              </li>
-              <li>
-                Treinos concluídos <span>23</span>
-              </li>
-              <li>
-                Teste <span></span>
-              </li>
-            </ul>
-            <button>Criar novo Treino</button>
-          </div>
+          {/* só mostra esse bloco se não tiver treino selecionado */}
+          {!selectedTreino && (
+            <div className="pflidc fufufa">
+              <button>Criar novo Treino</button>
+            </div>
+          )}
+
+          {/* botão iniciar treino quando tiver treino selecionado */}
+          {selectedTreino && (
+            <div className="iniciar-treino-container">
+              <button>Começar</button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -187,7 +195,6 @@ function Treinos() {
         {/* se não clicou em treino → mostra cards */}
         {!selectedTreino ? (
           <>
-            <h2>{activeTab}</h2>
             <div className="containertnvw">
               {treinosJSON[activeTab].map((treino) => (
                 <div
@@ -208,60 +215,67 @@ function Treinos() {
           <>
             {/* detalhes do treino */}
             <div className="treino-detalhes">
-              <h2>{selectedTreino.nome}</h2>
               <button onClick={() => setSelectedTreino(null)}>← Voltar</button>
+              <h2>{selectedTreino.nome}</h2>
             </div>
-
             <div className="treino-content">
               {/* editor de exercício */}
-              {selectedExercicio && (
-                <div className="editor-exercicio">
-                  <h3>{selectedExercicio.nome}</h3>
-                  <label>
-                    Séries:
-                    <input
-                      type="number"
-                      value={selectedExercicio.series}
-                      onChange={(e) =>
-                        handleEditChange("series", parseInt(e.target.value))
-                      }
-                    />
-                  </label>
-                  <label>
-                    Repetições:
-                    <input
-                      type="number"
-                      value={selectedExercicio.repeticoes}
-                      onChange={(e) =>
-                        handleEditChange("repeticoes", parseInt(e.target.value))
-                      }
-                    />
-                  </label>
-                  <label>
-                    Peso (kg):
-                    <input
-                      type="number"
-                      value={selectedExercicio.peso}
-                      onChange={(e) =>
-                        handleEditChange("peso", parseFloat(e.target.value))
-                      }
-                    />
-                  </label>
-                  <label>
-                    Descanso (s):
-                    <input
-                      type="number"
-                      value={selectedExercicio.descanso}
-                      onChange={(e) =>
-                        handleEditChange("descanso", parseInt(e.target.value))
-                      }
-                    />
-                  </label>
-                </div>
-              )}
+              <div className="editor-exercicio">
+                {selectedExercicio ? (
+                  <>
+                    <h3>{selectedExercicio.nome}</h3>
+                    <label>
+                      Séries:
+                      <input
+                        type="number"
+                        value={selectedExercicio.series}
+                        onChange={(e) =>
+                          handleEditChange("series", parseInt(e.target.value))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Repetições:
+                      <input
+                        type="number"
+                        value={selectedExercicio.repeticoes}
+                        onChange={(e) =>
+                          handleEditChange(
+                            "repeticoes",
+                            parseInt(e.target.value)
+                          )
+                        }
+                      />
+                    </label>
+                    <label>
+                      Peso (kg):
+                      <input
+                        type="number"
+                        value={selectedExercicio.peso}
+                        onChange={(e) =>
+                          handleEditChange("peso", parseFloat(e.target.value))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Descanso (s):
+                      <input
+                        type="number"
+                        value={selectedExercicio.descanso}
+                        onChange={(e) =>
+                          handleEditChange("descanso", parseInt(e.target.value))
+                        }
+                      />
+                    </label>
+
+                    <h4 className="desctrn">{selectedExercicio.desc}</h4>
+                  </>
+                ) : (
+                  <p>Selecione um exercício</p>
+                )}
+              </div>
               {/* lista de exercícios */}
               <div className="lista-exercicios">
-                <h3>Exercícios</h3>
                 <ul>
                   {selectedTreino.exercicios.length > 0 ? (
                     selectedTreino.exercicios.map((ex) => (
@@ -275,6 +289,9 @@ function Treinos() {
                         }
                       >
                         {ex.nome}
+                        <a className="dltaex" href="">
+                          X
+                        </a>
                       </li>
                     ))
                   ) : (
