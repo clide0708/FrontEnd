@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 08-Set-2025 às 00:57
+-- Tempo de geração: 08-Set-2025 às 02:39
 -- Versão do servidor: 8.0.31
 -- versão do PHP: 8.0.26
 
@@ -42,6 +42,11 @@ CREATE TABLE IF NOT EXISTS `agendamentos` (
   KEY `FK_Agend_Personal` (`idPersonal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `agendamentos`
+--
+
+TRUNCATE TABLE `agendamentos`;
 -- --------------------------------------------------------
 
 --
@@ -58,6 +63,11 @@ CREATE TABLE IF NOT EXISTS `agua` (
   KEY `FK_Agua_Aluno` (`idaluno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `agua`
+--
+
+TRUNCATE TABLE `agua`;
 -- --------------------------------------------------------
 
 --
@@ -84,6 +94,11 @@ CREATE TABLE IF NOT EXISTS `alunos` (
   KEY `FK_Alunos_Personal` (`idPersonal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `alunos`
+--
+
+TRUNCATE TABLE `alunos`;
 -- --------------------------------------------------------
 
 --
@@ -100,6 +115,11 @@ CREATE TABLE IF NOT EXISTS `exercadaptados` (
   PRIMARY KEY (`idExercAdaptado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `exercadaptados`
+--
+
+TRUNCATE TABLE `exercadaptados`;
 -- --------------------------------------------------------
 
 --
@@ -116,6 +136,11 @@ CREATE TABLE IF NOT EXISTS `exercicios` (
   PRIMARY KEY (`idExercicio`)
 ) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `exercicios`
+--
+
+TRUNCATE TABLE `exercicios`;
 --
 -- Extraindo dados da tabela `exercicios`
 --
@@ -252,6 +277,11 @@ CREATE TABLE IF NOT EXISTS `itens_refeicao` (
   KEY `id_tipo_refeicao` (`id_tipo_refeicao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `itens_refeicao`
+--
+
+TRUNCATE TABLE `itens_refeicao`;
 -- --------------------------------------------------------
 
 --
@@ -271,6 +301,11 @@ CREATE TABLE IF NOT EXISTS `nutrientes` (
   UNIQUE KEY `alimento_id` (`alimento_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `nutrientes`
+--
+
+TRUNCATE TABLE `nutrientes`;
 -- --------------------------------------------------------
 
 --
@@ -299,6 +334,11 @@ CREATE TABLE IF NOT EXISTS `personal` (
   UNIQUE KEY `uq_rg` (`rg`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `personal`
+--
+
+TRUNCATE TABLE `personal`;
 -- --------------------------------------------------------
 
 --
@@ -313,6 +353,11 @@ CREATE TABLE IF NOT EXISTS `refeicoes_tipos` (
   UNIQUE KEY `nome_tipo` (`nome_tipo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `refeicoes_tipos`
+--
+
+TRUNCATE TABLE `refeicoes_tipos`;
 -- --------------------------------------------------------
 
 --
@@ -331,6 +376,32 @@ CREATE TABLE IF NOT EXISTS `solicitacoes` (
   KEY `FK_Aluno_Solicit` (`idAluno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `solicitacoes`
+--
+
+TRUNCATE TABLE `solicitacoes`;
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `traducoes_alimentos`
+--
+
+DROP TABLE IF EXISTS `traducoes_alimentos`;
+CREATE TABLE IF NOT EXISTS `traducoes_alimentos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `termo_ingles` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `termo_portugues` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `termo_ingles` (`termo_ingles`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Truncar tabela antes do insert `traducoes_alimentos`
+--
+
+TRUNCATE TABLE `traducoes_alimentos`;
 -- --------------------------------------------------------
 
 --
@@ -353,6 +424,11 @@ CREATE TABLE IF NOT EXISTS `treinos` (
   KEY `FK_Aluno_treino` (`idAluno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `treinos`
+--
+
+TRUNCATE TABLE `treinos`;
 -- --------------------------------------------------------
 
 --
@@ -370,6 +446,11 @@ CREATE TABLE IF NOT EXISTS `treinospersonal` (
   KEY `FK_Treino_nomePersonal` (`nomePersonal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `treinospersonal`
+--
+
+TRUNCATE TABLE `treinospersonal`;
 -- --------------------------------------------------------
 
 --
@@ -395,6 +476,11 @@ CREATE TABLE IF NOT EXISTS `treino_exercicio` (
   KEY `FK_Treino_ExercAdaptado` (`idExercAdaptado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `treino_exercicio`
+--
+
+TRUNCATE TABLE `treino_exercicio`;
 -- --------------------------------------------------------
 
 --
@@ -413,6 +499,11 @@ CREATE TABLE IF NOT EXISTS `videos` (
   KEY `FK_Video_ExercAdaptado` (`idExercAdaptado`)
 ) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Truncar tabela antes do insert `videos`
+--
+
+TRUNCATE TABLE `videos`;
 --
 -- Extraindo dados da tabela `videos`
 --

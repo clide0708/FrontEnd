@@ -1,0 +1,425 @@
+.treinos-container {
+  display: flex;
+  width: 1200px;
+  margin: auto;
+  height: 800px;
+  margin-top: 40px;
+}
+
+.PT1 {
+  width: 300px;
+  background-color: transparent;
+  padding: 20px;
+  border-radius: 20px;
+  height: 700px;
+}
+
+.PT1 h1 {
+  font-size: 200%;
+  height: auto;
+  color: white;
+  text-align: center;
+}
+
+.PT2 {
+  margin-left: auto;
+  flex-direction: column;
+  display: flex;
+  justify-content: right;
+  width: 950px;
+  height: auto;
+  padding-left: 50px;
+}
+
+.navlinktn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: auto;
+  text-align: center;
+  justify-content: center;
+  height: 259px;
+}
+
+.navlinktn a {
+  color: white;
+  text-decoration: none;
+  font-size: 120%;
+}
+
+.ststn {
+  width: 100%;
+  height: 350px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.containertnvw {
+  margin-top: 50px;
+  width: 1000px;
+  max-height: 700px;
+  background-color: #27292a;
+  border-radius: 30px;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.PT1 h2 {
+  color: white;
+  text-align: left;
+  padding-left: 7px;
+  font-size: 200%;
+  border-left: 5px solid #368DD9;
+  margin-top: 0px;
+  width: 100%;
+}
+
+
+.fufufa {
+  box-shadow: none;
+  width: 100%;
+  background-color: transparent;
+  justify-content: end;
+}
+
+/* links da esquerda */
+.navlinktn a {
+  text-decoration: none;
+  color: #ccc;
+  margin-right: 20px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navlinktn a:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* link ativo */
+.navlinktn a.active {
+  background-color: #368DD9;
+  color: #fff;
+}
+
+/* container dos treinos */
+.containertnvw {
+  gap: 12px;
+  padding: 10px;
+  max-width: 800px;
+  max-height: 780px;
+  overflow-y: auto;
+}
+
+/* barra de rolagem webpik */
+.containertnvw::-webkit-scrollbar {
+  width: 9px;
+}
+
+.containertnvw::-webkit-scrollbar-track {
+  border-radius: 0px;
+}
+
+.containertnvw::-webkit-scrollbar-thumb {
+  background-color: #368DD9;
+  border-radius: 0px;
+  border: 1px solid #1e1e2f;
+}
+
+/* card do treino */
+.treino-card {
+  margin-bottom: 8px;
+  margin-top: 8px;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  height: 120px;
+  /* altura fixa */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.treino-card:hover {
+  transform: translateY(-2px);
+  border: 2px solid #368DD9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* botão de delete */
+.treino-card .delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 14px;
+}
+
+.treino-card .delete-btn:hover {
+  background-color: #ff1a1a;
+}
+
+/* título e descrição */
+.treino-card h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.treino-card p {
+  font-size: 12px;
+  color: #ccc;
+  margin: 0;
+}
+
+.popopoptata {
+  margin: 10px;
+  background-color: #1e1e1e;
+}
+
+.popopoptata h3 {
+  color: white;
+  font-size: 200%;
+}
+
+.fufufa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fufufa button {
+  margin-top: 20px;
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  padding: 4%;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.fufufa ul {
+  width: 100%;
+  padding-bottom: 50px;
+}
+
+.fufufa button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.treino-content {
+  padding-right: 0px;
+  justify-content: right;
+  display: flex;
+  width: 800px;
+  margin: auto;
+  margin-top: 0px;
+  height: 692px;
+  padding: 30px;
+  padding-bottom: 0px;
+}
+
+.lista-exercicios {
+  margin: auto;
+  position: block;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lista-exercicios h3 {
+  color: white;
+  font-size: 170%;
+  width: 100%;
+  margin-left: 10%;
+  text-align: right;
+  margin-bottom: 40px;
+}
+
+.lista-exercicios li {
+  text-align: right;
+  width: 100%;
+  padding-right: 10px;
+  font-size: 120%;
+  margin-bottom: 10px;
+}
+
+.editor-exercicio {
+  border-radius: 20px;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  width: 700px;
+  background-color: #27292a;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.editor-exercicio h3 {
+  border-left: 8px solid #368DD9;
+  padding-left: 4%;
+  font-size: 150%;
+  width: 100%;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.editor-exercicio label {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.desctrn {
+  width: 100%;
+  margin-top: 50px;
+  padding-top: 10px;
+  border-top: 2px solid white;
+  font-weight: 300;
+}
+
+.active-exercicio {
+  color: #368DD9;
+}
+
+.lista-exercicios li:hover {
+  color: #8f8f8f;
+  cursor: pointer;
+}
+
+.active-exercicio li:hover {
+  color: #1363a8;
+}
+
+.lista-exercicios ul {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 4px;
+  margin: 4px;
+  width: 90%;
+  margin-left: 10%;
+}
+
+.treino-detalhes button {
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 80%;
+  padding: 7px;
+  margin-top: 25px;
+  margin-left: 60px;
+  font-weight: bold;
+}
+
+
+.treino-detalhes button:hover {
+  background-color: #368DD9;
+  border: #368DD9 2px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+
+.dltaex {
+  padding-left: 7px;
+  color: white;
+}
+
+.dltaex:hover {
+  color: #d93636;
+}
+
+.lista-exercicios p {
+  text-align: right;
+}
+
+.treino-detalhes {
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  justify-content: space-between;
+  border-bottom: white 2px solid;
+  padding-bottom: 20px;
+  margin-bottom: 2px;
+}
+
+.treino h2 {
+  width: 90%;
+}
+
+.fufufa button {
+  margin-top: 20px;
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  padding: 4%;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.fufufa button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.iniciar-treino-container button {
+  margin-top: 180px;
+  background-color: transparent;
+  border: #36d975 2px solid;
+  padding: 20px;
+  color: #36d975;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  width: 100%;
+}
+
+.iniciar-treino-container button:hover {
+  background-color: #36d975;
+  border: #36d975 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.popopoptata p{
+  margin-left: 20px;
+  margin-bottom: 10px;
+  font-size: 100%;
+}
+
+.popopoptata h3{
+  margin-left: 20px;;
+  margin-top: 10px;
+}
