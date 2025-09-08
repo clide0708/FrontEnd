@@ -1,9 +1,13 @@
 import { useState } from "react";
-import "./style.css"
+import AddExercicio from "./addExercicio";
+import Treino from "./treinando";
+import "./style.css";
 
-function EditarTreino({ treino, onVoltar }) {
-  const [selectedExercicio, setSelectedExercicio] = useState(null);
+export default function EditarTreino({ treino, onVoltar }) {
   const [currentTreino, setCurrentTreino] = useState(treino);
+  const [selectedExercicio, setSelectedExercicio] = useState(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [iniciou, setIniciou] = useState(false); // controla tela de treino
 
   const handleEditChange = (field, value) => {
     if (!selectedExercicio) return;
@@ -18,20 +22,42 @@ function EditarTreino({ treino, onVoltar }) {
     }));
   };
 
+  const handleRemoveExercicio = (id) => {
+    setCurrentTreino((prev) => ({
+      ...prev,
+      exercicios: prev.exercicios.filter((ex) => ex.id !== id),
+    }));
+    if (selectedExercicio?.id === id) setSelectedExercicio(null);
+  };
+
+  const handleAddExercicio = (novoEx) => {
+    setCurrentTreino((prev) => ({
+      ...prev,
+      exercicios: [...prev.exercicios, novoEx],
+    }));
+  };
+
+  // se iniciou treino, renderiza a tela Treino
+  if (iniciou) {
+    return <Treino treino={currentTreino} />;
+  }
+
   return (
     <div className="editar-treino-container">
-      <button onClick={onVoltar}>← Voltar</button>
-      <h2>{currentTreino.nome}</h2>
+      <div className="btnhd">
+        <button onClick={onVoltar}>← Voltar</button>
+        <h2>{currentTreino.nome}</h2>
+      </div>
 
       <div className="headertrn">
-        {selectedExercicio ? (
-          <>
-            <h3>{selectedExercicio.nome}</h3>
-
-          </>
-        ) : null}
+        <h3>
+          {selectedExercicio
+            ? selectedExercicio.nome
+            : "Selecione um exercício"}
+        </h3>
         <h2>Exercícios</h2>
       </div>
+
       <div className="treino-content">
         <div className="editor-exercicio">
           {selectedExercicio ? (
@@ -76,38 +102,66 @@ function EditarTreino({ treino, onVoltar }) {
                   }
                 />
               </label>
-
-              <h4 className="desctrn">{selectedExercicio.desc}</h4>
+              {selectedExercicio.informacoes && (
+                <p>{selectedExercicio.informacoes}</p>
+              )}
+              {selectedExercicio.url && (
+                <a
+                  href={selectedExercicio.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Vídeo
+                </a>
+              )}
             </>
           ) : (
-            <p>Selecione um exercício</p>
+            <h1>Selecione um exercício para editar</h1>
           )}
         </div>
+
         <div className="lista-exercicios">
           <ul>
             {currentTreino.exercicios.length > 0 ? (
               currentTreino.exercicios.map((ex) => (
                 <li
                   key={ex.id}
+                  className={
+                    selectedExercicio?.id === ex.id ? "active-exercicio" : ""
+                  }
                   onClick={() => setSelectedExercicio(ex)}
-                  className={selectedExercicio?.id === ex.id ? "active-exercicio" : ""}
                 >
                   {ex.nome}
-                  {selectedExercicio?.id === ex.id && (
-                    <a className="dltaex" href="#">
-                      X
-                    </a>
-                  )}
+                  <a
+                    className="dltaex"
+                    onClick={() => handleRemoveExercicio(ex.id)}
+                  >
+                    X
+                  </a>
                 </li>
               ))
             ) : (
-              <p>Nenhum exercício cadastrado.</p>
+              <p>Nenhum exercício ainda.</p>
             )}
           </ul>
+
+          <div className="ftltex">
+            <button className="addexbtn" onClick={() => setShowAdd(true)}>
+              Adicionar exercício +
+            </button>
+            <div className="bttcmc">
+              <button onClick={() => setIniciou(true)}>Iniciar</button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {showAdd && (
+        <AddExercicio
+          onAdd={handleAddExercicio}
+          onClose={() => setShowAdd(false)}
+        />
+      )}
     </div>
   );
 }
-
-export default EditarTreino;

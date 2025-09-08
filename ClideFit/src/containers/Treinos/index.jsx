@@ -1,12 +1,50 @@
+// src/components/Treinos.jsx
 import { useState } from "react";
 import "./style.css";
 import EditarTreino from "./editTreino";
+import ModalAddTreino from "./addTreino";
 
-const treinosJSON = { "Meus Treinos": [{ id: 1, nome: "Treino A", descricao: "Descrição do treino A", exercicios: [{ id: 1, nome: "Supino Reto", series: 3, repeticoes: 12, peso: 20, descanso: 60, desc: "galilili", }, { id: 2, nome: "Agachamento", series: 4, repeticoes: 10, peso: 40, descanso: 90, desc: "galilili", }, { id: 3, nome: "Rosca Direta", series: 3, repeticoes: 15, peso: 15, descanso: 45, desc: "galilili", },], }, { id: 2, nome: "Treino B", descricao: "Descrição do treino B", exercicios: [{ id: 1, nome: "Puxada Aberta", series: 4, repeticoes: 12, peso: 30, descanso: 60, desc: "galilili", }, { id: 2, nome: "Levantamento Terra", series: 3, repeticoes: 8, peso: 50, descanso: 120, desc: "galilili", },], }, { id: 3, nome: "Treino C", descricao: "Descrição do treino C", exercicios: [], }, { id: 4, nome: "Treino D", descricao: "Descrição do treino D", exercicios: [], },], Personal: [{ id: 1, nome: "Treino Personal X", descricao: "Descrição do treino X", exercicios: [{ id: 1, nome: "Flexão de Braço", series: 3, repeticoes: 20, peso: 0, descanso: 30, desc: "galilili", }, { id: 2, nome: "Burpee", series: 4, repeticoes: 15, peso: 0, descanso: 60, desc: "galilili", },], },], MarketPlace: [{ id: 1, nome: "Treino Marketplace 1", descricao: "Descrição do treino 1", exercicios: [{ id: 1, nome: "Corrida", series: 1, repeticoes: 20, peso: 0, descanso: 120, desc: "galilili", }, { id: 2, nome: "Abdominal", series: 4, repeticoes: 25, peso: 0, descanso: 45, desc: "galilili", },], },], };
+const treinosJSON = {
+  "Meus Treinos": [
+    {
+      id: 1,
+      nome: "Treino A",
+      descricao: "Descrição do treino A",
+      exercicios: [],
+    },
+  ],
+  Personal: [],
+  MarketPlace: [],
+};
 
 function Treinos() {
   const [activeTab, setActiveTab] = useState("Meus Treinos");
   const [selectedTreino, setSelectedTreino] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [treinoEditando, setTreinoEditando] = useState(null);
+  const [treinos, setTreinos] = useState(treinosJSON);
+
+  const handleSaveTreino = (novoTreino) => {
+    setTreinos((prev) => {
+      const lista = prev[activeTab];
+      const index = lista.findIndex((t) => t.id === novoTreino.id);
+
+      let novaLista;
+      if (index >= 0) {
+        // edição
+        novaLista = [...lista];
+        novaLista[index] = novoTreino;
+      } else {
+        // criação
+        novaLista = [...lista, novoTreino];
+      }
+
+      return {
+        ...prev,
+        [activeTab]: novaLista,
+      };
+    });
+  };
 
   return (
     <div className="treinos-container">
@@ -34,12 +72,14 @@ function Treinos() {
             <div className="ststn">
               {!selectedTreino && (
                 <div className="pflidc fufufa">
-                  <button>Criar novo Treino</button>
-                </div>
-              )}
-              {selectedTreino && (
-                <div className="iniciar-treino-container">
-                  <button>Começar</button>
+                  <button
+                    onClick={() => {
+                      setTreinoEditando(null);
+                      setShowModal(true);
+                    }}
+                  >
+                    Criar novo Treino
+                  </button>
                 </div>
               )}
             </div>
@@ -48,22 +88,63 @@ function Treinos() {
           {/* Coluna direita */}
           <div className="PT2">
             <div className="containertnvw">
-              {treinosJSON[activeTab].map((treino) => (
-                <div
-                  key={treino.id}
-                  className={`treino-card popopoptata`}
-                  onClick={() => setSelectedTreino(treino)}
-                >
-                  <button className="delete-btn">🗑️</button>
-                  <h3>{treino.nome}</h3>
-                  <p>{treino.descricao}</p>
-                </div>
-              ))}
+              {treinos[activeTab].length === 0 ? (
+                <h1 className="ntnnnntast">Sem treinos atribuidos</h1>
+              ) : (
+                treinos[activeTab].map((treino) => (
+                  <div
+                    key={treino.id}
+                    className="treino-card popopoptata"
+                    onClick={() => setSelectedTreino(treino)}
+                  >
+                    <div className="card-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTreinoEditando(treino);
+                          setShowModal(true);
+                        }}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTreinos((prev) => ({
+                            ...prev,
+                            [activeTab]: prev[activeTab].filter(
+                              (t) => t.id !== treino.id
+                            ),
+                          }));
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                    <h3>{treino.nome}</h3>
+                    <p>{treino.descricao}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
+          
         </>
       ) : (
-        <EditarTreino treino={selectedTreino} onVoltar={() => setSelectedTreino(null)} />
+        <EditarTreino
+          treino={selectedTreino}
+          onVoltar={() => setSelectedTreino(null)}
+        />
+      )}
+
+      {showModal && (
+        <ModalAddTreino
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveTreino}
+          treino={treinoEditando}
+        />
       )}
     </div>
   );
