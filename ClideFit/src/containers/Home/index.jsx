@@ -1,4 +1,4 @@
-import React from "react";
+import banner from "./banner.jpg";
 import "./style.css";
 
 function Home() {
@@ -9,7 +9,17 @@ function Home() {
           <div className="col-lg-12">
             <div className="page-content">
               {/* ***** Banner Start ***** */}
-              <div className="main-banner">
+              <div
+                className="main-banner"
+                style={{
+                  backgroundImage: `url(${banner})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  padding: "100px 0",
+                  color: "white",
+                }}
+              >
                 <div className="row">
                   <div className="col-lg-7">
                     <div className="header-text">
