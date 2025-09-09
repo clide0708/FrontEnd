@@ -70,7 +70,8 @@ function Treinos() {
               ))}
             </div>
             <div className="ststn">
-              {!selectedTreino && (
+              {/* botão só aparece em Meus Treinos */}
+              {activeTab === "Meus Treinos" && !selectedTreino && (
                 <div className="pflidc fufufa">
                   <button
                     onClick={() => {
@@ -98,30 +99,36 @@ function Treinos() {
                     onClick={() => setSelectedTreino(treino)}
                   >
                     <div className="card-actions">
-                      <button
-                        className="edit-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setTreinoEditando(treino);
-                          setShowModal(true);
-                        }}
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setTreinos((prev) => ({
-                            ...prev,
-                            [activeTab]: prev[activeTab].filter(
-                              (t) => t.id !== treino.id
-                            ),
-                          }));
-                        }}
-                      >
-                        🗑️
-                      </button>
+                      {/* editar só permite em Meus Treinos */}
+                      {activeTab === "Meus Treinos" && (
+                        <button
+                          className="edit-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTreinoEditando(treino);
+                            setShowModal(true);
+                          }}
+                        >
+                          ✏️
+                        </button>
+                      )}
+                      {/* delete só permite em Meus Treinos */}
+                      {activeTab === "Meus Treinos" && (
+                        <button
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTreinos((prev) => ({
+                              ...prev,
+                              [activeTab]: prev[activeTab].filter(
+                                (t) => t.id !== treino.id
+                              ),
+                            }));
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      )}
                     </div>
                     <h3>{treino.nome}</h3>
                     <p>{treino.descricao}</p>
@@ -130,7 +137,6 @@ function Treinos() {
               )}
             </div>
           </div>
-          
         </>
       ) : (
         <EditarTreino
@@ -139,7 +145,7 @@ function Treinos() {
         />
       )}
 
-      {showModal && (
+      {showModal && activeTab === "Meus Treinos" && (
         <ModalAddTreino
           onClose={() => setShowModal(false)}
           onSave={handleSaveTreino}

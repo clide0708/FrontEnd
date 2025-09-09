@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AddExercicio from "./addExercicio";
-import Treino from "./treinando";
 import "./style.css";
 
 export default function EditarTreino({ treino, onVoltar }) {
   const [currentTreino, setCurrentTreino] = useState(treino);
   const [selectedExercicio, setSelectedExercicio] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
-  const [iniciou, setIniciou] = useState(false); // controla tela de treino
+
+  const navigate = useNavigate();
+
+  // auto seleciona o primeiro exercício se houver e nenhum estiver selecionado
+  useEffect(() => {
+    if (currentTreino.exercicios.length > 0 && !selectedExercicio) {
+      setSelectedExercicio(currentTreino.exercicios[0]);
+    } else if (currentTreino.exercicios.length === 0) {
+      setSelectedExercicio(null);
+    }
+  }, [currentTreino.exercicios, selectedExercicio]);
 
   const handleEditChange = (field, value) => {
     if (!selectedExercicio) return;
@@ -37,11 +47,6 @@ export default function EditarTreino({ treino, onVoltar }) {
     }));
   };
 
-  // se iniciou treino, renderiza a tela Treino
-  if (iniciou) {
-    return <Treino treino={currentTreino} />;
-  }
-
   return (
     <div className="editar-treino-container">
       <div className="btnhd">
@@ -50,9 +55,15 @@ export default function EditarTreino({ treino, onVoltar }) {
       </div>
 
       <div className="headertrn">
-        <h3>
+        <h3
+          className={
+            currentTreino.exercicios.length === 0 ? "empty-exercicio" : ""
+          }
+        >
           {selectedExercicio
             ? selectedExercicio.nome
+            : currentTreino.exercicios.length === 0
+            ? "" // sem texto se não tiver exercícios
             : "Selecione um exercício"}
         </h3>
         <h2>Exercícios</h2>
@@ -60,7 +71,9 @@ export default function EditarTreino({ treino, onVoltar }) {
 
       <div className="treino-content">
         <div className="editor-exercicio">
-          {selectedExercicio ? (
+          {currentTreino.exercicios.length === 0 ? (
+            <h1 className="asdoasd">Adicione um exercício</h1>
+          ) : selectedExercicio ? (
             <>
               <label>
                 Séries:
@@ -115,34 +128,28 @@ export default function EditarTreino({ treino, onVoltar }) {
                 </a>
               )}
             </>
-          ) : (
-            <h1>Selecione um exercício para editar</h1>
-          )}
+          ) : null}
         </div>
 
         <div className="lista-exercicios">
           <ul>
-            {currentTreino.exercicios.length > 0 ? (
-              currentTreino.exercicios.map((ex) => (
-                <li
-                  key={ex.id}
-                  className={
-                    selectedExercicio?.id === ex.id ? "active-exercicio" : ""
-                  }
-                  onClick={() => setSelectedExercicio(ex)}
+            {currentTreino.exercicios.map((ex) => (
+              <li
+                key={ex.id}
+                className={
+                  selectedExercicio?.id === ex.id ? "active-exercicio" : ""
+                }
+                onClick={() => setSelectedExercicio(ex)}
+              >
+                {ex.nome}
+                <a
+                  className="dltaex"
+                  onClick={() => handleRemoveExercicio(ex.id)}
                 >
-                  {ex.nome}
-                  <a
-                    className="dltaex"
-                    onClick={() => handleRemoveExercicio(ex.id)}
-                  >
-                    X
-                  </a>
-                </li>
-              ))
-            ) : (
-              <p>Nenhum exercício ainda.</p>
-            )}
+                  X
+                </a>
+              </li>
+            ))}
           </ul>
 
           <div className="ftltex">
@@ -150,7 +157,23 @@ export default function EditarTreino({ treino, onVoltar }) {
               Adicionar exercício +
             </button>
             <div className="bttcmc">
-              <button onClick={() => setIniciou(true)}>Iniciar</button>
+              <button
+                onClick={() =>
+                  navigate("/Treinos/treinando", {
+                    state: { treino: currentTreino },
+                  })
+                }
+                disabled={currentTreino.exercicios.length === 0}
+                style={{
+                  opacity: currentTreino.exercicios.length === 0 ? 0.5 : 1,
+                  cursor:
+                    currentTreino.exercicios.length === 0
+                      ? "not-allowed"
+                      : "pointer",
+                }}
+              >
+                Iniciar
+              </button>
             </div>
           </div>
         </div>
