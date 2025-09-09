@@ -326,8 +326,9 @@ export default function Treino() {
                   <h1>repetições</h1>
                 </div>
                 <div className="peso">
-                  <span id="ex-peso">{ex.peso}</span> kg
+                  {ex.peso && ex.peso > 0 ? `${ex.peso} kg` : "\u00A0"}
                 </div>
+
                 <div className="controls">
                   <button
                     id="btn-avancar"

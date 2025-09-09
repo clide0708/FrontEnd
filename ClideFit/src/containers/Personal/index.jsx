@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./style.css";
 import clientesData from "./clientes.json";
+import { Pencil, Trash2, Plus } from "lucide-react"; // ícones bonitos
 
 function Personal() {
   const [clientes, setClientes] = useState(clientesData);
@@ -18,15 +19,12 @@ function Personal() {
 
     const treinoObj = { id: novoId, nome: novoTreino };
 
-    // atualiza o cliente selecionado
     const clienteAtualizado = {
       ...clienteSelecionado,
       treinos: [...clienteSelecionado.treinos, treinoObj],
     };
 
     setClienteSelecionado(clienteAtualizado);
-
-    // atualiza a lista de clientes
     setClientes(
       clientes.map((c) =>
         c.id === clienteSelecionado.id ? clienteAtualizado : c
@@ -102,38 +100,54 @@ function Personal() {
           </div>
 
           <div className="ClienteEX">
-            <h1>Treinos atribuídos</h1>
+            <div className="clte1">
+              <h1>Treinos atribuídos</h1>
 
-            <form onSubmit={adicionarTreino} style={{ marginBottom: "10px" }}>
-              <input
-                type="text"
-                placeholder="Novo treino"
-                value={novoTreino}
-                onChange={(e) => setNovoTreino(e.target.value)}
-              />
-              <button type="submit">Adicionar</button>
-            </form>
+              <div className="treinosGrid">
+                {clienteSelecionado.treinos.map((treino) => (
+                  <div className="treinoCard" key={treino.id}>
+                    <p>{treino.nome}</p>
+                    <div className="acoesTreino">
+                      <button
+                        onClick={() => apagarTreino(treino.id)}
+                        className="btnIcon delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="clte2">
+              <h1>Atribuir</h1>
 
-            <ul>
-              {clienteSelecionado.treinos.map((treino) => (
-                <li key={treino.id} style={{ marginBottom: "5px" }}>
-                  {treino.nome}{" "}
-                  <button onClick={() => editarTreino(treino.id)}>
-                    Editar
-                  </button>{" "}
-                  <button onClick={() => apagarTreino(treino.id)}>
-                    Apagar
-                  </button>
-                </li>
-              ))}
-            </ul>
+              <div className="treinosGridedede">
+                {clienteSelecionado.treinos.map((treino) => (
+                  <div className="treinoCard" key={treino.id}>
+                    <p>{treino.nome}</p>
+                    <div className="acoesTreino">
+                      <button
+                        onClick={() => apagarTreino(treino.id)}
+                        className="btnIcon delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="clttet">
+                <button>Criar Novo</button>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="SC2">
           <div className="SC2p1">
             <h4 style={{ textAlign: "center" }}>Seu link de convite</h4>
-              <h1>{`📄 https://clidefit.com/invite/${clienteSelecionado.id}`}</h1>
+            <h1>{`📄 https://clidefit.com/invite/${clienteSelecionado.id}`}</h1>
           </div>
 
           <div className="SC2p2">
@@ -147,7 +161,8 @@ function Personal() {
                     clienteSelecionado.id === cliente.id ? "selecionado" : ""
                   }
                 >
-                  <img className="imgpflpqn"
+                  <img
+                    className="imgpflpqn"
                     src={cliente.img || "/default-profile.png"}
                     alt="Perfil"
                   />

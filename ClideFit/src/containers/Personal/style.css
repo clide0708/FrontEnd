@@ -42,7 +42,7 @@
     margin-top: 20px;
 }
 
-.SC2 h1{
+.SC2 h1 {
     font-size: 150%;
     color: white;
     width: 100%;
@@ -50,7 +50,7 @@
     padding-top: 5%;
 }
 
-.SC2 h4{
+.SC2 h4 {
     margin-top: 2%;
 }
 
@@ -74,12 +74,16 @@
 }
 
 .lnCliente {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: #1e1f20;
+    margin-right: 5%;
+    padding: 4%;
     margin-left: 5%;
     display: flex;
-    width: 100%;
     align-items: center;
     gap: 50px;
     margin-top: 30px;
+    border-radius: 20px;
 }
 
 .Clientestrong {
@@ -94,7 +98,7 @@
     margin: 30px;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: solid 1px white;
+    display: flex;
 }
 
 .ClienteEX h1 {
@@ -159,9 +163,156 @@
     height: 20%;
 }
 
-.imgpflpqn{
+.imgpflpqn {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+.formTreino {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.formTreino input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.btnAdd {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #368dd9;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btnAdd:hover {
+    background: #2a6dad;
+}
+
+.treinosGrid {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.treinoCard {
+    height: 60px;
+    background: #1e1f20;
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    border: solid 2px transparent;
+}
+
+.treinoCard p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.treinoCard:hover {
+    border: #368DD9 2px solid;
+    cursor: pointer;
+    transform: translateY(-5px);
+    transition: all 0.2s;
+}
+
+.acoesTreino {
+    display: flex;
+    gap: 8px;
+}
+
+.btnIcon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: 0.2s;
+    color: white;
+}
+
+.btnIcon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btnIcon.edit:hover {
+    color: #ffca28;
+}
+
+.btnIcon.delete:hover {
+    color: #f44336;
+}
+
+.clte1 {
+    width: 40%;
+}
+
+.treinosGridedede {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+    max-height: 200px;
+    min-height: 200px;
+}
+
+.clte2 h1 {
+    width: 100%;
+    text-align: right;
+}
+
+.clte2 {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-left: 10%;
+    padding-left: 10%;
+    border-left: 2px solid #ffffff;
+}
+
+.clttet button {
+    background-color: transparent;
+    border: #368DD9 2px solid;
+    padding: 10px;
+    color: #368DD9;
+    border-radius: 10px;
+    font-size: 100%;
+    font-weight: bold;
+    width: 120px;
+}
+
+.clttet button:hover {
+    background-color: #368DD9;
+    border: #368DD9 2px solid;
+    color: #27292a;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.clttet {
+    display: flex;
+    justify-content: right;
 }

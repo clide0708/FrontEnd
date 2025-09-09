@@ -1,0 +1,18 @@
+.main-banner {
+  background-image: url('assets/images/banner.jpg'); 
+  background-size: cover;     
+  background-position: center; 
+  background-repeat: no-repeat;
+  padding: 100px 0;           
+  color: white;              
+  width: 100%;
+}
+
+.header-text{
+    width: 80%;
+    margin-left: 10%;
+}
+
+.main-button a:hover{
+    color: black;
+}

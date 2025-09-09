@@ -537,5 +537,7 @@
 }
 
 .modalrmvps-btn:hover {
-    border: 2px solid #d93636;
+    transform: scale(1.2);
+    color: #d93636;
+    transition: all 0.2s;
 }

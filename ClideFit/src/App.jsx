@@ -14,7 +14,7 @@ export default function App() {
       <PageTransition>
         <Header />
         <Routes>
-          <Route path="/Inicio" element={<Home />} />
+          <Route path="/" element={<Home />} /> {/* rota inicial agora */}
           <Route path="/Alimentacao" element={<Alimentacao />} />
           <Route path="/Personal" element={<Personal />} />
           <Route path="/Perfil" element={<Profile />} />
