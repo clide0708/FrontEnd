@@ -7,6 +7,8 @@ import Personal from "./containers/Personal";
 import Profile from "./containers/Perfil";
 import Treinos from "./containers/Treinos/index.jsx";
 import Treinando from "./containers/Treinos/treinando/treinando.jsx";
+import Landing from "./containers/LandingPage";
+
 
 export default function App() {
   return (
@@ -14,7 +16,8 @@ export default function App() {
       <PageTransition>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} /> {/* rota inicial agora */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/Home" element={<Home />} />
           <Route path="/Alimentacao" element={<Alimentacao />} />
           <Route path="/Personal" element={<Personal />} />
           <Route path="/Perfil" element={<Profile />} />
