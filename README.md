@@ -1,6 +1,8 @@
-# <span style="color: red">ClideFit</span>
+# ClideFit 🔥🔥
 
 Projeto React integrado com Axios e React-Query para consumir API REST de treinos e usuários.
+
+![Logo ClideFit](ClideFit/src/pages/Home/banner.jpg)
 
 ## Instalação e execução
 
