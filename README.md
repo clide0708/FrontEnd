@@ -1,6 +1,6 @@
 # ClideFit 🔥🔥
 
-Projeto React integrado com Axios e React-Query para consumir API REST de treinos e usuários.
+Projeto React integrado com Axios e React-Query para consumir API REST de gestão de treinos, alimentos e usuários.
 
 ![Logo ClideFit](/src/pages/Home/banner.jpg)
 
