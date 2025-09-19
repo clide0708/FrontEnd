@@ -17,7 +17,7 @@ JavaScript
 React  
 Vite
 
-#Bibliotecas
+# Bibliotecas
 
 axios (^1.12.2)  
 framer-motion (^12.23.12)  
