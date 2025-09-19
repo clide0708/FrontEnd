@@ -31,3 +31,7 @@ React-Query (@tanstack/react-query)
 ## Rotas da API
 
 --
+
+## Parcerias
+
+[![YouTube](https://img.shields.io/badge/YouTube-Inscreva-se-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@OneMoreAcademia)
