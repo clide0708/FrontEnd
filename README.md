@@ -34,4 +34,4 @@ React-Query (@tanstack/react-query)
 
 ## Parcerias
 
-### [![One More Academia]](https://www.youtube.com/@OneMoreAcademia)
+### [One More Academia](https://www.youtube.com/@OneMoreAcademia)
