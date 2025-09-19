@@ -1,4 +1,3 @@
-/* Row */
 .row {
     display: flex;
     flex-wrap: wrap;
@@ -6,7 +5,6 @@
     margin-left: -15px;
 }
 
-/* Columns */
 .col-lg-12,
 .col-lg-4,
 .col-lg-3,
@@ -41,13 +39,11 @@
     }
 }
 
-/* Align self center */
 .align-self-center {
     align-self: center;
 }
 
 
-/* Buttons */
 .main-border-button a {
     display: inline-block;
     padding: 10px 20px;
@@ -61,19 +57,16 @@
     color: #fff;
 }
 
-/* Heading sections */
 .heading-section h4 {
     font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
-/* Profile image */
 .main-profile img {
     max-width: 100%;
     height: auto;
 }
 
-/* Clips / items */
 .clips .item {
     margin-bottom: 20px;
     text-align: center;
@@ -94,7 +87,6 @@
     font-size: 0.9rem;
 }
 
-/* container de informações do perfil */
 .main-info {
     padding: 20px;
     border-radius: 20px;
@@ -104,23 +96,19 @@
     gap: 15px;
 }
 
-/* título */
 .main-info h4 {
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 5px;
     color: #368DD9;
-    /* azul neon leve */
 }
 
-/* parágrafos */
 .main-info p {
     font-size: 1rem;
     margin: 2px 0;
     color: #ccc;
 }
 
-/* inputs e selects do modo edição */
 .main-info input,
 .main-info select {
     width: 100%;
@@ -140,7 +128,6 @@
     box-shadow: 0 0 10px #368DD9;
 }
 
-/* botões */
 .main-border-button button {
     background-color: transparent;
     color: #368DD9;
@@ -157,7 +144,6 @@
     color: #121212;
 }
 
-/* cancel button específico */
 .main-info div button:nth-child(2) {
     border-color: #ff5252;
     color: #ff5252;
@@ -168,7 +154,6 @@
     color: #fff;
 }
 
-/* espaçamento interno entre inputs e botões */
 .main-info>div {
     display: flex;
     gap: 10px;
@@ -176,9 +161,7 @@
 }
 
 
-/* container de informações do perfil */
 .main-info {
-    /* fundo escuro tipo cyber */
     padding: 20px;
     color: #fff;
     display: flex;
@@ -186,28 +169,23 @@
     gap: 15px;
 }
 
-/* título */
 .main-info h4 {
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 5px;
     color: #368DD9;
-    /* azul neon leve */
 }
 
-/* parágrafos */
 .main-info p {
     font-size: 1rem;
     margin: 2px 0;
     color: #ccc;
 }
 
-/* slider container */
 .slider-container {
     margin-bottom: 20px;
 }
 
-/* label */
 .slider-container label {
     display: block;
     margin-bottom: 8px;
@@ -216,7 +194,6 @@
     font-size: 14px;
 }
 
-/* slider input */
 .slider-container input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
@@ -228,7 +205,6 @@
     cursor: pointer;
 }
 
-/* slider thumb */
 .slider-container input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -246,7 +222,6 @@
     background: #1f5aa6;
 }
 
-/* Firefox */
 .slider-container input[type="range"]::-moz-range-thumb {
     width: 22px;
     height: 22px;
@@ -262,14 +237,12 @@
     background: #1f5aa6;
 }
 
-/* barra do firefox */
 .slider-container input[type="range"]::-moz-range-track {
     height: 10px;
     border-radius: 5px;
     background: linear-gradient(90deg, #368dd9 0%, #1b1b1b 100%);
 }
 
-/* barra do IE */
 .slider-container input[type="range"]::-ms-track {
     height: 10px;
     border-radius: 5px;
