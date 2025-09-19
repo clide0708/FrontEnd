@@ -4,16 +4,17 @@ Projeto React integrado com Axios e React-Query para consumir API REST de treino
 
 ![Logo ClideFit](/src/pages/Home/banner.jpg)
 
+## Hospedagens
+
+### [FrontEnd](https://clide-8vw8bdr3a-clidefits-projects.vercel.app)  
+### [BackEnd]()
+
+
 ## Instalação e execução
 
 git clone <repo-url>  
 npm i  
 npm run dev  
-
-## Hospedagem
-
-### [FrontEnd](https://clide-8vw8bdr3a-clidefits-projects.vercel.app)  
-### [BackEnd]()
 
 ## Tecnologias
 
