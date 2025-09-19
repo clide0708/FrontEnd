@@ -258,7 +258,7 @@ function Alimentacao() {
             </div>
           </div>
 
-          {/* Perfil */}
+          {/* perfil */}
           <div className="pfl-content">
             <div className="heading-section">
               <h4 className="nmpfl">{user.nome}</h4>
@@ -318,8 +318,8 @@ function Alimentacao() {
       {modalAdd && (
         <ModalAdd
           fechar={() => setModalAdd(false)}
-          currentMealList={currentMealList} // ⬅️ importante
-          abrirModalDetalhes={abrirModalDetalhes} // ⬅️ importante
+          currentMealList={currentMealList}
+          abrirModalDetalhes={abrirModalDetalhes}
         />
       )}
       {modalDetalhes && currentItem && (

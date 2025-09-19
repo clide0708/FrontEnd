@@ -144,7 +144,6 @@
     cursor: pointer;
 }
 
-/* cliente selecionado */
 .SC2p2 ul li.selecionado {
     color: #368dd9;
 }

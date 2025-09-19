@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./style.css";
 import clientesData from "./clientes.json";
-import { Pencil, Trash2, Plus } from "lucide-react"; // ícones bonitos
+import { Pencil, Trash2, Plus } from "lucide-react"; // ícones bonitos da djoliz
 
 function Personal() {
   const [clientes, setClientes] = useState(clientesData);

@@ -1,4 +1,3 @@
-// src/components/Treinos.jsx
 import { useState } from "react";
 import "./style.css";
 import EditarTreino from "./editTreino";
@@ -50,7 +49,7 @@ function Treinos() {
     <div className="treinos-container">
       {!selectedTreino ? (
         <>
-          {/* Coluna esquerda */}
+          {/* pardte da esquerdinha, tabela de selecionar as playlist */}
           <div className="PT1">
             <h2>{activeTab}</h2>
             <div className="navlinktn">
@@ -86,7 +85,6 @@ function Treinos() {
             </div>
           </div>
 
-          {/* Coluna direita */}
           <div className="PT2">
             <div className="containertnvw">
               {treinos[activeTab].length === 0 ? (
@@ -112,7 +110,6 @@ function Treinos() {
                           ✏️
                         </button>
                       )}
-                      {/* delete só permite em Meus Treinos */}
                       {activeTab === "Meus Treinos" && (
                         <button
                           className="delete-btn"

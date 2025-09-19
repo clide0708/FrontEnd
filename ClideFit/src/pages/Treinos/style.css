@@ -82,7 +82,6 @@
   justify-content: end;
 }
 
-/* links da esquerda */
 .navlinktn a {
   text-decoration: none;
   color: #ccc;
@@ -97,13 +96,11 @@
   color: #fff;
 }
 
-/* link ativo */
 .navlinktn a.active {
   background-color: #368DD9;
   color: #fff;
 }
 
-/* container dos treinos */
 .containertnvw {
   gap: 12px;
   padding: 10px;
@@ -112,7 +109,6 @@
   overflow-y: auto;
 }
 
-/* barra de rolagem webpik */
 .containertnvw::-webkit-scrollbar {
   width: 9px;
 }
@@ -127,7 +123,7 @@
   border: 1px solid #1e1e2f;
 }
 
-/* card do treino */
+
 .treino-card {
   margin-bottom: 8px;
   margin-top: 8px;
@@ -135,7 +131,6 @@
   border-radius: 10px;
   padding: 10px;
   height: 120px;
-  /* altura fixa */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -150,7 +145,6 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* botão de delete */
 .treino-card .delete-btn {
   position: absolute;
   top: 6px;
@@ -171,7 +165,6 @@
   transform: scale(1.5);
 }
 
-/* título e descrição */
 .treino-card h3 {
   margin: 0;
   font-size: 14px;
@@ -689,7 +682,6 @@
   cursor: pointer;
 }
 
-/* fundo escuro ocupando tela */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -697,15 +689,12 @@
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.6);
-  /* deixa escuro */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
-  /* fica na frente */
 }
 
-/* caixa do modal */
 .modal-content {
   background: #fff;
   padding: 20px;
@@ -1124,7 +1113,6 @@ a:hover {
   left: 1;
 }
 
-/* Timer circular */
 .timer-wrapper {
   position: relative;
   width: 400px;
@@ -1204,16 +1192,13 @@ a:hover {
 
 .adjustfoda {
   position: fixed;
-  /* ou absolute, mas fora do container */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* ou a altura que você quiser */
   display: flex;
   padding-top: 100px;
   pointer-events: none;
-  /* pra ficar na frente de tudo */
 }
 
 .editor-exercicio h1 {
@@ -1245,7 +1230,6 @@ a:hover {
 
 .empty-exercicio {
   border-left: none;
-  /* remove a borda */
 }
 
 .asdoasd{
