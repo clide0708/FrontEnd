@@ -6,8 +6,8 @@ Projeto React integrado com Axios e React-Query para consumir API REST de treino
 
 ## Hospedagens
 
-### [FrontEnd](https://clide-8vw8bdr3a-clidefits-projects.vercel.app)  
-### [BackEnd]()
+### [FrontEnd](https://clide-8vw8bdr3a-clidefits-projects.vercel.app) Vercel
+### [BackEnd]() Hostinger
 
 
 ## Instalação e execução
