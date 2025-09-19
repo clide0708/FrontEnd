@@ -34,4 +34,4 @@ React-Query (@tanstack/react-query)
 
 ## Parcerias
 
-###[![One More Academia](https://img.shields.io/badge/YouTube-Inscreva-se-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@OneMoreAcademia)
+### [![One More Academia]](https://www.youtube.com/@OneMoreAcademia)
