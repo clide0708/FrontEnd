@@ -1,14 +1,14 @@
-<span style="color: red">ClideFit</span>
+# <span style="color: red">ClideFit</span>
 
 Projeto React integrado com Axios e React-Query para consumir API REST de treinos e usuários.
 
-# Instalação e execução
+## Instalação e execução
 
 git clone <repo-url>  
 npm i  
 npm run dev  
 
-# Tecnologias
+## Tecnologias
 
 HTML5/CSS  
 PHP  
@@ -17,7 +17,7 @@ JavaScript
 React  
 Vite
 
-# Bibliotecas
+## Bibliotecas
 
 axios (^1.12.2)  
 framer-motion (^12.23.12)  
@@ -26,6 +26,6 @@ react-router-dom (^7.8.2)
 styled-components (^6.1.19)  
 React-Query (@tanstack/react-query)
 
-# Rotas da API
+## Rotas da API
 
 --
