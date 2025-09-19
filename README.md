@@ -32,6 +32,10 @@ React-Query (@tanstack/react-query)
 
 --
 
+## APIs externas
+
+### [Spoonacular](https://spoonacular.com/food-api)
+
 ## Parcerias
 
 ### [One More Academia](https://www.youtube.com/@OneMoreAcademia)
