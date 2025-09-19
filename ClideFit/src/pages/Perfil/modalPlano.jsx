@@ -66,7 +66,6 @@ export default function PlanModal({
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        {/* topo com personal */}
         <div className="modal-header">
           <div className="personal-row">
             <h2>
@@ -76,7 +75,6 @@ export default function PlanModal({
               Remover Personal
             </a>
           </div>
-          {/* fechar */}
           <div className="modal-actions">
             <button className="modal-btn close" onClick={onClose}>
               X
@@ -84,7 +82,6 @@ export default function PlanModal({
           </div>
         </div>
 
-        {/* cards de planos */}
         <div className="plans-grid">
           {plans.map((plan, idx) => (
             <div

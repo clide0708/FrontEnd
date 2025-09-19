@@ -9,7 +9,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
   const [itensAdicionados, setItensAdicionados] = useState([]);
   const containerRef = useRef(null);
 
-  // fecha dropdown ao clicar fora
+  // fecha se clica fora
   useEffect(() => {
     function handleClickFora(event) {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -24,7 +24,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
   useEffect(() => {
     async function carregarAlimentos() {
       try {
-        const response = await fetch("/dados.json"); // pega do public
+        const response = await fetch("/dados.json"); // pega do public, mas tu vai trocar pela API
         const data = await response.json();
         const listaAtual = data[currentMealList]?.items || [];
         setItensAdicionados(listaAtual);

@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import "./style.css";
-
-// exemplo do JSON que tu tem
 import exerciciosJSON from "./exercicios.json";
 
 export default function AddExercicio({ onAdd, onClose }) {

@@ -10,7 +10,7 @@ export default function EditarTreino({ treino, onVoltar }) {
 
   const navigate = useNavigate();
 
-  // auto seleciona o primeiro exercício se houver e nenhum estiver selecionado
+  // auto seleciona o primeiro exercício
   useEffect(() => {
     if (currentTreino.exercicios.length > 0 && !selectedExercicio) {
       setSelectedExercicio(currentTreino.exercicios[0]);
@@ -63,7 +63,7 @@ export default function EditarTreino({ treino, onVoltar }) {
           {selectedExercicio
             ? selectedExercicio.nome
             : currentTreino.exercicios.length === 0
-            ? "" // sem texto se não tiver exercícios
+            ? ""
             : "Selecione um exercício"}
         </h3>
         <h2>Exercícios</h2>

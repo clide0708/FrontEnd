@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
-import PlanModal from "./modalPlano.jsx"; // importa o modal separado
+import PlanModal from "./modalPlano.jsx";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -70,7 +70,6 @@ export default function Profile() {
           <div className="page-content">
             <div className="main-profile">
               <div className="row">
-                {/* Imagem do perfil */}
                 <div className="col-lg-4">
                   {editing ? (
                     <label style={{ cursor: "pointer", width: "100%" }}>
@@ -104,7 +103,6 @@ export default function Profile() {
                   )}
                 </div>
 
-                {/* Informações do usuário */}
                 <div className="col-lg-4 align-self-center">
                   <div className="main-info header-text">
                     {editing ? (
@@ -146,7 +144,6 @@ export default function Profile() {
                           <option value="feminino">Feminino</option>
                         </select>
 
-                        {/* Slider Treino */}
                         <div className="slider-container">
                           <label>Treino: {form.treino}</label>
                           <input
@@ -172,7 +169,6 @@ export default function Profile() {
                           />
                         </div>
 
-                        {/* Slider Meta */}
                         <div className="slider-container">
                           <label>Meta: {form.meta}</label>
                           <input
@@ -197,7 +193,6 @@ export default function Profile() {
                           />
                         </div>
 
-                        {/* Botões Salvar / Cancelar */}
                         <div style={{ marginTop: "10px" }}>
                           <button onClick={saveProfile} className="savebtnpf">
                             Salvar
@@ -233,7 +228,6 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* Estatísticas e plano */}
                 <div className="col-lg-4 align-self-center">
                   <ul className="infopfl">
                     <li>
@@ -252,7 +246,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Modal do plano */}
               {editingPlan && (
                 <PlanModal
                   onClose={() => setEditingPlan(false)}
@@ -267,7 +260,6 @@ export default function Profile() {
                 />
               )}
 
-              {/* Treinos recentes */}
               <div className="row">
                 <div className="col-lg-12">
                   <div className="clips">
@@ -319,7 +311,6 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
-              {/* fim treinos */}
             </div>
           </div>
         </div>

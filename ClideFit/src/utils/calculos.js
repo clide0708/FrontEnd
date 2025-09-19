@@ -1,3 +1,5 @@
+//calculos matemáticos js
+
 export const calcularIMC = (peso, altura, genero) => {
   if (!peso || !altura) return "";
   const imc = peso / ((altura / 100) ** 2);

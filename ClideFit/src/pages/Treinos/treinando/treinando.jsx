@@ -126,7 +126,7 @@ export default function Treino() {
     const circumference = 2 * Math.PI * radius;
     circleRef.current.style.strokeDasharray = circumference;
 
-    // cálculo direto pro sentido horário
+    // essa merda não vai pra sentido horário
     const percent = totalTime ? timerRemaining / totalTime : 0;
     circleRef.current.style.strokeDashoffset = circumference * (1 - percent);
   }, [timerRemaining, totalTime]);
@@ -230,7 +230,6 @@ export default function Treino() {
 
   return (
     <div className="adjustfoda">
-      {/* BARRA DE PROGRESSO ORIGINAL RESTAURADA */}
       <div
         className="barra-progresso"
         style={{ width: "1200px", height: "8px", background: "#eee" }}
@@ -286,7 +285,6 @@ export default function Treino() {
                 </div>
               </div>
 
-              {/* VIDEO CONTAINER - COVER SEMPRE VISÍVEL, DIMENSÕES PELO CSS */}
               <div id="video-container">
                 <img
                   id="ex-cover"

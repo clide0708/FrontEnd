@@ -12,7 +12,7 @@ export default function PageTransition({ children }) {
     setIsLoading(true)
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 500) // tempo do vídeo em ms (ajusta conforme o vídeo)
+    }, 500) // tempo do vídeo
     return () => clearTimeout(timer)
   }, [location])
 
