@@ -8,13 +8,16 @@ import { Paginas } from "../pages/ltPages";
 import { PrivateRoute, PublicRoute } from "../utils/VerRoute";
 import Header from "../components/Header";
 import PageTransition from "../components/Loading";
+import "./style.css";
 
 // esse daqui vai criar um layout para o usuário logado
 const AuthenticatedLayout = () => (
-  <PageTransition>
-    <Header />
-    <Outlet />
-  </PageTransition>
+  <>
+    <Header /> {/* Header sempre visível */}
+    <div className="page-content">
+      <Outlet /> {/* cada página decide se usa PageTransition */}
+    </div>
+  </>
 );
 
 const routes = createBrowserRouter([
@@ -37,7 +40,11 @@ const routes = createBrowserRouter([
             path: "/", // raiz
             element: <Paginas.LandingPage />,
           },
-          //login.jsx
+
+          {
+            path: "/login",
+            element: <Paginas.Login />,
+          },
         ],
       },
       {
@@ -45,33 +52,45 @@ const routes = createBrowserRouter([
         children: [
           {
             path: "/", // raiz
-            loader: async () => redirect("/Home"), // redireciona raiz pra home
+            loader: async () => redirect("/home"), // redireciona raiz pra home
           },
           {
             element: <AuthenticatedLayout />,
             children: [
               {
-                path: "/Home",
+                path: "/home",
                 element: <Paginas.HomePage />,
               },
               {
-                path: "/Alimentacao",
-                element: <Paginas.AlimentacaoPage />,
+                path: "/alimentacao",
+                element: (
+                  <PageTransition>
+                    <Paginas.AlimentacaoPage />
+                  </PageTransition>
+                ),
               },
               {
-                path: "/Personal",
-                element: <Paginas.PersonalPage />,
+                path: "/personal",
+                element: (
+                  <PageTransition>
+                    <Paginas.PersonalPage />
+                  </PageTransition>
+                ),
               },
               {
-                path: "/Perfil",
+                path: "/perfil",
                 element: <Paginas.PerfilPage />,
               },
               {
-                path: "/Treinos",
-                element: <Paginas.TreinosPage />,
+                path: "/treinos",
+                element: (
+                  <PageTransition>
+                    <Paginas.TreinosPage />
+                  </PageTransition>
+                ),
               },
               {
-                path: "/Treinos/treinando",
+                path: "/treinos/treinando",
                 element: <Paginas.TreinandoPage />,
               },
             ],

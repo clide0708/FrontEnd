@@ -1,0 +1,13 @@
+header {
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+}
+
+.page-wrapper,
+.page-loader {
+  position: fixed;
+  top: 1;
+  left: 1;
+  z-index: 1;
+}

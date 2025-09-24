@@ -7,10 +7,11 @@ import { default as PersonalPage } from "./Personal";
 import { default as PerfilPage } from "./Perfil";
 import { default as TreinosPage } from "./Treinos";
 import { default as TreinandoPage } from "./Treinos";
+import { default as Login } from "./Auth/login";
 
 const PaginaNaoEncontrada = () => <div>404 - Página Não Encontrada</div>;
 const TelaEmManutencao = () => <div>Em Manutenção</div>;
-const TelaErro = () => <div>Ocorreu um erro!</div>;
+const TelaErro = () => <div>deu erro kkkkkkkkkkk</div>;
 
 export const Paginas = {
     LandingPage,
@@ -23,5 +24,6 @@ export const Paginas = {
     PaginaNaoEncontrada,
     TelaEmManutencao,
     TelaErro,
+    Login,
     // adicionar outras quando criar
 };

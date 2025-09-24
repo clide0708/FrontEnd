@@ -1,12 +1,11 @@
 import './style.css'
-
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function PageTransition({ children }) {
   const location = useLocation()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -22,7 +21,7 @@ export default function PageTransition({ children }) {
         {isLoading && (
           <motion.div
             key="page-loader"
-            initial={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
@@ -34,14 +33,18 @@ export default function PageTransition({ children }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        {children}
-      </motion.div>
+
+      {!isLoading && (
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          {children}
+        </motion.div>
+      )}
     </>
   )
 }

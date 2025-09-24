@@ -11,7 +11,7 @@ export default function LandingPage() {
                 <h1>Teste</h1>
                 <button
                     onClick={() =>
-                        navigate("/Home",)}
+                        navigate("/login",)}
                 >Entrar
                 </button>
 
