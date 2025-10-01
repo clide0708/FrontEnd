@@ -12,7 +12,7 @@ import { default as Cadastro } from "./Auth/cadastro";
 
 const PaginaNaoEncontrada = () => <div>404 - Página Não Encontrada</div>;
 const TelaEmManutencao = () => <div>Em Manutenção</div>;
-const TelaErro = () => <div>deu erro kkkkkkkkkkk</div>;
+const TelaErro = () => <div>deu erro kkkkkkkkkkk se fudeu</div>;
 
 export const Paginas = {
     LandingPage,
