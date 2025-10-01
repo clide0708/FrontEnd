@@ -101,4 +101,6 @@ body, html {
 
 .lp-sobre{
     margin-top: 50%;
+    background-color: red;
+    z-index: 800;
 }
