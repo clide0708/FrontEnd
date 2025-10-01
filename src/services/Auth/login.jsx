@@ -3,14 +3,18 @@ import api from "../api";
 export async function loginUsuario(email, senha) {
   try {
     const response = await api.post("/auth/login", { email, senha });
-    if (response.data.success && response.data.token) {
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
-      return { success: true, usuario: response.data.usuario };
+
+    const { success, token, usuario, error } = response.data;
+
+    if (success && token) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      return { success: true, usuario };
     } else {
-      return { success: false, error: response.data.error || "Erro no login" };
+      return { success: false, error: error || "Credenciais inválidas" };
     }
   } catch (err) {
+    console.error("Erro login:", err);
     return { success: false, error: "Erro ao conectar com o servidor" };
   }
 }

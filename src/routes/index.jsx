@@ -8,6 +8,7 @@ import { Paginas } from "../pages/ltPages";
 import { PrivateRoute, PublicRoute } from "../utils/VerRoute";
 import Header from "../components/Header";
 import PageTransition from "../components/Loading";
+import BGanm from "../components/BG";
 import "./style.css";
 
 // esse daqui vai criar um layout para o usuário logado
@@ -45,6 +46,10 @@ const routes = createBrowserRouter([
             path: "/login",
             element: <Paginas.Login />,
           },
+          {
+            path: "/cadastro",
+            element: <Paginas.Cadastro />,
+          },
         ],
       },
       {
@@ -59,7 +64,11 @@ const routes = createBrowserRouter([
             children: [
               {
                 path: "/home",
-                element: <Paginas.HomePage />,
+                element: (
+                  <BGanm>
+                    <Paginas.HomePage />
+                  </BGanm>
+                ),
               },
               {
                 path: "/alimentacao",
@@ -79,7 +88,11 @@ const routes = createBrowserRouter([
               },
               {
                 path: "/perfil",
-                element: <Paginas.PerfilPage />,
+                element: (
+                  <BGanm>
+                    <Paginas.PerfilPage />
+                  </BGanm>
+                ),
               },
               {
                 path: "/treinos",
@@ -91,7 +104,11 @@ const routes = createBrowserRouter([
               },
               {
                 path: "/treinos/treinando",
-                element: <Paginas.TreinandoPage />,
+                element: (
+                  <BGanm>
+                    <Paginas.TreinandoPage />
+                  </BGanm>
+                ),
               },
             ],
           },

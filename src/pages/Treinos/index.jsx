@@ -1,41 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
 import EditarTreino from "./editTreino";
 import ModalAddTreino from "./addTreino";
-
-const treinosJSON = {
-  "Meus Treinos": [
-    {
-      id: 1,
-      nome: "Treino A",
-      descricao: "Descrição do treino A",
-      exercicios: [],
-    },
-  ],
-  Personal: [],
-  MarketPlace: [],
-};
+import treinosService from "../../services/Treinos/treinos.jsx";
 
 function Treinos() {
   const [activeTab, setActiveTab] = useState("Meus Treinos");
   const [selectedTreino, setSelectedTreino] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [treinoEditando, setTreinoEditando] = useState(null);
-  const [treinos, setTreinos] = useState(treinosJSON);
+  const [treinos, setTreinos] = useState({
+    "Meus Treinos": [],
+    Personal: [],
+    MarketPlace: [],
+  });
 
-  const handleSaveTreino = (novoTreino) => {
+  // carrega lista ao montar ou trocar de aba
+  useEffect(() => {
+    if (activeTab === "Meus Treinos") {
+      treinosService.listarMeus().then((data) => {
+        setTreinos((prev) => ({
+          ...prev,
+          "Meus Treinos": data,
+        }));
+      });
+    }
+
+    if (activeTab === "Personal") {
+      treinosService.listarPersonal().then((data) => {
+        setTreinos((prev) => ({
+          ...prev,
+          Personal: data,
+        }));
+      });
+    }
+  }, [activeTab]);
+
+  const handleSaveTreino = async (novoTreino) => {
+    let treinoSalvo;
+    if (novoTreino.id) {
+      treinoSalvo = await treinosService.editar(novoTreino);
+    } else {
+      treinoSalvo = await treinosService.criar(novoTreino);
+    }
+
     setTreinos((prev) => {
       const lista = prev[activeTab];
-      const index = lista.findIndex((t) => t.id === novoTreino.id);
+      const index = lista.findIndex((t) => t.id === treinoSalvo.id);
 
       let novaLista;
       if (index >= 0) {
-        // edição
         novaLista = [...lista];
-        novaLista[index] = novoTreino;
+        novaLista[index] = treinoSalvo;
       } else {
-        // criação
-        novaLista = [...lista, novoTreino];
+        novaLista = [...lista, treinoSalvo];
       }
 
       return {
@@ -45,11 +63,18 @@ function Treinos() {
     });
   };
 
+  const handleDeleteTreino = async (id) => {
+    await treinosService.deletar(id);
+    setTreinos((prev) => ({
+      ...prev,
+      [activeTab]: prev[activeTab].filter((t) => t.id !== id),
+    }));
+  };
+
   return (
     <div className="treinos-container">
       {!selectedTreino ? (
         <>
-          {/* pardte da esquerdinha, tabela de selecionar as playlist */}
           <div className="PT1">
             <h2>{activeTab}</h2>
             <div className="navlinktn">
@@ -69,7 +94,6 @@ function Treinos() {
               ))}
             </div>
             <div className="ststn">
-              {/* botão só aparece em Meus Treinos */}
               {activeTab === "Meus Treinos" && !selectedTreino && (
                 <div className="pflidc fufufa">
                   <button
@@ -97,34 +121,28 @@ function Treinos() {
                     onClick={() => setSelectedTreino(treino)}
                   >
                     <div className="card-actions">
-                      {/* editar só permite em Meus Treinos */}
                       {activeTab === "Meus Treinos" && (
-                        <button
-                          className="edit-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setTreinoEditando(treino);
-                            setShowModal(true);
-                          }}
-                        >
-                          ✏️
-                        </button>
-                      )}
-                      {activeTab === "Meus Treinos" && (
-                        <button
-                          className="delete-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setTreinos((prev) => ({
-                              ...prev,
-                              [activeTab]: prev[activeTab].filter(
-                                (t) => t.id !== treino.id
-                              ),
-                            }));
-                          }}
-                        >
-                          🗑️
-                        </button>
+                        <>
+                          <button
+                            className="edit-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTreinoEditando(treino);
+                              setShowModal(true);
+                            }}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className="delete-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTreino(treino.id);
+                            }}
+                          >
+                            🗑️
+                          </button>
+                        </>
                       )}
                     </div>
                     <h3>{treino.nome}</h3>

@@ -14,7 +14,7 @@ export default function Header() {
       <div className="container">
         <div className="nav-bar">
           <h1>
-            <Link className="nav-CF" to="/">ClideFit</Link>
+            <Link className="nav-CF" to="/home">ClideFit</Link>
           </h1>
 
           <div className="menu-icon" onClick={toggleMenu}>
@@ -26,9 +26,9 @@ export default function Header() {
           {/* aqui ele pega as rotas já definidas, da um toque qualquer coisa */}
 
           <ul className={`nav-menu ${menuOpen ? "show" : ""}`}>
-            <li><Link to="/Home" className={location.pathname === "/Home" ? "active" : ""}>Início</Link></li>
+            <li><Link to="/home" className={location.pathname === "/" || location.pathname === "/home" ? "active" : ""}>Início</Link></li>
             <li><Link to="/alimentacao" className={location.pathname === "/alimentacao" ? "active" : ""}>Alimentação</Link></li>
-            <li><Link to="/Treinos" className={location.pathname === "/Treinos" || location.pathname === "/Treinos/treinando" ? "active" : ""}>Treinos</Link></li>
+            <li><Link to="/treinos" className={location.pathname === "/treinos" || location.pathname === "/treinos/treinando" ? "active" : ""}>Treinos</Link></li>
             <li><Link to="/personal" className={location.pathname === "/personal" ? "active" : ""}>Personal</Link></li>
             <li>
               <Link to="/perfil" className={`profile-link ${location.pathname === "/perfil" ? "pfact" : ""}`}>

@@ -3,11 +3,16 @@ import { useState, useEffect } from "react";
 export default function ModalAddTreino({ onClose, onSave, treino }) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [tipo, setTipo] = useState("Musculação"); // valor padrão
+
+  // pega usuário logado
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   useEffect(() => {
     if (treino) {
-      setNome(treino.nome);
-      setDescricao(treino.descricao);
+      setNome(treino.nome || "");
+      setDescricao(treino.descricao || "");
+      setTipo(treino.tipo || "Musculação");
     }
   }, [treino]);
 
@@ -16,10 +21,14 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
     if (!nome.trim() || !descricao.trim()) return;
 
     const novoTreino = {
-      id: treino ? treino.id : Date.now(),
-      nome,
-      descricao,
-      exercicios: treino ? treino.exercicios : [],
+      id: treino ? treino.id : undefined,
+      nome: nome.trim(),
+      tipo, // obrigatório pro backend
+      descricao: descricao.trim() || null,
+      criadoPor: usuario.email,
+      idAluno: usuario.tipo === "aluno" ? usuario.id : null, // se for aluno
+      idPersonal: usuario.tipo === "personal" ? usuario.id : null, // se for personal
+      exercicios: treino ? treino.exercicios : [], // vazio inicialmente
     };
 
     onSave(novoTreino);
@@ -29,7 +38,9 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
   return (
     <div className="modal-overlay">
       <div className="modal-contentadtn">
-        <h2 className="modal-title">{treino ? "Editar Treino" : "Novo Treino"}</h2>
+        <h2 className="modal-title">
+          {treino ? "Editar Treino" : "Novo Treino"}
+        </h2>
         <form className="form-add-treino" onSubmit={handleSubmit}>
           <label className="label-add-treino">
             Nome:
@@ -41,6 +52,25 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
               required
             />
           </label>
+
+          <label className="label-add-treino">
+            Tipo:
+            <select
+              className="input-add-treino"
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+              required
+            >
+              <option value="Musculação">Musculação</option>
+              <option value="CrossFit">CrossFit</option>
+              <option value="Calistenia">Calistenia</option>
+              <option value="Pilates">Pilates</option>
+              <option value="Aquecimento">Aquecimento</option>
+              <option value="Treino Específico">Treino Específico</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </label>
+
           <label className="label-add-treino">
             Descrição:
             <textarea
@@ -50,6 +80,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
               required
             />
           </label>
+
           <div className="modal-actions">
             <button type="button" className="b1" onClick={onClose}>
               Cancelar

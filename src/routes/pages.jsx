@@ -1,11 +1,12 @@
-// índice conceitual das páginas do projeto.
+// índice conceitual das páginas do projeto, é meio bucha, não faz quase nada.
 // os reais tão em ltPages.jsx
 
 
 export const RoutePages = {
   Public: {
     LandingPage: "LandingPage",
-    //paginas do login
+    Login: "Login",
+    Cadastro: "Cadastro",
   },
   Private: {
     HomePage: "HomePage",

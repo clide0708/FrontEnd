@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { loginUsuario } from "../../services/Auth/login";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
@@ -22,15 +24,16 @@ export default function LoginPage() {
     <div>
       <input
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
       />
       <input
         type="password"
         value={senha}
-        onChange={e => setSenha(e.target.value)}
+        onChange={(e) => setSenha(e.target.value)}
         placeholder="Senha"
       />
+      <button onClick={() => navigate("/cadastro")}>Cadastro</button>
       <button onClick={handleLogin}>Entrar</button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

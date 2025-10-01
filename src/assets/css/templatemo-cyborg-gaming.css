@@ -209,7 +209,6 @@ body {
 
 body .page-content {
   margin-top: 0px;
-  background-color: #1e1e1e;
   padding: 60px;
   padding-top: 0px;
   border-radius: 23px;
@@ -1637,7 +1636,6 @@ Profile Style
 .main-profile {
   border-radius: 23px;
   padding: 30px;
-  background-color: #1e1e1e;
 }
 
 .main-profile .main-info span {
