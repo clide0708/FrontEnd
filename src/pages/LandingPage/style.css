@@ -1,3 +1,104 @@
-.LP h1{
+/* LandingPage.css */
+body, html {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background: #111;
+  color: white;
+}
+
+.lp-header .logo {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.lp-header button {
+  padding: 10px 20px;
+  background: #ff4500;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.lp-hero {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  position: fixed;
+}
+
+.lp-hero button {
+  margin-top: 50px;
+  padding: 15px 30px;
+  width: 120px;
+  margin-left: 10%;
+  background: #ff4500;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.lp-sobre, .lp-servicos {
+  padding: 80px 50px;
+  text-align: center;
+}
+
+.lp-servicos .cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.lp-servicos .card {
+  background: #f2f2f2;
+  padding: 30px;
+  border-radius: 10px;
+  width: 250px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.lp-footer {
+  padding: 20px 50px;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+
+.lp-hero h1{
     color: white;
+    font-size: 900%;
+    width: 100%;
+    padding-left: 10%;
+    text-align: left;
+}
+
+.lp-hero p{
+    color: white;
+    font-size: 200%;
+    width: 100%;
+    padding-left: 10%;
+    text-align: left;
+}
+
+.lp-sobre{
+    margin-top: 50%;
 }
