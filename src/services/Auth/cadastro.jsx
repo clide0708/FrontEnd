@@ -14,7 +14,7 @@ export const cadastrarPersonal = async (dados) => {
 export const verificarEmail = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-email", dados);
-    return res.data; // retorna { success: true, disponivel: true/false, email: "..." }
+    return res.data; // { success: true, disponivel: true/false, email: "..." }
   } catch (err) {
     console.error("Erro ao verificar email:", err);
     return { success: false, disponivel: false };
@@ -25,21 +25,9 @@ export const verificarEmail = async (dados) => {
 export const verificarCpf = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-cpf", dados);
-    return res.data; // retorna { success: true, disponivel: true/false, cpf: "..." }
+    return res.data; // { success: true, disponivel: true/false, cpf: "..." }
   } catch (err) {
     console.error("Erro ao verificar CPF:", err);
     return { success: false, disponivel: false };
   }
 };
-
-// verificar se o RG já existe
-export const verificarRg = async (dados) => {
-    try {
-      const res = await api.post("/cadastro/verificar-rg", dados);
-      return res.data; // retorna { success: true, disponivel: true/false, rg: "..." }
-    } catch (err) {
-      console.error("Erro ao verificar RG:", err);
-      return { success: false, disponivel: false };
-    }
-  };
-  

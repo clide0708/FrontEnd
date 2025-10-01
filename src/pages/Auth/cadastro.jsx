@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { cadastrarAluno, cadastrarPersonal, verificarEmail, verificarCpf, verificarRg } from "../../services/Auth/cadastro";
+import { cadastrarAluno, cadastrarPersonal, verificarEmail, verificarCpf } from "../../services/Auth/cadastro";
 
 export default function CadastroPage() {
   const navigate = useNavigate();
@@ -9,8 +9,8 @@ export default function CadastroPage() {
     nome: "",
     email: "",
     cpf: "",
-    rg: "",
     senha: "",
+    rg: "",
     numTel: "",
     cref_numero: "",
     cref_categoria: "",
@@ -19,14 +19,87 @@ export default function CadastroPage() {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // limpa erro ao digitar
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    // máscara CPF
+    if (name === "cpf") {
+      formattedValue = value
+        .replace(/\D/g, "")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+
+    // máscara telefone
+    if (name === "numTel") {
+      formattedValue = value
+        .replace(/\D/g, "")
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d{4})$/, "$1-$2");
+    }
+
+    // CREF número só números
+    if (name === "cref_numero") {
+      formattedValue = value.replace(/\D/g, "").substring(0, 9);
+    }
+
+    // categoria e regional sempre maiúsculo
+    if (name === "cref_categoria") formattedValue = value.toUpperCase().substring(0, 1);
+    if (name === "cref_regional") formattedValue = value.toUpperCase().substring(0, 5);
+
+    setForm({ ...form, [name]: formattedValue });
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const handleBlur = async (e) => {
+    const { name, value } = e.target;
+    let newErrors = { ...errors };
+
+    if (!value.trim()) {
+      newErrors[name] = "Campo obrigatório";
+    } else {
+      try {
+        if (name === "email") {
+          const res = await verificarEmail({ email: value });
+          if (!res.disponivel) newErrors.email = "Email já cadastrado";
+          else delete newErrors.email;
+        }
+
+        if (name === "cpf") {
+          const numericCpf = value.replace(/\D/g, "");
+          if (numericCpf.length !== 11) newErrors.cpf = "CPF deve ter 11 dígitos";
+          else {
+            const res = await verificarCpf({ cpf: numericCpf });
+            if (!res.disponivel) newErrors.cpf = "CPF já cadastrado";
+            else delete newErrors.cpf;
+          }
+        }
+
+        if (isPersonal && name === "cref_numero") {
+          if (!/^\d{6,9}$/.test(value.replace(/\D/g, ''))) newErrors.cref_numero = "Número CREF inválido (6-9 dígitos)";
+          else delete newErrors.cref_numero;
+        }
+
+        if (isPersonal && name === "cref_categoria") {
+          if (!/^[A-Z]{1}$/.test(value.trim())) newErrors.cref_categoria = "Categoria CREF inválida (1 letra)";
+          else delete newErrors.cref_categoria;
+        }
+
+        if (isPersonal && name === "cref_regional") {
+          if (!/^[A-Z]{2,5}$/.test(value.trim())) newErrors.cref_regional = "Regional CREF inválida (2-5 letras)";
+          else delete newErrors.cref_regional;
+        }
+      } catch (err) {
+        newErrors[name] = "Erro ao validar";
+      }
+    }
+
+    setErrors(newErrors);
   };
 
   const validateFields = async () => {
     const newErrors = {};
-
-    // campos obrigatórios
     if (!form.nome) newErrors.nome = "Nome é obrigatório";
     if (!form.cpf) newErrors.cpf = "CPF é obrigatório";
     if (!form.rg) newErrors.rg = "RG é obrigatório";
@@ -34,37 +107,10 @@ export default function CadastroPage() {
     if (!form.senha) newErrors.senha = "Senha é obrigatória";
     if (!form.numTel) newErrors.numTel = "Telefone é obrigatório";
 
-    // campos CREF para Personal
     if (isPersonal) {
       if (!form.cref_numero) newErrors.cref_numero = "Número CREF é obrigatório";
       if (!form.cref_categoria) newErrors.cref_categoria = "Categoria CREF é obrigatória";
       if (!form.cref_regional) newErrors.cref_regional = "Regional CREF é obrigatória";
-    }
-
-    // validações básicas
-    if (form.cpf && form.cpf.length !== 11) newErrors.cpf = "CPF deve ter 11 dígitos";
-    if (form.numTel && form.numTel.length < 10) newErrors.numTel = "Telefone deve ter pelo menos 10 dígitos";
-    if (form.senha && form.senha.length < 6) newErrors.senha = "Senha deve ter no mínimo 6 caracteres";
-    if (form.rg && !/^[a-zA-Z0-9]{7,12}$/.test(form.rg)) newErrors.rg = "RG deve ter 7-12 caracteres e pode conter letras e números";
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) return false;
-
-    // verificação de duplicados via API
-    try {
-      const emailRes = await verificarEmail({ email: form.email });
-      if (!emailRes.disponivel) newErrors.email = "Email já cadastrado";
-
-      const cpfRes = await verificarCpf({ cpf: form.cpf });
-      if (!cpfRes.disponivel) newErrors.cpf = "CPF já cadastrado";
-
-      const rgRes = await verificarRg({ rg: form.rg });
-      if (!rgRes.disponivel) newErrors.rg = "RG já cadastrado";
-    } catch (err) {
-      console.error("Erro ao verificar duplicados:", err);
-      alert("Erro ao validar duplicados, tente novamente");
-      return false;
     }
 
     setErrors(newErrors);
@@ -73,16 +119,14 @@ export default function CadastroPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const isValid = await validateFields();
     if (!isValid) return;
 
     try {
-      // payload base comum
       const basePayload = {
         nome: form.nome.trim(),
         cpf: form.cpf.replace(/\D/g, ''),
-        rg: form.rg.trim().toUpperCase(),
+        rg: form.rg.trim(),
         email: form.email.trim(),
         senha: form.senha,
         numTel: form.numTel.replace(/\D/g, '')
@@ -95,11 +139,8 @@ export default function CadastroPage() {
           cref_categoria: form.cref_categoria.trim().toUpperCase().charAt(0),
           cref_regional: form.cref_regional.trim().toUpperCase().substring(0, 5)
         };
-
-        console.log("Payload personal:", personalPayload);
         await cadastrarPersonal(personalPayload);
       } else {
-        console.log("Payload aluno:", basePayload);
         await cadastrarAluno(basePayload);
       }
 
@@ -108,7 +149,15 @@ export default function CadastroPage() {
     } catch (err) {
       console.error("Erro no cadastro:", err);
       if (err.response && err.response.data && err.response.data.error) {
-        alert(`Erro ao cadastrar: ${err.response.data.error}`);
+        const backendError = err.response.data.error.toLowerCase();
+        const newErrors = { ...errors };
+
+        if (backendError.includes("email")) newErrors.email = err.response.data.error;
+        else if (backendError.includes("cpf")) newErrors.cpf = err.response.data.error;
+        else if (backendError.includes("cref")) newErrors.cref_numero = err.response.data.error;
+        else alert(`Erro ao cadastrar: ${err.response.data.error}`);
+
+        setErrors(newErrors);
       } else {
         alert("Erro ao cadastrar, confira os dados!");
       }
@@ -134,6 +183,7 @@ export default function CadastroPage() {
           placeholder="Nome"
           value={form.nome}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         {errors.nome && <span style={{ color: "red" }}>{errors.nome}</span>}
 
@@ -142,7 +192,8 @@ export default function CadastroPage() {
           placeholder="CPF"
           value={form.cpf}
           onChange={handleChange}
-          maxLength={11}
+          onBlur={handleBlur}
+          maxLength={14}
         />
         {errors.cpf && <span style={{ color: "red" }}>{errors.cpf}</span>}
 
@@ -151,6 +202,7 @@ export default function CadastroPage() {
           placeholder="RG"
           value={form.rg}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         {errors.rg && <span style={{ color: "red" }}>{errors.rg}</span>}
 
@@ -159,6 +211,7 @@ export default function CadastroPage() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         {errors.email && <span style={{ color: "red" }}>{errors.email}</span>}
 
@@ -168,6 +221,7 @@ export default function CadastroPage() {
           placeholder="Senha"
           value={form.senha}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         {errors.senha && <span style={{ color: "red" }}>{errors.senha}</span>}
 
@@ -176,6 +230,7 @@ export default function CadastroPage() {
           placeholder="Telefone"
           value={form.numTel}
           onChange={handleChange}
+          onBlur={handleBlur}
         />
         {errors.numTel && <span style={{ color: "red" }}>{errors.numTel}</span>}
 
@@ -186,6 +241,7 @@ export default function CadastroPage() {
               placeholder="CREF Número"
               value={form.cref_numero}
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.cref_numero && <span style={{ color: "red" }}>{errors.cref_numero}</span>}
 
@@ -194,6 +250,7 @@ export default function CadastroPage() {
               placeholder="CREF Categoria"
               value={form.cref_categoria}
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.cref_categoria && <span style={{ color: "red" }}>{errors.cref_categoria}</span>}
 
@@ -202,6 +259,7 @@ export default function CadastroPage() {
               placeholder="CREF Regional"
               value={form.cref_regional}
               onChange={handleChange}
+              onBlur={handleBlur}
             />
             {errors.cref_regional && <span style={{ color: "red" }}>{errors.cref_regional}</span>}
           </>
