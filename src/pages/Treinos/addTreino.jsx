@@ -5,7 +5,6 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
   const [descricao, setDescricao] = useState("");
   const [tipo, setTipo] = useState("Musculação"); // valor padrão
 
-  // pega usuário logado
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   useEffect(() => {
@@ -18,17 +17,26 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!nome.trim() || !descricao.trim()) return;
+
+    // valida campos obrigatórios
+    if (!nome.trim()) {
+      alert("Nome é obrigatório");
+      return;
+    }
+    if (!tipo.trim()) {
+      alert("Tipo é obrigatório");
+      return;
+    }
 
     const novoTreino = {
-      id: treino ? treino.id : undefined,
+      idTreino: treino ? treino.idTreino : undefined,
       nome: nome.trim(),
-      tipo, // obrigatório pro backend
+      tipo,
       descricao: descricao.trim() || null,
       criadoPor: usuario.email,
-      idAluno: usuario.tipo === "aluno" ? usuario.id : null, // se for aluno
-      idPersonal: usuario.tipo === "personal" ? usuario.id : null, // se for personal
-      exercicios: treino ? treino.exercicios : [], // vazio inicialmente
+      idAluno: usuario.tipo === "aluno" ? usuario.id : null,
+      idPersonal: usuario.tipo === "personal" ? usuario.id : null,
+      exercicios: treino ? treino.exercicios : [],
     };
 
     onSave(novoTreino);
@@ -38,9 +46,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
   return (
     <div className="modal-overlay">
       <div className="modal-contentadtn">
-        <h2 className="modal-title">
-          {treino ? "Editar Treino" : "Novo Treino"}
-        </h2>
+        <h2 className="modal-title">{treino ? "Editar Treino" : "Novo Treino"}</h2>
         <form className="form-add-treino" onSubmit={handleSubmit}>
           <label className="label-add-treino">
             Nome:
@@ -77,7 +83,6 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
               className="textarea-add-treino"
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
-              required
             />
           </label>
 

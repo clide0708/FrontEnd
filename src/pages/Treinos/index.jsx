@@ -15,60 +15,66 @@ function Treinos() {
     MarketPlace: [],
   });
 
-  // carrega lista ao montar ou trocar de aba
-  useEffect(() => {
+  // carregar treinos
+  const carregarTreinos = async () => {
     if (activeTab === "Meus Treinos") {
-      treinosService.listarMeus().then((data) => {
-        setTreinos((prev) => ({
-          ...prev,
-          "Meus Treinos": data,
-        }));
-      });
+      const data = await treinosService.listarMeus();
+      setTreinos((prev) => ({ ...prev, "Meus Treinos": data }));
+    } else if (activeTab === "Personal") {
+      const data = await treinosService.listarPersonal();
+      setTreinos((prev) => ({ ...prev, Personal: data }));
     }
-
-    if (activeTab === "Personal") {
-      treinosService.listarPersonal().then((data) => {
-        setTreinos((prev) => ({
-          ...prev,
-          Personal: data,
-        }));
-      });
-    }
-  }, [activeTab]);
-
-  const handleSaveTreino = async (novoTreino) => {
-    let treinoSalvo;
-    if (novoTreino.id) {
-      treinoSalvo = await treinosService.editar(novoTreino);
-    } else {
-      treinoSalvo = await treinosService.criar(novoTreino);
-    }
-
-    setTreinos((prev) => {
-      const lista = prev[activeTab];
-      const index = lista.findIndex((t) => t.id === treinoSalvo.id);
-
-      let novaLista;
-      if (index >= 0) {
-        novaLista = [...lista];
-        novaLista[index] = treinoSalvo;
-      } else {
-        novaLista = [...lista, treinoSalvo];
-      }
-
-      return {
-        ...prev,
-        [activeTab]: novaLista,
-      };
-    });
   };
 
-  const handleDeleteTreino = async (id) => {
-    await treinosService.deletar(id);
-    setTreinos((prev) => ({
-      ...prev,
-      [activeTab]: prev[activeTab].filter((t) => t.id !== id),
-    }));
+  useEffect(() => {
+    carregarTreinos();
+  }, [activeTab]);
+
+  // salvar treino (novo ou edição)
+  const handleSaveTreino = async (novoTreino) => {
+    try {
+      let treinoSalvo;
+      if (novoTreino.idTreino) {
+        treinoSalvo = await treinosService.editar(novoTreino);
+      } else {
+        treinoSalvo = await treinosService.criar(novoTreino);
+      }
+
+      // atualiza lista de treinos no state
+      setTreinos((prev) => {
+        const lista = prev[activeTab];
+        const index = lista.findIndex((t) => t.idTreino === treinoSalvo.idTreino);
+
+        let novaLista;
+        if (index >= 0) {
+          novaLista = [...lista];
+          novaLista[index] = treinoSalvo;
+        } else {
+          novaLista = [...lista, treinoSalvo];
+        }
+
+        return { ...prev, [activeTab]: novaLista };
+      });
+
+      setShowModal(false);
+      setTreinoEditando(null);
+    } catch (err) {
+      console.error("Erro ao salvar treino:", err);
+      alert(err?.response?.data?.error || "Erro ao salvar treino");
+    }
+  };
+
+  const handleDeleteTreino = async (idTreino) => {
+    try {
+      await treinosService.deletar(idTreino);
+      setTreinos((prev) => ({
+        ...prev,
+        [activeTab]: prev[activeTab].filter((t) => t.idTreino !== idTreino),
+      }));
+    } catch (err) {
+      console.error("Erro ao deletar treino:", err);
+      alert(err?.response?.data?.error || "Erro ao deletar treino");
+    }
   };
 
   return (
@@ -94,7 +100,7 @@ function Treinos() {
               ))}
             </div>
             <div className="ststn">
-              {activeTab === "Meus Treinos" && !selectedTreino && (
+              {activeTab === "Meus Treinos" && (
                 <div className="pflidc fufufa">
                   <button
                     onClick={() => {
@@ -115,18 +121,13 @@ function Treinos() {
                 <h1 className="ntnnnntast">Sem treinos atribuidos</h1>
               ) : (
                 treinos[activeTab].map((treino) => (
-                  <div
-                    key={treino.id}
-                    className="treino-card popopoptata"
-                    onClick={() => setSelectedTreino(treino)}
-                  >
+                  <div key={treino.idTreino} className="treino-card popopoptata">
                     <div className="card-actions">
                       {activeTab === "Meus Treinos" && (
                         <>
                           <button
                             className="edit-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
+                            onClick={() => {
                               setTreinoEditando(treino);
                               setShowModal(true);
                             }}
@@ -135,10 +136,7 @@ function Treinos() {
                           </button>
                           <button
                             className="delete-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTreino(treino.id);
-                            }}
+                            onClick={() => handleDeleteTreino(treino.idTreino)}
                           >
                             🗑️
                           </button>
@@ -157,12 +155,16 @@ function Treinos() {
         <EditarTreino
           treino={selectedTreino}
           onVoltar={() => setSelectedTreino(null)}
+          onSave={handleSaveTreino} // passa handleSaveTreino pro EditarTreino
         />
       )}
 
       {showModal && activeTab === "Meus Treinos" && (
         <ModalAddTreino
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setTreinoEditando(null);
+          }}
           onSave={handleSaveTreino}
           treino={treinoEditando}
         />
