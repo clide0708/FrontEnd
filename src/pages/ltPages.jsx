@@ -9,6 +9,7 @@ import { default as TreinosPage } from "./Treinos";
 import { default as TreinandoPage } from "./Treinos/treinando/treinando.jsx";
 import { default as Login } from "./Auth/login";
 import { default as Cadastro } from "./Auth/cadastro";
+import { default as RecuperarSenha} from "./Auth/recuperar";
 
 const PaginaNaoEncontrada = () => <div>404 - Página Não Encontrada</div>;
 const TelaEmManutencao = () => <div>Em Manutenção</div>;
@@ -27,5 +28,6 @@ export const Paginas = {
     TelaErro,
     Login,
     Cadastro,
-    // adicionar outras quando criar
+    RecuperarSenha,
+    // adicionar outras quando criar essa merda
 };

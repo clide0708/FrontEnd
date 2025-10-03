@@ -34,6 +34,7 @@ export default function LoginPage() {
         placeholder="Senha"
       />
       <button onClick={() => navigate("/cadastro")}>Cadastro</button>
+      <button onClick={() => navigate("/recuperar-senha")}>Recuperar Senha</button>
       <button onClick={handleLogin}>Entrar</button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

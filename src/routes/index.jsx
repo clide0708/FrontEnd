@@ -5,7 +5,7 @@ import {
   redirect,
 } from "react-router-dom";
 import { Paginas } from "../pages/ltPages";
-import { PrivateRoute, PublicRoute } from "../utils/VerRoute";
+import { PrivateRoute, PublicRoute, RoleRoute } from "../utils/VerRoute";
 import Header from "../components/Header";
 import PageTransition from "../components/Loading";
 import BGanm from "../components/BG";
@@ -50,6 +50,10 @@ const routes = createBrowserRouter([
             path: "/cadastro",
             element: <Paginas.Cadastro />,
           },
+          {
+            path: "/recuperar-senha",
+            element: <Paginas.RecuperarSenha />,
+          },
         ],
       },
       {
@@ -79,12 +83,10 @@ const routes = createBrowserRouter([
                 ),
               },
               {
-                path: "/personal",
-                element: (
-                  <PageTransition>
-                    <Paginas.PersonalPage />
-                  </PageTransition>
-                ),
+                element: <RoleRoute allowedRoles={["personal"]} />,
+                children: [
+                  { path: "/personal", element: <Paginas.PersonalPage /> },
+                ],
               },
               {
                 path: "/perfil",

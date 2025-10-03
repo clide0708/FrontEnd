@@ -3,6 +3,7 @@ import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
 import PlanModal from "./modalPlano.jsx";
+import LogoutButton from "../../components/Buttons/Logout.jsx";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -65,6 +66,7 @@ export default function Profile() {
 
   return (
     <div className="container">
+      <LogoutButton />
       <div className="row">
         <div className="col-lg-12">
           <div className="page-content">
