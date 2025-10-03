@@ -10,7 +10,6 @@ export default function EditarTreino({
   onVoltar,
   onSave,
   onDelete,
-  hideIniciar = false, // nova prop
 }) {
   const navigate = useNavigate();
 
@@ -20,9 +19,10 @@ export default function EditarTreino({
   });
 
   const [selectedExercicio, setSelectedExercicio] = useState(null);
+  const [editExercicioTemp, setEditExercicioTemp] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
 
-  const isReadOnly = abaAtiva === "Personal" && !hideIniciar;
+  const isReadOnly = abaAtiva === "Personal";
 
   // Buscar exercícios do treino
   useEffect(() => {
@@ -76,6 +76,7 @@ export default function EditarTreino({
 
         if (exerciciosFormatados.length > 0) {
           setSelectedExercicio(exerciciosFormatados[0]);
+          setEditExercicioTemp(exerciciosFormatados[0]);
         }
       } catch (err) {
         console.error("Erro ao buscar exercícios do treino", err);
@@ -86,40 +87,46 @@ export default function EditarTreino({
     fetchExerciciosDoTreino();
   }, [treino]);
 
-  const handleEditChange = (campo, valor) => {
-    if (!selectedExercicio) return;
-
-    const exercicioAtualizado = { ...selectedExercicio, [campo]: valor };
-    setSelectedExercicio(exercicioAtualizado);
-
-    setCurrentTreino((prev) => ({
-      ...prev,
-      exercicios: prev.exercicios.map((ex) =>
-        ex.id === selectedExercicio.id ? exercicioAtualizado : ex
-      ),
-    }));
+  // Quando seleciona outro exercício
+  const handleSelectExercicio = (ex) => {
+    setSelectedExercicio(ex);
+    // reinicia edição temporária
+    setEditExercicioTemp(ex);
   };
 
+  // Alterar exercício temporário
+  const handleEditChange = (campo, valor) => {
+    if (!editExercicioTemp) return;
+
+    setEditExercicioTemp({
+      ...editExercicioTemp,
+      [campo]: valor,
+    });
+  };
+
+  // Remover exercício
   const handleRemoveExercicio = async (id) => {
-    if (isReadOnly) return;
+    if (!isReadOnly) {
+      try {
+        await exerciciosService.removerExercicioDoTreino(id);
 
-    try {
-      await exerciciosService.removerExercicioDoTreino(id);
+        setCurrentTreino((prev) => ({
+          ...prev,
+          exercicios: prev.exercicios.filter((ex) => ex.id !== id),
+        }));
 
-      setCurrentTreino((prev) => ({
-        ...prev,
-        exercicios: prev.exercicios.filter((ex) => ex.id !== id),
-      }));
-
-      if (selectedExercicio?.id === id) setSelectedExercicio(null);
-
-      if (onSave) onSave({ ...currentTreino, exercicios: currentTreino.exercicios.filter((ex) => ex.id !== id) });
-    } catch (err) {
-      console.error("Erro ao remover exercício:", err);
-      alert("Erro ao remover exercício");
+        if (selectedExercicio?.id === id) {
+          setSelectedExercicio(null);
+          setEditExercicioTemp(null);
+        }
+      } catch (err) {
+        console.error("Erro ao remover exercício:", err);
+        alert("Erro ao remover exercício");
+      }
     }
   };
 
+  // Adicionar exercício
   const handleAddExercicio = async (novoEx) => {
     if (!treino?.idTreino) return;
 
@@ -159,8 +166,7 @@ export default function EditarTreino({
         }));
 
         setSelectedExercicio(exercicioAdicionado);
-
-        if (onSave) onSave({ ...currentTreino, exercicios: [...currentTreino.exercicios, exercicioAdicionado] });
+        setEditExercicioTemp(exercicioAdicionado);
       }
     } catch (err) {
       console.error("Erro ao adicionar exercício:", err);
@@ -168,30 +174,36 @@ export default function EditarTreino({
     }
   };
 
-  const handleSaveExercicio = async () => {
-    if (!selectedExercicio) return;
+  // Salvar todos os exercícios temporários
+  const handleSaveTodosExercicios = async () => {
+    if (!currentTreino.exercicios.length || isReadOnly) return;
 
     try {
-      await exerciciosService.atualizarExercicioNoTreino(selectedExercicio.id, {
-        series: selectedExercicio.series,
-        repeticoes: selectedExercicio.repeticoes,
-        carga: selectedExercicio.peso,
-        observacoes: selectedExercicio.informacoes,
-      });
+      for (const ex of currentTreino.exercicios) {
+        // só atualiza se for o exercício que foi editado temporariamente
+        if (ex.id === editExercicioTemp?.id) {
+          await exerciciosService.atualizarExercicioNoTreino(ex.id, {
+            series: editExercicioTemp.series,
+            repeticoes: editExercicioTemp.repeticoes,
+            carga: editExercicioTemp.peso,
+            descanso: editExercicioTemp.descanso,
+            observacoes: editExercicioTemp.informacoes,
+          });
 
-      alert("Exercício atualizado com sucesso!");
-
-      if (onSave) {
-        setCurrentTreino((prev) =>
-          prev.exercicios.map((ex) =>
-            ex.id === selectedExercicio.id ? selectedExercicio : ex
-          )
-        );
-        onSave({ ...currentTreino });
+          // atualiza o state final
+          setCurrentTreino((prev) => ({
+            ...prev,
+            exercicios: prev.exercicios.map((item) =>
+              item.id === editExercicioTemp.id ? editExercicioTemp : item
+            ),
+          }));
+        }
       }
+
+      alert("Alterações salvas com sucesso!");
     } catch (err) {
-      console.error("Erro ao atualizar exercício:", err);
-      alert("Erro ao atualizar exercício");
+      console.error("Erro ao salvar exercícios:", err);
+      alert("Erro ao salvar exercícios");
     }
   };
 
@@ -221,13 +233,13 @@ export default function EditarTreino({
         <div className="editor-exercicio">
           {currentTreino.exercicios.length === 0 ? (
             <h1 className="asdoasd">Adicione um exercício</h1>
-          ) : selectedExercicio ? (
+          ) : editExercicioTemp ? (
             <>
               <label>
                 Séries:
                 <input
                   type="number"
-                  value={selectedExercicio.series || 0}
+                  value={editExercicioTemp.series || 0}
                   onChange={(e) =>
                     handleEditChange("series", parseInt(e.target.value) || 0)
                   }
@@ -238,7 +250,7 @@ export default function EditarTreino({
                 Repetições:
                 <input
                   type="number"
-                  value={selectedExercicio.repeticoes || 0}
+                  value={editExercicioTemp.repeticoes || 0}
                   onChange={(e) =>
                     handleEditChange(
                       "repeticoes",
@@ -252,7 +264,7 @@ export default function EditarTreino({
                 Peso (kg):
                 <input
                   type="number"
-                  value={selectedExercicio.peso || 0}
+                  value={editExercicioTemp.peso || 0}
                   onChange={(e) =>
                     handleEditChange("peso", parseFloat(e.target.value) || 0)
                   }
@@ -263,31 +275,34 @@ export default function EditarTreino({
                 Descanso (s):
                 <input
                   type="number"
-                  value={selectedExercicio.descanso || 0}
+                  value={editExercicioTemp.descanso || 0}
                   onChange={(e) =>
                     handleEditChange("descanso", parseInt(e.target.value) || 0)
                   }
                   disabled={isReadOnly}
                 />
               </label>
-              {selectedExercicio.informacoes && (
-                <p>Informações: {selectedExercicio.informacoes}</p>
+              {editExercicioTemp.informacoes && (
+                <p>Informações: {editExercicioTemp.informacoes}</p>
               )}
-              {selectedExercicio.url && (
+              {editExercicioTemp.url && (
                 <a
-                  href={selectedExercicio.url}
+                  href={editExercicioTemp.url}
                   target="_blank"
                   rel="noreferrer"
                 >
                   Ver Vídeo
                 </a>
               )}
+
+              {/* botão salvar todos */}
               {!isReadOnly && (
                 <button
-                  onClick={handleSaveExercicio}
-                  style={{ marginTop: "10px", padding: "8px 16px" }}
+                  onClick={handleSaveTodosExercicios}
+                  className="btnSalvarTodos"
+                  style={{ marginTop: "15px" }}
                 >
-                  Salvar Alterações
+                  Salvar Todos
                 </button>
               )}
             </>
@@ -304,7 +319,7 @@ export default function EditarTreino({
                 className={
                   selectedExercicio?.id === ex.id ? "active-exercicio" : ""
                 }
-                onClick={() => !isReadOnly && setSelectedExercicio(ex)}
+                onClick={() => handleSelectExercicio(ex)}
               >
                 {ex.nome}
                 {!isReadOnly && (
@@ -328,8 +343,8 @@ export default function EditarTreino({
                 Adicionar exercício +
               </button>
             )}
-            {!hideIniciar && (
-              <div className="bttcmc">
+            <div className="bttcmc">
+              {!isReadOnly && currentTreino.exercicios.length > 0 && (
                 <button
                   onClick={() => {
                     if (currentTreino.exercicios.length === 0) return;
@@ -346,8 +361,8 @@ export default function EditarTreino({
                 >
                   Iniciar
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

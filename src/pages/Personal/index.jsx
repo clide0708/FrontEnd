@@ -64,24 +64,6 @@ function Personal() {
     setTreinosAluno([...treinosAluno, treino]);
   }
 
-  // salvar alterações feitas pelo Personal no BD
-  const handleSaveTreinoPersonal = async (novoTreino) => {
-    try {
-      // salva no backend
-      await treinosService.atualizarTreino(novoTreino.idTreino, novoTreino);
-
-      // atualiza local
-      setTreinosAluno((prev) =>
-        prev.map((t) => (t.idTreino === novoTreino.idTreino ? novoTreino : t))
-      );
-      setShowEditar(false);
-      setTreinoSelecionado(null);
-    } catch (err) {
-      console.error("Erro ao salvar treino pelo Personal:", err);
-      alert("Erro ao salvar treino");
-    }
-  };
-
   return (
     <div className="Personal">
       <div className="containerPS">
@@ -226,7 +208,6 @@ function Personal() {
                 setShowEditar(false);
                 setTreinoSelecionado(null);
               }}
-              onSave={handleSaveTreinoPersonal}
               onDelete={(id) => {
                 setTreinosAluno((prev) => prev.filter((t) => t.idTreino !== id));
                 setShowEditar(false);
