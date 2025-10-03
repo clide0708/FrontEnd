@@ -4,7 +4,6 @@ const treinosService = {
   // Criar treino
   criar: async (treino) => {
     const { data } = await api.post("/treinos/criar", treino);
-    // se o backend não retorna idTreino ou tipo, força defaults
     return {
       idTreino: data.idTreino,
       nome: data.nome || treino.nome,
@@ -14,6 +13,7 @@ const treinosService = {
       exercicios: data.exercicios || [],
       idAluno: data.idAluno || treino.idAluno || null,
       idPersonal: data.idPersonal || treino.idPersonal || null,
+      nomeAluno: data.nomeAluno || treino.nomeAluno || null,
     };
   },
 
@@ -35,6 +35,7 @@ const treinosService = {
       exercicios: data.exercicios || treino.exercicios || [],
       idAluno: data.idAluno || treino.idAluno || null,
       idPersonal: data.idPersonal || treino.idPersonal || null,
+      nomeAluno: data.nomeAluno || treino.nomeAluno || null,
     };
   },
 
@@ -44,7 +45,7 @@ const treinosService = {
     return data;
   },
 
-  // Listar treinos do usuário logado (backend decide se é aluno/personal)
+  // Listar treinos do usuário logado
   listarUsuario: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     const { data } = await api.post("/treinos/listarUsuario", {
@@ -53,36 +54,37 @@ const treinosService = {
     return data || [];
   },
 
-  // Listar só os treinos "Meus Treinos" (aluno: sem personal)
+  // Meus treinos (aluno)
   listarMeus: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario.tipo === "aluno") {
-      const { data } = await api.get(`/treinos/aluno/${usuario.id}`);
-      return (data.meusTreinos || []).filter((t) => !t.idPersonal);
-    }
-    if (usuario.tipo === "personal") {
-      const { data } = await api.get(
-        `/treinos/personal/${usuario.id}/meus-treinos`
-      );
-      return (data.meusTreinos || []).filter((t) => !t.idPersonal);
-    }
-    return [];
+    const { data } =
+      usuario.tipo === "aluno"
+        ? await api.get(`/treinos/aluno/${usuario.id}`)
+        : await api.get(`/treinos/personal/${usuario.id}`);
+    return data.meusTreinos || []; // remove o filtro que excluía idPersonal
   },
 
-  // Listar treinos de personal atribuídos a alunos (só com idPersonal)
+  // Treinos atribuídos pelo personal
   listarPersonal: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    if (usuario.tipo === "personal") {
-      const { data } = await api.get(`/treinos/personal/${usuario.id}`);
-      return data.treinosAtribuidos || [];
-    }
-    return [];
+    if (usuario.tipo !== "personal") return [];
+    const { data } = await api.get(`/treinos/personal/${usuario.id}`);
+    // agora só pega os treinos que têm idPersonal
+    return (data.treinosAtribuidos || []).filter((t) => t.idPersonal);
   },
 
-  // Buscar treino completo (com exercícios e vídeos)
+  // Buscar treino completo
   buscarCompleto: async (idTreino) => {
     const { data } = await api.get(`/treinos/buscarCompleto/${idTreino}`);
     return data;
+  },
+
+  // treinosService.jsx
+  listarTreinosPersonalDoAluno: async () => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario.tipo !== "aluno") return [];
+    const { data } = await api.get(`/treinos/aluno/personal/${usuario.id}`);
+    return data.treinosAtribuidos || [];
   },
 };
 

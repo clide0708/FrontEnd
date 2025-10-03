@@ -6,7 +6,7 @@ import { default as AlimentacaoPage } from "./Alimentacao";
 import { default as PersonalPage } from "./Personal";
 import { default as PerfilPage } from "./Perfil";
 import { default as TreinosPage } from "./Treinos";
-import { default as TreinandoPage } from "./Treinos";
+import { default as TreinandoPage } from "./Treinos/treinando/treinando.jsx";
 import { default as Login } from "./Auth/login";
 import { default as Cadastro } from "./Auth/cadastro";
 

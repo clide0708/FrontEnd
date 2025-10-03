@@ -103,7 +103,7 @@ const routes = createBrowserRouter([
                 ),
               },
               {
-                path: "/treinos/treinando",
+                path: "/treinando",
                 element: (
                   <BGanm>
                     <Paginas.TreinandoPage />
