@@ -67,7 +67,7 @@ export default function Header() {
                   to="/personal" 
                   className={location.pathname === "/personal" ? "active" : ""}
                 >
-                  Personal
+                  Alunos
                 </Link>
               </li>
             )}

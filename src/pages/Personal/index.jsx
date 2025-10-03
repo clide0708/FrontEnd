@@ -1,178 +1,241 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
-import clientesData from "./clientes.json";
-import { Pencil, Trash2, Plus } from "lucide-react"; // ícones bonitos da djoliz
+import { Trash2, Plus } from "lucide-react";
+import treinosService from "../../services/Personal/personal";
+import EditarTreino from "../Treinos/editTreino";
 
 function Personal() {
-  const [clientes, setClientes] = useState(clientesData);
-  const [clienteSelecionado, setClienteSelecionado] = useState(clientes[0]);
-  const [novoTreino, setNovoTreino] = useState("");
+  const [alunos, setAlunos] = useState([]);
+  const [clienteSelecionado, setClienteSelecionado] = useState(null);
+  const [treinosPersonal, setTreinosPersonal] = useState([]); // treinos do personal
+  const [treinosAluno, setTreinosAluno] = useState([]); // treinos atribuídos ao aluno
 
-  function adicionarTreino(e) {
-    e.preventDefault();
-    if (!novoTreino) return;
+  const [showEditar, setShowEditar] = useState(false);
+  const [treinoSelecionado, setTreinoSelecionado] = useState(null);
 
-    const novoId =
-      clienteSelecionado.treinos.length > 0
-        ? Math.max(...clienteSelecionado.treinos.map((t) => t.id)) + 1
-        : 1;
+  const idPersonal = 2; // depois pega do token/logged user
 
-    const treinoObj = { id: novoId, nome: novoTreino };
+  // carrega treinos do personal
+  useEffect(() => {
+    async function fetchTreinosPersonal() {
+      const treinos = await treinosService.getTreinosPersonal(idPersonal);
+      setTreinosPersonal(treinos);
+    }
+    fetchTreinosPersonal();
+  }, []);
 
-    const clienteAtualizado = {
-      ...clienteSelecionado,
-      treinos: [...clienteSelecionado.treinos, treinoObj],
-    };
+  // carrega alunos do personal e seleciona o primeiro
+  useEffect(() => {
+    async function fetchAlunos() {
+      const lista = await treinosService.getAlunosPersonal(idPersonal);
+      setAlunos(lista);
+      if (lista.length > 0) setClienteSelecionado(lista[0]);
+    }
+    fetchAlunos();
+  }, []);
 
-    setClienteSelecionado(clienteAtualizado);
-    setClientes(
-      clientes.map((c) =>
-        c.id === clienteSelecionado.id ? clienteAtualizado : c
-      )
-    );
+  // carrega treinos do aluno selecionado
+  useEffect(() => {
+    async function fetchTreinosAluno() {
+      if (!clienteSelecionado) return;
 
-    setNovoTreino("");
-  }
+      try {
+        const treinos = await treinosService.getTreinosAluno(clienteSelecionado.idAluno);
+        setTreinosAluno(treinos || []);
+      } catch (error) {
+        console.error("Erro ao buscar treinos do aluno:", error);
+        setTreinosAluno([]);
+      }
+    }
+    fetchTreinosAluno();
+  }, [clienteSelecionado]);
 
+  // apagar treino do aluno localmente
   function apagarTreino(treinoId) {
-    const treinosAtualizados = clienteSelecionado.treinos.filter(
-      (t) => t.id !== treinoId
-    );
-    const clienteAtualizado = {
-      ...clienteSelecionado,
-      treinos: treinosAtualizados,
-    };
-    setClienteSelecionado(clienteAtualizado);
-    setClientes(
-      clientes.map((c) =>
-        c.id === clienteSelecionado.id ? clienteAtualizado : c
-      )
-    );
+    setTreinosAluno(treinosAluno.filter((t) => t.idTreino !== treinoId));
   }
 
-  function editarTreino(treinoId) {
-    const novoNome = prompt("Digite o novo nome do treino:");
-    if (!novoNome) return;
-
-    const treinosAtualizados = clienteSelecionado.treinos.map((t) =>
-      t.id === treinoId ? { ...t, nome: novoNome } : t
-    );
-
-    const clienteAtualizado = {
-      ...clienteSelecionado,
-      treinos: treinosAtualizados,
-    };
-
-    setClienteSelecionado(clienteAtualizado);
-    setClientes(
-      clientes.map((c) =>
-        c.id === clienteSelecionado.id ? clienteAtualizado : c
-      )
-    );
+  // atribuir treino do personal ao aluno
+  function atribuirTreinoAoAluno(treino) {
+    if (treinosAluno.some((t) => t.idTreino === treino.idTreino)) {
+      alert("Esse treino já está atribuído!");
+      return;
+    }
+    setTreinosAluno([...treinosAluno, treino]);
   }
+
+  // salvar alterações feitas pelo Personal no BD
+  const handleSaveTreinoPersonal = async (novoTreino) => {
+    try {
+      // salva no backend
+      await treinosService.atualizarTreino(novoTreino.idTreino, novoTreino);
+
+      // atualiza local
+      setTreinosAluno((prev) =>
+        prev.map((t) => (t.idTreino === novoTreino.idTreino ? novoTreino : t))
+      );
+      setShowEditar(false);
+      setTreinoSelecionado(null);
+    } catch (err) {
+      console.error("Erro ao salvar treino pelo Personal:", err);
+      alert("Erro ao salvar treino");
+    }
+  };
 
   return (
     <div className="Personal">
       <div className="containerPS">
+        {/* Painel esquerdo */}
         <div className="SC1">
-          <h4 className="Titulo">{clienteSelecionado.nome}</h4>
-          <div className="lnCliente">
-            <div className="ftCliente">
-              <img
-                src={clienteSelecionado.img || "/default-profile.png"}
-                alt="Perfil"
-              />
-            </div>
-            <div className="infCliente">
-              <p>
-                <strong className="Clientestrong">Idade:</strong>{" "}
-                {clienteSelecionado.idade}
-              </p>
-              <p>
-                <strong className="Clientestrong">Email:</strong>{" "}
-                {clienteSelecionado.email}
-              </p>
-              <p>
-                <strong className="Clientestrong">Telefone:</strong>{" "}
-                {clienteSelecionado.telefone}
-              </p>
-            </div>
-          </div>
+          {clienteSelecionado && (
+            <>
+              <h4 className="Titulo">{clienteSelecionado.nome}</h4>
+              <div className="lnCliente">
+                <div className="ftCliente">
+                  <img
+                    src={clienteSelecionado.img || "/assets/images/profilefoto.png"}
+                    alt="Perfil"
+                  />
+                </div>
+                <div className="infCliente">
+                  <p><strong className="Clientestrong">Email:</strong> {clienteSelecionado.email}</p>
+                  <p><strong className="Clientestrong">Status:</strong> {clienteSelecionado.status_vinculo}</p>
+                </div>
+              </div>
 
-          <div className="ClienteEX">
-            <div className="clte1">
-              <h1>Treinos atribuídos</h1>
-
-              <div className="treinosGrid">
-                {clienteSelecionado.treinos.map((treino) => (
-                  <div className="treinoCard" key={treino.id}>
-                    <p>{treino.nome}</p>
-                    <div className="acoesTreino">
-                      <button
-                        onClick={() => apagarTreino(treino.id)}
-                        className="btnIcon delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+              <div className="ClienteEX">
+                {/* Treinos atribuídos */}
+                <div className="clte1">
+                  <h1>Treinos atribuídos</h1>
+                  <div className="treinosGrid">
+                    {treinosAluno.length > 0 ? (
+                      treinosAluno.map((treino) => (
+                        <div
+                          className="treinoCard"
+                          key={treino.idTreino}
+                          onClick={() => {
+                            setTreinoSelecionado(treino);
+                            setShowEditar(true);
+                          }}
+                        >
+                          <p>{treino.nome}</p>
+                          <div className="acoesTreino">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                apagarTreino(treino.idTreino);
+                              }}
+                              className="btnIcon delete"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Nenhum treino atribuído</p>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="clte2">
-              <h1>Atribuir</h1>
+                </div>
 
-              <div className="treinosGridedede">
-                {clienteSelecionado.treinos.map((treino) => (
-                  <div className="treinoCard" key={treino.id}>
-                    <p>{treino.nome}</p>
-                    <div className="acoesTreino">
-                      <button
-                        onClick={() => apagarTreino(treino.id)}
-                        className="btnIcon delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                {/* Treinos disponíveis do personal */}
+                <div className="clte2">
+                  <h1>Atribuir</h1>
+                  <div className="treinosGridedede">
+                    {treinosPersonal.length > 0 ? (
+                      treinosPersonal.map((treino) => (
+                        <div
+                          className="treinoCard"
+                          key={treino.idTreino}
+                          onClick={() => {
+                            setTreinoSelecionado(treino);
+                            setShowEditar(true);
+                          }}
+                        >
+                          <p>{treino.nome}</p>
+                          <div className="acoesTreino">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                atribuirTreinoAoAluno(treino);
+                              }}
+                              className="btnIcon add"
+                            >
+                              <Plus size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Nenhum treino disponível</p>
+                    )}
                   </div>
-                ))}
+                  <div className="clttet">
+                    <button>Criar Novo</button>
+                  </div>
+                </div>
               </div>
-              <div className="clttet">
-                <button>Criar Novo</button>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
+        {/* Painel direito */}
         <div className="SC2">
           <div className="SC2p1">
             <h4 style={{ textAlign: "center" }}>Seu link de convite</h4>
-            <h1>{`📄 https://clidefit.com/invite/${clienteSelecionado.id}`}</h1>
+            {clienteSelecionado && (
+              <h1>{`📄 https://clidefit.com/invite/${clienteSelecionado.idAluno}`}</h1>
+            )}
           </div>
 
           <div className="SC2p2">
             <h4 style={{ textAlign: "center" }}>Alunos</h4>
             <ul>
-              {clientes.map((cliente) => (
-                <li
-                  key={cliente.id}
-                  onClick={() => setClienteSelecionado(cliente)}
-                  className={
-                    clienteSelecionado.id === cliente.id ? "selecionado" : ""
-                  }
-                >
-                  <img
-                    className="imgpflpqn"
-                    src={cliente.img || "/default-profile.png"}
-                    alt="Perfil"
-                  />
-                  {cliente.nome}
-                </li>
-              ))}
+              {alunos.length > 0 ? (
+                alunos.map((aluno) => (
+                  <li
+                    key={aluno.idAluno}
+                    onClick={() => setClienteSelecionado(aluno)}
+                    className={clienteSelecionado?.idAluno === aluno.idAluno ? "selecionado" : ""}
+                  >
+                    <img
+                      className="imgpflpqn"
+                      src={aluno.img || "/assets/images/profilefoto.png"}
+                      alt="Perfil"
+                    />
+                    {aluno.nome}
+                  </li>
+                ))
+              ) : (
+                <p>Nenhum aluno encontrado</p>
+              )}
             </ul>
           </div>
         </div>
       </div>
+
+      {/* Modal EditarTreino */}
+      {showEditar && treinoSelecionado && (
+        <div className="modal-overlay">
+          <div className="editcontttttent">
+            <EditarTreino
+              treino={treinoSelecionado}
+              abaAtiva="Editar"      // força edição pro Personal
+              hideIniciar={true}     // esconde botão iniciar
+              onVoltar={() => {
+                setShowEditar(false);
+                setTreinoSelecionado(null);
+              }}
+              onSave={handleSaveTreinoPersonal}
+              onDelete={(id) => {
+                setTreinosAluno((prev) => prev.filter((t) => t.idTreino !== id));
+                setShowEditar(false);
+                setTreinoSelecionado(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export default function EditarTreino({
   onVoltar,
   onSave,
   onDelete,
+  hideIniciar = false, // nova prop
 }) {
   const navigate = useNavigate();
 
@@ -21,7 +22,7 @@ export default function EditarTreino({
   const [selectedExercicio, setSelectedExercicio] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
 
-  const isReadOnly = abaAtiva === "Personal";
+  const isReadOnly = abaAtiva === "Personal" && !hideIniciar;
 
   // Buscar exercícios do treino
   useEffect(() => {
@@ -54,17 +55,16 @@ export default function EditarTreino({
                 peso: ex.carga || 0,
                 descanso: ex.descanso || 0,
                 url: ex.video_url,
-                // concatena todas as informações relevantes
                 informacoes: [
                   ex.observacoes,
                   isExercicioNormal
                     ? ex.descricaoExercicio
                     : ex.descricaoExercAdaptado,
-                  ex.comoExecutar, // esse é o campo que tava sumindo
+                  ex.comoExecutar,
                 ]
                   .filter(Boolean)
                   .join(" - "),
-                _rawData: ex, // útil pra debug
+                _rawData: ex,
               };
             })
           : [];
@@ -86,15 +86,10 @@ export default function EditarTreino({
     fetchExerciciosDoTreino();
   }, [treino]);
 
-  // Editar exercício selecionado
   const handleEditChange = (campo, valor) => {
     if (!selectedExercicio) return;
 
-    const exercicioAtualizado = {
-      ...selectedExercicio,
-      [campo]: valor,
-    };
-
+    const exercicioAtualizado = { ...selectedExercicio, [campo]: valor };
     setSelectedExercicio(exercicioAtualizado);
 
     setCurrentTreino((prev) => ({
@@ -106,22 +101,22 @@ export default function EditarTreino({
   };
 
   const handleRemoveExercicio = async (id) => {
-    if (!isReadOnly) {
-      try {
-        await exerciciosService.removerExercicioDoTreino(id);
+    if (isReadOnly) return;
 
-        setCurrentTreino((prev) => ({
-          ...prev,
-          exercicios: prev.exercicios.filter((ex) => ex.id !== id),
-        }));
+    try {
+      await exerciciosService.removerExercicioDoTreino(id);
 
-        if (selectedExercicio?.id === id) {
-          setSelectedExercicio(null);
-        }
-      } catch (err) {
-        console.error("Erro ao remover exercício:", err);
-        alert("Erro ao remover exercício");
-      }
+      setCurrentTreino((prev) => ({
+        ...prev,
+        exercicios: prev.exercicios.filter((ex) => ex.id !== id),
+      }));
+
+      if (selectedExercicio?.id === id) setSelectedExercicio(null);
+
+      if (onSave) onSave({ ...currentTreino, exercicios: currentTreino.exercicios.filter((ex) => ex.id !== id) });
+    } catch (err) {
+      console.error("Erro ao remover exercício:", err);
+      alert("Erro ao remover exercício");
     }
   };
 
@@ -164,6 +159,8 @@ export default function EditarTreino({
         }));
 
         setSelectedExercicio(exercicioAdicionado);
+
+        if (onSave) onSave({ ...currentTreino, exercicios: [...currentTreino.exercicios, exercicioAdicionado] });
       }
     } catch (err) {
       console.error("Erro ao adicionar exercício:", err);
@@ -172,7 +169,7 @@ export default function EditarTreino({
   };
 
   const handleSaveExercicio = async () => {
-    if (!selectedExercicio || isReadOnly) return;
+    if (!selectedExercicio) return;
 
     try {
       await exerciciosService.atualizarExercicioNoTreino(selectedExercicio.id, {
@@ -183,6 +180,15 @@ export default function EditarTreino({
       });
 
       alert("Exercício atualizado com sucesso!");
+
+      if (onSave) {
+        setCurrentTreino((prev) =>
+          prev.exercicios.map((ex) =>
+            ex.id === selectedExercicio.id ? selectedExercicio : ex
+          )
+        );
+        onSave({ ...currentTreino });
+      }
     } catch (err) {
       console.error("Erro ao atualizar exercício:", err);
       alert("Erro ao atualizar exercício");
@@ -194,9 +200,6 @@ export default function EditarTreino({
       <div className="btnhd">
         <button onClick={onVoltar}>← Voltar</button>
         <h2>{currentTreino.nome}</h2>
-        {/* {selectedExercicio && !isReadOnly && (
-          <button onClick={handleSaveExercicio}>Salvar Alterações</button>
-        )} */}
       </div>
 
       <div className="headertrn">
@@ -279,14 +282,14 @@ export default function EditarTreino({
                   Ver Vídeo
                 </a>
               )}
-              {/* {selectedExercicio && !isReadOnly && (
+              {!isReadOnly && (
                 <button
                   onClick={handleSaveExercicio}
                   style={{ marginTop: "10px", padding: "8px 16px" }}
                 >
                   Salvar Alterações
                 </button>
-              )} */}
+              )}
             </>
           ) : (
             <p>Selecione um exercício da lista para editar</p>
@@ -325,25 +328,26 @@ export default function EditarTreino({
                 Adicionar exercício +
               </button>
             )}
-            <div className="bttcmc">
-              <button
-                onClick={() => {
-                  if (currentTreino.exercicios.length === 0) return; // previne clique se vazio
-                  console.log("Iniciando treino:", currentTreino);
-                  navigate("/treinando", { state: { treino: currentTreino } });
-                }}
-                disabled={currentTreino.exercicios.length === 0}
-                style={{
-                  opacity: currentTreino.exercicios.length === 0 ? 0.5 : 1,
-                  cursor:
-                    currentTreino.exercicios.length === 0
-                      ? "not-allowed"
-                      : "pointer",
-                }}
-              >
-                Iniciar
-              </button>
-            </div>
+            {!hideIniciar && (
+              <div className="bttcmc">
+                <button
+                  onClick={() => {
+                    if (currentTreino.exercicios.length === 0) return;
+                    navigate("/treinando", { state: { treino: currentTreino } });
+                  }}
+                  disabled={currentTreino.exercicios.length === 0}
+                  style={{
+                    opacity: currentTreino.exercicios.length === 0 ? 0.5 : 1,
+                    cursor:
+                      currentTreino.exercicios.length === 0
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                >
+                  Iniciar
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

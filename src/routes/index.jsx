@@ -83,7 +83,11 @@ const routes = createBrowserRouter([
                 ),
               },
               {
-                element: <RoleRoute allowedRoles={["personal"]} />,
+                element: (
+                  <BGanm>
+                    <RoleRoute allowedRoles={["personal"]} />
+                  </BGanm>
+                ),
                 children: [
                   { path: "/personal", element: <Paginas.PersonalPage /> },
                 ],
