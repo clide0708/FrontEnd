@@ -1298,3 +1298,115 @@ a:hover {
 .fade-out {
   opacity: 0;
 }
+
+
+/* ------------------- Layout Principal ------------------- */
+.treinos-container {
+  display: flex;
+  flex-wrap: wrap; /* permite quebra em telas menores */
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  margin-top: 20px;
+  gap: 20px;
+  padding: 10px;
+}
+
+/* Sidebar esquerda */
+.PT1 {
+  flex: 1;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 20px;
+  border-radius: 20px;
+  background: transparent;
+}
+
+/* Conteúdo direita */
+.PT2 {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+/* Container de cards */
+.containertnvw {
+  margin-top: 20px;
+  width: 100%;
+  max-height: 700px;
+  background-color: #27292a;
+  border-radius: 20px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* Cards */
+.treino-card {
+  margin: 10px 0;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.treino-card:hover {
+  transform: translateY(-4px);
+  border: 2px solid #368DD9;
+}
+
+/* ------------------- Editor de Treino ------------------- */
+.treino-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.editor-exercicio {
+  flex: 1;
+  min-width: 280px;
+  background: #27292a;
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+}
+
+.lista-exercicios {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* ------------------- Responsividade ------------------- */
+@media (max-width: 1024px) {
+  .treinos-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .PT1, .PT2 {
+    width: 100%;
+    max-width: none;
+  }
+
+  .treino-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .treino-card h3 {
+    font-size: 1rem;
+  }
+  .treino-card p {
+    font-size: 0.85rem;
+  }
+  .editor-exercicio, .lista-exercicios {
+    padding: 12px;
+  }
+}

@@ -315,3 +315,114 @@
     display: flex;
     justify-content: right;
 }
+
+.containerPS {
+    display: flex;
+    flex-wrap: wrap; /* permite quebrar linha */
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1400px; /* limite para telas grandes */
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.Personal {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Seção esquerda */
+.SC1 {
+    background: #27292a;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex: 2; /* ocupa mais espaço */
+    min-width: 300px;
+    padding-bottom: 20px;
+}
+
+/* Seção direita */
+.SC2 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 260px;
+    gap: 20px;
+}
+
+.SC2p1, .SC2p2 {
+    background: #27292a;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+}
+
+/* Ajustar altura dinâmica */
+.SC2p1 {
+    min-height: 120px;
+}
+
+.SC2p2 {
+    flex: 1;
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+/* Treinos lado a lado só em telas grandes */
+.ClienteEX {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px;
+}
+
+/* Treinos ficam empilhados no mobile */
+.clte1, .clte2 {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Media queries */
+@media (max-width: 1024px) {
+    .containerPS {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .SC1, .SC2 {
+        width: 100%;
+    }
+
+    .clte2 {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .clte2 h1 {
+        text-align: left;
+    }
+}
+
+@media (max-width: 600px) {
+    .Titulo {
+        font-size: 22px;
+    }
+
+    .lnCliente {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .ftCliente {
+        margin: 0 auto;
+    }
+
+    .SC2p2 ul li {
+        font-size: 100%;
+        padding: 12px;
+    }
+}

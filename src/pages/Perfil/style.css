@@ -514,3 +514,65 @@
     color: #d93636;
     transition: all 0.2s;
 }
+
+.modal-header {
+  background-color: #1f2122;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  padding: 15px;
+  position: sticky; /* em vez de fixed */
+  top: 0;
+  display: flex;
+  flex-direction: column; /* mobile: quebra em coluna */
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .modal-header {
+    flex-direction: row; /* desktop mantém lado a lado */
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+.plan-card ul {
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .col-lg-4, .col-lg-3 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .main-info {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .clips .item img {
+    max-height: 180px;
+    object-fit: cover;
+  }
+}
+@media (max-width: 576px) {
+  .savebtnpf, .modalplas-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.logout-container {
+  display: flex;
+  justify-content: center;   /* centraliza horizontalmente */
+  align-items: center;       /* centraliza verticalmente dentro do espaço */
+  margin: 40px 0;            /* espaço acima e abaixo */
+  width: 100%;
+}
+
+.logout-container button {
+  max-width: 200px;          /* tamanho máximo do botão */
+  width: 100%;               /* ocupa toda a largura possível no mobile */
+  text-align: center;
+}

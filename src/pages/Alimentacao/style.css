@@ -1407,3 +1407,84 @@ body {
   color: #1e1e1e;
   background-color: #ffffff;
 }
+
+.alimentacao .geral {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .alim-content,
+  .pfl-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+@media (max-width: 768px) {
+  .alim-content .pt1,
+  .alim-content .pt2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .alim-content .pt2 h2 {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+}
+.modalalm-content {
+  width: 90%;
+  max-width: 500px;
+  height: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.psqsalm {
+  width: 100%;
+  max-width: 100%;
+}
+
+.psqsalm .campo,
+.psqsalm .inmputmodal {
+  width: 100%;
+}
+.modalalm2-content {
+  width: 90%;
+  max-width: 500px;
+  height: auto;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.infnm {
+  width: 100%;
+  flex-direction: column;
+  height: auto;
+  padding: 10px;
+  text-align: center;
+}
+
+.infnm h2 {
+  font-size: 150%;
+  width: 100%;
+}
+
+.infnm .select {
+  width: 100%;
+  margin-top: 10px;
+}
+@media (max-width: 576px) {
+  .add-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+
+  .addalmbtn button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+  }
+}

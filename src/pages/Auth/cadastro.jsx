@@ -90,6 +90,7 @@ export default function CadastroPage() {
           if (!/^[A-Z]{2,5}$/.test(value.trim())) newErrors.cref_regional = "Regional CREF inválida (2-5 letras)";
           else delete newErrors.cref_regional;
         }
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         newErrors[name] = "Erro ao validar";
       }

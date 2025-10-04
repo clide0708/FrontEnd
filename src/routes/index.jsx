@@ -54,16 +54,11 @@ const routes = createBrowserRouter([
             path: "/recuperar-senha",
             element: <Paginas.RecuperarSenha />,
           },
-        ],
-      },
-      {
-        element: <PrivateRoute />, // só quem tá logado
-        children: [
-          {
+                    {
             path: "/", // raiz
             loader: async () => redirect("/home"), // redireciona raiz pra home
           },
-          {
+                    {
             element: <AuthenticatedLayout />,
             children: [
               {
@@ -118,6 +113,12 @@ const routes = createBrowserRouter([
               },
             ],
           },
+        ],
+      },
+      {
+        element: <PrivateRoute />, // só quem tá logado
+        children: [
+
         ],
       },
     ],

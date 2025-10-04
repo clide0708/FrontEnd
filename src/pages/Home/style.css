@@ -1,8 +1,140 @@
-.header-text{
-    width: 80%;
-    margin-left: 10%;
+/* ====== BANNER ====== */
+.main-banner {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5%;
+  box-sizing: border-box;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+}
+.header-text em {
+  color: #bf2c71;
+  font-style: normal;
+  font-weight: bold;
+}
+.header-text {
+  max-width: 800px;
+  margin: auto;
 }
 
-.main-button a:hover{
-    color: black;
+.header-text h6 {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  margin-bottom: 10px;
+  color: #368dd9;
+  font-weight: 600;
+}
+
+.header-text h4 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.4;
+  margin-bottom: 20px;
+  word-wrap: break-word;
+}
+
+
+
+/* ====== CARDS ====== */
+.gaming-library {
+  display: grid;
+  gap: 25px;
+  width: 95%;
+  margin: 60px auto;
+}
+
+.heading-section h4 {
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  text-align: center;
+  margin-bottom: 30px;
+  color: #dd5fa3;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.gaming-library .item {
+  background: #1f1f1f;
+  border-radius: 15px;
+  padding: 20px;
+  color: #fff;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.gaming-library .item:hover {
+  transform: scale(1.03);
+  background: #368dd9;
+}
+
+.gaming-library .item ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gaming-library .item li {
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  word-wrap: break-word;
+}
+
+/* ====== BOTÕES ====== */
+
+.main-button{
+    color: #bf2c71;
+}
+
+.main-border-button a {
+  border: 2px solid #7055df;
+  padding: 6px 15px;
+  border-radius: 25px;
+  color: #7055df;
+  font-weight: bold;
+}
+
+.main-border-button a:hover {
+  background: #7055df;
+  color: #fff;
+}
+
+/* ====== RESPONSIVIDADE ====== */
+
+/* Telas médias: 2 colunas */
+@media (max-width: 1024px) {
+  .gaming-library {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .header-text h4 {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+  }
+}
+
+/* Celulares: 1 coluna */
+@media (max-width: 768px) {
+  .main-banner {
+    padding: 15% 5%;
+  }
+
+  .header-text h4 {
+    font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+  }
+
+  .gaming-library {
+    grid-template-columns: 1fr; /* um card por linha */
+    justify-items: center; /* centraliza */
+  }
+
+  .gaming-library .item {
+    width: 100%;
+    max-width: 380px; /* não fica gigante */
+    margin: 0 auto;
+  }
 }

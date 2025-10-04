@@ -25,16 +25,16 @@ export default function Profile() {
             data.treino === "Sedentário"
               ? 1
               : data.treino === "Leve"
-              ? 2
-              : data.treino === "Moderado"
-              ? 3
-              : 4,
+                ? 2
+                : data.treino === "Moderado"
+                  ? 3
+                  : 4,
           metaValue:
             data.meta === "Perder peso"
               ? 1
               : data.meta === "Manter peso"
-              ? 2
-              : 3,
+                ? 2
+                : 3,
         });
       })
       .catch((err) => console.error(err));
@@ -66,7 +66,6 @@ export default function Profile() {
 
   return (
     <div className="container">
-      <LogoutButton />
       <div className="row">
         <div className="col-lg-12">
           <div className="page-content">
@@ -308,6 +307,9 @@ export default function Profile() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                      <div className="logout-container">
+                        <LogoutButton />
                       </div>
                     </div>
                   </div>
