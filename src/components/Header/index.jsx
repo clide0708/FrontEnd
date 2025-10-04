@@ -5,13 +5,13 @@ import "../../assets/css/templatemo-cyborg-gaming.css";
 import "../../assets/css/style.css";
 import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification"; // verifica se o caminho tá certo
-
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [notModalOpen, setNotModalOpen] = useState(false);
   const [notificacoes, setNotificacoes] = useState([
     "Mensagem do personal",
+    "pt2",
   ]);
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const location = useLocation();
