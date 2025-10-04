@@ -5,7 +5,7 @@ const treinosService = {
   async getTreinosPersonal(idPersonal) {
     try {
       const response = await api.get(`/treinos/personal/${idPersonal}`);
-      return response.data.meusTreinos || []; // garante array
+      return response.data.meusTreinos || [];
     } catch (error) {
       console.error("Erro ao buscar treinos do personal:", error);
       return [];
@@ -16,21 +16,48 @@ const treinosService = {
   async getAlunosPersonal(idPersonal) {
     try {
       const response = await api.get(`/perfil/personal/${idPersonal}/alunos`);
-      return response.data.data || []; // garante array
+      return response.data.data || [];
     } catch (error) {
       console.error("Erro ao buscar alunos do personal:", error);
       return [];
     }
   },
 
-  // pega treinos atribuídos de um aluno específico pelo personal
+  // pega treinos atribuídos de um aluno específico
   async getTreinosAluno(idAluno) {
     try {
       const response = await api.get(`/treinos/aluno/personal/${idAluno}`);
-      return response.data.treinosAtribuidos || []; // garante array
+      return response.data.treinosAtribuidos || [];
     } catch (error) {
       console.error("Erro ao buscar treinos do aluno:", error);
       return [];
+    }
+  },
+
+  // atribui treino a um aluno
+  async atribuirTreino(idTreino, idAluno) {
+    try {
+      const response = await api.post("/treinos/atribuir", {
+        idTreino,
+        idAluno,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao atribuir treino:", error);
+      throw error;
+    }
+  },
+
+  async desatribuirTreino(idTreino) {
+    try {
+      const response = await api.put(
+        `/treinos/atribuido/${idTreino}/desatribuir`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao desatribuir treino:", error);
+      throw error;
     }
   },
 

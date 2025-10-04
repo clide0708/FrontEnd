@@ -8,8 +8,7 @@ export default function EditarTreino({
   treino,
   abaAtiva,
   onVoltar,
-  onSave,
-  onDelete,
+  hideIniciar = false,
 }) {
   const navigate = useNavigate();
 
@@ -143,30 +142,58 @@ export default function EditarTreino({
       );
 
       if (resultado.success !== false) {
-        const exercicioAdicionado = {
-          id: resultado.idTreino_Exercicio || Date.now(),
-          idExercicio: novoEx.idExercicio || novoEx.id,
-          idExercAdaptado: novoEx.idExercAdaptado || null,
-          nome: novoEx.nome,
-          descricao: novoEx.descricao || "",
-          grupoMuscular: novoEx.grupoMuscular || "",
-          series: novoEx.series || 3,
-          repeticoes: novoEx.repeticoes || 10,
-          peso: novoEx.peso || 0,
-          descanso: novoEx.descanso || 0,
-          observacoes: novoEx.informacoes || "",
-          informacoes: novoEx.informacoes || "",
-          url: novoEx.url || "",
-          _rawData: novoEx,
-        };
+        // busca tudo de novo do backend pra atualizar corretamente
+        const exerciciosAtualizados =
+          await exerciciosService.buscarExerciciosDoTreino(treino.idTreino);
+
+        const exerciciosFormatados = Array.isArray(exerciciosAtualizados)
+          ? exerciciosAtualizados.map((ex) => {
+              const isExercicioNormal = ex.idExercicio !== null;
+              return {
+                id: ex.idTreino_Exercicio,
+                idExercicio: ex.idExercicio,
+                idExercAdaptado: ex.idExercAdaptado,
+                nome: isExercicioNormal
+                  ? ex.nomeExercicio
+                  : ex.nomeExercAdaptado,
+                descricao: isExercicioNormal
+                  ? ex.descricaoExercicio
+                  : ex.descricaoExercAdaptado,
+                grupoMuscular: isExercicioNormal
+                  ? ex.grupoMuscularExercicio
+                  : ex.grupoMuscularExercAdaptado,
+                series: ex.series || 0,
+                repeticoes: ex.repeticoes || 0,
+                peso: ex.carga || 0,
+                descanso: ex.descanso || 0,
+                url: ex.video_url,
+                informacoes: [
+                  ex.observacoes,
+                  isExercicioNormal
+                    ? ex.descricaoExercicio
+                    : ex.descricaoExercAdaptado,
+                  ex.comoExecutar,
+                ]
+                  .filter(Boolean)
+                  .join(" - "),
+                _rawData: ex,
+              };
+            })
+          : [];
 
         setCurrentTreino((prev) => ({
           ...prev,
-          exercicios: [...prev.exercicios, exercicioAdicionado],
+          exercicios: exerciciosFormatados,
         }));
 
-        setSelectedExercicio(exercicioAdicionado);
-        setEditExercicioTemp(exercicioAdicionado);
+        if (exerciciosFormatados.length > 0) {
+          setSelectedExercicio(
+            exerciciosFormatados[exerciciosFormatados.length - 1]
+          );
+          setEditExercicioTemp(
+            exerciciosFormatados[exerciciosFormatados.length - 1]
+          );
+        }
       }
     } catch (err) {
       console.error("Erro ao adicionar exercício:", err);
@@ -179,25 +206,35 @@ export default function EditarTreino({
     if (!currentTreino.exercicios.length || isReadOnly) return;
 
     try {
-      for (const ex of currentTreino.exercicios) {
-        // só atualiza se for o exercício que foi editado temporariamente
-        if (ex.id === editExercicioTemp?.id) {
-          await exerciciosService.atualizarExercicioNoTreino(ex.id, {
+      // atualiza só o exercício temporário editado
+      if (editExercicioTemp) {
+        await exerciciosService.atualizarExercicioNoTreino(
+          editExercicioTemp.id,
+          {
             series: editExercicioTemp.series,
             repeticoes: editExercicioTemp.repeticoes,
             carga: editExercicioTemp.peso,
             descanso: editExercicioTemp.descanso,
-            observacoes: editExercicioTemp.informacoes,
-          });
+            // informacoes/observacoes não é alterado
+          }
+        );
 
-          // atualiza o state final
-          setCurrentTreino((prev) => ({
-            ...prev,
-            exercicios: prev.exercicios.map((item) =>
-              item.id === editExercicioTemp.id ? editExercicioTemp : item
-            ),
-          }));
-        }
+        // atualiza o state local sem tocar informacoes
+        setCurrentTreino((prev) => ({
+          ...prev,
+          exercicios: prev.exercicios.map((item) =>
+            item.id === editExercicioTemp.id
+              ? {
+                  ...item,
+                  series: editExercicioTemp.series,
+                  repeticoes: editExercicioTemp.repeticoes,
+                  peso: editExercicioTemp.peso,
+                  descanso: editExercicioTemp.descanso,
+                  // mantem informacoes e outros campos intactos
+                }
+              : item
+          ),
+        }));
       }
 
       alert("Alterações salvas com sucesso!");
@@ -344,11 +381,13 @@ export default function EditarTreino({
               </button>
             )}
             <div className="bttcmc">
-              {!isReadOnly && currentTreino.exercicios.length > 0 && (
+              {!hideIniciar && currentTreino.exercicios.length > 0 && (
                 <button
                   onClick={() => {
                     if (currentTreino.exercicios.length === 0) return;
-                    navigate("/treinando", { state: { treino: currentTreino } });
+                    navigate("/treinando", {
+                      state: { treino: currentTreino },
+                    });
                   }}
                   disabled={currentTreino.exercicios.length === 0}
                   style={{

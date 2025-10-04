@@ -1,29 +1,36 @@
-import { useState, useEffect } from "react"
-import { Link, useLocation } from "react-router-dom"
-import profileImg from "/assets/images/profilefoto.png"
-import '../../assets/css/templatemo-cyborg-gaming.css'
-import '../../assets/css/style.css'
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import profileImg from "/assets/images/profilefoto.png";
+import "../../assets/css/templatemo-cyborg-gaming.css";
+import "../../assets/css/style.css";
+import { FaBell } from "react-icons/fa";
+import NotificacoesModal from "../Notification"; // verifica se o caminho tá certo
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [userRole, setUserRole] = useState(null) // vai pegar o "tipo" do usuário
-  const toggleMenu = () => setMenuOpen(!menuOpen)
-  const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [notModalOpen, setNotModalOpen] = useState(false);
+  const [notificacoes, setNotificacoes] = useState([
+    "Mensagem do personal",
+  ]);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const location = useLocation();
 
   useEffect(() => {
-    // pega o usuário do localStorage
-    const user = JSON.parse(localStorage.getItem("usuario"))
+    const user = JSON.parse(localStorage.getItem("usuario"));
     if (user && user.tipo) {
-      setUserRole(user.tipo) // agora usa "tipo" que vem do backend
+      setUserRole(user.tipo);
     }
-  }, [])
+  }, []);
 
   return (
     <header className="nav-header">
       <div className="container">
         <div className="nav-bar">
           <h1>
-            <Link className="nav-CF" to="/home">ClideFit</Link>
+            <Link className="nav-CF" to="/home">
+              ClideFit
+            </Link>
           </h1>
 
           <div className="menu-icon" onClick={toggleMenu}>
@@ -34,17 +41,21 @@ export default function Header() {
 
           <ul className={`nav-menu ${menuOpen ? "show" : ""}`}>
             <li>
-              <Link 
-                to="/home" 
-                className={location.pathname === "/" || location.pathname === "/home" ? "active" : ""}
+              <Link
+                to="/home"
+                className={
+                  location.pathname === "/" || location.pathname === "/home"
+                    ? "active"
+                    : ""
+                }
               >
                 Início
               </Link>
             </li>
 
             <li>
-              <Link 
-                to="/alimentacao" 
+              <Link
+                to="/alimentacao"
                 className={location.pathname === "/alimentacao" ? "active" : ""}
               >
                 Alimentação
@@ -52,19 +63,23 @@ export default function Header() {
             </li>
 
             <li>
-              <Link 
-                to="/treinos" 
-                className={location.pathname === "/treinos" || location.pathname === "/treinos/treinando" ? "active" : ""}
+              <Link
+                to="/treinos"
+                className={
+                  location.pathname === "/treinos" ||
+                  location.pathname === "/treinando"
+                    ? "active"
+                    : ""
+                }
               >
                 Treinos
               </Link>
             </li>
-            
-            {/* só aparece se o cara for personal */}
+
             {userRole === "personal" && (
               <li>
-                <Link 
-                  to="/personal" 
+                <Link
+                  to="/personal"
                   className={location.pathname === "/personal" ? "active" : ""}
                 >
                   Alunos
@@ -72,10 +87,47 @@ export default function Header() {
               </li>
             )}
 
-            <li>
-              <Link 
-                to="/perfil" 
-                className={`profile-link ${location.pathname === "/perfil" ? "pfact" : ""}`}
+            <li
+              className="notif-item"
+              style={{
+                position: "relative",
+                display: "inline-block",
+                marginRight: "20px",
+              }}
+            >
+              <FaBell
+                className="notif-icon"
+                onClick={() => setNotModalOpen(true)}
+                size={24}
+              />
+
+              {notificacoes.length > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-5px",
+                    right: "-5px",
+                    background: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "2px 6px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    minWidth: "18px",
+                    textAlign: "center",
+                  }}
+                >
+                  {notificacoes.length}
+                </span>
+              )}
+            </li>
+
+            <li className="profile-item">
+              <Link
+                to="/perfil"
+                className={`profile-link ${
+                  location.pathname === "/perfil" ? "pfact" : ""
+                }`}
               >
                 <span>Perfil</span>
                 <img src={profileImg} alt="Foto de perfil" />
@@ -84,6 +136,12 @@ export default function Header() {
           </ul>
         </div>
       </div>
+
+      <NotificacoesModal
+        isOpen={notModalOpen}
+        onClose={() => setNotModalOpen(false)}
+        notificacoes={notificacoes}
+      />
     </header>
-  )
+  );
 }

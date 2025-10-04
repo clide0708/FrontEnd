@@ -7,7 +7,7 @@ export default function Treino() {
   const treino = location.state?.treino;
 
   if (!treino) {
-    navigate("/Treinos", { replace: true });
+    navigate("/treinos", { replace: true });
     return null;
   }
 
@@ -85,7 +85,7 @@ export default function Treino() {
         setTotalTime(0);
       } else {
         setEstado("finalizado");
-        setTimeout(() => navigate("/Treinos", { replace: true }), 1500);
+        setTimeout(() => navigate("/treinos", { replace: true }), 1500);
       }
     }
   }
@@ -267,7 +267,7 @@ export default function Treino() {
           </div>
           <button
             className="ext"
-            onClick={() => navigate("/Treinos", { replace: true })}
+            onClick={() => navigate("/treinos", { replace: true })}
           >
             Sair
           </button>

@@ -40,7 +40,9 @@ function Personal() {
       if (!clienteSelecionado) return;
 
       try {
-        const treinos = await treinosService.getTreinosAluno(clienteSelecionado.idAluno);
+        const treinos = await treinosService.getTreinosAluno(
+          clienteSelecionado.idAluno
+        );
         setTreinosAluno(treinos || []);
       } catch (error) {
         console.error("Erro ao buscar treinos do aluno:", error);
@@ -51,17 +53,61 @@ function Personal() {
   }, [clienteSelecionado]);
 
   // apagar treino do aluno localmente
-  function apagarTreino(treinoId) {
-    setTreinosAluno(treinosAluno.filter((t) => t.idTreino !== treinoId));
+  async function apagarTreino(treino) {
+    if (!treino.idAtribuicao && !treino.idTreino) {
+      alert("ID do treino inválido");
+      return;
+    }
+
+    try {
+      await treinosService.desatribuirTreino(
+        treino.idAtribuicao || treino.idTreino
+      );
+      setTreinosAluno((prev) =>
+        prev.filter((t) => t.idTreino !== treino.idTreino)
+      );
+    } catch (error) {
+      alert("Erro ao desatribuir treino");
+      console.error(error);
+    }
   }
 
   // atribuir treino do personal ao aluno
-  function atribuirTreinoAoAluno(treino) {
+  async function atribuirTreinoAoAluno(treino) {
+    if (!clienteSelecionado) return;
+
     if (treinosAluno.some((t) => t.idTreino === treino.idTreino)) {
       alert("Esse treino já está atribuído!");
       return;
     }
-    setTreinosAluno([...treinosAluno, treino]);
+
+    try {
+      await treinosService.atribuirTreino(
+        treino.idTreino,
+        clienteSelecionado.idAluno
+      );
+
+      setTreinosAluno((prev) => [...prev, treino]);
+    } catch (error) {
+      alert("Erro ao atribuir treino");
+      console.error(error);
+    }
+  }
+
+  async function handleDesatribuirTreino(treino) {
+    if (!treino?.idTreino) {
+      console.error("ID do treino inválido:", treino);
+      return;
+    }
+
+    try {
+      await treinosService.desatribuirTreino(treino.idTreino);
+      setTreinosAluno((prev) =>
+        prev.filter((t) => t.idTreino !== treino.idTreino)
+      );
+    } catch (error) {
+      console.error("Erro ao desatribuir treino:", error);
+    }
   }
 
   return (
@@ -75,13 +121,21 @@ function Personal() {
               <div className="lnCliente">
                 <div className="ftCliente">
                   <img
-                    src={clienteSelecionado.img || "/assets/images/profilefoto.png"}
+                    src={
+                      clienteSelecionado.img || "/assets/images/profilefoto.png"
+                    }
                     alt="Perfil"
                   />
                 </div>
                 <div className="infCliente">
-                  <p><strong className="Clientestrong">Email:</strong> {clienteSelecionado.email}</p>
-                  <p><strong className="Clientestrong">Status:</strong> {clienteSelecionado.status_vinculo}</p>
+                  <p>
+                    <strong className="Clientestrong">Email:</strong>{" "}
+                    {clienteSelecionado.email}
+                  </p>
+                  <p>
+                    <strong className="Clientestrong">Status:</strong>{" "}
+                    {clienteSelecionado.status_vinculo}
+                  </p>
                 </div>
               </div>
 
@@ -105,7 +159,7 @@ function Personal() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                apagarTreino(treino.idTreino);
+                                handleDesatribuirTreino(treino); // passa o objeto inteiro
                               }}
                               className="btnIcon delete"
                             >
@@ -178,7 +232,11 @@ function Personal() {
                   <li
                     key={aluno.idAluno}
                     onClick={() => setClienteSelecionado(aluno)}
-                    className={clienteSelecionado?.idAluno === aluno.idAluno ? "selecionado" : ""}
+                    className={
+                      clienteSelecionado?.idAluno === aluno.idAluno
+                        ? "selecionado"
+                        : ""
+                    }
                   >
                     <img
                       className="imgpflpqn"
@@ -202,14 +260,16 @@ function Personal() {
           <div className="editcontttttent">
             <EditarTreino
               treino={treinoSelecionado}
-              abaAtiva="Editar"      // força edição pro Personal
-              hideIniciar={true}     // esconde botão iniciar
+              abaAtiva="Editar" // força edição pro Personal
+              hideIniciar={true} // esconde botão iniciar
               onVoltar={() => {
                 setShowEditar(false);
                 setTreinoSelecionado(null);
               }}
               onDelete={(id) => {
-                setTreinosAluno((prev) => prev.filter((t) => t.idTreino !== id));
+                setTreinosAluno((prev) =>
+                  prev.filter((t) => t.idTreino !== id)
+                );
                 setShowEditar(false);
                 setTreinoSelecionado(null);
               }}
