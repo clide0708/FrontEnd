@@ -42,12 +42,12 @@ h4 {
   margin: auto;
 }
 
-.notif-icon{
+.notif-icon {
   margin-right: 10px;
   scale: 1.0;
 }
 
-.profile-notif{
+.profile-notif {
   display: flex;
   margin-left: 50px;
   align-items: center;
@@ -104,7 +104,7 @@ body {
   color: #ddd;
 }
 
-header{
+header {
   z-index: 1000;
 }
 
@@ -137,9 +137,6 @@ header{
   align-items: center;
 }
 
-.nav-menu li:last-child {
-  padding-left: 250px;
-}
 
 /* Logo */
 .nav-logo {
@@ -245,7 +242,7 @@ header{
   }
 }
 
-.pfact{
+.pfact {
   border: #368dd9 solid 1px;
   color: #368dd9;
 }
@@ -257,4 +254,10 @@ html {
 .notif-item:hover {
   cursor: pointer;
   color: #368dd9;
+}
+
+.pipipiripii {
+  padding-left: 250px;
+  display: flex;
+  align-items: center;
 }

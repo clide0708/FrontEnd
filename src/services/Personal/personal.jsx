@@ -1,6 +1,6 @@
 import api from "../api";
 
-const treinosService = {
+const personalService = {
   // pega todos os treinos do personal
   async getTreinosPersonal(idPersonal) {
     try {
@@ -51,7 +51,7 @@ const treinosService = {
   async desatribuirTreino(idTreino) {
     try {
       const response = await api.put(
-        `/treinos/atribuido/${idTreino}/desatribuir`
+        `/treinos/excluir/${idTreino}`
       );
 
       return response.data;
@@ -95,4 +95,4 @@ const treinosService = {
   },
 };
 
-export default treinosService;
+export default personalService;

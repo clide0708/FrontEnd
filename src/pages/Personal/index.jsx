@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
 import "./style.css";
+import { FiEdit } from "react-icons/fi";
 import { Trash2, Plus } from "lucide-react";
-import treinosService from "../../services/Personal/personal";
+import personalService from "../../services/Personal/personal";
+import treinosService from "../../services/Treinos/treinos.jsx"; // criar/editar
+
 import EditarTreino from "../Treinos/editTreino";
+import ModalAddTreino from "../Treinos/addTreino";
 
 function Personal() {
   const [alunos, setAlunos] = useState([]);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
-  const [treinosPersonal, setTreinosPersonal] = useState([]); // treinos do personal
-  const [treinosAluno, setTreinosAluno] = useState([]); // treinos atribuídos ao aluno
-
+  const [treinosPersonal, setTreinosPersonal] = useState([]);
+  const [treinosAluno, setTreinosAluno] = useState([]);
+  const [treinoEditando, setTreinoEditando] = useState(null);
+  const [showModalAdd, setShowModalAdd] = useState(false);
   const [showEditar, setShowEditar] = useState(false);
   const [treinoSelecionado, setTreinoSelecionado] = useState(null);
 
@@ -18,17 +23,17 @@ function Personal() {
   // carrega treinos do personal
   useEffect(() => {
     async function fetchTreinosPersonal() {
-      const treinos = await treinosService.getTreinosPersonal(idPersonal);
-      setTreinosPersonal(treinos);
+      const treinos = await personalService.getTreinosPersonal(idPersonal);
+      setTreinosPersonal(treinos || []);
     }
     fetchTreinosPersonal();
   }, []);
 
-  // carrega alunos do personal e seleciona o primeiro
+  // carrega alunos do personal
   useEffect(() => {
     async function fetchAlunos() {
-      const lista = await treinosService.getAlunosPersonal(idPersonal);
-      setAlunos(lista);
+      const lista = await personalService.getAlunosPersonal(idPersonal);
+      setAlunos(lista || []);
       if (lista.length > 0) setClienteSelecionado(lista[0]);
     }
     fetchAlunos();
@@ -38,75 +43,52 @@ function Personal() {
   useEffect(() => {
     async function fetchTreinosAluno() {
       if (!clienteSelecionado) return;
-
       try {
-        const treinos = await treinosService.getTreinosAluno(
+        const treinos = await personalService.getTreinosAluno(
           clienteSelecionado.idAluno
         );
         setTreinosAluno(treinos || []);
-      } catch (error) {
-        console.error("Erro ao buscar treinos do aluno:", error);
+      } catch (err) {
+        console.error("Erro ao buscar treinos do aluno:", err);
         setTreinosAluno([]);
       }
     }
     fetchTreinosAluno();
   }, [clienteSelecionado]);
 
-  // apagar treino do aluno localmente
-  async function apagarTreino(treino) {
-    if (!treino.idAtribuicao && !treino.idTreino) {
-      alert("ID do treino inválido");
-      return;
-    }
-
-    try {
-      await treinosService.desatribuirTreino(
-        treino.idAtribuicao || treino.idTreino
-      );
-      setTreinosAluno((prev) =>
-        prev.filter((t) => t.idTreino !== treino.idTreino)
-      );
-    } catch (error) {
-      alert("Erro ao desatribuir treino");
-      console.error(error);
-    }
-  }
-
-  // atribuir treino do personal ao aluno
+  // atribuir treino ao aluno
   async function atribuirTreinoAoAluno(treino) {
     if (!clienteSelecionado) return;
-
     if (treinosAluno.some((t) => t.idTreino === treino.idTreino)) {
       alert("Esse treino já está atribuído!");
       return;
     }
-
     try {
-      await treinosService.atribuirTreino(
+      await personalService.atribuirTreino(
         treino.idTreino,
         clienteSelecionado.idAluno
       );
-
-      setTreinosAluno((prev) => [...prev, treino]);
-    } catch (error) {
+      // atualiza lista do aluno
+      const treinosAtualizados = await personalService.getTreinosAluno(
+        clienteSelecionado.idAluno
+      );
+      setTreinosAluno(treinosAtualizados || []);
+    } catch (err) {
+      console.error(err);
       alert("Erro ao atribuir treino");
-      console.error(error);
     }
   }
 
+  // desatribuir treino do aluno
   async function handleDesatribuirTreino(treino) {
-    if (!treino?.idTreino) {
-      console.error("ID do treino inválido:", treino);
-      return;
-    }
-
+    if (!treino?.idTreino) return;
     try {
-      await treinosService.desatribuirTreino(treino.idTreino);
+      await personalService.desatribuirTreino(treino.idTreino);
       setTreinosAluno((prev) =>
         prev.filter((t) => t.idTreino !== treino.idTreino)
       );
-    } catch (error) {
-      console.error("Erro ao desatribuir treino:", error);
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -144,70 +126,79 @@ function Personal() {
                 <div className="clte1">
                   <h1>Treinos atribuídos</h1>
                   <div className="treinosGrid">
-                    {treinosAluno.length > 0 ? (
-                      treinosAluno.map((treino) => (
-                        <div
-                          className="treinoCard"
-                          key={treino.idTreino}
-                          onClick={() => {
-                            setTreinoSelecionado(treino);
-                            setShowEditar(true);
-                          }}
-                        >
-                          <p>{treino.nome}</p>
-                          <div className="acoesTreino">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDesatribuirTreino(treino); // passa o objeto inteiro
-                              }}
-                              className="btnIcon delete"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
+                    {treinosAluno.map((treino) => (
+                      <div
+                        className="treinoCard"
+                        key={treino.idAtribuicao}
+                        onClick={() => {
+                          setTreinoSelecionado(treino);
+                          setShowEditar(true);
+                        }}
+                      >
+                        <p>{treino.nome}</p>
+                        <div className="acoesTreino">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTreinoEditando(treino);
+                              setShowModalAdd(true);
+                            }}
+                            className="btnIcon edit"
+                          >
+                            <FiEdit size={16} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDesatribuirTreino(treino);
+                            }}
+                            className="btnIcon delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
-                      ))
-                    ) : (
-                      <p>Nenhum treino atribuído</p>
-                    )}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Treinos disponíveis do personal */}
+                {/* Treinos do personal */}
                 <div className="clte2">
                   <h1>Atribuir</h1>
                   <div className="treinosGridedede">
-                    {treinosPersonal.length > 0 ? (
-                      treinosPersonal.map((treino) => (
-                        <div
-                          className="treinoCard"
-                          key={treino.idTreino}
-                          onClick={() => {
-                            setTreinoSelecionado(treino);
-                            setShowEditar(true);
-                          }}
-                        >
-                          <p>{treino.nome}</p>
-                          <div className="acoesTreino">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                atribuirTreinoAoAluno(treino);
-                              }}
-                              className="btnIcon add"
-                            >
-                              <Plus size={16} />
-                            </button>
-                          </div>
+                    {treinosPersonal.map((treino) => (
+                      <div
+                        className="treinoCard"
+                        key={treino.idTreino}
+                        onClick={() => {
+                          setTreinoSelecionado(treino);
+                          setShowEditar(true);
+                        }}
+                      >
+                        <p>{treino.nome}</p>
+                        <div className="acoesTreino">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              atribuirTreinoAoAluno(treino);
+                            }}
+                            className="btnIcon add"
+                          >
+                            <Plus size={16} />
+                          </button>
                         </div>
-                      ))
-                    ) : (
-                      <p>Nenhum treino disponível</p>
-                    )}
+                      </div>
+                    ))}
                   </div>
                   <div className="clttet">
-                    <button>Criar Novo</button>
+                    <button
+                      onClick={() => {
+                        setTreinoEditando(null); // modal vazio pra criar
+                        setShowModalAdd(true);
+                      }}
+                    >
+                      Criar Novo
+                    </button>
                   </div>
                 </div>
               </div>
@@ -227,28 +218,24 @@ function Personal() {
           <div className="SC2p2">
             <h4 style={{ textAlign: "center" }}>Alunos</h4>
             <ul>
-              {alunos.length > 0 ? (
-                alunos.map((aluno) => (
-                  <li
-                    key={aluno.idAluno}
-                    onClick={() => setClienteSelecionado(aluno)}
-                    className={
-                      clienteSelecionado?.idAluno === aluno.idAluno
-                        ? "selecionado"
-                        : ""
-                    }
-                  >
-                    <img
-                      className="imgpflpqn"
-                      src={aluno.img || "/assets/images/profilefoto.png"}
-                      alt="Perfil"
-                    />
-                    {aluno.nome}
-                  </li>
-                ))
-              ) : (
-                <p>Nenhum aluno encontrado</p>
-              )}
+              {alunos.map((aluno) => (
+                <li
+                  key={aluno.idAluno}
+                  onClick={() => setClienteSelecionado(aluno)}
+                  className={
+                    clienteSelecionado?.idAluno === aluno.idAluno
+                      ? "selecionado"
+                      : ""
+                  }
+                >
+                  <img
+                    className="imgpflpqn"
+                    src={aluno.img || "/assets/images/profilefoto.png"}
+                    alt="Perfil"
+                  />
+                  {aluno.nome}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -260,15 +247,18 @@ function Personal() {
           <div className="editcontttttent">
             <EditarTreino
               treino={treinoSelecionado}
-              abaAtiva="Editar" // força edição pro Personal
-              hideIniciar={true} // esconde botão iniciar
+              treinoId={
+                treinoSelecionado.idAtribuicao || treinoSelecionado.idTreino
+              }
+              abaAtiva="Editar"
+              hideIniciar={true}
               onVoltar={() => {
                 setShowEditar(false);
                 setTreinoSelecionado(null);
               }}
               onDelete={(id) => {
                 setTreinosAluno((prev) =>
-                  prev.filter((t) => t.idTreino !== id)
+                  prev.filter((t) => t.idAtribuicao !== id)
                 );
                 setShowEditar(false);
                 setTreinoSelecionado(null);
@@ -276,6 +266,36 @@ function Personal() {
             />
           </div>
         </div>
+      )}
+
+      {/* Modal de editar nome (ModalAddTreino) */}
+      {showModalAdd && (
+        <ModalAddTreino
+          treino={treinoEditando}
+          onClose={() => {
+            setShowModalAdd(false);
+            setTreinoEditando(null);
+          }}
+          onSave={async (novoTreino) => {
+            if (novoTreino.idTreino) {
+              await treinosService.editar(novoTreino);
+            } else {
+              await treinosService.criar(novoTreino);
+            }
+
+            // atualiza treinos do personal
+            const treinosAtualizados = await personalService.getTreinosPersonal(idPersonal);
+            setTreinosPersonal(treinosAtualizados || []);
+
+            // atualiza treinos do aluno se ele tiver o treino editado
+            setTreinosAluno(prev =>
+              prev.map(t => t.idTreino === novoTreino.idTreino ? { ...t, ...novoTreino } : t)
+            );
+
+            setShowModalAdd(false);
+            setTreinoEditando(null);
+          }}
+        />
       )}
     </div>
   );

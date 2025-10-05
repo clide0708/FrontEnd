@@ -79,7 +79,6 @@ const treinosService = {
     return data;
   },
 
-  // treinosService.jsx
   listarTreinosPersonalDoAluno: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (usuario.tipo !== "aluno") return [];

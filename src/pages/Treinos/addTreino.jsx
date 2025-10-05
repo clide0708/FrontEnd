@@ -15,7 +15,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
     }
   }, [treino]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // valida campos obrigatórios
@@ -39,7 +39,8 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
       exercicios: treino ? treino.exercicios : [],
     };
 
-    onSave(novoTreino);
+    // espera salvar antes de fechar
+    await onSave(novoTreino);
     onClose();
   };
 
