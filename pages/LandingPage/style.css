@@ -1,0 +1,178 @@
+:root {
+  --rosa: #bf2c71;
+  --lilas: #7055df;
+  --azul-escuro: #020659;
+  --azul-medio: #368dd9;
+  --rosa-claro: #dd5fa3;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--azul-escuro);
+  color: white;
+  scroll-behavior: smooth;
+}
+
+/* HEADER */
+.lp-header {
+  position: relative;
+  width: 100%;
+  top: 0;
+  background: rgba(34, 34, 34, 0.95);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.lp-header .logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white
+}
+
+.lp-header button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lp-header button:hover {
+  transform: translateY(-2px);
+}
+
+.lp-header button.secondary {
+  background: var(--lilas);
+  color: white;
+}
+
+.lp-header button:not(.secondary) {
+  background: var(--rosa);
+  color: white;
+}
+
+/* HERO */
+.lp-hero {
+  height: 100vh;
+  background: linear-gradient(120deg, var(--azul-medio), var(--lilas), var(--rosa));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  animation: gradientShift 10s ease infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.lp-hero .hero-content {
+  max-width: 600px;
+  padding: 20px;
+}
+
+.lp-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.lp-hero p {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+}
+
+.lp-hero button {
+  padding: 15px 35px;
+  background: var(--rosa);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.lp-hero button:hover {
+  background: var(--rosa-claro);
+  transform: scale(1.05);
+}
+
+/* SEÇÕES */
+.lp-sobre, .lp-servicos, .lp-acessibilidade {
+  padding: 100px 50px;
+  text-align: center;
+  background-color: var(--azul-escuro);
+}
+
+.lp-sobre h2, .lp-servicos h2, .lp-acessibilidade h2 {
+  color: var(--azul-medio);
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.lp-sobre p, .lp-acessibilidade p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* CARDS */
+.lp-servicos .cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.lp-servicos .card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 15px;
+  padding: 30px;
+  width: 260px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.lp-servicos .card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FOOTER */
+.lp-footer {
+  width: 100%;
+  background: linear-gradient(90deg, var(--rosa), var(--lilas));
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.lp-footer .socials {
+  margin-top: 10px;
+}
+
+.lp-footer .socials a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.lp-footer .socials a:hover {
+  opacity: 0.8;
+}

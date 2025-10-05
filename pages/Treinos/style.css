@@ -1,0 +1,1412 @@
+.treinos-container {
+  display: flex;
+  width: 1200px;
+  margin: auto;
+  height: 800px;
+  margin-top: 40px;
+}
+
+.PT1 {
+  width: 300px;
+  background-color: transparent;
+  padding: 20px;
+  border-radius: 20px;
+  height: 700px;
+}
+
+.PT1 h1 {
+  font-size: 200%;
+  height: auto;
+  color: white;
+  text-align: center;
+}
+
+.PT2 {
+  margin-left: auto;
+  flex-direction: column;
+  display: flex;
+  justify-content: right;
+  width: 950px;
+  height: auto;
+  padding-left: 50px;
+}
+
+.navlinktn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: auto;
+  text-align: center;
+  justify-content: center;
+  height: 259px;
+}
+
+.navlinktn a {
+  color: white;
+  text-decoration: none;
+  font-size: 120%;
+  transition: all 1s;
+}
+
+.ststn {
+  width: 100%;
+  height: 350px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.containertnvw {
+  margin-top: 50px;
+  width: 1000px;
+  max-height: 700px;
+  background-color: #27292a;
+  border-radius: 30px;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.PT1 h2 {
+  color: white;
+  text-align: left;
+  padding-left: 7px;
+  font-size: 200%;
+  border-left: 10px solid #368DD9;
+  margin-top: 0px;
+  width: 100%;
+}
+
+
+.fufufa {
+  box-shadow: none;
+  width: 100%;
+  background-color: transparent;
+  justify-content: end;
+}
+
+.navlinktn a {
+  text-decoration: none;
+  color: #ccc;
+  margin-right: 20px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navlinktn a:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.navlinktn a.active {
+  background-color: #368DD9;
+  color: #fff;
+  transition: all 1s;
+}
+
+.containertnvw {
+  gap: 12px;
+  padding: 10px;
+  max-width: 800px;
+  max-height: 780px;
+  overflow-y: auto;
+}
+
+.containertnvw::-webkit-scrollbar {
+  width: 9px;
+}
+
+.containertnvw::-webkit-scrollbar-track {
+  border-radius: 0px;
+}
+
+.containertnvw::-webkit-scrollbar-thumb {
+  background-color: #368DD9;
+  border-radius: 0px;
+  border: 1px solid #1e1e2f;
+}
+
+
+.treino-card {
+  border: 1px transparent solid;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.treino-card:hover {
+  transform: translateY(-4px);
+  border: 2px solid #368DD9;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s;
+}
+
+.treino-card .delete-btn {
+  color: white;
+  background: none;
+  border: none;
+  margin-right: 10px;
+  transition: 90ms;
+}
+
+.treino-card .delete-btn:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+  transition: 90ms;
+  color: #368dd9;
+}
+
+.treino-card h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.treino-card p {
+  font-size: 12px;
+  color: #ccc;
+  margin: 0;
+}
+
+.popopoptata {
+  margin: 10px;
+  background-color: #1e1e1e;
+}
+
+.popopoptata h3 {
+  color: white;
+  font-size: 200%;
+  margin-top: 0px;
+}
+
+.fufufa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fufufa button {
+  margin-top: 20px;
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  padding: 4%;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 50px;
+  transition: all 0.2s;
+}
+
+.fufufa ul {
+  width: 100%;
+  padding-bottom: 50px;
+}
+
+.fufufa button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  scale: 1.1;
+}
+
+.treino-content {
+  padding-right: 0px;
+  justify-content: right;
+  display: flex;
+  width: 800px;
+  margin: auto;
+  margin-top: 0px;
+  height: 620px;
+  padding: 30px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  padding-left: 0pxs;
+}
+
+.lista-exercicios {
+  position: block;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lista-exercicios h3 {
+  color: white;
+  font-size: 170%;
+  width: 100%;
+  margin-left: 10%;
+  text-align: right;
+  margin-bottom: 40px;
+}
+
+.lista-exercicios li {
+  text-align: right;
+  width: 100%;
+  padding-right: 10px;
+  font-size: 120%;
+  margin-bottom: 30px;
+}
+
+.editor-exercicio {
+  border-radius: 20px;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  background-color: #27292a;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.editor-exercicio h3 {
+  border-left: 10px solid #368DD9;
+  padding-left: 4%;
+  font-size: 150%;
+  width: 100%;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.editor-exercicio label {
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #1F2122;
+  padding-left: 20px;
+}
+
+.editor-exercicio label:first-child {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  margin-top: 20px;
+}
+
+.desctrn {
+  width: 100%;
+  margin-top: 50px;
+  padding-top: 10px;
+  border-top: 2px solid white;
+  font-weight: 300;
+}
+
+.active-exercicio {
+  color: #368DD9;
+}
+
+.lista-exercicios li:hover {
+  color: #8f8f8f;
+  cursor: pointer;
+}
+
+.active-exercicio li:hover {
+  color: #1363a8;
+}
+
+.lista-exercicios ul {
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 4px;
+  padding-top: 40px;
+  margin: 4px;
+  width: 90%;
+  margin-left: 10%;
+  border-top: 3px solid white;
+}
+
+.treino-detalhes button {
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 80%;
+  padding: 7px;
+  margin-top: 25px;
+  margin-left: 60px;
+  font-weight: bold;
+}
+
+
+.treino-detalhes button:hover {
+  background-color: #368DD9;
+  border: #368DD9 2px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+
+.dltaex {
+  padding-left: 7px;
+  color: white;
+}
+
+.dltaex:hover {
+  color: #ff7878;
+}
+
+.lista-exercicios p {
+  text-align: right;
+}
+
+.treino-detalhes {
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  justify-content: space-between;
+  border-bottom: white 2px solid;
+  padding-bottom: 20px;
+  margin-bottom: 2px;
+}
+
+.treino h2 {
+  width: 90%;
+}
+
+.fufufa button {
+  margin-top: 20px;
+  background-color: transparent;
+  border: #368DD9 2px solid;
+  padding: 4%;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.fufufa button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.iniciar-treino-container button {
+  margin-top: 180px;
+  background-color: transparent;
+  border: #36d975 2px solid;
+  padding: 20px;
+  color: #36d975;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  width: 100%;
+}
+
+.iniciar-treino-container button:hover {
+  background-color: #36d975;
+  border: #36d975 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.popopoptata p {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  font-size: 100%;
+}
+
+.popopoptata h3 {
+  margin-left: 20px;
+}
+
+.lista-exercicios h2 {
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+
+.editor-exercicio {
+  width: 700px;
+  padding-top: 10px;
+}
+
+.treino-content {
+  width: 1000px;
+}
+
+.lista-exercicios {
+  width: 500px;
+}
+
+.headertrn h3 {
+  color: white;
+  text-align: left;
+  padding-left: 7px;
+  font-size: 150%;
+  border-left: 5px solid #368DD9;
+  margin-top: 0px;
+  width: 580px;
+  font-weight: 300;
+}
+
+.headertrn h2 {
+  color: white;
+  width: 420px;
+  text-align: center;
+  font-size: 200%;
+}
+
+.headertrn {
+  width: 1000px;
+  display: flex;
+  align-items: center;
+}
+
+.lista-exercicios ul li {
+  width: 100%;
+  font-size: 110%;
+  font-weight: 600;
+}
+
+.btnhd button {
+  background-color: transparent;
+  border: #368DD9 3px solid;
+  padding: 10px;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 120px;
+}
+
+.btnhd button:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.editor-exercicio input {
+  background-color: transparent;
+  border-radius: 20px;
+  border: 2px solid white;
+  padding: 7px;
+  color: white;
+  width: 150px;
+  margin-top: 5px;
+}
+
+.btnhd {
+  width: 100%;
+  display: flex;
+  margin-bottom: 20px;
+
+}
+
+.btnhd h2 {
+  width: 760px;
+  text-align: center;
+  color: #368DD9;
+  font-size: 200%;
+}
+
+.ftltex {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ftltex a:hover {
+  color: #368DD9;
+  cursor: pointer;
+}
+
+.bttcmc button {
+  background-color: transparent;
+  border: #36d975 3px solid;
+  padding: 20px;
+  color: #36d975;
+  border-radius: 10px;
+  font-size: 150%;
+  font-weight: bold;
+  width: 150px;
+  margin-top: 100px;
+  margin-left: 300px;
+}
+
+.bttcmc button:hover {
+  background-color: #36d975;
+  border: #36d975 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-contentadtn {
+  background: #27292a;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.form-add-treino label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.form-add-treino input,
+.form-add-treino textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-contentadtn h2 {
+  color: white;
+  font-size: 200%;
+  margin-bottom: 20px;
+}
+
+.modal-actions .b1 {
+  background-color: transparent;
+  border: white 2px solid;
+  padding: 10px;
+  color: white;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 120px;
+}
+
+.modal-actions .b1:hover {
+  background-color: white;
+  border: white 2px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.modal-actions .b2 {
+  background-color: transparent;
+  border: #36d975 2px solid;
+  padding: 10px;
+  color: #36d975;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 120px;
+}
+
+.modal-actions .b2:hover {
+  background-color: #36d975;
+  border: #36d975 2px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.modal-contentadtn input {
+  border-radius: 10px;
+}
+
+.modal-contentadtn textarea {
+  border-radius: 10px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: right;
+}
+
+.card-actions .edit-btn {
+  color: white;
+  background: none;
+  border: none;
+  margin-right: 7px;
+  transition: 90ms;
+}
+
+.card-actions .edit-btn:hover {
+  color: #368dd9;
+  cursor: pointer;
+  transform: scale(1.2);
+  transition: 90ms;
+}
+
+.ftltex .addexbt {
+  background-color: red;
+}
+
+.addexbtn {
+  border: none;
+  color: white;
+  width: 90%;
+  text-align: right;
+  font-size: 150%;
+  border-bottom: 3px solid white;
+  padding-bottom: 6px;
+  margin-left: 10%;
+  background: none;
+  margin-top: 20px;
+}
+
+.addexbtn:hover {
+  color: #368DD9;
+  cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #1e1e1e;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  animation: aparecer 0.3s ease-out;
+  font-family: Arial, sans-serif;
+  margin: auto;
+  margin-top: 5%;
+  position: relative;
+}
+
+@keyframes aparecer {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #aaa;
+  transition: 0.2s;
+}
+
+.close-button:hover {
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #ddd;
+}
+
+.modal-content input[type="number"],
+.modal-content select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #27292a;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.modal-content input[type="number"]:focus,
+.modal-content select:focus {
+  background: #27292a;
+  box-shadow: 0 0 0 2px #368dd9;
+}
+
+.btns-add-ex {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.mdnbt,
+.clcbt {
+  padding: 0.8rem 1.4rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: bold;
+}
+
+.mdnbt {
+  background: #ffffff;
+  color: #000000;
+}
+
+.mdnbt:hover {
+  background: #368dd9;
+  color: #fff;
+}
+
+.clcbt {
+  background: #ffffff;
+  color: #000000;
+}
+
+.clcbt:hover {
+  background: #cc3939;
+  color: #fff;
+}
+
+.iptex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.iptex input {
+  margin-bottom: 10px;
+}
+
+.editor-exercicio p {
+  margin-top: 20px;
+  color: white;
+  padding-top: 20px;
+  border-top: white 2px solid;
+}
+
+a:hover {
+  color: #368DD9;
+}
+
+.lista-exercicios p {
+  color: white;
+}
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  color: #fff;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+.ntnnnntast {
+  color: white;
+  width: 100%;
+  text-align: center;
+}
+
+/* Treinando */
+
+.ex-item {
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: white;
+  font-size: 120%;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+}
+
+.ex-item.active {
+  color: #368DD9;
+}
+
+.ex-item.concluido {
+  color: #888888;
+}
+
+.ex-item.active.concluido {
+  color: #368DD9;
+}
+
+.treinando {
+  display: flex;
+  flex-direction: row;
+  width: 1350px;
+  position: absolute;
+  pointer-events: auto;
+}
+
+#lista-exercicios {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 2%;
+  margin-right: 2%;
+  width: 30%;
+  height: 800px;
+}
+
+#lista-exercicios h3 {
+  background-color: #27292A;
+  padding-top: 6%;
+  padding-bottom: 6%;
+  margin-bottom: 10%;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  font-size: 150%;
+}
+
+#lista {
+  background-color: #27292A;
+  padding: 6%;
+  max-width: 100%;
+  border-radius: 20px;
+  height: 100%;
+  box-shadow: 0 0.5px 20px #111111;
+}
+
+#conteudo {
+  background-color: #27292A;
+  width: 1400px;
+  margin: 2%;
+  height: 800px;
+  border-radius: 20px;
+  box-shadow: 0 0.5px 20px #111111;
+}
+
+#video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+
+#ex-cover,
+#playerex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 850px;
+  aspect-ratio: 16 / 9;
+  border-radius: 15px;
+  margin-left: 57px;
+  object-fit: cover;
+}
+
+.titulo {
+  background-color: #27292A;
+  display: flex;
+  border-radius: 20px;
+  padding: 2% 0;
+  align-items: center;
+  font-size: 120%;
+  margin-bottom: 2%;
+}
+
+.titulo h2 {
+  border-left: 10px solid #368dd9;
+  padding-left: 2%;
+  margin-left: 3%;
+  font-size: 240%;
+  width: 80%;
+  color: white;
+}
+
+.series {
+  width: 25%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.series span {
+  width: 75%;
+  font-size: 250%;
+  margin-right: 5%;
+  text-align: right;
+  font-weight: 900;
+  color: white;
+}
+
+.infos {
+  display: flex;
+  padding-top: 6%;
+  align-items: center;
+  justify-content: center;
+  border-top: 2px white solid;
+  height: 80px;
+}
+
+.reps {
+  display: flex;
+  align-items: end;
+  width: auto;
+  height: 80px;
+  color: white;
+  padding-right: 20%;
+}
+
+.reps strong {
+  font-size: 300%;
+  font-weight: bold;
+  margin-left: 30%;
+  height: 65px;
+}
+
+.reps h1 {
+  font-size: 150%;
+  margin-left: 10%;
+  color: white;
+}
+
+.peso {
+  font-size: 200%;
+  font-weight: bold;
+  width: 20%;
+  margin-left: 10%;
+  margin-right: 5%;
+  text-align: end;
+}
+
+.b1,
+.b2 {
+  color: white;
+  font-size: 500%;
+  font-weight: bolder;
+  background: none;
+  border: none;
+}
+
+.b2 {
+  float: right;
+  width: 100%;
+  display: flex;
+}
+
+.b1:hover,
+.b2:hover {
+  color: #368dd9;
+  cursor: pointer;
+}
+
+.controls {
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ext {
+  margin-top: 10%;
+  padding: 8%;
+  font-size: 220%;
+  font-weight: 900;
+  border-radius: 20px;
+  border: 2px solid #27292A;
+  background-color: #27292A;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+.ext:hover {
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.adjustfoda {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 80%;
+  justify-content: center;
+  top: 1;
+  left: 1;
+}
+
+.timer-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 300%;
+  font-weight: bold;
+  color: white;
+}
+
+.progress-ring__circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  width: 400px;
+  height: 400px;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.progress-ring {
+  width: 400px;
+  height: 400px;
+}
+
+.circulozin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 291.5px;
+}
+
+.btns {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.btnplr {
+  background-color: #368dd9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 80px;
+  padding: 1.5%;
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border: #368dd9 2px solid;
+}
+
+.btnplr:hover {
+  border: white solid 2px;
+}
+
+.btnvtl {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 110%;
+  cursor: pointer;
+}
+
+#btnAdd30 {
+  position: absolute;
+  color: black;
+  border-radius: 10px;
+  padding: 2%;
+  font-size: 80%;
+  border: none;
+  top: -5;
+}
+
+.adjustfoda {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding-top: 100px;
+  pointer-events: none;
+}
+
+.editor-exercicio h1 {
+  color: white;
+  margin-top: 60px;
+  font-size: 150%;
+}
+
+#ex-reps {
+  font-size: 370%;
+  font-weight: bold;
+}
+
+.reps strong {
+  font-size: 250%;
+}
+
+.reps h1 {
+  margin-bottom: 15px;
+}
+
+#view-finalizado h2 {
+  width: 100%;
+  font-size: 200%;
+  text-align: center;
+  color: white;
+  margin-top: 40px;
+}
+
+.empty-exercicio {
+  border-left: none;
+}
+
+.asdoasd {
+  width: 100%;
+  text-align: center;
+}
+
+.btnplr {
+  background-color: transparent;
+  border: #368DD9 3px solid;
+  padding: 10px;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 120px;
+}
+
+.btnplr:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#btnAdd10 {
+  width: 60px;
+  height: 40px;
+  background: none;
+  border-radius: 10px;
+  border: #368DD9 3px solid;
+  color: white;
+  position: absolute;
+}
+
+#btnAdd10:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.lista-exercicios ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-exercicios ul::-webkit-scrollbar-thumb {
+  background-color: rgb(54, 141, 217);
+  border-radius: 5px;
+  height: 20%;
+}
+
+.fade-container {
+  transition: opacity 0.3s ease;
+}
+
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+
+/* ------------------- Layout Principal ------------------- */
+.treinos-container {
+  display: flex;
+  flex-wrap: wrap; /* permite quebra em telas menores */
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  margin-top: 20px;
+  gap: 20px;
+  padding: 10px;
+}
+
+/* Sidebar esquerda */
+.PT1 {
+  flex: 1;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 20px;
+  border-radius: 20px;
+  background: transparent;
+}
+
+/* Conteúdo direita */
+.PT2 {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+/* Container de cards */
+.containertnvw {
+  margin-top: 20px;
+  width: 100%;
+  max-height: 700px;
+  background-color: #27292a;
+  border-radius: 20px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* Cards */
+.treino-card {
+  margin: 10px 0;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.treino-card:hover {
+  transform: translateY(-4px);
+  border: 2px solid #368DD9;
+}
+
+/* ------------------- Editor de Treino ------------------- */
+.treino-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.editor-exercicio {
+  flex: 1;
+  min-width: 280px;
+  background: #27292a;
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+}
+
+.lista-exercicios {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* ------------------- Responsividade ------------------- */
+@media (max-width: 1024px) {
+  .treinos-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .PT1, .PT2 {
+    width: 100%;
+    max-width: none;
+  }
+
+  .treino-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .treino-card h3 {
+    font-size: 1rem;
+  }
+  .treino-card p {
+    font-size: 0.85rem;
+  }
+  .editor-exercicio, .lista-exercicios {
+    padding: 12px;
+  }
+}
