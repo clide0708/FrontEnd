@@ -34,7 +34,7 @@ function Home() {
             <div className="header-text">
               <h6>Seja bem vindo(a) CLIDE Fit</h6>
               <h4>
-                <em>Treinos</em> personalizados, acessíveis e inclusivos
+                <em className="textorosa">Treinos</em> personalizados, acessíveis e inclusivos
               </h4>
               <div className="main-button">
                 <a href="/treinos">Veja agora</a>

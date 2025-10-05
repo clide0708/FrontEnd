@@ -9,6 +9,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [notModalOpen, setNotModalOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [notificacoes, setNotificacoes] = useState([
     "Mensagem do personal",
     "pt2",

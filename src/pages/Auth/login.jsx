@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginUsuario } from "../../services/Auth/login";
 import { useNavigate } from "react-router-dom";
+import "./login.css"; // Importa o arquivo CSS
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -12,31 +13,40 @@ export default function LoginPage() {
     const result = await loginUsuario(email, senha);
 
     if (result.success) {
-      // token e usuário já estão salvos no localStorage dentro de loginUsuario
       alert("Login feito com sucesso 😎");
-      window.location.href = "/home"; // ou use navigate("/home") se estiver usando react-router
+      window.location.href = "/home";
     } else {
       setError(result.error);
     }
   };
 
   return (
-    <div>
+    <div className="login-container">
+      <h2>Login</h2>
       <input
+        className="login-input"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
+        type="email"
       />
       <input
+        className="login-input"
         type="password"
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
         placeholder="Senha"
       />
-      <button onClick={() => navigate("/cadastro")}>Cadastro</button>
-      <button onClick={() => navigate("/recuperar-senha")}>Recuperar Senha</button>
-      <button onClick={handleLogin}>Entrar</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button className="login-button" onClick={handleLogin}>
+        Entrar
+      </button>
+      <button className="login-link-button" onClick={() => navigate("/cadastro")}>
+        Cadastro
+      </button>
+      <button className="login-link-button" onClick={() => navigate("/recuperar-senha")}>
+        Recuperar Senha
+      </button>
+      {error && <p className="login-error">{error}</p>}
     </div>
   );
 }

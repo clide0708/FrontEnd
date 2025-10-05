@@ -1,0 +1,88 @@
+/* === CORREÇÃO DE RESPONSIVIDADE DO HEADER === */
+
+/* Ícone sanduíche (oculto no desktop) */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* Animação do sanduíche quando ativo */
+.menu-icon.active span:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+.menu-icon.active span:nth-child(2) {
+  opacity: 0;
+}
+.menu-icon.active span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+
+/* Oculta o menu e mostra o sanduíche em telas menores */
+@media (max-width: 992px) {
+  .nav-bar {
+    position: relative;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 70px; /* abaixo do header */
+    right: 0;
+    width: 100%;
+    background: inherit; /* mantém cor original */
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+    display: none;
+    z-index: 999;
+  }
+
+  .nav-menu.show {
+    display: flex;
+  }
+
+  .menu-icon {
+    display: flex;
+  }
+
+  .nav-menu li a {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Corrige sobreposição do banner pelo menu fixo */
+.main-banner,
+.page-content,
+.container:first-child {
+  margin-top: 80px; /* altura do header fixo */
+}
+
+@media (max-width: 768px) {
+  .main-banner,
+  .page-content,
+  .container:first-child {
+    margin-top: 100px; /* mais espaço se o menu crescer */
+  }
+}
+
+/* Evita corte de texto */
+.nav-bar h1,
+.nav-menu li a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
