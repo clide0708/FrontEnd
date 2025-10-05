@@ -30,6 +30,14 @@ const convitesService = {
       return { success: false, error: err.message };
     }
   },
+  criarConvite: async (email) => {
+    try {
+      const res = await api.post(`/convites/criar`, { email });
+      return res.data;
+    } catch (err) {
+      console.error("Erro ao criar convite", err);
+      throw err;
+    }
+  },
 };
-
 export default convitesService;

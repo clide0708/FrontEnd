@@ -93,6 +93,17 @@ const personalService = {
       throw error;
     }
   },
+
+  desvincularAluno: async (idPersonal, idAluno) => {
+    try {
+      const res = await api.delete(`/personal/${idPersonal}/desvincular-aluno/${idAluno}`);
+      return res.data;
+    } catch (err) {
+      console.error("Erro na rota de desvincular aluno", err);
+      throw err;
+    }
+  },
+
 };
 
 export default personalService;
