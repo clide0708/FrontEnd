@@ -87,7 +87,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
     <div className="modalalimento show">
       <div className="modalalm-content">
         <div className="addalm">
-          <h4>Adicionar alimentos</h4>
+          <h4 className="h4modal" >Adicionar alimentos</h4>
         </div>
 
         <div className="psqsalm">

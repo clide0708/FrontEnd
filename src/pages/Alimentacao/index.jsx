@@ -66,7 +66,7 @@ function Alimentacao() {
         const treino =
           data.treino && data.treino.length > 0
             ? data.treino.charAt(0).toUpperCase() +
-              data.treino.slice(1).toLowerCase()
+            data.treino.slice(1).toLowerCase()
             : "";
         setUser({
           nome: data.nome || "",
@@ -80,8 +80,8 @@ function Alimentacao() {
             data.img && data.img.startsWith("/")
               ? data.img
               : data.img
-              ? "/" + data.img
-              : "",
+                ? "/" + data.img
+                : "",
         });
       })
       .catch((err) => console.error("Erro ao carregar usuário:", err));
@@ -184,7 +184,7 @@ function Alimentacao() {
                           {refeicao === "cafe"
                             ? "Café da manhã"
                             : refeicao.charAt(0).toUpperCase() +
-                              refeicao.slice(1)}
+                            refeicao.slice(1)}
                         </h1>
                         <h2>{tot.calorias} Cal</h2>
                       </div>
@@ -263,42 +263,56 @@ function Alimentacao() {
             <div className="heading-section">
               <h4 className="nmpfl">{user.nome}</h4>
             </div>
+
             <div className="pflaln">
+              {/* Bloco de informações principais */}
               <div className="sts">
                 <ul>
-                  <li>Peso</li>
-                  <p>{user.peso > 0 ? user.peso : "-"}</p>
-                  <li>Altura</li>
-                  <p>{user.altura > 0 ? user.altura : "-"}</p>
-                  <li>Gênero</li>
-                  <p>{user.genero || "-"}</p>
-                  <li>Treino</li>
-                  <p>{user.treino || "-"}</p>
+                  <li>
+                    Peso: 
+                    <span>{user.peso > 0 ? user.peso + " kg" : "-"}</span>
+                  </li>
+                  <li>
+                    Altura: 
+                    <span>{user.altura > 0 ? user.altura + " cm" : "-"}</span>
+                  </li>
+                  <li>
+                    Gênero:
+                    <span>{user.genero || "-"}</span>
+                  </li>
+                  <li>
+                    Treino:
+                    <span>{user.treino || "-"}</span>
+                  </li>
                 </ul>
               </div>
+
+              {/* Bloco da foto */}
               <div className="pflft">
                 <img src={user.img || "/default-profile.png"} alt="Perfil" />
                 {/* <button className="btnperfil2">Editar perfil</button> */}
               </div>
             </div>
+
+            {/* Bloco de indicadores */}
             <div className="pflidc">
               <ul>
                 <li>
-                  IDR{" "}
+                  IDR:
                   <span>
                     {user.peso > 0 && user.altura > 0 && user.idade > 0
                       ? calcularIDR(
-                          user.peso,
-                          user.altura,
-                          user.idade,
-                          user.genero,
-                          user.treino
-                        )
+                        user.peso,
+                        user.altura,
+                        user.idade,
+                        user.genero,
+                        user.treino
+                      )
                       : "-"}
                   </span>
                 </li>
                 <li>
-                  IMC{" "}
+                  IMC:
                   <span>
                     {user.peso > 0 && user.altura > 0
                       ? calcularIMC(user.peso, user.altura, user.genero)
@@ -306,12 +320,13 @@ function Alimentacao() {
                   </span>
                 </li>
                 <li>
-                  Consumo de água ideal{" "}
+                  Consumo de água ideal:
                   <span>{user.peso > 0 ? consumoAgua(user.peso) : "-"}</span>
                 </li>
               </ul>
             </div>
           </div>
+
         </div>
       </div>
 
