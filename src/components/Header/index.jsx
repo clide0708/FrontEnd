@@ -6,23 +6,26 @@ import "../../assets/css/style.css";
 import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification";
 import convitesService from "../../services/Notification/convites";
+import perfilService from "../../services/Perfil/perfil.jsx";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [notModalOpen, setNotModalOpen] = useState(false);
   const [notificacoes, setNotificacoes] = useState([]);
+  const [fotoPerfil, setFotoPerfil] = useState(profileImg);
   const location = useLocation();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("usuario"));
-    if (user && user.tipo) {
-      setUserRole(user.tipo);
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario && usuario.tipo) {
+      setUserRole(usuario.tipo);
 
-      if (user.email) {
-        carregarNotificacoes(user.email);
+      if (usuario.email) {
+        carregarNotificacoes(usuario.email);
+        carregarFotoPerfil(usuario.email);
       }
     }
   }, []);
@@ -32,7 +35,18 @@ export default function Header() {
     setNotificacoes(dados); // pega só o array
   };
 
-  const user = JSON.parse(localStorage.getItem("usuario"));
+  const carregarFotoPerfil = async (email) => {
+    try {
+      const res = await perfilService.getPerfil(email);
+      if (res?.success && res.data?.foto_perfil) {
+        setFotoPerfil(res.data.foto_perfil);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar foto de perfil", err);
+    }
+  };
+
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   return (
     <header className="nav-header">
@@ -103,7 +117,6 @@ export default function Header() {
                   onClick={() => setNotModalOpen(true)}
                   size={24}
                 />
-
                 {notificacoes.length > 0 && (
                   <span
                     style={{
@@ -131,7 +144,7 @@ export default function Header() {
                   className={`profile-link ${location.pathname === "/perfil" ? "pfact" : ""}`}
                 >
                   <span>Perfil</span>
-                  <img src={profileImg} alt="Foto de perfil" />
+                  <img src={fotoPerfil} alt="Foto de perfil" />
                 </Link>
               </li>
             </div>
@@ -143,7 +156,7 @@ export default function Header() {
         isOpen={notModalOpen}
         onClose={() => setNotModalOpen(false)}
         notificacoes={notificacoes}
-        refresh={() => carregarNotificacoes(user.email)}
+        refresh={() => carregarNotificacoes(usuario?.email)}
       />
     </header>
   );

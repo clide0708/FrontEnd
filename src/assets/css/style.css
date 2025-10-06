@@ -173,7 +173,7 @@ header {
 
 /* Perfil */
 .profile-link {
-  background-color: #1e1e1e;
+  background-color: transparent;
   padding: 5px 12px;
   border-radius: 20px;
   border: transparent 1px solid;
