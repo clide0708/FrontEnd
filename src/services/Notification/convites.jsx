@@ -1,7 +1,7 @@
 // src/services/Notification/convites.jsx
 import api from "../api.js";
 
-// Buscar convites por email do aluno
+// Funções individuais
 export const getConvitesByEmail = async (email) => {
   try {
     const response = await api.get(`/convites/email/${encodeURIComponent(email)}`);
@@ -12,7 +12,6 @@ export const getConvitesByEmail = async (email) => {
   }
 };
 
-// Aceitar convite
 export const aceitarConvite = async (idConvite) => {
   try {
     const response = await api.post(`/convites/${idConvite}/aceitar`);
@@ -23,7 +22,6 @@ export const aceitarConvite = async (idConvite) => {
   }
 };
 
-// Negar convite
 export const negarConvite = async (idConvite) => {
   try {
     const response = await api.post(`/convites/${idConvite}/negar`);
@@ -34,7 +32,6 @@ export const negarConvite = async (idConvite) => {
   }
 };
 
-// Criar convite (para personais)
 export const criarConvite = async (conviteData) => {
   try {
     const response = await api.post('/convites/criar', conviteData);
@@ -44,3 +41,13 @@ export const criarConvite = async (conviteData) => {
     throw error;
   }
 };
+
+// Exportação padrão como objeto de serviço
+const convitesService = {
+  getConvitesByEmail,
+  aceitarConvite,
+  negarConvite,
+  criarConvite
+};
+
+export default convitesService;
