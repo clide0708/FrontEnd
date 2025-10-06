@@ -1,13 +1,46 @@
 import { useState, useEffect, useRef } from "react";
 import "./style.css";
+import { 
+  buscarAlimentos, 
+  addAlimento, 
+  listarAlimentosRefeicao, // Removido se não for usado
+  criarRefeicao,
+  listarRefeicoes
+} from "../../services/Alimentos/alimentos";
 
-export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }) {
+export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, onUpdate }) {
   const [sugestoes, setSugestoes] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const [dropdownAberto, setDropdownAberto] = useState(false);
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [itensAdicionados, setItensAdicionados] = useState([]);
+  const [idRefeicaoAtual, setIdRefeicaoAtual] = useState(null);
+  const [erro, setErro] = useState(null);
   const containerRef = useRef(null);
+
+  // Mapear nomes internos para nomes de refeição
+  const mapearNomeRefeicao = (nomeInterno) => {
+    const mapeamento = {
+      'cafe': 'Café da manhã',
+      'almoco': 'Almoço', 
+      'janta': 'Jantar',
+      'outros': 'Outros'
+    };
+    return mapeamento[nomeInterno] || nomeInterno;
+  };
+
+  // Função para carregar itens - DEFINIDA
+  const carregarItensAdicionados = async (idRefeicao) => {
+    try {
+      const response = await listarAlimentosRefeicao(idRefeicao);
+      if (response.success) {
+        setItensAdicionados(response.alimentos || []);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar alimentos adicionados:", err);
+      setItensAdicionados([]);
+    }
+  };
 
   // fecha se clica fora
   useEffect(() => {
@@ -20,25 +53,57 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
     return () => document.removeEventListener("mousedown", handleClickFora);
   }, []);
 
-  // carrega itens da refeição atual do JSON
+  // Inicializar ou buscar refeição atual
   useEffect(() => {
-    async function carregarAlimentos() {
+    const inicializarRefeicao = async () => {
+      setErro(null);
       try {
-        const response = await fetch("/dados.json"); // pega do public, mas tu vai trocar pela API
-        const data = await response.json();
-        const listaAtual = data[currentMealList]?.items || [];
-        setItensAdicionados(listaAtual);
-      } catch (err) {
-        console.error("Erro ao carregar alimentos:", err);
-        setItensAdicionados([]);
+        const nomeRefeicaoMapeado = mapearNomeRefeicao(currentMealList);
+        console.log("Buscando refeição existente:", nomeRefeicaoMapeado);
+        
+        // PRIMEIRO busca refeições existentes
+        const response = await listarRefeicoes();
+        console.log("Refeições encontradas:", response.refeicoes);
+        
+        if (response.success && response.refeicoes) {
+          const hoje = new Date().toISOString().split('T')[0]; // Data de hoje YYYY-MM-DD
+          const refeicaoExistente = response.refeicoes.find(ref => {
+            const dataRef = ref.data_ref ? ref.data_ref.split(' ')[0] : ''; // Pega apenas a data
+            return ref.nome_tipo === nomeRefeicaoMapeado && dataRef === hoje;
+          });
+          
+          if (refeicaoExistente) {
+            console.log("Refeição existente encontrada:", refeicaoExistente);
+            setIdRefeicaoAtual(refeicaoExistente.id);
+            await carregarItensAdicionados(refeicaoExistente.id);
+            return;
+          }
+        }
+        
+        // Se não encontrou, cria nova refeição
+        console.log("Criando nova refeição:", nomeRefeicaoMapeado);
+        const criarResponse = await criarRefeicao(nomeRefeicaoMapeado);
+        
+        if (criarResponse.success && criarResponse.id_refeicao) {
+          setIdRefeicaoAtual(criarResponse.id_refeicao);
+          await carregarItensAdicionados(criarResponse.id_refeicao);
+        } else {
+          throw new Error(criarResponse.error || 'Erro ao criar refeição');
+        }
+        
+      } catch (error) {
+        console.error("Erro ao inicializar refeição:", error);
+        setErro(`Erro: ${error.message}`);
       }
-    }
+    };
 
-    carregarAlimentos();
+    if (currentMealList) {
+      inicializarRefeicao();
+    }
   }, [currentMealList]);
 
   // busca ingredientes na API externa
-  async function buscarIngredientes(termo) {
+  const buscarSugestoes = async (termo) => {
     setTermoPesquisa(termo);
 
     if (termo.length < 2) {
@@ -46,48 +111,65 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
       return;
     }
 
-    const apiKey = "617d584fd753442483088b758ccd52fd";
-    const url = `https://api.spoonacular.com/food/ingredients/search?query=${encodeURIComponent(
-      termo
-    )}&number=10&apiKey=${apiKey}`;
-
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-      setSugestoes(data.results || []);
+      const data = await buscarAlimentos(termo);
+      if (data.success && data.resultados) {
+        setSugestoes(data.resultados);
+      } else {
+        setSugestoes([]);
+      }
     } catch (error) {
-      console.error("Erro na API:", error);
+      console.error("Erro ao buscar sugestões de alimentos:", error);
       setSugestoes([]);
     }
-  }
+  };
 
-  // adiciona item novo na lista local
-  function adicionarItem(item) {
-    if (loadingId) return;
+  // adiciona item novo na lista local e no backend
+  const handleAddItem = async (item) => {
+    if (loadingId || !idRefeicaoAtual) {
+      alert("Refeição não está pronta. Aguarde...");
+      return;
+    }
+    
     setLoadingId(item.id);
     document.body.style.cursor = "wait";
 
-    const novoItem = {
-      id: Date.now(), // id único
-      nome: item.name,
-      especificacao: 100,
-      calorias: 0,
-      proteinas: 0,
-      carboidratos: 0,
-      gorduras: 0,
-    };
+    try {
+      const novoAlimento = {
+        id_tipo_refeicao: idRefeicaoAtual,
+        nome: item.nome || item.name,
+        quantidade: 100,
+        medida: 'g'
+      };
 
-    setItensAdicionados((prev) => [...prev, novoItem]);
-    setLoadingId(null);
-    setDropdownAberto(false);
-    document.body.style.cursor = "default";
-  }
+      await addAlimento(novoAlimento);
+      await carregarItensAdicionados(idRefeicaoAtual);
+      
+      if (onUpdate) {
+        onUpdate();
+      }
+      
+      setLoadingId(null);
+      setDropdownAberto(false);
+      setTermoPesquisa("");
+      document.body.style.cursor = "default";
+    } catch (error) {
+      console.error("Erro ao adicionar alimento:", error);
+      alert(`Erro ao adicionar alimento: ${error.message}`);
+      setLoadingId(null);
+      document.body.style.cursor = "default";
+    }
+  };
+
+  const nomeExibicao = mapearNomeRefeicao(currentMealList);
 
   return (
     <div className="modalalimento show">
       <div className="modalalm-content">
         <div className="addalm">
-          <h4 className="h4modal" >Adicionar alimentos</h4>
+          <h4 className="h4modal">Adicionar alimentos - {nomeExibicao}</h4>
+          {idRefeicaoAtual && <p style={{color: 'green', fontSize: '12px'}}>Refeição ID: {idRefeicaoAtual}</p>}
+          {erro && <p style={{color: 'red', fontSize: '12px'}}>{erro}</p>}
         </div>
 
         <div className="psqsalm">
@@ -97,10 +179,11 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
               placeholder="Pesquisar alimento..."
               value={termoPesquisa}
               onChange={(e) => {
-                buscarIngredientes(e.target.value);
+                buscarSugestoes(e.target.value);
                 setDropdownAberto(true);
               }}
               onFocus={() => setDropdownAberto(true)}
+              disabled={!idRefeicaoAtual}
             />
 
             {dropdownAberto && sugestoes.length > 0 && (
@@ -110,13 +193,14 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
               >
                 {sugestoes.map((item, index) => (
                   <div
-                    key={index}
+                    key={item.id || index}
                     className={`sugestao-item ${
                       loadingId === item.id ? "loading" : ""
                     }`}
-                    onClick={() => adicionarItem(item)}
+                    onClick={() => handleAddItem(item)}
                   >
-                    {index + 1}. {item.name}
+                    {index + 1}. {item.nome}
+                    {item.nome_original && ` (${item.nome_original})`}
                   </div>
                 ))}
               </div>
@@ -125,25 +209,27 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes }
         </div>
 
         <div className="almadd existing-items">
-          {itensAdicionados.length === 0 && (
+          {!idRefeicaoAtual ? (
+            <div className="no-items">Carregando refeição...</div>
+          ) : itensAdicionados.length === 0 ? (
             <div className="no-items">Nenhum alimento adicionado ainda</div>
+          ) : (
+            itensAdicionados.map((item) => (
+              <div
+                key={item.idItensRef}
+                className="itemadd"
+                onClick={() => abrirModalDetalhes(currentMealList, item)}
+              >
+                <div className="nm">
+                  <h1>{item.nome}</h1>
+                  <h2>{item.calorias || 0} cal</h2>
+                </div>
+                <div className="gm">
+                  <h1>{item.quantidade || 0} {item.medida || 'g'}</h1>
+                </div>
+              </div>
+            ))
           )}
-
-          {itensAdicionados.map((item) => (
-            <div
-              key={item.id}
-              className="itemadd"
-              onClick={() => abrirModalDetalhes(currentMealList, item.id)}
-            >
-              <div className="nm">
-                <h1>{item.nome}</h1>
-                <h2>{item.calorias || 0} cal</h2>
-              </div>
-              <div className="gm">
-                <h1>{item.especificacao || 0} g/ml</h1>
-              </div>
-            </div>
-          ))}
 
           <div className="addalmbtn">
             <button className="mdlcl" onClick={fechar}>

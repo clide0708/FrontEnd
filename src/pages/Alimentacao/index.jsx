@@ -1,10 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ModalAdd from "./modalAdd";
 import ModalDetalhes from "./modalDetalhes";
 import "./style.css";
 import { calcularIMC, calcularIDR, consumoAgua } from "../../utils/calculos";
+import { listarTotais } from "../../services/Alimentos/alimentos";
+import { obterUsuario } from "../../services/Auth/login";
+
+import TesteRotasAlimentacao from './TesteRotasAlimentacao';
 
 function Alimentacao() {
+  
   const [dataHoje, setDataHoje] = useState("");
   const [user, setUser] = useState({
     nome: "",
@@ -16,6 +21,8 @@ function Alimentacao() {
     meta: 0,
     img: "",
   });
+
+  const [mostrarTeste, setMostrarTeste] = useState(true);
 
   const [caltotal, setCalTotal] = useState(0);
   const [refeicoes, setRefeicoes] = useState({
@@ -52,60 +59,81 @@ function Alimentacao() {
   }, []);
 
   // carregar usuário
-  useEffect(() => {
-    fetch("/user.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao carregar user.json");
-        return res.json();
-      })
-      .then((data) => {
-        const genero =
-          data.genero && data.genero.toLowerCase() === "masculino"
-            ? "Masculino"
-            : "Feminino";
-        const treino =
-          data.treino && data.treino.length > 0
-            ? data.treino.charAt(0).toUpperCase() +
-            data.treino.slice(1).toLowerCase()
-            : "";
-        setUser({
-          nome: data.nome || "",
-          idade: Number(data.idade) || 0,
-          peso: Number(data.peso) || 0,
-          altura: Number(data.altura) || 0,
-          genero: genero,
-          treino: treino,
-          meta: Number(data.meta) || 0,
-          img:
-            data.img && data.img.startsWith("/")
-              ? data.img
-              : data.img
-                ? "/" + data.img
-                : "",
-        });
-      })
-      .catch((err) => console.error("Erro ao carregar usuário:", err));
+  const carregarUsuario = useCallback(async () => {
+    try {
+      const data = await obterUsuario();
+      const genero =
+        data.genero && data.genero.toLowerCase() === "masculino"
+          ? "Masculino"
+          : "Feminino";
+      const treino =
+        data.treino && data.treino.length > 0
+          ? data.treino.charAt(0).toUpperCase() +
+          data.treino.slice(1).toLowerCase()
+          : "";
+      setUser({
+        nome: data.nome || "",
+        idade: Number(data.idade) || 0,
+        peso: Number(data.peso) || 0,
+        altura: Number(data.altura) || 0,
+        genero: genero,
+        treino: treino,
+        meta: Number(data.meta) || 0,
+        img:
+          data.img && data.img.startsWith("/")
+            ? data.img
+            : data.img
+              ? "/" + data.img
+              : "",
+      });
+    } catch (err) {
+      console.error("Erro ao carregar usuário:", err);
+    }
   }, []);
 
   // fetch das refeições
-  useEffect(() => {
-    fetch("/dados.json")
-      .then((res) => res.json())
-      .then((dados) => {
-        setRefeicoes({
-          cafe: { tot: dados.cafe.totais, items: dados.cafe.items },
-          almoco: { tot: dados.almoco.totais, items: dados.almoco.items },
-          janta: { tot: dados.janta.totais, items: dados.janta.items },
-          outros: { tot: dados.outros.totais, items: dados.outros.items },
-        });
-        const totalCal = ["cafe", "almoco", "janta", "outros"].reduce(
-          (acc, r) => acc + dados[r].totais.calorias,
+  const carregarRefeicoes = useCallback(async () => {
+    try {
+      const dados = await listarTotais();
+      if (dados.success) {
+        // Estrutura os dados conforme esperado pelo frontend
+        const refeicoesFormatadas = {
+          cafe: { 
+            tot: dados.refeicoes?.cafe?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
+            items: dados.refeicoes?.cafe?.items || [] 
+          },
+          almoco: { 
+            tot: dados.refeicoes?.almoco?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
+            items: dados.refeicoes?.almoco?.items || [] 
+          },
+          janta: { 
+            tot: dados.refeicoes?.janta?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
+            items: dados.refeicoes?.janta?.items || [] 
+          },
+          outros: { 
+            tot: dados.refeicoes?.outros?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
+            items: dados.refeicoes?.outros?.items || [] 
+          },
+        };
+
+        setRefeicoes(refeicoesFormatadas);
+        
+        // Calcula total de calorias
+        const totalCal = Object.values(refeicoesFormatadas).reduce(
+          (acc, r) => acc + (r.tot.calorias || 0),
           0
         );
         setCalTotal(totalCal);
-      })
-      .catch((err) => console.error(err));
+      }
+    } catch (err) {
+      console.error("Erro ao carregar refeições:", err);
+    }
   }, []);
+
+  useEffect(() => {
+    carregarUsuario();
+    carregarRefeicoes();
+  }, [carregarUsuario, carregarRefeicoes]);
 
   const abrirModalDetalhes = (lista, item) => {
     setCurrentMealList(lista);
@@ -119,9 +147,39 @@ function Alimentacao() {
 
   const calRes = () => Math.max(user.meta - caltotal, 0);
 
-  return (
-    <div className="alimentacao">
-      <header></header>
+  const handleUpdateAlimentos = () => {
+    carregarRefeicoes();
+    carregarUsuario();
+  };
+
+return (
+  <div className="alimentacao">
+    <header>
+      {/* BOTÃO PARA CONTROLE DO TESTE - OPICIONAL */}
+      <button 
+        onClick={() => setMostrarTeste(!mostrarTeste)}
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          zIndex: 1000,
+          background: '#368dd9',
+          color: 'white',
+          border: 'none',
+          padding: '5px 10px',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        {mostrarTeste ? 'Ocultar Teste' : 'Mostrar Teste'}
+      </button>
+    </header>
+    
+    {/* TESTE DE ROTAS */}
+    {mostrarTeste && (
+      <TesteRotasAlimentacao />
+    )}
+
       <div className="container">
         <div className="geral">
           {/* alimentação */}
@@ -167,7 +225,7 @@ function Alimentacao() {
               {["cafe", "almoco", "janta", "outros"]
                 .filter(
                   (refeicao) => cardAberto === "" || cardAberto === refeicao
-                ) // só mostra o aberto ou todos se vazio
+                )
                 .map((refeicao) => {
                   const tot = refeicoes[refeicao].tot;
                   const items = refeicoes[refeicao].items;
@@ -198,7 +256,7 @@ function Alimentacao() {
                         <div className="tablescrollref">
                           {items.map((item) => (
                             <table
-                              key={item.id}
+                              key={item.idItensRef}
                               className="tableref"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -208,7 +266,7 @@ function Alimentacao() {
                               <tbody>
                                 <tr>
                                   <td>{item.nome}</td>
-                                  <td>{item.especificacao} g/ml</td>
+                                  <td>{item.quantidade} {item.medida}</td>
                                 </tr>
                               </tbody>
                             </table>
@@ -252,7 +310,6 @@ function Alimentacao() {
                 <div className="metadt">
                   <h3>Ganho de massa</h3>
                   <h5>60kg - 80kg</h5>
-                  {/* <button className="btnperfil">Alterar meta</button> */}
                 </div>
               </div>
             </div>
@@ -265,7 +322,6 @@ function Alimentacao() {
             </div>
 
             <div className="pflaln">
-              {/* Bloco de informações principais */}
               <div className="sts">
                 <ul>
                   <li>
@@ -287,14 +343,11 @@ function Alimentacao() {
                 </ul>
               </div>
 
-              {/* Bloco da foto */}
               <div className="pflft">
                 <img src={user.img || "/default-profile.png"} alt="Perfil" />
-                {/* <button className="btnperfil2">Editar perfil</button> */}
               </div>
             </div>
 
-            {/* Bloco de indicadores */}
             <div className="pflidc">
               <ul>
                 <li>
@@ -326,7 +379,6 @@ function Alimentacao() {
               </ul>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -335,12 +387,15 @@ function Alimentacao() {
           fechar={() => setModalAdd(false)}
           currentMealList={currentMealList}
           abrirModalDetalhes={abrirModalDetalhes}
+          onUpdate={handleUpdateAlimentos}
         />
       )}
       {modalDetalhes && currentItem && (
         <ModalDetalhes
           item={currentItem}
           fechar={() => setModalDetalhes(false)}
+          onUpdate={handleUpdateAlimentos}
+          onDelete={handleUpdateAlimentos}
         />
       )}
     </div>

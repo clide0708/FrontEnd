@@ -1,43 +1,46 @@
-import api from "../api";
+// src/services/Notification/convites.jsx
+import api from "../api.js";
 
-const convitesService = {
-  getConvitesByEmail: async (email) => {
-    try {
-      const res = await api.get(`/convites/${email}`);
-      return res.data.success ? res.data.data : [];
-    } catch (err) {
-      console.error("Erro ao carregar convites:", err);
-      return [];
-    }
-  },
-
-  aceitarConvite: async (idConvite) => {
-    try {
-      const res = await api.post(`/convites/${idConvite}/aceitar`);
-      return res.data;
-    } catch (err) {
-      console.error("Erro ao aceitar convite:", err);
-      return { success: false, error: err.message };
-    }
-  },
-
-  negarConvite: async (idConvite) => {
-    try {
-      const res = await api.post(`/convites/${idConvite}/negar`);
-      return res.data;
-    } catch (err) {
-      console.error("Erro ao negar convite:", err);
-      return { success: false, error: err.message };
-    }
-  },
-  criarConvite: async (email) => {
-    try {
-      const res = await api.post(`/convites/criar`, { email });
-      return res.data;
-    } catch (err) {
-      console.error("Erro ao criar convite", err);
-      throw err;
-    }
-  },
+// Buscar convites por email do aluno
+export const getConvitesByEmail = async (email) => {
+  try {
+    const response = await api.get(`/convites/email/${encodeURIComponent(email)}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao carregar convites:", error);
+    throw error;
+  }
 };
-export default convitesService;
+
+// Aceitar convite
+export const aceitarConvite = async (idConvite) => {
+  try {
+    const response = await api.post(`/convites/${idConvite}/aceitar`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao aceitar convite:", error);
+    throw error;
+  }
+};
+
+// Negar convite
+export const negarConvite = async (idConvite) => {
+  try {
+    const response = await api.post(`/convites/${idConvite}/negar`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao negar convite:", error);
+    throw error;
+  }
+};
+
+// Criar convite (para personais)
+export const criarConvite = async (conviteData) => {
+  try {
+    const response = await api.post('/convites/criar', conviteData);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao criar convite:", error);
+    throw error;
+  }
+};

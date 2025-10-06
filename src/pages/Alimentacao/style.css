@@ -1194,3 +1194,74 @@ body {
     height: 120px;
   }
 }
+
+
+
+
+
+
+/* Estilos para loading e estados */
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+}
+
+.nome-original {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* Informações nutricionais adicionais */
+.info-adicional {
+  margin-top: 20px;
+  padding: 15px;
+  background: #27292b;
+  border-radius: 10px;
+}
+
+.info-adicional h4 {
+  color: #368dd9;
+  margin-bottom: 10px;
+}
+
+.nutrientes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nutriente-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #333;
+}
+
+.nutriente-nome {
+  color: #ccc;
+  text-transform: capitalize;
+}
+
+.nutriente-valor {
+  color: #fff;
+  font-weight: 500;
+}
+
+.percentual {
+  color: #368dd9;
+  font-size: 0.8rem;
+}
+
+/* Estados de loading */
+.sugestao-item.loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn2:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
