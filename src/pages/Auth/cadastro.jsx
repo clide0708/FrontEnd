@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { cadastrarAluno, cadastrarPersonal, verificarEmail, verificarCpf } from "../../services/Auth/cadastro";
+import {
+  cadastrarAluno,
+  cadastrarPersonal,
+  verificarEmail,
+  verificarCpf,
+} from "../../services/Auth/cadastro";
+import "./style.css";
 
 export default function CadastroPage() {
   const navigate = useNavigate();
@@ -14,7 +20,7 @@ export default function CadastroPage() {
     numTel: "",
     cref_numero: "",
     cref_categoria: "",
-    cref_regional: ""
+    cref_regional: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -22,7 +28,6 @@ export default function CadastroPage() {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    // máscara CPF
     if (name === "cpf") {
       formattedValue = value
         .replace(/\D/g, "")
@@ -31,7 +36,6 @@ export default function CadastroPage() {
         .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     }
 
-    // máscara telefone
     if (name === "numTel") {
       formattedValue = value
         .replace(/\D/g, "")
@@ -39,12 +43,7 @@ export default function CadastroPage() {
         .replace(/(\d{5})(\d{4})$/, "$1-$2");
     }
 
-    // CREF número só números
-    if (name === "cref_numero") {
-      formattedValue = value.replace(/\D/g, "").substring(0, 9);
-    }
-
-    // categoria e regional sempre maiúsculo
+    if (name === "cref_numero") formattedValue = value.replace(/\D/g, "").substring(0, 9);
     if (name === "cref_categoria") formattedValue = value.toUpperCase().substring(0, 1);
     if (name === "cref_regional") formattedValue = value.toUpperCase().substring(0, 5);
 
@@ -77,7 +76,7 @@ export default function CadastroPage() {
         }
 
         if (isPersonal && name === "cref_numero") {
-          if (!/^\d{6,9}$/.test(value.replace(/\D/g, ''))) newErrors.cref_numero = "Número CREF inválido (6-9 dígitos)";
+          if (!/^\d{6,9}$/.test(value.replace(/\D/g, ""))) newErrors.cref_numero = "Número CREF inválido (6-9 dígitos)";
           else delete newErrors.cref_numero;
         }
 
@@ -125,19 +124,19 @@ export default function CadastroPage() {
     try {
       const basePayload = {
         nome: form.nome.trim(),
-        cpf: form.cpf.replace(/\D/g, ''),
+        cpf: form.cpf.replace(/\D/g, ""),
         rg: form.rg.trim(),
         email: form.email.trim(),
         senha: form.senha,
-        numTel: form.numTel.replace(/\D/g, '')
+        numTel: form.numTel.replace(/\D/g, ""),
       };
 
       if (isPersonal) {
         const personalPayload = {
           ...basePayload,
-          cref_numero: form.cref_numero.replace(/\D/g, ''),
+          cref_numero: form.cref_numero.replace(/\D/g, ""),
           cref_categoria: form.cref_categoria.trim().toUpperCase().charAt(0),
-          cref_regional: form.cref_regional.trim().toUpperCase().substring(0, 5)
+          cref_regional: form.cref_regional.trim().toUpperCase().substring(0, 5),
         };
         await cadastrarPersonal(personalPayload);
       } else {
@@ -165,110 +164,128 @@ export default function CadastroPage() {
   };
 
   return (
-    <div>
-      <h1>Cadastro</h1>
+    <div className="cntrcds">
+      <div className="topppp-global">
+        <h2>ClideFit</h2>
+      </div>
+      <div className="cad-container">
+        <h2>Cadastro</h2>
 
-      <label>
-        <input
-          type="checkbox"
-          checked={isPersonal}
-          onChange={(e) => setIsPersonal(e.target.checked)}
-        />
-        Conta Personal
-      </label>
+        <label className="cad-checkbox-label">
+          <input
+            type="checkbox"
+            checked={isPersonal}
+            onChange={(e) => setIsPersonal(e.target.checked)}
+          />
+          Conta Personal
+        </label>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="nome"
-          placeholder="Nome"
-          value={form.nome}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        {errors.nome && <span style={{ color: "red" }}>{errors.nome}</span>}
+        <form onSubmit={handleSubmit}>
+          <input
+            className="cad-input"
+            name="nome"
+            placeholder="Nome"
+            value={form.nome}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          {errors.nome && <span className="cad-error">{errors.nome}</span>}
 
-        <input
-          name="cpf"
-          placeholder="CPF"
-          value={form.cpf}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          maxLength={14}
-        />
-        {errors.cpf && <span style={{ color: "red" }}>{errors.cpf}</span>}
+          <input
+            className="cad-input"
+            name="cpf"
+            placeholder="CPF"
+            value={form.cpf}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            maxLength={14}
+          />
+          {errors.cpf && <span className="cad-error">{errors.cpf}</span>}
 
-        <input
-          name="rg"
-          placeholder="RG"
-          value={form.rg}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        {errors.rg && <span style={{ color: "red" }}>{errors.rg}</span>}
+          <input
+            className="cad-input"
+            name="rg"
+            placeholder="RG"
+            value={form.rg}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          {errors.rg && <span className="cad-error">{errors.rg}</span>}
 
-        <input
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        {errors.email && <span style={{ color: "red" }}>{errors.email}</span>}
+          <input
+            className="cad-input"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          {errors.email && <span className="cad-error">{errors.email}</span>}
 
-        <input
-          type="password"
-          name="senha"
-          placeholder="Senha"
-          value={form.senha}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        {errors.senha && <span style={{ color: "red" }}>{errors.senha}</span>}
+          <input
+            className="cad-input"
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            value={form.senha}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          {errors.senha && <span className="cad-error">{errors.senha}</span>}
 
-        <input
-          name="numTel"
-          placeholder="Telefone"
-          value={form.numTel}
-          onChange={handleChange}
-          onBlur={handleBlur}
-        />
-        {errors.numTel && <span style={{ color: "red" }}>{errors.numTel}</span>}
+          <input
+            className="cad-input"
+            name="numTel"
+            placeholder="Telefone"
+            value={form.numTel}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          {errors.numTel && <span className="cad-error">{errors.numTel}</span>}
 
-        {isPersonal && (
-          <>
-            <input
-              name="cref_numero"
-              placeholder="CREF Número"
-              value={form.cref_numero}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.cref_numero && <span style={{ color: "red" }}>{errors.cref_numero}</span>}
+          {isPersonal && (
+            <>
+              <input
+                className="cad-input"
+                name="cref_numero"
+                placeholder="CREF Número"
+                value={form.cref_numero}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.cref_numero && <span className="cad-error">{errors.cref_numero}</span>}
 
-            <input
-              name="cref_categoria"
-              placeholder="CREF Categoria"
-              value={form.cref_categoria}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.cref_categoria && <span style={{ color: "red" }}>{errors.cref_categoria}</span>}
+              <input
+                className="cad-input"
+                name="cref_categoria"
+                placeholder="CREF Categoria"
+                value={form.cref_categoria}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.cref_categoria && <span className="cad-error">{errors.cref_categoria}</span>}
 
-            <input
-              name="cref_regional"
-              placeholder="CREF Regional"
-              value={form.cref_regional}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.cref_regional && <span style={{ color: "red" }}>{errors.cref_regional}</span>}
-          </>
-        )}
+              <input
+                className="cad-input"
+                name="cref_regional"
+                placeholder="CREF Regional"
+                value={form.cref_regional}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.cref_regional && <span className="cad-error">{errors.cref_regional}</span>}
+            </>
+          )}
 
-        <button type="submit">Cadastrar</button>
-      </form>
+          <button type="submit" className="cad-button">
+            Cadastrar
+          </button>
+        </form>
 
-      <button onClick={() => navigate("/login")}>Já tenho conta</button>
+        <button className="cad-link-button" onClick={() => navigate("/login")}>
+          Já tenho conta
+        </button>
+      </div>
     </div>
   );
 }
