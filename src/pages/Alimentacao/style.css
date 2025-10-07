@@ -1543,3 +1543,43 @@ body {
     width: 100%;
   }
 }
+
+
+
+
+
+/* Botão de excluir refeição */
+.btn-excluir-refeicao {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.btn-excluir-refeicao:hover {
+  opacity: 1;
+  background: #c0392b;
+}
+
+.refln {
+  position: relative;
+  padding-right: 40px; /* Espaço para o botão */
+}
+
+/* Ajuste para garantir que o título não sobreponha o botão */
+.refln h1 {
+  margin-right: 30px;
+}

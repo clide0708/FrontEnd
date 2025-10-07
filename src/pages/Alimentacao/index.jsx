@@ -66,6 +66,29 @@ function Alimentacao() {
     }
   }, []);
 
+  const excluirRefeicao = async (idRefeicao, nomeRefeicao) => {
+    if (!window.confirm(`Tem certeza que deseja excluir a refeição "${nomeRefeicao}"?`)) {
+      return;
+    }
+
+    try {
+      console.log("🗑️ Excluindo refeição:", idRefeicao);
+      
+      // Você precisará criar este método no alimentosService
+      const response = await alimentosService.removerRefeicao(idRefeicao);
+      
+      if (response.success) {
+        console.log("✅ Refeição excluída com sucesso");
+        carregarRefeicoes(); // Recarrega a lista
+      } else {
+        throw new Error(response.error || 'Erro ao excluir refeição');
+      }
+    } catch (error) {
+      console.error("❌ Erro ao excluir refeição:", error);
+      alert(`Erro ao excluir refeição: ${error.message}`);
+    }
+  };
+
   // Carregar usuário
   const carregarUsuario = useCallback(async () => {
     try {
@@ -145,6 +168,32 @@ function Alimentacao() {
   const totais = calcularTotais();
   const calRes = () => Math.max(user.meta - totais.totalCalorias, 0);
 
+  const calcularTotaisRefeicao = (refeicao) => {
+    if (refeicao.totais) {
+      return refeicao.totais;
+    }
+    
+    // Calcula manualmente se não vier do backend
+    let calorias = 0;
+    let proteinas = 0;
+    let carboidratos = 0;
+    let gorduras = 0;
+    
+    (refeicao.alimentos || []).forEach(alimento => {
+      calorias += parseFloat(alimento.calorias || 0);
+      proteinas += parseFloat(alimento.proteinas || 0);
+      carboidratos += parseFloat(alimento.carboidratos || 0);
+      gorduras += parseFloat(alimento.gorduras || 0);
+    });
+    
+    return {
+      calorias: Math.round(calorias),
+      proteinas: Math.round(proteinas),
+      carboidratos: Math.round(carboidratos),
+      gorduras: Math.round(gorduras)
+    };
+  };
+
   // Handlers para modais
   const abrirModalDetalhes = (refeicao, item) => {
     setCurrentMealList(refeicao.nome_tipo);
@@ -212,7 +261,20 @@ function Alimentacao() {
                   >
                     <div className="refln">
                       <h1>{refeicao.nome_tipo}</h1>
-                      <h2>{tot.calorias.toFixed(0)} Cal</h2>
+                      <h2>{calcularTotaisRefeicao(refeicao).calorias} Cal</h2>
+                      
+
+                      {/* Botão de excluir - posicionado no canto superior direito */}
+                      <button
+                        className="btn-excluir-refeicao"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          excluirRefeicao(refeicao.id, refeicao.nome_tipo);
+                        }}
+                        title="Excluir refeição"
+                      >
+                        ×
+                      </button>
                     </div>
 
                     <div className={`contalm ${isAtivo ? "" : "oculto"}`}>
@@ -358,6 +420,7 @@ function Alimentacao() {
           </div>
 
           {/* Seção do Perfil */}
+          // Substitua a seção completa do .pfl-content por:
           <div className="pfl-content">
             <div className="heading-section">
               <h4 className="nmpfl">{user.nome}</h4>
@@ -370,6 +433,8 @@ function Alimentacao() {
                   <li>Altura: <span>{user.altura > 0 ? user.altura + " cm" : "-"}</span></li>
                   <li>Gênero: <span>{user.genero || "-"}</span></li>
                   <li>Treino: <span>{user.treino || "-"}</span></li>
+                  <li>Meta: <span>{user.meta || "-"}</span></li>
+                  <li>Idade: <span>{user.idade > 0 ? user.idade + " anos" : "-"}</span></li>
                 </ul>
               </div>
 
@@ -400,9 +465,17 @@ function Alimentacao() {
                   Consumo de água ideal:
                   <span>{user.peso > 0 ? consumoAgua(user.peso) : "-"}</span>
                 </li>
+                <li>
+                  Meta calórica:
+                  <span>{user.meta > 0 ? user.meta + " kcal" : "-"}</span>
+                </li>
+                <li>
+                  Calorias restantes:
+                  <span>{user.meta > 0 ? calRes() + " kcal" : "-"}</span>
+                </li>
               </ul>
             </div>
-           </div>
+          </div>
         </div>
       </div>
 
