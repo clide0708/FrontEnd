@@ -45,9 +45,12 @@ export default function AddExercicio({ onAdd, onClose }) {
       id: exercicio.idExercicio || exercicio.id,
       series: numSeries,
       repeticoes: numRepeticoes,
-      peso: peso ? parseFloat(peso) : 0,
+      carga: peso ? parseFloat(peso) : 0, // ← MUDAR de 'peso' para 'carga'
       descanso: descanso ? parseInt(descanso) : 0,
+      ordem: 0,
     };
+
+    console.log("Dados sendo enviados:", novoExercicio);
 
     onAdd(novoExercicio);
     onClose();
@@ -109,7 +112,17 @@ export default function AddExercicio({ onAdd, onClose }) {
 
           <div className="iptex">
             <label>Peso (kg - opcional)</label>
-            <input type="number" step="0.01" value={peso} onChange={(e) => setPeso(e.target.value)} />
+            <input 
+              type="number" 
+              step="0.01" 
+              min="0"
+              value={peso} 
+              onChange={(e) => {
+                const value = e.target.value;
+                console.log("Valor digitado:", value); // ← LOG DO INPUT
+                setPeso(value);
+              }} 
+            />
           </div>
 
           <div className="iptex">

@@ -32,41 +32,43 @@ export default function EditarTreino({
           treino.idTreino
         );
 
+        // No useEffect que busca exercícios, atualize o mapeamento:
         const exerciciosFormatados = Array.isArray(res)
-          ? res.map((ex) => {
-              const isExercicioNormal = ex.idExercicio !== null;
+        ? res.map((ex) => {
+            const isExercicioNormal = ex.idExercicio !== null;
 
-              return {
-                id: ex.idTreino_Exercicio,
-                idExercicio: ex.idExercicio,
-                idExercAdaptado: ex.idExercAdaptado,
-                nome: isExercicioNormal
-                  ? ex.nomeExercicio
-                  : ex.nomeExercAdaptado,
-                descricao: isExercicioNormal
+            return {
+              id: ex.idTreino_Exercicio,
+              idExercicio: ex.idExercicio,
+              idExercAdaptado: ex.idExercAdaptado,
+              nome: isExercicioNormal
+                ? ex.nomeExercicio
+                : ex.nomeExercAdaptado,
+              descricao: isExercicioNormal
+                ? ex.descricaoExercicio
+                : ex.descricaoExercAdaptado,
+              grupoMuscular: isExercicioNormal
+                ? ex.grupoMuscularExercicio
+                : ex.grupoMuscularExercAdaptado,
+              series: ex.series || 0,
+              repeticoes: ex.repeticoes || 0,
+              carga: ex.carga || 0, // ← MANTER como 'carga' para consistência
+              descanso: ex.descanso || 0,
+              ordem: ex.ordem || 0,
+              url: ex.video_url,
+              informacoes: [
+                ex.observacoes,
+                isExercicioNormal
                   ? ex.descricaoExercicio
                   : ex.descricaoExercAdaptado,
-                grupoMuscular: isExercicioNormal
-                  ? ex.grupoMuscularExercicio
-                  : ex.grupoMuscularExercAdaptado,
-                series: ex.series || 0,
-                repeticoes: ex.repeticoes || 0,
-                peso: ex.carga || 0,
-                descanso: ex.descanso || 0,
-                url: ex.video_url,
-                informacoes: [
-                  ex.observacoes,
-                  isExercicioNormal
-                    ? ex.descricaoExercicio
-                    : ex.descricaoExercAdaptado,
-                  ex.comoExecutar,
-                ]
-                  .filter(Boolean)
-                  .join(" - "),
-                _rawData: ex,
-              };
-            })
-          : [];
+                ex.comoExecutar,
+              ]
+                .filter(Boolean)
+                .join(" - "),
+              _rawData: ex,
+            };
+          })
+        : [];
 
         setCurrentTreino((prev) => ({
           ...prev,
@@ -136,7 +138,9 @@ export default function EditarTreino({
           idExercicio: novoEx.idExercicio || novoEx.id,
           series: novoEx.series || 3,
           repeticoes: novoEx.repeticoes || 10,
-          carga: novoEx.peso || 0,
+          carga: novoEx.carga || 0, // ← MUDAR de 'peso' para 'carga'
+          descanso: novoEx.descanso || 0,
+          ordem: novoEx.ordem || 0,
           observacoes: novoEx.informacoes || "",
         }
       );
@@ -206,20 +210,18 @@ export default function EditarTreino({
     if (!currentTreino.exercicios.length || isReadOnly) return;
 
     try {
-      // atualiza só o exercício temporário editado
       if (editExercicioTemp) {
         await exerciciosService.atualizarExercicioNoTreino(
           editExercicioTemp.id,
           {
             series: editExercicioTemp.series,
             repeticoes: editExercicioTemp.repeticoes,
-            carga: editExercicioTemp.peso,
+            carga: editExercicioTemp.carga, // ← MUDAR para 'carga'
             descanso: editExercicioTemp.descanso,
-            // informacoes/observacoes não é alterado
+            ordem: editExercicioTemp.ordem || 0,
           }
         );
 
-        // atualiza o state local sem tocar informacoes
         setCurrentTreino((prev) => ({
           ...prev,
           exercicios: prev.exercicios.map((item) =>
@@ -228,9 +230,9 @@ export default function EditarTreino({
                   ...item,
                   series: editExercicioTemp.series,
                   repeticoes: editExercicioTemp.repeticoes,
-                  peso: editExercicioTemp.peso,
+                  carga: editExercicioTemp.carga, // ← MUDAR para 'carga'
                   descanso: editExercicioTemp.descanso,
-                  // mantem informacoes e outros campos intactos
+                  ordem: editExercicioTemp.ordem || 0,
                 }
               : item
           ),
@@ -301,9 +303,10 @@ export default function EditarTreino({
                 Peso (kg):
                 <input
                   type="number"
-                  value={editExercicioTemp.peso || 0}
+                  step="0.01"
+                  value={editExercicioTemp.carga || 0} // ← MUDAR de 'peso' para 'carga'
                   onChange={(e) =>
-                    handleEditChange("peso", parseFloat(e.target.value) || 0)
+                    handleEditChange("carga", parseFloat(e.target.value) || 0) // ← MUDAR aqui também
                   }
                   disabled={isReadOnly}
                 />

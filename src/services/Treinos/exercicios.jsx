@@ -67,9 +67,21 @@ const deletarExercicio = async (id) => {
 // adicionar exercício ao treino
 const adicionarExercicioAoTreino = async (idTreino, exercicio) => {
   try {
+    const payload = {
+      idExercicio: exercicio.idExercicio || exercicio.id,
+      series: exercicio.series || 3,
+      repeticoes: exercicio.repeticoes || 10,
+      carga: exercicio.carga || 0, // ← Agora recebendo 'carga' do frontend
+      descanso: exercicio.descanso || 0,
+      ordem: exercicio.ordem || 0,
+      observacoes: exercicio.informacoes || "",
+    };
+
+    console.log("Payload enviado para API:", payload);
+
     const res = await api.post(
       `/treinos/${idTreino}/adicionar-exercicio`,
-      exercicio
+      payload
     );
     return res.data;
   } catch (err) {
@@ -81,9 +93,17 @@ const adicionarExercicioAoTreino = async (idTreino, exercicio) => {
 // atualizar exercício dentro do treino
 const atualizarExercicioNoTreino = async (idExercicio, data) => {
   try {
+    const pesoNumerico = data.peso !== "" ? Number(data.peso) : 0;
+    
     const res = await api.put(
       `/treinos/exercicio/${idExercicio}/atualizar`,
-      data
+      {
+        series: data.series,
+        repeticoes: data.repeticoes,
+        carga: pesoNumerico, // ← Usar conversão explícita aqui também
+        descanso: data.descanso,
+        ordem: data.ordem || 0,
+      }
     );
     return res.data;
   } catch (err) {
