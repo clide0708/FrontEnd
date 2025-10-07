@@ -60,7 +60,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
             />
           </label>
 
-          <label className="label-add-treino">
+          <label className="label-add-treino" style={{ display: "none" }}>
             Tipo:
             <select
               className="input-add-treino"

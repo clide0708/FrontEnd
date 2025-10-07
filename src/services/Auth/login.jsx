@@ -18,15 +18,3 @@ export async function loginUsuario(email, senha) {
     return { success: false, error: "Erro ao conectar com o servidor" };
   }
 }
-
-
-export async function obterUsuario() {
-  try {
-    const response = await api.get("/auth/obter-usuario");
-    return response.data.usuario;
-  } catch (err) {
-    console.error("Erro ao obter usuário:", err);
-    throw err;
-  }
-}
-

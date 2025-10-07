@@ -139,7 +139,7 @@ function Personal() {
                 <div className="ftCliente">
                   <img
                     src={
-                      clienteSelecionado.img || "/assets/images/profilefoto.png"
+                      clienteSelecionado.foto_perfil || "/assets/images/profilefoto.png"
                     }
                     alt="Perfil"
                   />
@@ -268,7 +268,7 @@ function Personal() {
                 >
                   <img
                     className="imgpflpqn"
-                    src={aluno.img || "/assets/images/profilefoto.png"}
+                    src={aluno.foto_perfil || "/assets/images/profilefoto.png"}
                     alt="Perfil"
                   />
                   {aluno.nome}

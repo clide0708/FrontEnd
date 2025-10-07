@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import AddExercicio from "./addExercicio";
 import exerciciosService from "../../services/Treinos/exercicios.jsx";
 import { useNavigate } from "react-router-dom";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { IoArrowBackSharp } from "react-icons/io5";
 import "./style.css";
 
 export default function EditarTreino({
@@ -247,7 +249,9 @@ export default function EditarTreino({
   return (
     <div className="editar-treino-container">
       <div className="btnhd">
-        <button onClick={onVoltar}>← Voltar</button>
+        <button onClick={onVoltar}>
+          <IoArrowBackSharp />
+        </button>
         <h2>{currentTreino.nome}</h2>
       </div>
 
@@ -320,7 +324,7 @@ export default function EditarTreino({
                 />
               </label>
               {editExercicioTemp.informacoes && (
-                <p>Informações: {editExercicioTemp.informacoes}</p>
+                <p>{editExercicioTemp.informacoes}</p>
               )}
               {editExercicioTemp.url && (
                 <a
@@ -339,7 +343,7 @@ export default function EditarTreino({
                   className="btnSalvarTodos"
                   style={{ marginTop: "15px" }}
                 >
-                  Salvar Todos
+                  Salvar
                 </button>
               )}
             </>
@@ -367,7 +371,7 @@ export default function EditarTreino({
                       handleRemoveExercicio(ex.id);
                     }}
                   >
-                    X
+                    <FiTrash2 size={18} />
                   </button>
                 )}
               </li>
