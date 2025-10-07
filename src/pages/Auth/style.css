@@ -11,7 +11,7 @@
     /* ======================= */
     .topppp-global {
         /* Cores padronizadas para o destaque global */
-        color: #368DD9;
+        color: white;
         /* Laranja de destaque */
         width: 100%;
         /* Removendo top/left desnecessários para um bloco centralizado */
@@ -22,7 +22,7 @@
     }
 
     .topppp-global h2 {
-        color: #368DD9;
+        color: white;
         font-size: 400%;
         margin-top: 80px;
     }
@@ -64,7 +64,7 @@
     .cad-title,
     .login-title-global,
     .rs-title {
-        color: #368DD9;
+        color: white;
         margin-bottom: 30px;
         font-size: 2.2em;
         /* Tamanho padronizado */
