@@ -253,10 +253,13 @@
 
 .lista-exercicios li {
   text-align: right;
+  align-items: center;
+  display: flex;
   width: 100%;
   padding-right: 10px;
   font-size: 120%;
   margin-bottom: 30px;
+  justify-content: right;
 }
 
 .editor-exercicio {
@@ -357,10 +360,11 @@
 .dltaex {
   padding-left: 7px;
   color: white;
+  background-color: transparent;
 }
 
-.dltaex:hover {
-  color: #368dd9;
+.dltaex svg:hover {
+  color: rgb(255, 154, 154);
 }
 
 .lista-exercicios p {
@@ -523,10 +527,11 @@
 }
 
 .btnhd h2 {
-  width: 760px;
-  text-align: center;
+  width: 100%;
+  text-align: right;
   color: #368DD9;
   font-size: 200%;
+  padding-right: 50px;
 }
 
 .ftltex {
@@ -549,7 +554,7 @@
   font-size: 150%;
   font-weight: bold;
   width: 150px;
-  margin-top: 100px;
+  margin-top: 60px;
   margin-left: 300px;
 }
 
@@ -1472,11 +1477,11 @@ a:hover {
 }
 
 .btnSalvarTodos {
+  border: none;
   background-color: white;
   /* Laranja para salvar */
   color: black;
   padding: 10px;
-  border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1.1em;
@@ -1484,10 +1489,6 @@ a:hover {
   transition: background-color 0.3s;
   width: 100%;
   margin: none;
-}
-
-.btnSalvarTodos:hover {
-  background-color: #368dd9;
 }
 
 
@@ -1519,15 +1520,13 @@ a:hover {
 }
 
 .lista-exercicios .active-exercicio {
-  background-color: #368dd9;
+  color: #368dd9;
   /* Azul para o item selecionado */
-  color: white;
   font-weight: bold;
-  box-shadow: 0 0 10px rgba(54, 141, 217, 0.5);
 }
 
 .lista-exercicios .active-exercicio:hover {
-  background-color: #368dd9;
+  color: #368dd9;
   /* Mantém a cor */
 }
 
@@ -1586,24 +1585,6 @@ a:hover {
   justify-content: center;
 }
 
-/* Botão Iniciar Treino */
-.bttcmc button {
-  background-color: #368dd9;
-  /* Ciano/Turquesa para Iniciar */
-  color: white;
-  padding: 12px 30px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.2em;
-  font-weight: bold;
-  transition: background-color 0.3s, opacity 0.3s;
-  width: 100%;
-}
-
-.bttcmc button:hover:not(:disabled) {
-  background-color: #138496;
-}
 
 /*
 ==================================================
