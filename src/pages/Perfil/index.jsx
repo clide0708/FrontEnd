@@ -4,8 +4,8 @@ import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
 import PlanModal from "./modalPlano.jsx";
-import LogoutButton from "../../components/Buttons/Logout.jsx";
 import CropModal from "./modalCrop.jsx";
+import { FiSettings } from "react-icons/fi"; // engrenagemzinha
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -18,16 +18,19 @@ export default function Profile() {
     return usuario.email || "";
   });
 
-  // busca perfil do usuário logado
   useEffect(() => {
     const fetchPerfil = async () => {
       if (!email) return;
       const data = await perfilService.getPerfil(email);
       if (data && data.success) {
         const treinoMap = { Sedentário: 1, Leve: 2, Moderado: 3, Intenso: 4 };
-        const metaMap = { "Perder peso": 1, "Manter peso": 2, "Ganhar peso": 3 };
+        const metaMap = {
+          "Perder peso": 1,
+          "Manter peso": 2,
+          "Ganhar peso": 3,
+        };
         setUser(data.data);
-        setForm({ 
+        setForm({
           ...data.data,
           treinoValue: treinoMap[data.data.treinoTipo] || 1,
           metaValue: metaMap[data.data.meta] || 1,
@@ -37,7 +40,6 @@ export default function Profile() {
     fetchPerfil();
   }, [email]);
 
-  // busca nome do personal pelo idPersonal
   useEffect(() => {
     const fetchPersonal = async () => {
       if (user?.idPersonal) {
@@ -65,17 +67,26 @@ export default function Profile() {
     if (result.success) {
       setUser({ ...form });
       setEditing(false);
-      console.log("Perfil atualizado com sucesso!");
     } else {
       alert("Erro ao atualizar perfil: " + result.error);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   if (!user) return <p>Carregando...</p>;
 
   return (
-    <div className="container">
-      <LogoutButton />
+    <div className="container" style={{ position: "relative" }}>
+      {/* ENGRENAGEM LOGOUT */}
+      <div className="logout-gear" onClick={handleLogout} title="Sair">
+        <FiSettings size={30} />
+      </div>
+
       <div className="row">
         <div className="col-lg-12">
           <div className="page-content">
@@ -158,7 +169,6 @@ export default function Profile() {
                           <option value="feminino">Feminino</option>
                         </select>
 
-                        {/* BARRINHAS DE TREINO E META */}
                         <div className="slider-container">
                           <label>Treino: {form.treinoTipo}</label>
                           <input
@@ -175,7 +185,11 @@ export default function Profile() {
                                 3: "Moderado",
                                 4: "Intenso",
                               };
-                              setForm({ ...form, treinoTipo: treinoMap[val], treinoValue: val });
+                              setForm({
+                                ...form,
+                                treinoTipo: treinoMap[val],
+                                treinoValue: val,
+                              });
                             }}
                           />
                         </div>
@@ -194,7 +208,11 @@ export default function Profile() {
                                 2: "Manter peso",
                                 3: "Ganhar peso",
                               };
-                              setForm({ ...form, meta: metaMap[val], metaValue: val });
+                              setForm({
+                                ...form,
+                                meta: metaMap[val],
+                                metaValue: val,
+                              });
                             }}
                           />
                         </div>
@@ -226,7 +244,9 @@ export default function Profile() {
                         <p>Treino: {user.treinoTipo ?? "—"}</p>
                         <p>Meta: {user.meta ?? "—"}</p>
                         <div className="main-border-button">
-                          <button onClick={() => setEditing(true)}>Editar perfil</button>
+                          <button onClick={() => setEditing(true)}>
+                            Editar perfil
+                          </button>
                         </div>
                       </>
                     )}
@@ -266,7 +286,6 @@ export default function Profile() {
                   }}
                 />
               )}
-
               {cropModalOpen && (
                 <CropModal
                   onClose={() => setCropModalOpen(false)}
@@ -327,7 +346,6 @@ export default function Profile() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
