@@ -247,7 +247,7 @@ function Alimentacao() {
                           className="add-btn"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setCurrentMealList(""); // ← STRING VAZIA
+                            setCurrentMealList(refeicao.nome_tipo); // ← AGORA MANDA O NOME DA REFEIÇÃO ATUAL
                             setModalAdd(true);
                           }}
                         >
@@ -278,7 +278,7 @@ function Alimentacao() {
               )}
 
               {/* // Adicione temporariamente no seu JSX: */}
-            <button 
+            {/* <button 
               onClick={() => {
                 console.log("🔍 Estado atual:", { refeicoes, carregando, erro });
                 carregarRefeicoes();
@@ -297,39 +297,39 @@ function Alimentacao() {
               }}
             >
               Debug
-            </button>
+            </button> */}
 
               {/* BOTÃO ADICIONAL PARA CRIAR NOVA REFEIÇÃO (mesmo quando já tem refeições) */}
               {refeicoes.length > 0 && (
-                <div className="nova-refeicao-section" style={{textAlign: 'center', padding: '15px', marginTop: '10px'}}>
-                  <button 
-                    className="add-btn"
-                    onClick={() => {
-                      setCurrentMealList(""); // ← STRING VAZIA
-                      setModalAdd(true);
-                    }}
-                    style={{
-                      background: '#27ae60',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 48px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '1em',
-                      fontWeight: 'bold',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      margin: '0 auto'
-                    }}
-                  >
-                    <span style={{fontSize: '1.2em'}}>+</span>
-                    Nova Refeição
-                  </button>
-                  <p style={{color: '#aaa', fontSize: '0.8em', marginTop: '8px'}}>
-                    Adicione mais refeições ao seu dia
-                  </p>
-                </div>
+              <div className="nova-refeicao-section" style={{textAlign: 'center', padding: '15px', marginTop: '10px'}}>
+                <button 
+                  className="add-btn"
+                  onClick={() => {
+                    setCurrentMealList(""); // ← VOLTA A SER STRING VAZIA
+                    setModalAdd(true);
+                  }}
+                  style={{
+                    background: '#27ae60',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 48px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '1em',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    margin: '0 auto'
+                  }}
+                >
+                  <span style={{fontSize: '1.2em'}}>+</span>
+                  Nova Refeição
+                </button>
+                <p style={{color: '#aaa', fontSize: '0.8em', marginTop: '8px'}}>
+                  Adicione mais refeições ao seu dia
+                </p>
+              </div>
               )}
             </div>
 

@@ -258,41 +258,55 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
   //     setCarregando(false);
   //   }
   // };
+  const [modo, setModo] = useState(
+    currentMealList === "" ? "selecao" : 
+    currentMealList === "nova" ? "criacao" : 
+    currentMealList === "existente" ? "adicao" : 
+    "especifico"
+  );
+
+  const voltarParaSelecao = () => {
+    setModo("selecao");
+    setIdRefeicaoAtual(null);
+    setItensAdicionados([]);
+  };
 
   const nomeExibicao = modoCriacao ? 'Criar/Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
 
-return (
+  return (
     <div className="modalalimento show">
       <div className="modalalm-content">
         <div className="addalm">
-          <h4 className="h4modal">{nomeExibicao}</h4>
+          <h4 className="h4modal">
+            {modo === "selecao" && "Criar/Adicionar Refeição"}
+            {modo === "criacao" && "Criar Nova Refeição"}
+            {modo === "adicao" && "Adicionar Alimentos a Refeição Existente"}
+            {modo === "especifico" && mapearNomeRefeicao(currentMealList)}
+          </h4>
           
-          {/* ✅ CORREÇÃO: Mostrar data atual para debug */}
-          <div style={{color: '#aaa', fontSize: '10px', margin: '2px 0'}}>
-            Data atual: {new Date().toLocaleString('pt-BR')}
-          </div>
-          
-          {idRefeicaoAtual && (
-            <p style={{color: 'green', fontSize: '12px', margin: '5px 0'}}>
-              ✅ Refêição ID: {idRefeicaoAtual}
-            </p>
-          )}
-          
-          {erro && (
-            <p style={{color: 'red', fontSize: '12px', margin: '5px 0'}}>
-              ❌ {erro}
-            </p>
-          )}
-          
-          {carregando && (
-            <p style={{color: 'blue', fontSize: '12px', margin: '5px 0'}}>
-              ⏳ Carregando...
-            </p>
+          {/* Botão voltar quando não está no modo seleção */}
+          {modo !== "selecao" && (
+            <button 
+              onClick={voltarParaSelecao}
+              style={{
+                background: 'transparent',
+                color: '#368dd9',
+                border: '1px solid #368dd9',
+                padding: '5px 10px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '0.8em',
+                marginLeft: '10px',
+                margin: '15px'
+              }}
+            >
+              ← Voltar
+            </button>
           )}
         </div>
 
-        {/* Seção para criar/gerenciar refeições */}
-        {modoCriacao && (
+        {/* MODO SELEÇÃO - Aparece quando currentMealList está vazio ou "nova" ou "existente" */}
+        {modo === "selecao" && (
           <div className="gerenciar-refeicoes-section" style={{marginBottom: '20px'}}>
             <h5 style={{color: '#fff', marginBottom: '15px'}}>Escolha uma opção:</h5>
             
@@ -325,30 +339,62 @@ return (
               </div>
 
               {/* Opção 2: Adicionar a refeição existente */}
-              <div className="opcao-existente">
-                <h6 style={{color: '#f39c12', marginBottom: '10px'}}>Adicionar Alimentos a Refeição Existente</h6>
-                <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
-                  {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
-                    <button
-                      key={tipo}
-                      onClick={() => handleAdicionarARefeicaoExistente(tipo)}
-                      disabled={carregando}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#f39c12',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: carregando ? 'not-allowed' : 'pointer',
-                        opacity: carregando ? 0.6 : 1,
-                        fontSize: '0.9em'
-                      }}
-                    >
-                      ➕ {tipo}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODO CRIAÇÃO - Aparece quando vem do botão "Nova Refeição" */}
+        {modo === "criacao" && (
+          <div className="modo-criacao-section" style={{marginBottom: '20px'}}>
+            <h5 style={{color: '#fff', marginBottom: '15px'}}>Criar Nova Refeição</h5>
+            <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+              {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
+                <button
+                  key={tipo}
+                  onClick={() => handleCriarNovaRefeicao(tipo)}
+                  disabled={carregando}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#27ae60',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: carregando ? 'not-allowed' : 'pointer',
+                    opacity: carregando ? 0.6 : 1,
+                    fontSize: '0.9em'
+                  }}
+                >
+                  + {tipo}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* MODO ADIÇÃO - Aparece quando vem do botão "+" dentro de uma refeição */}
+        {modo === "adicao" && (
+          <div className="modo-adicao-section" style={{marginBottom: '20px'}}>
+            {/* <h5 style={{color: '#fff', marginBottom: '15px'}}>Adicionar Alimentos a Refeição Existente</h5> */}
+            <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+              {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
+                <button
+                  key={tipo}
+                  onClick={() => handleAdicionarARefeicaoExistente(tipo)}
+                  disabled={carregando}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#f39c12',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: carregando ? 'not-allowed' : 'pointer',
+                    opacity: carregando ? 0.6 : 1,
+                    fontSize: '0.9em'
+                  }}
+                >
+                  ➕ {tipo}
+                </button>
+              ))}
             </div>
           </div>
         )}
