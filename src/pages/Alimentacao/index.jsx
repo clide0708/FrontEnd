@@ -2,9 +2,17 @@ import { useState, useEffect, useCallback } from "react";
 import ModalAdd from "./modalAdd";
 import ModalDetalhes from "./modalDetalhes";
 import "./style.css";
-import { calcularIMC, calcularIDR, consumoAgua } from "../../utils/calculos";
+import { 
+  calcularIMC, 
+  calcularIDR, 
+  consumoAgua, 
+  pesoIdeal, 
+  gorduraCorporalEstimada,
+  calcularMetaCalorica
+} from "../../utils/calculos";
 import { obterUsuario } from "../../services/Auth/login";
 import alimentosService from "../../services/Alimentos/alimentosService";
+import perfilService from "../../services/Perfil/perfil";
 
 function Alimentacao() {
   const [dataHoje, setDataHoje] = useState("");
@@ -14,11 +22,11 @@ function Alimentacao() {
     peso: 0,
     altura: 0,
     genero: "",
-    treino: "",
-    meta: 0,
+    treinoTipo: "",
+    meta: "",
     img: "",
   });
-
+  
   const [refeicoes, setRefeicoes] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
@@ -33,9 +41,7 @@ function Alimentacao() {
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, "0");
     const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-    // const ano = hoje.getFullYear();
     
-    // Mostrar data completa para debug
     console.log("📅 Data atual do sistema:", hoje.toLocaleString('pt-BR'));
     console.log("📆 Data formatada para exibição:", `${dia}/${mes}`);
     
@@ -66,25 +72,42 @@ function Alimentacao() {
     }
   }, []);
 
-  // Carregar usuário
+  // ✅ CORREÇÃO: Carregar usuário do perfil
   const carregarUsuario = useCallback(async () => {
     try {
-      const data = await obterUsuario();
-      const genero = data.genero?.toLowerCase() === "masculino" ? "Masculino" : "Feminino";
-      const treino = data.treino ? data.treino.charAt(0).toUpperCase() + data.treino.slice(1).toLowerCase() : "";
+      // Primeiro tenta obter o email do usuário logado
+      const usuarioLogado = await obterUsuario();
+      const email = usuarioLogado?.email;
+
+      if (!email) {
+        console.error("❌ Email do usuário não encontrado");
+        return;
+      }
+
+      console.log("📧 Buscando perfil do email:", email);
       
-      setUser({
-        nome: data.nome || "",
-        idade: Number(data.idade) || 0,
-        peso: Number(data.peso) || 0,
-        altura: Number(data.altura) || 0,
-        genero: genero,
-        treino: treino,
-        meta: Number(data.meta) || 0,
-        img: data.img && data.img.startsWith("/") ? data.img : data.img ? "/" + data.img : "",
-      });
+      // Busca o perfil completo usando o serviço do perfil
+      const data = await perfilService.getPerfil(email);
+      
+      if (data && data.success) {
+        console.log("✅ Perfil carregado:", data.data);
+        
+        // Mapeia os dados do perfil para o formato esperado
+        setUser({
+          nome: data.data.nome || "",
+          idade: Number(data.data.idade) || 0,
+          peso: Number(data.data.peso) || 0,
+          altura: Number(data.data.altura) || 0,
+          genero: data.data.genero || "",
+          treinoTipo: data.data.treinoTipo || "",
+          meta: data.data.meta || "",
+          img: data.data.foto_perfil || "",
+        });
+      } else {
+        console.error("❌ Erro ao carregar perfil:", data?.error);
+      }
     } catch (err) {
-      console.error("Erro ao carregar usuário:", err);
+      console.error("❌ Erro ao carregar usuário:", err);
     }
   }, []);
 
@@ -101,9 +124,8 @@ function Alimentacao() {
       
       console.log("✅ Refeição criada com ID:", response.id_refeicao);
       
-      // CORREÇÃO: Aguarda um pouco e depois recarrega as refeições
       setTimeout(() => {
-        carregarRefeicoes(); // Isso deve atualizar o estado `refeicoes`
+        carregarRefeicoes();
       }, 1000);
       
       return response;
@@ -111,6 +133,29 @@ function Alimentacao() {
       console.error("❌ Erro ao criar refeição:", error);
       setErro(error.message);
       throw error;
+    }
+  };
+
+  // ✅ CORREÇÃO: Função para excluir refeição
+  const excluirRefeicao = async (idRefeicao, nomeRefeicao) => {
+    if (!window.confirm(`Tem certeza que deseja excluir a refeição "${nomeRefeicao}"?`)) {
+      return;
+    }
+
+    try {
+      console.log("🗑️ Excluindo refeição:", idRefeicao);
+      
+      const response = await alimentosService.removerRefeicao(idRefeicao);
+      
+      if (response.success) {
+        console.log("✅ Refeição excluída com sucesso");
+        carregarRefeicoes();
+      } else {
+        throw new Error(response.error || 'Erro ao excluir refeição');
+      }
+    } catch (error) {
+      console.error("❌ Erro ao excluir refeição:", error);
+      alert(`Erro ao excluir refeição: ${error.message}`);
     }
   };
 
@@ -125,7 +170,7 @@ function Alimentacao() {
     console.log("📊 Estado refeicoes atualizado:", refeicoes);
   }, [refeicoes]);
 
-  // Calcular totais
+  // Calcular totais das refeições
   const calcularTotais = () => {
     let totalCalorias = 0;
     let totalProteinas = 0;
@@ -139,11 +184,63 @@ function Alimentacao() {
       totalGorduras += refeicao.totais?.gorduras || 0;
     });
 
-    return { totalCalorias, totalProteinas, totalCarboidratos, totalGorduras };
+    return { 
+      totalCalorias: Math.round(totalCalorias), 
+      totalProteinas: Math.round(totalProteinas), 
+      totalCarboidratos: Math.round(totalCarboidratos), 
+      totalGorduras: Math.round(totalGorduras) 
+    };
   };
 
   const totais = calcularTotais();
-  const calRes = () => Math.max(user.meta - totais.totalCalorias, 0);
+
+  // ✅ CORREÇÃO: Calcular meta calórica baseada no perfil do usuário
+  const metaCalorica = user.peso > 0 && user.altura > 0 && user.idade > 0 && user.genero
+    ? calcularMetaCalorica(
+        user.peso, 
+        user.altura, 
+        user.idade, 
+        user.genero, 
+        user.treinoTipo, 
+        user.meta
+      )
+    : 0;
+
+  // ✅ CORREÇÃO: Calorias restantes = Meta calórica - Calorias consumidas
+  const caloriasRestantes = Math.max(metaCalorica - totais.totalCalorias, 0);
+
+  // Adicione esta função antes do return
+  const formatarValor = (valor, sufixo = "") => {
+    if (!valor || valor === 0) return "-";
+    return `${valor}${sufixo}`;
+  };
+
+  // ✅ CORREÇÃO: Função para calcular totais de uma refeição específica
+  const calcularTotaisRefeicao = (refeicao) => {
+    if (refeicao.totais) {
+      return refeicao.totais;
+    }
+    
+    // Calcula manualmente se não vier do backend
+    let calorias = 0;
+    let proteinas = 0;
+    let carboidratos = 0;
+    let gorduras = 0;
+    
+    (refeicao.alimentos || []).forEach(alimento => {
+      calorias += parseFloat(alimento.calorias || 0);
+      proteinas += parseFloat(alimento.proteinas || 0);
+      carboidratos += parseFloat(alimento.carboidratos || 0);
+      gorduras += parseFloat(alimento.gorduras || 0);
+    });
+    
+    return {
+      calorias: Math.round(calorias),
+      proteinas: Math.round(proteinas),
+      carboidratos: Math.round(carboidratos),
+      gorduras: Math.round(gorduras)
+    };
+  };
 
   // Handlers para modais
   const abrirModalDetalhes = (refeicao, item) => {
@@ -175,7 +272,6 @@ function Alimentacao() {
             <div className="pt1">
               <div className="heading-section">
                 <h4 className="data">{dataHoje}</h4>
-                {/* ✅ DEBUG: Mostrar data completa */}
                 <small style={{color: '#666', fontSize: '0.7em'}}>
                   {new Date().toLocaleDateString('pt-BR')} - {new Date().toLocaleTimeString('pt-BR')}
                 </small>
@@ -201,7 +297,7 @@ function Alimentacao() {
             <div className="refeicoes">
               {refeicoes.map((refeicao) => {
                 const isAtivo = cardAberto === refeicao.id;
-                const tot = refeicao.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 };
+                const tot = calcularTotaisRefeicao(refeicao);
                 const items = refeicao.alimentos || [];
 
                 return (
@@ -212,14 +308,26 @@ function Alimentacao() {
                   >
                     <div className="refln">
                       <h1>{refeicao.nome_tipo}</h1>
-                      <h2>{tot.calorias.toFixed(0)} Cal</h2>
+                      <h2>{tot.calorias} Cal</h2>
+                      
+                      {/* Botão de excluir - posicionado no canto superior direito */}
+                      <button
+                        className="btn-excluir-refeicao"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          excluirRefeicao(refeicao.id, refeicao.nome_tipo);
+                        }}
+                        title="Excluir refeição"
+                      >
+                        ×
+                      </button>
                     </div>
 
                     <div className={`contalm ${isAtivo ? "" : "oculto"}`}>
                       <div className="tableheadref">
-                        <h1>Prot - {tot.proteinas.toFixed(0)}g</h1>
-                        <h1>Carb - {tot.carboidratos.toFixed(0)}g</h1>
-                        <h1>Gord - {tot.gorduras.toFixed(0)}g</h1>
+                        <h1>Prot - {tot.proteinas}g</h1>
+                        <h1>Carb - {tot.carboidratos}g</h1>
+                        <h1>Gord - {tot.gorduras}g</h1>
                       </div>
                       <div className="tablescrollref">
                         {items.map((item) => (
@@ -241,13 +349,12 @@ function Alimentacao() {
                         ))}
                       </div>
                       <div className="btns">
-                        {/* BOTÃO ATUALIZADO - STRING VAZIA */}
                         <button
                           type="button"
                           className="add-btn"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setCurrentMealList(refeicao.nome_tipo); // ← AGORA MANDA O NOME DA REFEIÇÃO ATUAL
+                            setCurrentMealList(refeicao.nome_tipo);
                             setModalAdd(true);
                           }}
                         >
@@ -259,15 +366,14 @@ function Alimentacao() {
                 );
               })}
 
-              {/* Botão para adicionar nova refeição se não houver - ATUALIZADO */}
+              {/* Botão para adicionar nova refeição se não houver */}
               {refeicoes.length === 0 && (
                 <div className="no-refeicoes" style={{textAlign: 'center', padding: '20px', color: '#aaa'}}>
                   <p>Nenhuma refeição hoje</p>
-                  {/* BOTÃO ATUALIZADO - STRING VAZIA */}
                   <button 
                     className="add-btn"
                     onClick={() => {
-                      setCurrentMealList(""); // ← STRING VAZIA
+                      setCurrentMealList("");
                       setModalAdd(true);
                     }}
                     style={{margin: '10px auto'}}
@@ -277,35 +383,13 @@ function Alimentacao() {
                 </div>
               )}
 
-              {/* // Adicione temporariamente no seu JSX: */}
-            {/* <button 
-              onClick={() => {
-                console.log("🔍 Estado atual:", { refeicoes, carregando, erro });
-                carregarRefeicoes();
-              }}
-              style={{
-                position: 'fixed',
-                top: '10px',
-                right: '10px',
-                background: '#ff6b6b',
-                color: 'white',
-                border: 'none',
-                padding: '5px 10px',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                zIndex: 1000
-              }}
-            >
-              Debug
-            </button> */}
-
               {/* BOTÃO ADICIONAL PARA CRIAR NOVA REFEIÇÃO (mesmo quando já tem refeições) */}
               {refeicoes.length > 0 && (
               <div className="nova-refeicao-section" style={{textAlign: 'center', padding: '15px', marginTop: '10px'}}>
                 <button 
                   className="add-btn"
                   onClick={() => {
-                    setCurrentMealList(""); // ← VOLTA A SER STRING VAZIA
+                    setCurrentMealList("");
                     setModalAdd(true);
                   }}
                   style={{
@@ -339,19 +423,35 @@ function Alimentacao() {
                 <div className="metatbl">
                   <div className="metapt1">
                     <h1>
-                      <span id="metacal">{user.meta || "??"}</span>
+                      <span id="metacal">{formatarValor(metaCalorica)}</span>
                     </h1>
                   </div>
                   <div className="metapt2">
                     <h1>
-                      <span id="calres">{calRes()}</span>
+                      <span id="calres">{formatarValor(caloriasRestantes)}</span>
                     </h1>
                     <h2>cal restantes</h2>
                   </div>
                 </div>
                 <div className="metadt">
-                  <h3>Ganho de massa</h3>
-                  <h5>60kg - 80kg</h5>
+                  <h3>Meta</h3>
+                  <h5>{user.meta || "Definir meta"}</h5>
+                </div>
+                <div className="pesoideal">
+                  <h3 style={{color: '#ccc'}}>
+                    {user.peso > 0 && user.altura > 0 && user.genero 
+                      ? pesoIdeal(user.altura, user.genero) 
+                      : "-"}
+                  </h3>
+                  <h5 style={{color: '#ccc'}}>Peso ideal</h5>
+                </div>
+                <div className="gorduracorporal">
+                  <h3 style={{color: '#ccc'}}>
+                    {user.peso > 0 && user.altura > 0 && user.idade > 0 && user.genero 
+                      ? gorduraCorporalEstimada(user.peso, user.altura, user.idade, user.genero) 
+                      : "-"}
+                  </h3>
+                  <h5 style={{color: '#ccc'}}>Gordura corporal estimada</h5>
                 </div>
               </div>
             </div>
@@ -369,7 +469,9 @@ function Alimentacao() {
                   <li>Peso: <span>{user.peso > 0 ? user.peso + " kg" : "-"}</span></li>
                   <li>Altura: <span>{user.altura > 0 ? user.altura + " cm" : "-"}</span></li>
                   <li>Gênero: <span>{user.genero || "-"}</span></li>
-                  <li>Treino: <span>{user.treino || "-"}</span></li>
+                  <li>Treino: <span>{user.treinoTipo || "-"}</span></li>
+                  <li>Meta: <span>{user.meta || "-"}</span></li>
+                  <li>Idade: <span>{user.idade > 0 ? user.idade + " anos" : "-"}</span></li>
                 </ul>
               </div>
 
@@ -381,28 +483,42 @@ function Alimentacao() {
             <div className="pflidc">
               <ul>
                 <li>
-                  IDR:
+                  IDR (Manutenção):
                   <span>
-                    {user.peso > 0 && user.altura > 0 && user.idade > 0
-                      ? calcularIDR(user.peso, user.altura, user.idade, user.genero, user.treino)
+                    {user.peso > 0 && user.altura > 0 && user.idade > 0 && user.genero
+                      ? calcularIDR(user.peso, user.altura, user.idade, user.genero, user.treinoTipo)
                       : "-"}
+                  </span>
+                </li>
+                <li>
+                  Meta calórica:
+                  <span>
+                    {metaCalorica > 0 ? metaCalorica + " kcal" : "-"}
                   </span>
                 </li>
                 <li>
                   IMC:
                   <span>
-                    {user.peso > 0 && user.altura > 0
+                    {user.peso > 0 && user.altura > 0 && user.genero
                       ? calcularIMC(user.peso, user.altura, user.genero)
                       : "-"}
                   </span>
                 </li>
                 <li>
                   Consumo de água ideal:
-                  <span>{user.peso > 0 ? consumoAgua(user.peso) : "-"}</span>
+                  <span>{user.peso > 0 ? consumoAgua(user.peso, user.treinoTipo) : "-"}</span>
+                </li>
+                <li>
+                  Calorias consumidas:
+                  <span>{totais.totalCalorias.toFixed(0)} kcal</span>
+                </li>
+                <li>
+                  Calorias restantes:
+                  <span>{caloriasRestantes} kcal</span>
                 </li>
               </ul>
             </div>
-           </div>
+          </div>
         </div>
       </div>
 

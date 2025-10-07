@@ -66,6 +66,25 @@ class AlimentosService {
     }
   }
 
+  // Adicione este método na classe AlimentosService
+  async removerRefeicao(idRefeicao) {
+    try {
+      console.log("🗑️ Removendo refeição:", idRefeicao);
+      const response = await api.delete('/alimentos/remover-refeicao', {
+        data: { id_refeicao: idRefeicao }
+      });
+      
+      if (!response.data.success) {
+        throw new Error(response.data.error || 'Erro ao remover refeição');
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error("❌ Erro ao remover refeição:", error);
+      throw new Error(this.tratarErroAPI(error));
+    }
+  }
+
   // ✅ CORREÇÃO: Melhorar o listarRefeicoesHoje para debug
   async listarRefeicoesHoje() {
     try {
