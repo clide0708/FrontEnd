@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./style.css";
-import convitesService from "../../services/Notification/convites";
+// CORREÇÃO: Importar as funções específicas em vez do default
+import { criarConvite } from "../../services/Notification/convites";
 
 export default function InviteModal({ onClose }) {
   const [email, setEmail] = useState("");
@@ -11,7 +12,8 @@ export default function InviteModal({ onClose }) {
 
     setLoading(true);
     try {
-      await convitesService.criarConvite(email);
+      // CORREÇÃO: Passar o email como objeto
+      await criarConvite({ email });
       alert("Convite enviado com sucesso!");
       setEmail("");
       onClose();

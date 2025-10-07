@@ -1194,3 +1194,352 @@ body {
     height: 120px;
   }
 }
+
+
+
+
+
+
+/* Estilos para loading e estados */
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+}
+
+.nome-original {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* Informações nutricionais adicionais */
+.info-adicional {
+  margin-top: 20px;
+  padding: 15px;
+  background: #27292b;
+  border-radius: 10px;
+}
+
+.info-adicional h4 {
+  color: #368dd9;
+  margin-bottom: 10px;
+}
+
+.nutrientes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nutriente-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #333;
+}
+
+.nutriente-nome {
+  color: #ccc;
+  text-transform: capitalize;
+}
+
+.nutriente-valor {
+  color: #fff;
+  font-weight: 500;
+}
+
+.percentual {
+  color: #368dd9;
+  font-size: 0.8rem;
+}
+
+/* Estados de loading */
+.sugestao-item.loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn2:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+
+
+
+
+
+/* Estilos para o campo de busca com lupa */
+.campo-com-lupa {
+  position: relative;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-lupa {
+  background: #368dd9;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn-lupa:hover:not(:disabled) {
+  background: #2b78c2;
+  transform: scale(1.05);
+}
+
+.btn-lupa:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilos para as opções de refeição */
+.opcoes-refeicao {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.opcao-criar, .opcao-existente {
+  padding: 15px;
+  background: #2a2b2d;
+  border-radius: 8px;
+  border-left: 4px solid #368dd9;
+}
+
+.opcao-existente {
+  border-left-color: #f39c12;
+}
+
+.botoes-refeicao {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.botoes-refeicao button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.2s ease;
+}
+
+.botoes-refeicao button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+
+
+/* ====== ESTILOS ESPECÍFICOS PARA MODAL DETALHES - NOVA VERSÃO ====== */
+
+/* Container principal dos valores nutricionais */
+.infnt-grid {
+  background: #27292b;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Grid para os cabeçalhos */
+.infnt-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  text-align: center;
+}
+
+.infnt-header-grid h1 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #aaa;
+  margin: 0;
+}
+
+.infnt-header-grid .cal {
+  color: #368dd9;
+}
+
+/* Grid para os inputs */
+.infnt-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+  text-align: center;
+  align-items: center;
+}
+
+/* Container para cada input + label */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #1f2022;
+  color: #fff;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #368dd9;
+  background: #242526;
+  outline: none;
+}
+
+.input-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-label {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* Botões do modal detalhes */
+.btndv-grid {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn2 {
+  background: #368dd9;
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.btn2:hover:not(:disabled) {
+  background: #4ea2f0;
+  transform: scale(1.05);
+}
+
+.btn2:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estilo específico para o botão de remover */
+.btn2-remove {
+  background: #e74c3c;
+}
+
+.btn2-remove:hover:not(:disabled) {
+  background: #c0392b;
+}
+
+/* Informações do alimento */
+.infnm-grid {
+  background: #27292b;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.h2modal-grid {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #f4f4f4;
+  margin: 0;
+}
+
+.select-grid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+.select-grid input {
+  width: 80px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #1f2022;
+  color: #fff;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.select-grid input:focus {
+  border-color: #368dd9;
+  background: #242526;
+  outline: none;
+}
+
+/* Responsividade para o modal de detalhes */
+@media (max-width: 600px) {
+  .infnt-header-grid,
+  .infnt-inputs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .infnm-grid {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .btndv-grid {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn2 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .infnt-header-grid,
+  .infnt-inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .input-group input {
+    width: 100%;
+  }
+}
