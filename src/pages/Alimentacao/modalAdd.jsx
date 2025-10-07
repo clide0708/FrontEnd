@@ -6,7 +6,7 @@ import SearchWithButton from "./SearchWithButton";
 export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, onUpdate, criarRefeicao }) {
   const [itensAdicionados, setItensAdicionados] = useState([]);
   const [idRefeicaoAtual, setIdRefeicaoAtual] = useState(null);
-  const [erro, setErro] = useState(null);
+  const [, setErro] = useState(null);
   const [carregando, setCarregando] = useState(false);
   const [modoCriacao, setModoCriacao] = useState(!currentMealList);
 
