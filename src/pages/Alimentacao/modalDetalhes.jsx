@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { buscarInformacaoAlimento, updAlimento, rmvAlimento } from "../../services/Alimentos/alimentos";
+import alimentosService from "../../services/Alimentos/alimentosService";
 
 export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
   const [alimentoDetalhes, setAlimentoDetalhes] = useState(item);
@@ -12,7 +12,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
         setLoading(true);
         try {
           // Busca informações atualizadas da API
-          const data = await buscarInformacaoAlimento(item.idItensRef, item.quantidade, item.medida);
+          const data = await alimentosService.buscarInformacaoAlimento(item.idItensRef, item.quantidade, item.medida);
           if (data.success) {
             setDetalhesAPI(data.alimento);
             // Mescla os dados existentes com os detalhes da API
@@ -48,7 +48,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
   const handleSave = async () => {
     setLoading(true);
     try {
-      await updAlimento({
+      await alimentosService.updAlimento({
         id: alimentoDetalhes.idItensRef,
         quantidade: alimentoDetalhes.especificacao || alimentoDetalhes.quantidade,
         medida: 'g'
@@ -57,6 +57,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
       fechar();
     } catch (error) {
       console.error("Erro ao atualizar alimento:", error);
+      alert(`Erro ao atualizar alimento: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -65,17 +66,18 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await rmvAlimento(alimentoDetalhes.idItensRef);
+      await alimentosService.rmvAlimento(alimentoDetalhes.idItensRef);
       if (onDelete) onDelete();
       fechar();
     } catch (error) {
       console.error("Erro ao remover alimento:", error);
+      alert(`Erro ao remover alimento: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
+  if (loading && !alimentoDetalhes) {
     return (
       <div className="modalalimento2 modal-stack show">
         <div className="modalalm2-content">
@@ -103,6 +105,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               name="especificacao"
               value={alimentoDetalhes.especificacao || alimentoDetalhes.quantidade}
               onChange={handleInputChange}
+              disabled={loading}
             /> g/ml
           </div>
         </div>
@@ -120,6 +123,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               value={alimentoDetalhes.calorias} 
               onChange={handleInputChange} 
               className="cal" 
+              disabled={loading}
             />
             <input 
               type="number" 
@@ -127,6 +131,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               value={alimentoDetalhes.proteinas} 
               onChange={handleInputChange} 
               className="h1modal1" 
+              disabled={loading}
             />g
             <input 
               type="number" 
@@ -134,6 +139,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               value={alimentoDetalhes.carboidratos} 
               onChange={handleInputChange} 
               className="h1modal1" 
+              disabled={loading}
             />g
             <input 
               type="number" 
@@ -141,6 +147,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               value={alimentoDetalhes.gorduras} 
               onChange={handleInputChange} 
               className="h1modal1" 
+              disabled={loading}
             />g
           </div>
           <div className="btndv">

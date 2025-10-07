@@ -1,22 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
-import { 
-  buscarAlimentos, 
-  addAlimento, 
-  listarAlimentosRefeicao, // Removido se não for usado
-  criarRefeicao,
-  listarRefeicoes
-} from "../../services/Alimentos/alimentos";
+import alimentosService from "../../services/Alimentos/alimentosService";
+import SearchWithButton from "./SearchWithButton";
 
-export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, onUpdate }) {
-  const [sugestoes, setSugestoes] = useState([]);
-  const [loadingId, setLoadingId] = useState(null);
-  const [dropdownAberto, setDropdownAberto] = useState(false);
-  const [termoPesquisa, setTermoPesquisa] = useState("");
+export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, onUpdate, criarRefeicao }) {
   const [itensAdicionados, setItensAdicionados] = useState([]);
   const [idRefeicaoAtual, setIdRefeicaoAtual] = useState(null);
   const [erro, setErro] = useState(null);
-  const containerRef = useRef(null);
+  const [carregando, setCarregando] = useState(false);
+  const [modoCriacao, setModoCriacao] = useState(!currentMealList);
 
   // Mapear nomes internos para nomes de refeição
   const mapearNomeRefeicao = (nomeInterno) => {
@@ -29,10 +21,23 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
     return mapeamento[nomeInterno] || nomeInterno;
   };
 
-  // Função para carregar itens - DEFINIDA
+  // ✅ CORREÇÃO: Função para obter data atual formatada
+  const obterDataAtualFormatada = () => {
+    const agora = new Date();
+    const offset = -3; // UTC-3 para Brasília
+    const localTime = new Date(agora.getTime() + (offset * 60 * 60 * 1000));
+    
+    const ano = localTime.getUTCFullYear();
+    const mes = String(localTime.getUTCMonth() + 1).padStart(2, '0');
+    const dia = String(localTime.getUTCDate()).padStart(2, '0');
+    
+    return `${ano}-${mes}-${dia}`;
+  };
+
+  // Função para carregar itens
   const carregarItensAdicionados = async (idRefeicao) => {
     try {
-      const response = await listarAlimentosRefeicao(idRefeicao);
+      const response = await alimentosService.listarAlimentosRefeicao(idRefeicao);
       if (response.success) {
         setItensAdicionados(response.alimentos || []);
       }
@@ -42,99 +47,80 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
     }
   };
 
-  // fecha se clica fora
-  useEffect(() => {
-    function handleClickFora(event) {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setDropdownAberto(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickFora);
-    return () => document.removeEventListener("mousedown", handleClickFora);
-  }, []);
-
   // Inicializar ou buscar refeição atual
   useEffect(() => {
     const inicializarRefeicao = async () => {
       setErro(null);
+      setCarregando(true);
+      
       try {
+        // Se está no modo criação, não inicializa refeição específica
+        if (modoCriacao) {
+          console.log("📝 Modo criação de nova refeição");
+          setItensAdicionados([]);
+          setCarregando(false);
+          return;
+        }
+
         const nomeRefeicaoMapeado = mapearNomeRefeicao(currentMealList);
-        console.log("Buscando refeição existente:", nomeRefeicaoMapeado);
+        console.log("🔄 Inicializando refeição:", nomeRefeicaoMapeado);
         
-        // PRIMEIRO busca refeições existentes
-        const response = await listarRefeicoes();
-        console.log("Refeições encontradas:", response.refeicoes);
+        // Busca refeições existentes
+        const response = await alimentosService.listarRefeicoesHoje();
+        console.log("📋 Refêições encontradas:", response.refeicoes);
         
         if (response.success && response.refeicoes) {
-          const hoje = new Date().toISOString().split('T')[0]; // Data de hoje YYYY-MM-DD
+          // ✅ CORREÇÃO: Usar data atual formatada corretamente
+          const hoje = obterDataAtualFormatada();
+          console.log("📅 Buscando refeições para a data:", hoje);
+          
           const refeicaoExistente = response.refeicoes.find(ref => {
-            const dataRef = ref.data_ref ? ref.data_ref.split(' ')[0] : ''; // Pega apenas a data
+            const dataRef = ref.data_ref ? ref.data_ref.split(' ')[0] : '';
+            console.log(`🔍 Comparando: ${dataRef} === ${hoje} para ${ref.nome_tipo}`);
             return ref.nome_tipo === nomeRefeicaoMapeado && dataRef === hoje;
           });
           
           if (refeicaoExistente) {
-            console.log("Refeição existente encontrada:", refeicaoExistente);
+            console.log("✅ Refêição existente encontrada:", refeicaoExistente);
             setIdRefeicaoAtual(refeicaoExistente.id);
             await carregarItensAdicionados(refeicaoExistente.id);
-            return;
+          } else {
+            // Cria nova refeição se não existir
+            console.log("🆕 Criando nova refeição:", nomeRefeicaoMapeado);
+            const criarResponse = await criarRefeicao(nomeRefeicaoMapeado);
+            
+            if (criarResponse.id_refeicao) {
+              setIdRefeicaoAtual(criarResponse.id_refeicao);
+              console.log("✅ Nova refeição criada com ID:", criarResponse.id_refeicao);
+            } else {
+              throw new Error(criarResponse.error || 'Erro ao criar refeição');
+            }
           }
         }
         
-        // Se não encontrou, cria nova refeição
-        console.log("Criando nova refeição:", nomeRefeicaoMapeado);
-        const criarResponse = await criarRefeicao(nomeRefeicaoMapeado);
-        
-        if (criarResponse.success && criarResponse.id_refeicao) {
-          setIdRefeicaoAtual(criarResponse.id_refeicao);
-          await carregarItensAdicionados(criarResponse.id_refeicao);
-        } else {
-          throw new Error(criarResponse.error || 'Erro ao criar refeição');
-        }
-        
       } catch (error) {
-        console.error("Erro ao inicializar refeição:", error);
+        console.error("❌ Erro ao inicializar refeição:", error);
         setErro(`Erro: ${error.message}`);
+      } finally {
+        setCarregando(false);
       }
     };
 
-    if (currentMealList) {
+    if (!modoCriacao) {
       inicializarRefeicao();
     }
-  }, [currentMealList]);
+  }, [currentMealList, criarRefeicao, modoCriacao]);
 
-  // busca ingredientes na API externa
-  const buscarSugestoes = async (termo) => {
-    setTermoPesquisa(termo);
-
-    if (termo.length < 2) {
-      setSugestoes([]);
-      return;
-    }
-
-    try {
-      const data = await buscarAlimentos(termo);
-      if (data.success && data.resultados) {
-        setSugestoes(data.resultados);
-      } else {
-        setSugestoes([]);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar sugestões de alimentos:", error);
-      setSugestoes([]);
-    }
-  };
-
-  // adiciona item novo na lista local e no backend
+  // Adiciona item novo na lista
   const handleAddItem = async (item) => {
-    if (loadingId || !idRefeicaoAtual) {
+    if (!idRefeicaoAtual) {
       alert("Refeição não está pronta. Aguarde...");
       return;
     }
-    
-    setLoadingId(item.id);
-    document.body.style.cursor = "wait";
 
     try {
+      console.log("➕ Adicionando alimento:", item.nome);
+      
       const novoAlimento = {
         id_tipo_refeicao: idRefeicaoAtual,
         nome: item.nome || item.name,
@@ -142,83 +128,264 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
         medida: 'g'
       };
 
-      await addAlimento(novoAlimento);
-      await carregarItensAdicionados(idRefeicaoAtual);
+      const response = await alimentosService.addAlimento(novoAlimento);
       
-      if (onUpdate) {
-        onUpdate();
+      if (response.success) {
+        console.log("✅ Alimento adicionado com sucesso");
+        
+        // Recarrega os itens atualizados
+        await carregarItensAdicionados(idRefeicaoAtual);
+        
+        // Notifica o componente pai para atualizar totais
+        if (onUpdate) {
+          onUpdate();
+        }
+      } else {
+        throw new Error(response.error || 'Erro ao adicionar alimento');
       }
       
-      setLoadingId(null);
-      setDropdownAberto(false);
-      setTermoPesquisa("");
-      document.body.style.cursor = "default";
     } catch (error) {
-      console.error("Erro ao adicionar alimento:", error);
+      console.error("❌ Erro ao adicionar alimento:", error);
       alert(`Erro ao adicionar alimento: ${error.message}`);
-      setLoadingId(null);
-      document.body.style.cursor = "default";
     }
   };
 
-  const nomeExibicao = mapearNomeRefeicao(currentMealList);
+  // Handler para criar nova refeição
+  const handleCriarNovaRefeicao = async (nomeRefeicao) => {
+    try {
+      setCarregando(true);
+      setErro(null);
+      
+      console.log("🆕 Tentando criar refeição:", nomeRefeicao);
+      
+      const response = await criarRefeicao(nomeRefeicao);
+      
+      if (response.success && response.id_refeicao) {
+        console.log("✅ Nova refeição criada:", nomeRefeicao, "ID:", response.id_refeicao);
+        
+        // ✅ CORREÇÃO: Mostrar debug da data
+        console.log("📅 Data da criação:", new Date().toLocaleString('pt-BR'));
+        
+        // Fecha o modal imediatamente
+        fechar();
+        
+      } else {
+        throw new Error(response.error || 'Erro desconhecido ao criar refeição');
+      }
+    } catch (error) {
+      console.error("❌ Erro ao criar refeição:", error);
+      
+      if (error.message.includes('já existe') || error.message.includes('duplicat')) {
+        setErro(`A refeição "${nomeRefeicao}" já existe para hoje. Use "Adicionar a Refeição Existente".`);
+      } else {
+        setErro(`Erro: ${error.message}`);
+      }
+    } finally {
+      setCarregando(false);
+    }
+  };
 
-  return (
+
+  // Handler para adicionar a refeição existente - VERSÃO CORRIGIDA
+  const handleAdicionarARefeicaoExistente = async (nomeRefeicao) => {
+    try {
+      setCarregando(true);
+      setErro(null);
+      
+      console.log("🔍 Buscando refeição existente:", nomeRefeicao);
+      
+      // Busca a refeição existente
+      const response = await alimentosService.listarRefeicoesHoje();
+      
+      if (response.success && response.refeicoes) {
+        const refeicaoExistente = response.refeicoes.find(ref => 
+          ref.nome_tipo === nomeRefeicao
+        );
+        
+        if (refeicaoExistente) {
+          console.log("✅ Refeição existente encontrada:", refeicaoExistente);
+          setIdRefeicaoAtual(refeicaoExistente.id);
+          setModoCriacao(false);
+          await carregarItensAdicionados(refeicaoExistente.id);
+        } else {
+          // Se não existe, pergunta se quer criar
+          const confirmar = window.confirm(
+            `Refeição "${nomeRefeicao}" não encontrada. Deseja criá-la?`
+          );
+          
+          if (confirmar) {
+            await handleCriarNovaRefeicao(nomeRefeicao);
+          }
+        }
+      } else {
+        throw new Error('Erro ao buscar refeições existentes');
+      }
+    } catch (error) {
+      console.error("❌ Erro ao buscar refeição existente:", error);
+      setErro(`Erro: ${error.message}`);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  // Handler para forçar criação de refeição (ignora duplicação)
+  // const handleForcarCriarRefeicao = async (nomeRefeicao) => {
+  //   try {
+  //     setCarregando(true);
+  //     setErro(null);
+      
+  //     console.log("💪 Forçando criação de refeição:", nomeRefeicao);
+      
+  //     // CORREÇÃO: Adiciona timestamp único para evitar conflitos
+  //     const dataUnica = new Date().toISOString();
+  //     const nomeUnico = `${nomeRefeicao} - ${new Date().getTime()}`;
+      
+  //     const response = await criarRefeicao(nomeUnico, dataUnica);
+      
+  //     if (response.id_refeicao) {
+  //       setIdRefeicaoAtual(response.id_refeicao);
+  //       setModoCriacao(false);
+  //       console.log("✅ Refeição forçada criada:", nomeUnico, "ID:", response.id_refeicao);
+        
+  //       if (onUpdate) {
+  //         onUpdate();
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ Erro ao forçar criação:", error);
+  //     setErro(`Erro crítico: ${error.message}`);
+  //   } finally {
+  //     setCarregando(false);
+  //   }
+  // };
+
+  const nomeExibicao = modoCriacao ? 'Criar/Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
+
+return (
     <div className="modalalimento show">
       <div className="modalalm-content">
         <div className="addalm">
-          <h4 className="h4modal">Adicionar alimentos - {nomeExibicao}</h4>
-          {idRefeicaoAtual && <p style={{color: 'green', fontSize: '12px'}}>Refeição ID: {idRefeicaoAtual}</p>}
-          {erro && <p style={{color: 'red', fontSize: '12px'}}>{erro}</p>}
-        </div>
-
-        <div className="psqsalm">
-          <div className="campo" ref={containerRef}>
-            <input
-              className="inmputmodal"
-              placeholder="Pesquisar alimento..."
-              value={termoPesquisa}
-              onChange={(e) => {
-                buscarSugestoes(e.target.value);
-                setDropdownAberto(true);
-              }}
-              onFocus={() => setDropdownAberto(true)}
-              disabled={!idRefeicaoAtual}
-            />
-
-            {dropdownAberto && sugestoes.length > 0 && (
-              <div
-                className="sugestao-container"
-                onMouseDown={(e) => e.preventDefault()}
-              >
-                {sugestoes.map((item, index) => (
-                  <div
-                    key={item.id || index}
-                    className={`sugestao-item ${
-                      loadingId === item.id ? "loading" : ""
-                    }`}
-                    onClick={() => handleAddItem(item)}
-                  >
-                    {index + 1}. {item.nome}
-                    {item.nome_original && ` (${item.nome_original})`}
-                  </div>
-                ))}
-              </div>
-            )}
+          <h4 className="h4modal">{nomeExibicao}</h4>
+          
+          {/* ✅ CORREÇÃO: Mostrar data atual para debug */}
+          <div style={{color: '#aaa', fontSize: '10px', margin: '2px 0'}}>
+            Data atual: {new Date().toLocaleString('pt-BR')}
           </div>
+          
+          {idRefeicaoAtual && (
+            <p style={{color: 'green', fontSize: '12px', margin: '5px 0'}}>
+              ✅ Refêição ID: {idRefeicaoAtual}
+            </p>
+          )}
+          
+          {erro && (
+            <p style={{color: 'red', fontSize: '12px', margin: '5px 0'}}>
+              ❌ {erro}
+            </p>
+          )}
+          
+          {carregando && (
+            <p style={{color: 'blue', fontSize: '12px', margin: '5px 0'}}>
+              ⏳ Carregando...
+            </p>
+          )}
         </div>
 
+        {/* Seção para criar/gerenciar refeições */}
+        {modoCriacao && (
+          <div className="gerenciar-refeicoes-section" style={{marginBottom: '20px'}}>
+            <h5 style={{color: '#fff', marginBottom: '15px'}}>Escolha uma opção:</h5>
+            
+            <div className="opcoes-refeicao" style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
+              
+              {/* Opção 1: Criar nova refeição */}
+              <div className="opcao-criar">
+                <h6 style={{color: '#368dd9', marginBottom: '10px'}}>Criar Nova Refeição</h6>
+                <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                  {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
+                    <button
+                      key={tipo}
+                      onClick={() => handleCriarNovaRefeicao(tipo)}
+                      disabled={carregando}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#27ae60',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: carregando ? 'not-allowed' : 'pointer',
+                        opacity: carregando ? 0.6 : 1,
+                        fontSize: '0.9em'
+                      }}
+                    >
+                      + {tipo}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Opção 2: Adicionar a refeição existente */}
+              <div className="opcao-existente">
+                <h6 style={{color: '#f39c12', marginBottom: '10px'}}>Adicionar Alimentos a Refeição Existente</h6>
+                <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                  {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
+                    <button
+                      key={tipo}
+                      onClick={() => handleAdicionarARefeicaoExistente(tipo)}
+                      disabled={carregando}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#f39c12',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: carregando ? 'not-allowed' : 'pointer',
+                        opacity: carregando ? 0.6 : 1,
+                        fontSize: '0.9em'
+                      }}
+                    >
+                      ➕ {tipo}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Seção de pesquisa (só aparece se há refeição atual) */}
+        {idRefeicaoAtual && (
+          <div className="psqsalm">
+            <SearchWithButton
+              onSearch={handleAddItem}
+              placeholder="Pesquisar alimento (digite e clique em Buscar)..."
+            />
+          </div>
+        )}
+
+        {/* Lista de alimentos adicionados */}
         <div className="almadd existing-items">
+          <h5 style={{color: '#fff', marginBottom: '10px'}}>
+            {idRefeicaoAtual ? `Alimentos adicionados (${itensAdicionados.length})` : 'Nenhuma refeição selecionada'}
+          </h5>
+          
           {!idRefeicaoAtual ? (
-            <div className="no-items">Carregando refeição...</div>
+            <div className="no-items" style={{textAlign: 'center', padding: '20px', color: '#aaa'}}>
+              {carregando ? 'Carregando...' : 'Selecione ou crie uma refeição acima'}
+            </div>
           ) : itensAdicionados.length === 0 ? (
-            <div className="no-items">Nenhum alimento adicionado ainda</div>
+            <div className="no-items" style={{textAlign: 'center', padding: '20px', color: '#aaa'}}>
+              Nenhum alimento adicionado ainda
+              <br />
+              <small>Use a pesquisa acima para adicionar alimentos</small>
+            </div>
           ) : (
             itensAdicionados.map((item) => (
               <div
                 key={item.idItensRef}
                 className="itemadd"
-                onClick={() => abrirModalDetalhes(currentMealList, item)}
+                onClick={() => abrirModalDetalhes({nome_tipo: nomeExibicao}, item)}
+                style={{cursor: 'pointer'}}
               >
                 <div className="nm">
                   <h1>{item.nome}</h1>
@@ -231,10 +398,28 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
             ))
           )}
 
-          <div className="addalmbtn">
-            <button className="mdlcl" onClick={fechar}>
+          <div className="addalmbtn" style={{marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <button 
+              className="mdlcl" 
+              onClick={fechar}
+              style={{
+                background: '#368dd9',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
               Confirmar
             </button>
+            
+            {idRefeicaoAtual && (
+              <div style={{fontSize: '0.8em', color: '#aaa'}}>
+                {itensAdicionados.length} itens
+              </div>
+            )}
           </div>
         </div>
       </div>

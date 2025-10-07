@@ -1265,3 +1265,82 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+
+
+
+
+
+
+/* Estilos para o campo de busca com lupa */
+.campo-com-lupa {
+  position: relative;
+  width: 100%;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-lupa {
+  background: #368dd9;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn-lupa:hover:not(:disabled) {
+  background: #2b78c2;
+  transform: scale(1.05);
+}
+
+.btn-lupa:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilos para as opções de refeição */
+.opcoes-refeicao {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.opcao-criar, .opcao-existente {
+  padding: 15px;
+  background: #2a2b2d;
+  border-radius: 8px;
+  border-left: 4px solid #368dd9;
+}
+
+.opcao-existente {
+  border-left-color: #f39c12;
+}
+
+.botoes-refeicao {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.botoes-refeicao button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.2s ease;
+}
+
+.botoes-refeicao button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}

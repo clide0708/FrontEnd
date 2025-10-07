@@ -3,13 +3,10 @@ import ModalAdd from "./modalAdd";
 import ModalDetalhes from "./modalDetalhes";
 import "./style.css";
 import { calcularIMC, calcularIDR, consumoAgua } from "../../utils/calculos";
-import { listarTotais } from "../../services/Alimentos/alimentos";
 import { obterUsuario } from "../../services/Auth/login";
-
-import TesteRotasAlimentacao from './TesteRotasAlimentacao';
+import alimentosService from "../../services/Alimentos/alimentosService";
 
 function Alimentacao() {
-  
   const [dataHoje, setDataHoje] = useState("");
   const [user, setUser] = useState({
     nome: "",
@@ -22,55 +19,60 @@ function Alimentacao() {
     img: "",
   });
 
-  const [mostrarTeste, setMostrarTeste] = useState(true);
-
-  const [caltotal, setCalTotal] = useState(0);
-  const [refeicoes, setRefeicoes] = useState({
-    cafe: {
-      tot: { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 },
-      items: [],
-    },
-    almoco: {
-      tot: { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 },
-      items: [],
-    },
-    janta: {
-      tot: { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 },
-      items: [],
-    },
-    outros: {
-      tot: { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 },
-      items: [],
-    },
-  });
-
+  const [refeicoes, setRefeicoes] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(null);
   const [modalAdd, setModalAdd] = useState(false);
   const [modalDetalhes, setModalDetalhes] = useState(false);
   const [currentMealList, setCurrentMealList] = useState("");
   const [currentItem, setCurrentItem] = useState(null);
   const [cardAberto, setCardAberto] = useState("");
 
-  // data de hoje
+  // ✅ CORREÇÃO: Data de hoje formatada corretamente
   useEffect(() => {
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, "0");
     const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    // const ano = hoje.getFullYear();
+    
+    // Mostrar data completa para debug
+    console.log("📅 Data atual do sistema:", hoje.toLocaleString('pt-BR'));
+    console.log("📆 Data formatada para exibição:", `${dia}/${mes}`);
+    
     setDataHoje(`${dia}/${mes}`);
   }, []);
 
-  // carregar usuário
+  // Carregar refeições
+  const carregarRefeicoes = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+    
+    try {
+      console.log("🔄 Carregando refeições...");
+      const response = await alimentosService.listarRefeicoesHoje();
+      
+      if (response && response.success) {
+        setRefeicoes(response.refeicoes || []);
+        console.log("✅ Refêições carregadas:", response.refeicoes?.length || 0);
+      } else {
+        throw new Error(response?.error || 'Resposta inválida do servidor');
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar refeições:', error);
+      setErro(error.message);
+      setRefeicoes([]);
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  // Carregar usuário
   const carregarUsuario = useCallback(async () => {
     try {
       const data = await obterUsuario();
-      const genero =
-        data.genero && data.genero.toLowerCase() === "masculino"
-          ? "Masculino"
-          : "Feminino";
-      const treino =
-        data.treino && data.treino.length > 0
-          ? data.treino.charAt(0).toUpperCase() +
-          data.treino.slice(1).toLowerCase()
-          : "";
+      const genero = data.genero?.toLowerCase() === "masculino" ? "Masculino" : "Feminino";
+      const treino = data.treino ? data.treino.charAt(0).toUpperCase() + data.treino.slice(1).toLowerCase() : "";
+      
       setUser({
         nome: data.nome || "",
         idade: Number(data.idade) || 0,
@@ -79,216 +81,256 @@ function Alimentacao() {
         genero: genero,
         treino: treino,
         meta: Number(data.meta) || 0,
-        img:
-          data.img && data.img.startsWith("/")
-            ? data.img
-            : data.img
-              ? "/" + data.img
-              : "",
+        img: data.img && data.img.startsWith("/") ? data.img : data.img ? "/" + data.img : "",
       });
     } catch (err) {
       console.error("Erro ao carregar usuário:", err);
     }
   }, []);
 
-  // fetch das refeições
-  const carregarRefeicoes = useCallback(async () => {
+  // Criar refeição
+  const criarRefeicao = async (nomeTipo, dataRef = null) => {
     try {
-      const dados = await listarTotais();
-      if (dados.success) {
-        // Estrutura os dados conforme esperado pelo frontend
-        const refeicoesFormatadas = {
-          cafe: { 
-            tot: dados.refeicoes?.cafe?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
-            items: dados.refeicoes?.cafe?.items || [] 
-          },
-          almoco: { 
-            tot: dados.refeicoes?.almoco?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
-            items: dados.refeicoes?.almoco?.items || [] 
-          },
-          janta: { 
-            tot: dados.refeicoes?.janta?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
-            items: dados.refeicoes?.janta?.items || [] 
-          },
-          outros: { 
-            tot: dados.refeicoes?.outros?.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 }, 
-            items: dados.refeicoes?.outros?.items || [] 
-          },
-        };
-
-        setRefeicoes(refeicoesFormatadas);
-        
-        // Calcula total de calorias
-        const totalCal = Object.values(refeicoesFormatadas).reduce(
-          (acc, r) => acc + (r.tot.calorias || 0),
-          0
-        );
-        setCalTotal(totalCal);
+      console.log("🍽️ Criando refeição:", nomeTipo);
+      
+      const response = await alimentosService.criarRefeicao(nomeTipo, dataRef);
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Erro ao criar refeição');
       }
-    } catch (err) {
-      console.error("Erro ao carregar refeições:", err);
+      
+      console.log("✅ Refeição criada com ID:", response.id_refeicao);
+      
+      // CORREÇÃO: Aguarda um pouco e depois recarrega as refeições
+      setTimeout(() => {
+        carregarRefeicoes(); // Isso deve atualizar o estado `refeicoes`
+      }, 1000);
+      
+      return response;
+    } catch (error) {
+      console.error("❌ Erro ao criar refeição:", error);
+      setErro(error.message);
+      throw error;
     }
-  }, []);
+  };
+
+  // Efeitos iniciais
+  useEffect(() => {
+    console.log("🎯 Inicializando componente Alimentacao");
+    carregarRefeicoes();
+    carregarUsuario();
+  }, [carregarRefeicoes, carregarUsuario]);
 
   useEffect(() => {
-    carregarUsuario();
-    carregarRefeicoes();
-  }, [carregarUsuario, carregarRefeicoes]);
+    console.log("📊 Estado refeicoes atualizado:", refeicoes);
+  }, [refeicoes]);
 
-  const abrirModalDetalhes = (lista, item) => {
-    setCurrentMealList(lista);
+  // Calcular totais
+  const calcularTotais = () => {
+    let totalCalorias = 0;
+    let totalProteinas = 0;
+    let totalCarboidratos = 0;
+    let totalGorduras = 0;
+
+    refeicoes.forEach(refeicao => {
+      totalCalorias += refeicao.totais?.calorias || 0;
+      totalProteinas += refeicao.totais?.proteinas || 0;
+      totalCarboidratos += refeicao.totais?.carboidratos || 0;
+      totalGorduras += refeicao.totais?.gorduras || 0;
+    });
+
+    return { totalCalorias, totalProteinas, totalCarboidratos, totalGorduras };
+  };
+
+  const totais = calcularTotais();
+  const calRes = () => Math.max(user.meta - totais.totalCalorias, 0);
+
+  // Handlers para modais
+  const abrirModalDetalhes = (refeicao, item) => {
+    setCurrentMealList(refeicao.nome_tipo);
     setCurrentItem(item);
     setModalDetalhes(true);
   };
 
-  const toggleCard = (refeicao) => {
-    setCardAberto((prev) => (prev === refeicao ? "" : refeicao));
+  const toggleCard = (refeicaoId) => {
+    setCardAberto(prev => prev === refeicaoId ? "" : refeicaoId);
   };
 
-  const calRes = () => Math.max(user.meta - caltotal, 0);
+  if (carregando) {
+    return (
+      <div className="alimentacao">
+        <div className="container">
+          <div className="loading-message">Carregando suas refeições...</div>
+        </div>
+      </div>
+    );
+  }
 
-  const handleUpdateAlimentos = () => {
-    carregarRefeicoes();
-    carregarUsuario();
-  };
-
-return (
-  <div className="alimentacao">
-    <header>
-      {/* BOTÃO PARA CONTROLE DO TESTE - OPICIONAL */}
-      <button 
-        onClick={() => setMostrarTeste(!mostrarTeste)}
-        style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          zIndex: 1000,
-          background: '#368dd9',
-          color: 'white',
-          border: 'none',
-          padding: '5px 10px',
-          borderRadius: '5px',
-          cursor: 'pointer'
-        }}
-      >
-        {mostrarTeste ? 'Ocultar Teste' : 'Mostrar Teste'}
-      </button>
-    </header>
-    
-    {/* TESTE DE ROTAS */}
-    {mostrarTeste && (
-      <TesteRotasAlimentacao />
-    )}
-
+  return (
+    <div className="alimentacao">
       <div className="container">
         <div className="geral">
-          {/* alimentação */}
+          {/* Seção de Alimentação */}
           <div className="alim-content">
             <div className="pt1">
               <div className="heading-section">
                 <h4 className="data">{dataHoje}</h4>
+                {/* ✅ DEBUG: Mostrar data completa */}
+                <small style={{color: '#666', fontSize: '0.7em'}}>
+                  {new Date().toLocaleDateString('pt-BR')} - {new Date().toLocaleTimeString('pt-BR')}
+                </small>
               </div>
               <div className="caltotal">
                 <h1>Calorias</h1>
-                <h1>{caltotal}</h1>
+                <h1>{totais.totalCalorias.toFixed(0)}</h1>
               </div>
             </div>
 
             <div className="pt2">
-              <h2>
-                Prot -{" "}
-                {Object.values(refeicoes).reduce(
-                  (acc, r) => acc + (r.tot.proteinas || 0),
-                  0
-                )}
-                g
-              </h2>
-              <h2>
-                Carb -{" "}
-                {Object.values(refeicoes).reduce(
-                  (acc, r) => acc + (r.tot.carboidratos || 0),
-                  0
-                )}
-                g
-              </h2>
-              <h2>
-                Gord -{" "}
-                {Object.values(refeicoes).reduce(
-                  (acc, r) => acc + (r.tot.gorduras || 0),
-                  0
-                )}
-                g
-              </h2>
+              <h2>Prot - {totais.totalProteinas.toFixed(0)}g</h2>
+              <h2>Carb - {totais.totalCarboidratos.toFixed(0)}g</h2>
+              <h2>Gord - {totais.totalGorduras.toFixed(0)}g</h2>
             </div>
 
+            {erro && (
+              <div className="erro-message" style={{color: 'red', padding: '10px', background: '#ffebee', borderRadius: '5px', margin: '10px 0'}}>
+                {erro}
+              </div>
+            )}
+
             <div className="refeicoes">
-              {["cafe", "almoco", "janta", "outros"]
-                .filter(
-                  (refeicao) => cardAberto === "" || cardAberto === refeicao
-                )
-                .map((refeicao) => {
-                  const tot = refeicoes[refeicao].tot;
-                  const items = refeicoes[refeicao].items;
-                  const isAtivo = cardAberto === refeicao;
+              {refeicoes.map((refeicao) => {
+                const isAtivo = cardAberto === refeicao.id;
+                const tot = refeicao.totais || { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 };
+                const items = refeicao.alimentos || [];
 
-                  return (
-                    <div
-                      key={refeicao}
-                      className={`ref ${isAtivo ? "ativa" : ""}`}
-                      onClick={() => toggleCard(refeicao)}
-                    >
-                      <div className="refln">
-                        <h1>
-                          {refeicao === "cafe"
-                            ? "Café da manhã"
-                            : refeicao.charAt(0).toUpperCase() +
-                            refeicao.slice(1)}
-                        </h1>
-                        <h2>{tot.calorias} Cal</h2>
+                return (
+                  <div
+                    key={refeicao.id}
+                    className={`ref ${isAtivo ? "ativa" : ""}`}
+                    onClick={() => toggleCard(refeicao.id)}
+                  >
+                    <div className="refln">
+                      <h1>{refeicao.nome_tipo}</h1>
+                      <h2>{tot.calorias.toFixed(0)} Cal</h2>
+                    </div>
+
+                    <div className={`contalm ${isAtivo ? "" : "oculto"}`}>
+                      <div className="tableheadref">
+                        <h1>Prot - {tot.proteinas.toFixed(0)}g</h1>
+                        <h1>Carb - {tot.carboidratos.toFixed(0)}g</h1>
+                        <h1>Gord - {tot.gorduras.toFixed(0)}g</h1>
                       </div>
-
-                      <div className={`contalm ${isAtivo ? "" : "oculto"}`}>
-                        <div className="tableheadref">
-                          <h1>Prot - {tot.proteinas}g</h1>
-                          <h1>Carb - {tot.carboidratos}g</h1>
-                          <h1>Gord - {tot.gorduras}g</h1>
-                        </div>
-                        <div className="tablescrollref">
-                          {items.map((item) => (
-                            <table
-                              key={item.idItensRef}
-                              className="tableref"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                abrirModalDetalhes(refeicao, item);
-                              }}
-                            >
-                              <tbody>
-                                <tr>
-                                  <td>{item.nome}</td>
-                                  <td>{item.quantidade} {item.medida}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          ))}
-                        </div>
-                        <div className="btns">
-                          <button
-                            type="button"
-                            className="add-btn"
+                      <div className="tablescrollref">
+                        {items.map((item) => (
+                          <table
+                            key={item.idItensRef}
+                            className="tableref"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setCurrentMealList(refeicao);
-                              setModalAdd(true);
+                              abrirModalDetalhes(refeicao, item);
                             }}
                           >
-                            +
-                          </button>
-                        </div>
+                            <tbody>
+                              <tr>
+                                <td>{item.nome}</td>
+                                <td>{item.quantidade} {item.medida}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        ))}
+                      </div>
+                      <div className="btns">
+                        {/* BOTÃO ATUALIZADO - STRING VAZIA */}
+                        <button
+                          type="button"
+                          className="add-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentMealList(""); // ← STRING VAZIA
+                            setModalAdd(true);
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+
+              {/* Botão para adicionar nova refeição se não houver - ATUALIZADO */}
+              {refeicoes.length === 0 && (
+                <div className="no-refeicoes" style={{textAlign: 'center', padding: '20px', color: '#aaa'}}>
+                  <p>Nenhuma refeição hoje</p>
+                  {/* BOTÃO ATUALIZADO - STRING VAZIA */}
+                  <button 
+                    className="add-btn"
+                    onClick={() => {
+                      setCurrentMealList(""); // ← STRING VAZIA
+                      setModalAdd(true);
+                    }}
+                    style={{margin: '10px auto'}}
+                  >
+                    +
+                  </button>
+                </div>
+              )}
+
+              {/* // Adicione temporariamente no seu JSX: */}
+            <button 
+              onClick={() => {
+                console.log("🔍 Estado atual:", { refeicoes, carregando, erro });
+                carregarRefeicoes();
+              }}
+              style={{
+                position: 'fixed',
+                top: '10px',
+                right: '10px',
+                background: '#ff6b6b',
+                color: 'white',
+                border: 'none',
+                padding: '5px 10px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                zIndex: 1000
+              }}
+            >
+              Debug
+            </button>
+
+              {/* BOTÃO ADICIONAL PARA CRIAR NOVA REFEIÇÃO (mesmo quando já tem refeições) */}
+              {refeicoes.length > 0 && (
+                <div className="nova-refeicao-section" style={{textAlign: 'center', padding: '15px', marginTop: '10px'}}>
+                  <button 
+                    className="add-btn"
+                    onClick={() => {
+                      setCurrentMealList(""); // ← STRING VAZIA
+                      setModalAdd(true);
+                    }}
+                    style={{
+                      background: '#27ae60',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 48px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '1em',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      margin: '0 auto'
+                    }}
+                  >
+                    <span style={{fontSize: '1.2em'}}>+</span>
+                    Nova Refeição
+                  </button>
+                  <p style={{color: '#aaa', fontSize: '0.8em', marginTop: '8px'}}>
+                    Adicione mais refeições ao seu dia
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="metas">
@@ -315,7 +357,7 @@ return (
             </div>
           </div>
 
-          {/* perfil */}
+          {/* Seção do Perfil */}
           <div className="pfl-content">
             <div className="heading-section">
               <h4 className="nmpfl">{user.nome}</h4>
@@ -324,22 +366,10 @@ return (
             <div className="pflaln">
               <div className="sts">
                 <ul>
-                  <li>
-                    Peso: 
-                    <span>{user.peso > 0 ? user.peso + " kg" : "-"}</span>
-                  </li>
-                  <li>
-                    Altura: 
-                    <span>{user.altura > 0 ? user.altura + " cm" : "-"}</span>
-                  </li>
-                  <li>
-                    Gênero:
-                    <span>{user.genero || "-"}</span>
-                  </li>
-                  <li>
-                    Treino:
-                    <span>{user.treino || "-"}</span>
-                  </li>
+                  <li>Peso: <span>{user.peso > 0 ? user.peso + " kg" : "-"}</span></li>
+                  <li>Altura: <span>{user.altura > 0 ? user.altura + " cm" : "-"}</span></li>
+                  <li>Gênero: <span>{user.genero || "-"}</span></li>
+                  <li>Treino: <span>{user.treino || "-"}</span></li>
                 </ul>
               </div>
 
@@ -354,13 +384,7 @@ return (
                   IDR:
                   <span>
                     {user.peso > 0 && user.altura > 0 && user.idade > 0
-                      ? calcularIDR(
-                        user.peso,
-                        user.altura,
-                        user.idade,
-                        user.genero,
-                        user.treino
-                      )
+                      ? calcularIDR(user.peso, user.altura, user.idade, user.genero, user.treino)
                       : "-"}
                   </span>
                 </li>
@@ -378,24 +402,27 @@ return (
                 </li>
               </ul>
             </div>
-          </div>
+           </div>
         </div>
       </div>
 
+      {/* Modais */}
       {modalAdd && (
         <ModalAdd
           fechar={() => setModalAdd(false)}
           currentMealList={currentMealList}
           abrirModalDetalhes={abrirModalDetalhes}
-          onUpdate={handleUpdateAlimentos}
+          onUpdate={carregarRefeicoes}
+          criarRefeicao={criarRefeicao}
         />
       )}
+      
       {modalDetalhes && currentItem && (
         <ModalDetalhes
           item={currentItem}
           fechar={() => setModalDetalhes(false)}
-          onUpdate={handleUpdateAlimentos}
-          onDelete={handleUpdateAlimentos}
+          onUpdate={carregarRefeicoes}
+          onDelete={carregarRefeicoes}
         />
       )}
     </div>
