@@ -5,7 +5,7 @@ import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
 import PlanModal from "./modalPlano.jsx";
 import CropModal from "./modalCrop.jsx";
-import { FiSettings } from "react-icons/fi"; // engrenagemzinha
+import { FiLogOut } from "react-icons/fi"; // engrenagemzinha
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -84,7 +84,7 @@ export default function Profile() {
     <div className="container" style={{ position: "relative" }}>
       {/* ENGRENAGEM LOGOUT */}
       <div className="logout-gear" onClick={handleLogout} title="Sair">
-        <FiSettings size={30} />
+        <FiLogOut size={30} />
       </div>
 
       <div className="row">
