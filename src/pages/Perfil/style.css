@@ -596,3 +596,18 @@
     height: 400px;
     background: #333;
 }
+
+.logout-gear{
+    display: flex;
+    justify-content: right;
+}
+
+.logout-gear svg{
+    margin-right: 10px;
+}
+
+.logout-gear svg:hover{
+    margin-right: 10px;
+    color: red;
+    cursor: pointer;
+}
