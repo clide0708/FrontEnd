@@ -47,6 +47,8 @@ function Treinos() {
     carregarTreinos();
   }, [activeTab]);
 
+  
+
   const handleSaveTreino = async (novoTreino) => {
     try {
       let treinoSalvo;
@@ -58,7 +60,9 @@ function Treinos() {
 
       setTreinos((prev) => {
         const lista = prev[activeTab];
-        const index = lista.findIndex((t) => t.idTreino === treinoSalvo.idTreino);
+        const index = lista.findIndex(
+          (t) => t.idTreino === treinoSalvo.idTreino
+        );
 
         let novaLista;
         if (index >= 0) {
@@ -129,7 +133,11 @@ function Treinos() {
           ))}
         </div>
         {activeTab === "Meus Treinos" && (
-          <div className={`pflidc fufufa fade-container ${fade ? "fade-in" : "fade-out"}`}>
+          <div
+            className={`pflidc fufufa fade-container ${
+              fade ? "fade-in" : "fade-out"
+            }`}
+          >
             <button
               onClick={() => {
                 setTreinoEditando(null);
@@ -202,17 +210,32 @@ function Treinos() {
       )}
 
       {showEditar && treinoSelecionado && (
-        <div className="modal-overlay">
+        <div
+          className="modal-overlay"
+          style={{
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            paddingTop: "120px",
+          }}
+        >
           <div className="editcontttttent">
             <EditarTreino
-              treino={{ ...treinoSelecionado, idTreino: treinoSelecionado.idTreino }}
+              treino={{
+                ...treinoSelecionado,
+                idTreino: treinoSelecionado.idTreino,
+              }}
               abaAtiva={activeTab}
               onVoltar={() => {
                 setShowEditar(false);
                 setTreinoSelecionado(null);
               }}
               onSave={handleSaveTreino}
-              onDelete={() => treinoSelecionado && handleDeleteTreino(treinoSelecionado.idTreino)}
+              onDelete={() =>
+                treinoSelecionado &&
+                handleDeleteTreino(treinoSelecionado.idTreino)
+              }
             />
           </div>
         </div>

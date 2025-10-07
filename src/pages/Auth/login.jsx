@@ -21,7 +21,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="">
+    <div className="loginCC">
       <div className="topppp-global">
         <h2>ClideFit</h2>
       </div>

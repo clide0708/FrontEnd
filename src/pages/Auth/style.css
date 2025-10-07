@@ -1,590 +1,317 @@
-/* ======================= */
-/* Body Global */
-/* ======================= */
-
-.topppp-global {
-  color: white;
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  padding-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.topppp-global h2 {
-  color: white;
-  font-size: 400%;
-  margin-top: 80px;
-}
-
-/* ======================= */
-/* Cadastro */
-/* ======================= */
-.cad-container {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 100%;
-  margin: auto;
-  max-width: 400px;
-}
-
-.cad-container h2 {
-  color: #1e1e1e;
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-.cad-input {
-  width: calc(100% - 20px);
-  padding: 12px;
-  margin-top: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.cad-button {
-  background-color: #337fd6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.cad-button:hover {
-  background-color: #368dd9;
-}
-
-.cad-link-button {
-  background-color: transparent;
-  color: #337fd6;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 5px;
-  transition: color 0.3s ease;
-}
-
-.cad-link-button:hover {
-  color: #368dd9;
-}
-
-.cad-error {
-  color: black;
-  font-weight: 300;
-  margin-top: 5px;
-}
-
-.cad-success {
-  color: #368dd9;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
-.cad-checkbox-label {
-  color: black;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.cad-checkbox-label input {
-  margin-right: 10px;
-  margin-bottom: 20px;
-}
-
-
-
-
-.topppp-global {
-  color: white;
-  width: 100%;
-  top: 0px;
-  left: 0px;
-  padding-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.topppp-global h2 {
-  color: white;
-  font-size: 400%;
-  margin-top: 80px;
-}
-
-/* ======================= */
-/* Cadastro */
-/* ======================= */
-.cad-container-main {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 50px auto;
-}
-
-.cad-title {
-  color: #1e1e1e;
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-.cad-form input {
-  width: calc(100% - 20px);
-  padding: 12px;
-  margin-top: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.cad-btn-enviar {
-  background-color: #337fd6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.cad-btn-enviar:hover {
-  background-color: #368dd9;
-}
-
-.cad-msg {
-  color: black;
-  font-weight: lighter;
-  margin-top: 15px;
-}
-
-/* ======================= */
-/* Login */
-/* ======================= */
-.login-container-global {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 50px auto;
-}
-
-.login-title-global {
-  color: #1e1e1e;
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-.login-input-global {
-  width: calc(100% - 20px);
-  padding: 12px;
-  margin-top: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.login-button-global {
-  background-color: #337fd6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.login-button-global:hover {
-  background-color: #368dd9;
-}
-
-.login-link-button-global {
-  background-color: transparent;
-  color: #337fd6;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 5px;
-  transition: color 0.3s ease;
-}
-
-.login-link-button-global:hover {
-  color: #368dd9;
-}
-
-.login-error-global {
-  color: red;
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-/* ======================= */
-/* Recuperar Senha */
-/* ======================= */
-.rs-container-main {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 50px auto;
-}
-
-.rs-title {
-  color: #1e1e1e;
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-.rs-input-email,
-.rs-input-codigo,
-.rs-input-nova-senha {
-  width: calc(100% - 20px);
-  padding: 12px;
-  margin-top: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-.rs-btn-enviar,
-.rs-btn-reset,
-.rs-btn-fechar,
-.rs-btn-voltar {
-  background-color: #337fd6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.rs-btn-enviar:hover,
-.rs-btn-reset:hover {
-  background-color: #368dd9;
-}
-
-.rs-btn-fechar,
-.rs-btn-voltar {
-  background-color: transparent;
-  color: #337fd6;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 5px;
-}
-
-.rs-btn-fechar:hover,
-.rs-btn-voltar:hover {
-  color: #368dd9;
-}
-
-.rs-msg {
-  color: black;
-  font-weight: lighter;
-  margin-top: 15px;
-}
-
-/* ======================= */
-/* Modal Recuperar Senha */
-.rs-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.rs-modal-box {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.rs-modal-title {
-  color: #1e1e1e;
-  margin-bottom: 20px;
-  font-size: 1.5em;
-}
-
-.rs-loading {
-  color: #337fd6;
-  font-weight: bold;
-}
-
-.rs-container-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-}
-
-.rs-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.rs-form-email,
-.rs-form-codigo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.rs-input-email,
-.rs-input-codigo,
-.rs-input-nova-senha {
-  padding: 10px;
-  margin: 8px 0;
-  width: 250px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.rs-btn-enviar,
-.rs-btn-reset,
-.rs-btn-fechar {
-  padding: 10px 20px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.rs-btn-enviar {
-  background-color: #4caf50;
-  color: #fff;
-}
-
-.rs-btn-enviar:hover {
-  background-color: #45a049;
-}
-
-.rs-btn-reset {
-  background-color: #2196f3;
-  color: #fff;
-}
-
-.rs-btn-reset:hover {
-  background-color: #1976d2;
-}
-
-.rs-btn-fechar {
-  background-color: #f44336;
-  color: #fff;
-}
-
-.rs-btn-fechar:hover {
-  background-color: #d32f2f;
-}
-
-.rs-msg {
-  margin-top: 15px;
-  color: #333;
-}
-
-/* modal */
-.rs-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.rs-modal-box {
-  background: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.rs-modal-title {
-  margin-bottom: 15px;
-}
-
-/* container principal */
-.rs-container-main {
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 100%;
-  max-width: 400px;
-}
-
-/* título principal */
-.rs-title {
-  color: #1e1e1e;
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-/* inputs principais */
-.rs-input-email,
-.rs-input-codigo,
-.rs-input-nova-senha {
-  width: calc(100% - 20px);
-  padding: 12px;
-  margin-top: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
-
-/* botões principais */
-.rs-btn-enviar,
-.rs-btn-reset {
-  background-color: #337fd6;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.rs-btn-enviar:hover,
-.rs-btn-reset:hover {
-  background-color: #368dd9;
-}
-
-/* botão de fechar modal */
-.rs-btn-fechar {
-  background-color: transparent;
-  color: #337fd6;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 5px;
-  transition: color 0.3s ease;
-}
-
-.rs-btn-fechar:hover {
-  color: #1e1e1e;
-  background-color: transparent;
-}
-
-/* mensagens */
-.rs-msg {
-  color: black;
-  font-weight: 300;
-  margin-top: 15px;
-}
-
-/* modal overlay */
-.rs-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* caixa modal */
-.rs-modal-box {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* título modal */
-.rs-modal-title {
-  color: #1e1e1e;
-  margin-bottom: 20px;
-  font-size: 1.5em;
-}
-
-/* loading */
-.rs-loading {
-  color: #337fd6;
-  font-weight: bold;
-}
-
-/* botão lembrei da senha */
-.rs-btn-voltar {
-  background-color: transparent;
-  color: #337fd6;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9em;
-  margin-top: 10px;
-  padding: 5px;
-  transition: color 0.3s ease;
-}
-
-.rs-btn-voltar:hover {
-  color: #368dd9;
-}
-
-.cntrcd{
-  width: 100%;
-  display: flex;
-  justify-content: center;
+.cadastroCC, .loginCC, .recuperarCC{
+    width: 100%;
+    height: 100%;
+    padding-bottom: 5%;
+
+    /* Container principal (Layout Global, centralizando o conteúdo) */
+    /* Unifica seletores para o container principal que garante o fundo escuro e centraliza */
+
+    /* ======================= */
+    /* Título Global (topppp-global) */
+    /* ======================= */
+    .topppp-global {
+        /* Cores padronizadas para o destaque global */
+        color: #368DD9;
+        /* Laranja de destaque */
+        width: 100%;
+        /* Removendo top/left desnecessários para um bloco centralizado */
+        padding-bottom: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .topppp-global h2 {
+        color: #368DD9;
+        font-size: 400%;
+        margin-top: 80px;
+    }
+
+    /* ======================= */
+    /* Estilos Comuns de Container de Formulário */
+    /* Unifica estilos visuais para cad, login, e rs containers */
+    /* ======================= */
+    .cad-container,
+    .login-container-global,
+    .cad-container-main,
+    /* (Não usado no seu último bloco, mas mantido por segurança) */
+    .rs-container-main {
+        background-color: #333;
+        color: #eee;
+        padding: 40px;
+        border-radius: 15px;
+        /* Sombra padronizada */
+        box-shadow: 0 10px 20px rgba(73, 167, 255, 0.6);
+        text-align: center;
+        width: 90%;
+        max-width: 450px;
+        /* Max-width padronizado */
+        /* Margem adaptada para centralizar e dar espaço */
+        margin: 30px auto;
+    }
+
+    /* Sobrescreve a margem para login/recuperar se houver necessidade (de acordo com um dos seus blocos) */
+    .login-container-global,
+    .rs-container-main {
+        margin: 0 auto;
+    }
+
+    /* ======================= */
+    /* Estilos Comuns de Título do Formulário */
+    /* Unifica h2 em .cad-container e classes .cad-title, .login-title-global, .rs-title */
+    /* ======================= */
+    .cad-container h2,
+    .cad-title,
+    .login-title-global,
+    .rs-title {
+        color: #368DD9;
+        margin-bottom: 30px;
+        font-size: 2.2em;
+        /* Tamanho padronizado */
+    }
+
+
+    /* ======================= */
+    /* Estilos Comuns de Input de Formulário */
+    /* Unifica inputs de cad, login e rs */
+    /* ======================= */
+    .cad-input,
+    .login-input-global,
+    .cad-form input,
+    /* Seletor de input dentro do form de cadastro */
+    .rs-input-email,
+    .rs-input-codigo,
+    .rs-input-nova-senha {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: 1px solid white;
+        border-radius: 8px;
+        font-size: 1em;
+        box-sizing: border-box;
+        background-color: #444;
+        color: #eee;
+    }
+
+    /* Estilo para placeholder */
+    .cad-input::placeholder,
+    .login-input-global::placeholder {
+        color: #aaa;
+    }
+
+    /* ======================= */
+    /* Estilos Comuns de Botão Primário (Enviar/Login/Reset) */
+    /* Unifica botões de ação principal */
+    /* ======================= */
+    .cad-button,
+    .login-button-global,
+    .cad-btn-enviar,
+    /* Botão de cadastro */
+    .rs-btn-enviar,
+    .rs-btn-reset {
+        background-color: white;
+        color: #111;
+        padding: 15px 30px;
+        border: 1px transparent solid;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-top: 25px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .cad-button:hover,
+    .login-button-global:hover,
+    .cad-btn-enviar:hover,
+    .rs-btn-enviar:hover:not(:disabled),
+    /* Hover padronizado */
+    .rs-btn-reset:hover {
+        background-color: #368DD9;
+        color: #fff;
+        transform: scale(1.01);
+    }
+
+    .rs-btn-enviar:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* ======================= */
+    /* Estilos Comuns de Link/Botão Secundário (Trocar tela/Voltar) */
+    /* Unifica links de voltar ou ir para outra tela */
+    /* ======================= */
+    .cad-link-button,
+    .login-link-button-global,
+    .rs-btn-voltar {
+        background-color: transparent;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        margin-top: 15px;
+        padding: 5px;
+        transition: color 0.3s ease;
+    }
+
+    .cad-link-button:hover,
+    .login-link-button-global:hover,
+    .rs-btn-voltar:hover {
+        color: #368DD9;
+    }
+
+    /* ======================= */
+    /* Estilos Comuns de Mensagens e Erros */
+    /* Unifica mensagens de erro e status */
+    /* ======================= */
+    .cad-error,
+    .login-error-global,
+    .rs-msg,
+    .cad-msg {
+        /* cad-msg é mais fraco, rs-msg e cad-error são mais fortes */
+        color: #368DD9;
+        /* Laranja para erros/destaque */
+        font-weight: bold;
+        margin-top: 15px;
+        font-size: 0.9em;
+        display: block;
+        /* Garante que ocupe a linha para alinhamento */
+    }
+
+    /* Pequeno ajuste para erro de cadastro se necessário */
+    .cad-error {
+        margin-top: 5px;
+        text-align: left;
+        padding-left: 5px;
+    }
+
+    /* Estilo para a mensagem de sucesso que não foi unificada (cad-success) */
+    .cad-success {
+        color: #4CAF50;
+        /* Verde para sucesso */
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    /* ======================= */
+    /* Checkbox (Cadastro) */
+    /* ======================= */
+    .cad-checkbox-label {
+        color: #eee;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 20px;
+        font-size: 1.1em;
+    }
+
+    .cad-checkbox-label input {
+        margin-right: 10px;
+    }
+
+    /* ======================= */
+    /* Modal Recuperar Senha */
+    /* ======================= */
+    .rs-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.85);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .rs-modal-box {
+        background-color: #333;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 25px rgba(73, 167, 255, 0.6);
+        width: 90%;
+        max-width: 380px;
+        text-align: center;
+        transform: scale(1);
+        transition: transform 0.3s ease-out;
+    }
+
+    .rs-modal-title {
+        color: #368DD9;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+    }
+
+    /* Botão Fechar Modal */
+    .rs-btn-fechar {
+        background-color: transparent;
+        color: #777;
+        /* Cor menos chamativa */
+        border: none;
+        cursor: pointer;
+        font-size: 0.9em;
+        margin-top: 20px;
+        padding: 5px;
+        transition: color 0.3s ease;
+    }
+
+    .rs-btn-fechar:hover {
+        color: #fff;
+    }
+
+    /* Loading/Spin */
+    .rs-loading {
+        color: #368DD9;
+        /* Cor de destaque */
+        font-weight: bold;
+        animation: spin 1s infinite linear;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Formulários específicos de recuperação (dentro ou fora do modal) */
+    .rs-form-email,
+    .rs-form-codigo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* ======================= */
+    /* Mensagens de Cadastro (Opcional, de um bloco específico) */
+    /* ======================= */
+    .cadastro-mensagem {
+        padding: 15px 25px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: bold;
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: all 0.4s ease-in-out;
+    }
+
+    .cadastro-mensagem.sucesso {
+        background-color: rgba(30, 180, 50, 0.15);
+        color: #4CAF50;
+        border: 1px solid #4CAF50;
+    }
+
+    .cadastro-mensagem.erro {
+        background-color: rgba(255, 111, 0, 0.15);
+        color: #368DD9;
+        border: 1px solid #1f1f1f;
+    }
 }

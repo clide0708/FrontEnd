@@ -75,73 +75,86 @@ export default function RecuperarSenha() {
   };
 
   return (
-    <div className="cntrcds">
-      <div className="topppp-global">
-        <h2>ClideFit</h2>
-      </div>
-      <div className="rs-container-main">
-        <h2 className="rs-title">Esqueci minha senha</h2>
-        <form className="rs-form-email" onSubmit={handleEnviarEmail}>
-          <input
-            className="rs-input-email"
-            type="email"
-            placeholder="seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button className="rs-btn-enviar" type="submit" disabled={loading}>
-            {loading ? <span className="rs-loading">⏳</span> : "enviar código"}
+    <div className="recuperarCC">
+      <div className="cntrcds">
+        <div className="topppp-global">
+          <h2>ClideFit</h2>
+        </div>
+        <div className="rs-container-main">
+          <h2 className="rs-title">Esqueci minha senha</h2>
+          <form className="rs-form-email" onSubmit={handleEnviarEmail}>
+            <input
+              className="rs-input-email"
+              type="email"
+              placeholder="seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button className="rs-btn-enviar" type="submit" disabled={loading}>
+              {loading ? (
+                <span className="rs-loading">⏳</span>
+              ) : (
+                "enviar código"
+              )}
+            </button>
+          </form>
+          <button
+            className="login-link-button-global"
+            onClick={() => navigate("/login")}
+          >
+            Lembrei da senha
           </button>
-        </form>
-        <button className="login-link-button-global" onClick={() => navigate("/login")}>Lembrei da senha</button>
 
-        {mensagem && <p className="rs-msg">{mensagem}</p>}
+          {mensagem && <p className="rs-msg">{mensagem}</p>}
 
-        {mostrarModal && (
-          <div className="rs-modal-overlay">
-            <div className="rs-modal-box">
-              <h3 className="rs-modal-title">Insira o código</h3>
-              {mensagemModal && <p className="rs-msg">{mensagemModal}</p>} {/* <- mensagem só do modal */}
-              <form
-                className="rs-form-codigo"
-                onSubmit={handleResetSenha}
-                autoComplete="off"
-              >
-                <input type="text" style={{ display: "none" }} />
-                <input type="password" style={{ display: "none" }} />
-
-                <input
-                  className="rs-input-codigo"
-                  type="text"
-                  placeholder="código"
-                  value={codigo}
-                  onChange={handleCodigoChange}
+          {mostrarModal && (
+            <div className="rs-modal-overlay">
+              <div className="rs-modal-box">
+                <h3 className="rs-modal-title">Insira o código</h3>
+                {mensagemModal && (
+                  <p className="rs-msg">{mensagemModal}</p>
+                )}{" "}
+                {/* <- mensagem só do modal */}
+                <form
+                  className="rs-form-codigo"
+                  onSubmit={handleResetSenha}
                   autoComplete="off"
-                  name="codigo_reset_123"
-                />
-                <input
-                  className="rs-input-nova-senha"
-                  type="password"
-                  placeholder="nova senha"
-                  value={novaSenha}
-                  onChange={(e) => setNovaSenha(e.target.value)}
-                  autoComplete="new-password"
-                  name="nova_senha_456"
-                />
-                <button className="rs-btn-reset" type="submit">
-                  Resetar senha
-                </button>
-              </form>
+                >
+                  <input type="text" style={{ display: "none" }} />
+                  <input type="password" style={{ display: "none" }} />
 
-              <button
-                className="rs-btn-fechar"
-                onClick={() => setMostrarModal(false)}
-              >
-                fechar
-              </button>
+                  <input
+                    className="rs-input-codigo"
+                    type="text"
+                    placeholder="código"
+                    value={codigo}
+                    onChange={handleCodigoChange}
+                    autoComplete="off"
+                    name="codigo_reset_123"
+                  />
+                  <input
+                    className="rs-input-nova-senha"
+                    type="password"
+                    placeholder="nova senha"
+                    value={novaSenha}
+                    onChange={(e) => setNovaSenha(e.target.value)}
+                    autoComplete="new-password"
+                    name="nova_senha_456"
+                  />
+                  <button className="rs-btn-reset" type="submit">
+                    Resetar senha
+                  </button>
+                </form>
+                <button
+                  className="rs-btn-fechar"
+                  onClick={() => setMostrarModal(false)}
+                >
+                  fechar
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
