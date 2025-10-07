@@ -97,69 +97,91 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
         <div className="addalm">
           <h4 className="h4modal2">Detalhes do Alimento</h4>
         </div>
-        <div className="infnm">
-          <h2 className="h2modal">{alimentoDetalhes.nome}</h2>
-          <div className="select">
+        
+        {/* Informações do alimento - NOVA VERSÃO */}
+        <div className="infnm-grid">
+          <h2 className="h2modal-grid">{alimentoDetalhes.nome}</h2>
+          <div className="select-grid">
             <input
               type="number"
               name="especificacao"
               value={alimentoDetalhes.especificacao || alimentoDetalhes.quantidade}
               onChange={handleInputChange}
               disabled={loading}
-            /> g/ml
+            />
+            <span>g/ml</span>
           </div>
         </div>
-        <div className="infnt">
-          <div className="header">
-            <h1 className="cal">Cal</h1>
-            <h1 className="h1modal1">Prot</h1>
-            <h1 className="h1modal1">Carb</h1>
-            <h1 className="h1modal1">Gord</h1>
+
+        {/* Valores nutricionais - NOVA VERSÃO COM GRID */}
+        <div className="infnt-grid">
+          {/* Cabeçalhos */}
+          <div className="infnt-header-grid">
+            <h1 className="cal">Calorias</h1>
+            <h1 className="h1modal1">Proteínas</h1>
+            <h1 className="h1modal1">Carboidratos</h1>
+            <h1 className="h1modal1">Gorduras</h1>
           </div>
-          <div className="valores">
-            <input 
-              type="number" 
-              name="calorias" 
-              value={alimentoDetalhes.calorias} 
-              onChange={handleInputChange} 
-              className="cal" 
-              disabled={loading}
-            />
-            <input 
-              type="number" 
-              name="proteinas" 
-              value={alimentoDetalhes.proteinas} 
-              onChange={handleInputChange} 
-              className="h1modal1" 
-              disabled={loading}
-            />g
-            <input 
-              type="number" 
-              name="carboidratos" 
-              value={alimentoDetalhes.carboidratos} 
-              onChange={handleInputChange} 
-              className="h1modal1" 
-              disabled={loading}
-            />g
-            <input 
-              type="number" 
-              name="gorduras" 
-              value={alimentoDetalhes.gorduras} 
-              onChange={handleInputChange} 
-              className="h1modal1" 
-              disabled={loading}
-            />g
+
+          {/* Inputs */}
+          <div className="infnt-inputs-grid">
+            <div className="input-group">
+              <input 
+                type="number" 
+                name="calorias" 
+                value={alimentoDetalhes.calorias || 0} 
+                onChange={handleInputChange} 
+                disabled={loading}
+              />
+              <span className="input-label">kcal</span>
+            </div>
+            
+            <div className="input-group">
+              <input 
+                type="number" 
+                name="proteinas" 
+                value={alimentoDetalhes.proteinas || 0} 
+                onChange={handleInputChange} 
+                disabled={loading}
+              />
+              <span className="input-label">gramas</span>
+            </div>
+            
+            <div className="input-group">
+              <input 
+                type="number" 
+                name="carboidratos" 
+                value={alimentoDetalhes.carboidratos || 0} 
+                onChange={handleInputChange} 
+                disabled={loading}
+              />
+              <span className="input-label">gramas</span>
+            </div>
+            
+            <div className="input-group">
+              <input 
+                type="number" 
+                name="gorduras" 
+                value={alimentoDetalhes.gorduras || 0} 
+                onChange={handleInputChange} 
+                disabled={loading}
+              />
+              <span className="input-label">gramas</span>
+            </div>
           </div>
-          <div className="btndv">
+
+          {/* Botões - NOVA VERSÃO */}
+          <div className="btndv-grid">
             <button className="btn2" onClick={handleSave} disabled={loading}>
               {loading ? 'Salvando...' : 'Salvar'}
             </button>
-            <button className="btn2" onClick={handleDelete} disabled={loading}>
+            <button className="btn2 btn2-remove" onClick={handleDelete} disabled={loading}>
               {loading ? 'Removendo...' : 'Remover'}
             </button>
           </div>
         </div>
         
+        {/* Informações adicionais da API */}
         {detalhesAPI && detalhesAPI.nutrientes && (
           <div className="info-adicional">
             <h4>Informações Nutricionais</h4>
