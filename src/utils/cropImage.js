@@ -1,26 +1,35 @@
-export default function getCroppedImg(imageSrc, pixelCrop) {
+export default async function getCroppedImg(imageSrc, pixelCrop) {
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+  });
+
+  // cria o canvas
   const canvas = document.createElement("canvas");
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
   const ctx = canvas.getContext("2d");
 
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.src = imageSrc;
-    image.onload = () => {
-      ctx.drawImage(
-        image,
-        pixelCrop.x,
-        pixelCrop.y,
-        pixelCrop.width,
-        pixelCrop.height,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-      resolve(canvas.toDataURL("image/jpeg"));
-    };
-    image.onerror = (error) => reject(error);
-  });
+  // ajusta o tamanho real do recorte
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  // aplica o crop com escala correta
+  ctx.drawImage(
+    image,
+    pixelCrop.x * scaleX,
+    pixelCrop.y * scaleY,
+    pixelCrop.width * scaleX,
+    pixelCrop.height * scaleY,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  // retorna imagem cortada em base64
+  return canvas.toDataURL("image/jpeg", 0.95);
 }

@@ -290,7 +290,7 @@
   align-items: center;
 }
 
-.editor-exercicio label input{
+.editor-exercicio label input {
   margin-left: auto;
   margin-right: 20px;
 }
@@ -632,9 +632,9 @@
 
 .modal-actions .b2 {
   background-color: transparent;
-  border: #36d975 2px solid;
+  border: #368DD9 2px solid;
   padding: 10px;
-  color: #36d975;
+  color: #368DD9;
   border-radius: 10px;
   font-size: 100%;
   font-weight: bold;
@@ -642,8 +642,8 @@
 }
 
 .modal-actions .b2:hover {
-  background-color: #36d975;
-  border: #36d975 2px solid;
+  background-color: #368DD9;
+  border: #368DD9 2px solid;
   color: #27292a;
   border-radius: 10px;
   cursor: pointer;
@@ -1491,6 +1491,9 @@ a:hover {
   margin: none;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
 
 /*
 ------------------------------
@@ -1634,4 +1637,3 @@ a:hover {
     font-weight: bold;
   }
 }
-

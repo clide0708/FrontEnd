@@ -157,4 +157,7 @@
       opacity: 1;
     }
   }
+  p {
+    text-align: left;
+  }
 }
