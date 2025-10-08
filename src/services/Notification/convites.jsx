@@ -4,7 +4,7 @@ import api from "../api.js";
 // Funções individuais
 export const getConvitesByEmail = async (email) => {
   try {
-    const response = await api.get(`/convites/email/${encodeURIComponent(email)}`);
+    const response = await api.get(`/convites/email/${email}`);
     return response.data;
   } catch (error) {
     console.error("Erro ao carregar convites:", error);
