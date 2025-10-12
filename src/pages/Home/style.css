@@ -1,125 +1,16 @@
-/* ======= CORES ======= */
-:root {
-  --rosa: #bf2c71;
-  --roxo: #7055df;
-  --azul-escuro: #020659;
-  --azul-claro: #368dd9;
-  --rosa-medio: #dd5fa3;
+.header-text{
+    width: 80%;
+    margin-left: 10%;
 }
 
-/* ======= BANNER ======= */
-.main-banner {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 5%;
-  box-sizing: border-box;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: #fff;
+.main-button a:hover{
+    color: black;
 }
 
-.header-text {
-  max-width: 800px;
-  margin: auto;
-  background: rgba(2, 6, 89, 0.5);
-  padding: 30px;
-  border-radius: 15px;
+.footertext{
+    color: white;
 }
 
-.header-text em {
-  color: var(--rosa);
-  font-style: normal;
-  font-weight: bold;
-}
-
-.header-text h6 {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  margin-bottom: 10px;
-  color: var(--azul-claro);
-  font-weight: 600;
-}
-
-.header-text h4 {
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  line-height: 1.4;
-  margin-bottom: 20px;
-  word-wrap: break-word;
-}
-
-/* ======= BOTÕES ======= */
-.main-button a {
-  background: var(--roxo);
-  color: #fff;
-  padding: 10px 25px;
-  border-radius: 25px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.main-button a:hover {
-  background: var(--rosa);
-}
-
-.main-border-button a {
-  border: 2px solid var(--roxo);
-  padding: 6px 15px;
-  border-radius: 25px;
-  color: var(--roxo);
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.main-border-button a:hover {
-  background: var(--roxo);
-  color: #fff;
-}
-
-/* ======= RESPONSIVIDADE ======= */
-
-/* Tablets */
-@media (max-width: 1024px) {
-  .gaming-library {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Celulares */
-@media (max-width: 768px) {
-  .main-banner {
-    padding: 15% 5%;
-  }
-
-  .header-text h4 {
-    font-size: clamp(1.2rem, 4.5vw, 1.6rem);
-  }
-
-  .gaming-library {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-
-  .gaming-library .item {
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-  }
-}
-
-/* Muito pequenas */
-@media (max-width: 480px) {
-  .header-text {
-    padding: 20px;
-  }
-
-  .main-button a {
-    padding: 8px 18px;
-    font-size: 0.9rem;
-  }
+a{
+    color: pink;
 }
