@@ -32,7 +32,7 @@ export default function CropModal({ onClose, onSave }) {
   };
 
   return (
-    <div className="crop-modal-overlay">
+    <div className="modalCrop crop-modal-overlay">
       <div className="crop-modal">
         <h3>{imageSrc ? "Cortar Imagem" : "Selecionar Imagem"}</h3>
 

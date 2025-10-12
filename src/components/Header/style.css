@@ -1,0 +1,224 @@
+/* Header --------------------------------------------------------------------------- */
+.voltahead {
+  width: 90%;
+  display: flex;
+  margin: auto;
+}
+
+.notif-icon {
+  margin-right: 10px;
+  scale: 1.0;
+}
+
+.profile-notif {
+  display: flex;
+  margin-left: 50px;
+  align-items: center;
+}
+
+.botao-voltar {
+  font-weight: bolder;
+  background-color: #337fd6;
+  color: #1e1e1e;
+  border: none;
+  padding: 10px 18px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s ease;
+  margin: 20px;
+}
+
+.botao-voltar:hover {
+  background-color: #1e1e1e;
+  color: #337fd6;
+  border: 1px solid #337fd6;
+}
+
+.botao-voltar svg {
+  fill: #1e1e1e;
+}
+
+.botao-voltar:hover svg {
+  fill: #337fd6;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.nav-CF {
+  color: white;
+}
+
+.nav-CF:hover {
+  color: #368dd9;
+}
+
+body {
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+header {
+  z-index: 1000;
+}
+
+.nav-header {
+  background-color: transparent;
+  padding: 15px 0;
+}
+
+.nav-header h1 {
+  font-size: 300%;
+  color: #368dd9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.nav-menu {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+}
+
+
+/* Logo */
+.nav-logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #368dd9;
+}
+
+/* Menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+  background-color: transparent;
+}
+
+.nav-menu li a {
+  text-decoration: none;
+  color: #888;
+  font-size: 15px;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-menu li a.active {
+  color: #368dd9;
+}
+
+.nav-menu li a:hover {
+  color: #fff;
+}
+
+/* Perfil */
+.profile-link {
+  background-color: transparent;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: transparent 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ccc;
+  transition: background 0.3s ease;
+}
+
+.profile-link:hover {
+  background-color: #333;
+}
+
+.profile-link img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Botão Mobile (hamburguer) */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.menu-icon span {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: flex;
+  }
+
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 230px;
+    padding: 20px;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-menu.show {
+    display: flex;
+  }
+
+  .nav-menu li {
+    margin-bottom: 15px;
+  }
+
+  .nav-menu li:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.pfact {
+  border: #368dd9 solid 1px;
+  color: #368dd9;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+.notif-item:hover {
+  cursor: pointer;
+  color: #368dd9;
+}
+
+.pipipiripii {
+  padding-left: 250px;
+  display: flex;
+  align-items: center;
+}

@@ -81,7 +81,7 @@ export default function Profile() {
   if (!user) return <p>Carregando...</p>;
 
   return (
-    <div className="container" style={{ position: "relative" }}>
+    <div className="perfil container" style={{ position: "relative" }}>
       {/* ENGRENAGEM LOGOUT */}
       <div className="logout-gear" onClick={handleLogout} title="Sair">
         <FiLogOut size={30} />

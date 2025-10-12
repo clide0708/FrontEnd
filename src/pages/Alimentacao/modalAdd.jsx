@@ -274,7 +274,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
   const nomeExibicao = modoCriacao ? 'Criar/Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
 
   return (
-    <div className="modalalimento show">
+    <div className="modalAdd show">
       <div className="modalalm-content">
         <div className="addalm">
           <h4 className="h4modal">

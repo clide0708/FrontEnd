@@ -67,7 +67,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
   };
 
   return (
-    <div className="campo-com-lupa" ref={containerRef}>
+    <div className="SearchWithButton" ref={containerRef}>
       <div className="input-group" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         <input
           className="inmputmodal"

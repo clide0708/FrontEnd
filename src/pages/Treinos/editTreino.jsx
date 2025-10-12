@@ -247,7 +247,7 @@ export default function EditarTreino({
   };
 
   return (
-    <div className="editar-treino-container">
+    <div className="editTreino editar-treino-container">
       <div className="btnhd">
         <button onClick={onVoltar}>← Voltar</button>
         <h2>{currentTreino.nome}</h2>

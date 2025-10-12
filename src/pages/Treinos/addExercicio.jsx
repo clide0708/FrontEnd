@@ -61,7 +61,7 @@ export default function AddExercicio({ onAdd, onClose }) {
   const gruposUnicos = [...new Set(todosExercicios.map((ex) => ex.grupoMuscular).filter(Boolean))];
 
   return (
-    <div className="modal-overlay">
+    <div className="addExercicio modal-overlay">
       <div className="modal-content">
         <span className="close-button" onClick={onClose}>&times;</span>
         <h2>Adicionar Novo Exercício</h2>

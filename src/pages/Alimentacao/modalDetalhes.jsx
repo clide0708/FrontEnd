@@ -92,7 +92,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
   }
 
   return (
-    <div className="modalalimento2 modal-stack show">
+    <div className="modalDetalhes modalalimento2 modal-stack show">
       <div className="modalalm2-content">
         <div className="addalm">
           <h4 className="h4modal2">Detalhes do Alimento</h4>

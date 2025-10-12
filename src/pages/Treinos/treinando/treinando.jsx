@@ -178,7 +178,7 @@ export default function Treino() {
   const renderDescanso = () => {
     if (!ex.tempo_descanso || ex.tempo_descanso <= 0) return null;
     return (
-      <div id="view-descanso">
+      <div id="treinando view-descanso">
         <div className="descansano">
           <div className="titulo">
             <h2 id="descanso-titulo">{ex.nome}</h2>
@@ -229,7 +229,7 @@ export default function Treino() {
   };
 
   return (
-    <div className="adjustfoda">
+    <div className="treinando adjustfoda">
       <div
         className="barra-progresso"
         style={{ width: "1200px", height: "8px", background: "#eee" }}
@@ -244,7 +244,7 @@ export default function Treino() {
         ></div>
       </div>
 
-      <div className="treinando">
+      <div className="treinandorr">
         <div id="lista-exercicios">
           <h3 className="exnm">{treino.nome}</h3>
           <div id="lista">

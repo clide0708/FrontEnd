@@ -3,7 +3,7 @@ import "./style.css";
 
 function Home() {
   return (
-    <div>
+    <div className="home">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">

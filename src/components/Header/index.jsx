@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import profileImg from "/assets/images/profilefoto.png";
 import "../../assets/css/templatemo-cyborg-gaming.css";
-import "../../assets/css/style.css";
+import "./style.css";
 import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification";
 import convitesService from "../../services/Notification/convites";
