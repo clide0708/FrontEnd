@@ -14,7 +14,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="landing-page">
+    <div id="inicio"  className="landing-page">
       <header className={`lp-header ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">ClideFit</div>
         <nav>
@@ -26,11 +26,11 @@ export default function LandingPage() {
       </header>
 
       {/* banner vindo da pasta public */}
-      <section className="lp-banner">
+      <section  className="lp-banner">
         <img src="assets/images/banner-landing.png" alt="Banner ClideFit" className="banner-img" />
       </section>
 
-      <section className="lp-hero">
+      <section  className="lp-hero">
         <div className="hero-content">
           <h1>Treinos acessíveis para todos</h1>
           <p>Transforme sua rotina com treinos adaptados ao seu ritmo e realidade.</p>
@@ -38,7 +38,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="lp-planos">
+      <section id="planos" className="lp-planos">
         <h2>Nossos Planos</h2>
         <div className="planos-container">
           <div className="plano-card">
@@ -51,7 +51,7 @@ export default function LandingPage() {
             <button onClick={() => navigate("/login")}>Assinar</button>
           </div>
 
-          <div className="plano-card destaque">
+          <div className="plano-card">
             <h3>Plano Personal</h3>
             <ul>
               <li>✔️ Criação de treinos para alunos</li>
@@ -73,7 +73,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="lp-sobre">
+      <section id="sobre" className="lp-sobre">
         <h2>Sobre Nós</h2>
         <p>
           A ClideFit nasceu com o propósito de tornar o bem-estar acessível. Nossa missão é oferecer treinos
@@ -116,7 +116,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="lp-footer">
+      <footer id="contato" className="lp-footer">
         <div className="footer-content">
           <div className="footer-left">
             <h3>ClideFit</h3>
@@ -129,10 +129,10 @@ export default function LandingPage() {
           <div className="footer-center">
             <h4>Links Rápidos</h4>
             <ul>
-              <li><a href="#">Início</a></li>
-              <li><a href="#">Sobre</a></li>
-              <li><a href="#">Planos</a></li>
-              <li><a href="#">Contato</a></li>
+              <li><a href="#inicio">Início</a></li>
+              <li><a href="#sobre">Sobre</a></li>
+              <li><a href="#planos">Planos</a></li>
+              <li><a href="#contato">Contato</a></li>
             </ul>
           </div>
 
