@@ -313,6 +313,12 @@ export default function CadastroPage() {
           >
             Já tenho conta
           </button>
+          <button
+            className="cad-link-button"
+            onClick={() => navigate("/home")}
+          >
+            Voltar para início
+          </button>
         </div>
       </div>
     </div>

@@ -62,6 +62,12 @@ export default function LoginPage() {
         >
           Recuperar Senha
         </button>
+                  <button
+            className="cad-link-button"
+            onClick={() => navigate("/home")}
+          >
+            Voltar para início
+          </button>
       </div>
     </div>
   );

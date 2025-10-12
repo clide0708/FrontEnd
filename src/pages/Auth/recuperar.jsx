@@ -104,6 +104,12 @@ export default function RecuperarSenha() {
           >
             Lembrei da senha
           </button>
+          <button
+            className="cad-link-button"
+             onClick={() => navigate("/home")}
+            >
+             Voltar para início
+          </button>
 
           {mensagem && <p className="rs-msg">{mensagem}</p>}
 
