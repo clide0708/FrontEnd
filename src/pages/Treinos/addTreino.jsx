@@ -46,7 +46,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
   };
 
   return (
-    <div className="modal-overlay">
+    <div className="addTreino modal-overlay">
       <div className="modal-contentadtn">
         <h2 className="modal-title">{treino ? "Editar Treino" : "Novo Treino"}</h2>
         <form className="form-add-treino" onSubmit={handleSubmit}>

@@ -271,10 +271,10 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
     setItensAdicionados([]);
   };
 
-  const nomeExibicao = modoCriacao ? 'Criar/Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
+  const nomeExibicao = modoCriacao ? 'Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
 
   return (
-    <div className="modalalimento show">
+    <div className="modalAdd show">
       <div className="modalalm-content">
         <div className="addalm">
           <h4 className="h4modal">
@@ -308,29 +308,17 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
         {/* MODO SELEÇÃO - Aparece quando currentMealList está vazio ou "nova" ou "existente" */}
         {modo === "selecao" && (
           <div className="gerenciar-refeicoes-section" style={{marginBottom: '20px'}}>
-            <h5 style={{color: '#fff', marginBottom: '15px'}}>Escolha uma opção:</h5>
             
             <div className="opcoes-refeicao" style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
               
               {/* Opção 1: Criar nova refeição */}
               <div className="opcao-criar">
-                <h6 style={{color: '#368dd9', marginBottom: '10px'}}>Criar Nova Refeição</h6>
                 <div className="botoes-refeicao" style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                   {['Café da manhã', 'Almoço', 'Jantar', 'Lanche', 'Café da Tarde', 'Pré-treino', 'Pós-treino'].map((tipo) => (
                     <button
                       key={tipo}
                       onClick={() => handleCriarNovaRefeicao(tipo)}
                       disabled={carregando}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#27ae60',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: carregando ? 'not-allowed' : 'pointer',
-                        opacity: carregando ? 0.6 : 1,
-                        fontSize: '0.9em'
-                      }}
                     >
                       + {tipo}
                     </button>
@@ -411,7 +399,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
 
         {/* Lista de alimentos adicionados */}
         <div className="almadd existing-items">
-          <h5 style={{color: '#fff', marginBottom: '10px'}}>
+          {/* <h5 style={{color: '#fff', marginBottom: '10px'}}>
             {idRefeicaoAtual ? `Alimentos adicionados (${itensAdicionados.length})` : 'Nenhuma refeição selecionada'}
           </h5>
           
@@ -442,21 +430,12 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
                 </div>
               </div>
             ))
-          )}
+          )} */}
 
-          <div className="addalmbtn" style={{marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div className="addalmbtn">
             <button 
               className="mdlcl" 
               onClick={fechar}
-              style={{
-                background: '#368dd9',
-                color: 'white',
-                border: 'none',
-                padding: '10px 20px',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
             >
               Confirmar
             </button>

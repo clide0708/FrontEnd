@@ -1,116 +1,102 @@
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
 import banner from "./banner.jpg";
 import "./style.css";
 
 function Home() {
-  return (
-    <div>
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="page-content">
-              {/* ***** Banner Start ***** */}
-              <div
-                className="main-banner"
-                style={{
-                  backgroundImage: `url(${banner})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  padding: "100px 0",
-                  color: "white",
-                }}
-              >
-                <div className="row">
-                  <div className="col-lg-7">
-                    <div className="header-text">
-                      <h6>Seja bem vindo(a) CLIDE Fit</h6>
-                      <h4>
-                        <em>Treinos</em> personalizados, acessíveis e inclusivos
-                      </h4>
-                      <div className="main-button">
-                        <a href="/treinos">Veja agora</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* ***** Banner End ***** */}
+  const [frase, setFrase] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
-              {/* ***** Treinos Grátis Start ***** */}
-              <div className="gaming-library">
-                <div className="heading-section">
-                  <h4>Treinos acessíveis Grátis</h4>
-                </div>
-                {[
-                  {
-                    img: "musculacao.jpg",
-                    title: "Musculação",
-                    desc: "Costas e Biceps",
-                    added: "24/08/2024",
-                    duration: "1 H 22 Mins",
-                    author: "Personal Fulano",
-                  },
-                  {
-                    img: "crossfit.jpg",
-                    title: "CrossFit",
-                    desc: "Preparação para Jumping Pull-up",
-                    added: "13/05/2024",
-                    duration: "35 Mins",
-                    author: "Personal Ciclano",
-                  },
-                  {
-                    img: "yoga.jpg",
-                    title: "Yoga",
-                    desc: "Movimentos de alongamento",
-                    added: "21/02/2025",
-                    duration: "47 Mins",
-                    author: "Personal Beltrano",
-                  },
-                ].map((treino, index) => (
-                  <div className="item" key={index}>
-                    <ul>
-                      <li>
-                        <img
-                          src={`assets/images/${treino.img}`}
-                          alt={treino.title}
-                          className="templatemo-item"
-                        />
-                      </li>
-                      <li>
-                        <h4>{treino.title}</h4>
-                        <span>{treino.desc}</span>
-                      </li>
-                      <li>
-                        <h4>Adicionado em</h4>
-                        <span>{treino.added}</span>
-                      </li>
-                      <li>
-                        <h4>Duração</h4>
-                        <span>{treino.duration}</span>
-                      </li>
-                      <li>
-                        <h4>Criado por</h4>
-                        <span>{treino.author}</span>
-                      </li>
-                      <li>
-                        <div className="main-border-button">
-                          <a href="#">Abrir</a>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                ))}
+  // Função para buscar a frase motivacional
+  const fetchFrase = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        "https://cors-anywhere.herokuapp.com/https://allugofrases.herokuapp.com/frases/random"
+      );
+
+      // API retorna um objeto com content e meaning
+      const data = Array.isArray(response.data) ? response.data[0] : response.data;
+
+      setFrase({
+        content: data.content || "Mantenha-se firme e continue tentando!",
+        meaning: data.meaning || "CLIDE Fit",
+      });
+    } catch (err) {
+      console.error("Erro ao buscar frase motivacional:", err.message);
+      setFrase({
+        content: "Mantenha-se firme e continue tentando!",
+        meaning: "CLIDE Fit",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFrase();
+  }, []);
+
+  return (
+    <div className="home">
+      <div className="container">
+        {/* Banner */}
+        <div
+          className="main-banner"
+          style={{
+            backgroundImage: `url(${banner})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            padding: "100px 0",
+            color: "white",
+          }}
+        >
+          <div className="row">
+            <div className="col-lg-7">
+              <div className="header-text">
+                <h6>Bem vindo novamente ao CLIDE Fit</h6>
+                <h4>Vamos começar?</h4>
                 <div className="main-button">
-                  <a href="/profile">Mais</a>
+                  <Link
+                    to="/treinos"
+                    className={
+                      location.pathname === "/treinos" ||
+                      location.pathname === "/treinando"
+                        ? "active"
+                        : ""
+                    }
+                  >
+                    Bora Treinar
+                  </Link>
                 </div>
               </div>
-              {/* ***** Treinos Grátis End ***** */}
             </div>
+          </div>
+        </div>
+
+        {/* Frase Motivacional */}
+        <div className="gaming-library">
+          <div className="heading-section">
+            <h4>Frase do Dia</h4>
+            {loading ? (
+              <p>Carregando frase motivacional...</p>
+            ) : (
+              <div className="frase-motivacional">
+                <blockquote>“{frase.content}”</blockquote>
+                <p>{frase.meaning}</p>
+                <button className="btn-refresh" onClick={fetchFrase}>
+                  Outra frase
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ***** Footer Start ***** */}
+      {/* Footer */}
       <footer>
         <div className="container">
           <div className="row">
@@ -132,7 +118,6 @@ function Home() {
           </div>
         </div>
       </footer>
-      {/* ***** Footer End ***** */}
     </div>
   );
 }

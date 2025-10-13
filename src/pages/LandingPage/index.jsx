@@ -14,7 +14,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div id="inicio"  className="landing-page">
+    <div id="inicio"  className="landingPage">
       <header className={`lp-header ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">CLIDE Fit</div>
         <nav>

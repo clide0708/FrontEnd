@@ -114,7 +114,7 @@ function Treinos() {
   };
 
   return (
-    <div className="treinos-container">
+    <div className="treino treinos-container">
       <div className="PT1">
         <h2>{activeTab}</h2>
         <div className="navlinktn">

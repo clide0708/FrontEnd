@@ -1,35 +1,74 @@
 export default async function getCroppedImg(imageSrc, pixelCrop) {
   const image = await new Promise((resolve, reject) => {
-    const img = new Image();
-    img.src = imageSrc;
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
-  });
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.src = imageSrc
+    img.onload = () => resolve(img)
+    img.onerror = (err) => reject(err)
+  })
 
-  // cria o canvas
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  console.log("[v0] Image natural dimensions:", image.naturalWidth, "x", image.naturalHeight)
+  console.log("[v0] Crop area received:", pixelCrop)
 
-  // ajusta o tamanho real do recorte
-  const scaleX = image.naturalWidth / image.width;
-  const scaleY = image.naturalHeight / image.height;
+  const clippedCrop = {
+    x: Math.max(0, Math.min(pixelCrop.x, image.naturalWidth)),
+    y: Math.max(0, Math.min(pixelCrop.y, image.naturalHeight)),
+    width: Math.min(pixelCrop.width, image.naturalWidth - pixelCrop.x),
+    height: Math.min(pixelCrop.height, image.naturalHeight - pixelCrop.y),
+  }
 
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  console.log("[v0] Clipped crop area:", clippedCrop)
 
-  // aplica o crop com escala correta
+  const MAX_SIZE = 800
+  let outputWidth = clippedCrop.width
+  let outputHeight = clippedCrop.height
+
+  if (outputWidth > MAX_SIZE || outputHeight > MAX_SIZE) {
+    const ratio = Math.min(MAX_SIZE / outputWidth, MAX_SIZE / outputHeight)
+    outputWidth = Math.round(outputWidth * ratio)
+    outputHeight = Math.round(outputHeight * ratio)
+    console.log("[v0] Resizing output to:", outputWidth, "x", outputHeight)
+  }
+
+  const canvas = document.createElement("canvas")
+  const ctx = canvas.getContext("2d", { alpha: false })
+
+  canvas.width = outputWidth
+  canvas.height = outputHeight
+
   ctx.drawImage(
     image,
-    pixelCrop.x * scaleX,
-    pixelCrop.y * scaleY,
-    pixelCrop.width * scaleX,
-    pixelCrop.height * scaleY,
+    clippedCrop.x,
+    clippedCrop.y,
+    clippedCrop.width,
+    clippedCrop.height,
     0,
     0,
-    canvas.width,
-    canvas.height
-  );
+    outputWidth,
+    outputHeight,
+  )
 
-  // retorna imagem cortada em base64
-  return canvas.toDataURL("image/jpeg", 0.95);
+  console.log("[v0] Canvas created:", canvas.width, "x", canvas.height)
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error("Canvas is empty"))
+          return
+        }
+        console.log("[v0] Blob size:", (blob.size / 1024).toFixed(2), "KB")
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          console.log("[v0] Base64 length:", reader.result.length, "characters")
+          console.log("[v0] Estimated size:", (reader.result.length / 1024).toFixed(2), "KB")
+          resolve(reader.result)
+        }
+        reader.onerror = reject
+        reader.readAsDataURL(blob)
+      },
+      "image/jpeg",
+      0.8, // Reduced quality from 0.95 to 0.8 to reduce file size
+    )
+  })
 }

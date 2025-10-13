@@ -64,7 +64,7 @@ export default function PlanModal({
   ];
 
   return (
-    <div className="modal-overlay">
+    <div className="modalPlano modal-overlay">
       <div className="modal-container">
         <div className="modal-header">
           <div className="personal-row">
