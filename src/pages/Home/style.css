@@ -4,7 +4,13 @@
         margin-left: 10%;
     }
 
-    .main-button a:hover {
-        color: black;
+    .main-button a {
+        color: white;
+        border: white 1px solid;
+        background-color: transparent;
+        &:hover{
+            background-color: white;
+            color: black;
+        }
     }
 }
