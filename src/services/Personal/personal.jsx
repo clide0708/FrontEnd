@@ -1,5 +1,11 @@
 import api from "../api";
 
+// Obter usuário do localStorage
+const getUsuario = () => {
+  const usuarioStr = localStorage.getItem('usuario');
+  return usuarioStr ? JSON.parse(usuarioStr) : null;
+};
+
 const personalService = {
   // pega todos os treinos do personal
   async getTreinosPersonal(idPersonal) {
@@ -23,11 +29,17 @@ const personalService = {
     }
   },
 
-  // pega treinos atribuídos de um aluno específico
+  // pega treinos atribuídos de um aluno específico - CORRIGIDO
   async getTreinosAluno(idAluno) {
     try {
-      const response = await api.get(`/treinos/aluno/personal/${idAluno}`);
-      return response.data.treinosAtribuidos || [];
+      const usuario = getUsuario();
+      if (!usuario) {
+        console.error("Usuário não encontrado no localStorage");
+        return [];
+      }
+      
+      const response = await api.get(`/treinos/personal/${usuario.id}/aluno/${idAluno}`);
+      return response.data.treinos || [];
     } catch (error) {
       console.error("Erro ao buscar treinos do aluno:", error);
       return [];
@@ -50,10 +62,7 @@ const personalService = {
 
   async desatribuirTreino(idTreino) {
     try {
-      const response = await api.put(
-        `/treinos/excluir/${idTreino}`
-      );
-
+      const response = await api.put(`/treinos/excluir/${idTreino}`);
       return response.data;
     } catch (error) {
       console.error("Erro ao desatribuir treino:", error);
@@ -64,7 +73,7 @@ const personalService = {
   // cria um treino novo
   async addTreino(dadosTreino) {
     try {
-      const response = await api.post("/treinos", dadosTreino);
+      const response = await api.post("/treinos/criar", dadosTreino);
       return response.data;
     } catch (error) {
       console.error("Erro ao adicionar treino:", error);
@@ -75,7 +84,7 @@ const personalService = {
   // edita um treino existente
   async updateTreino(idTreino, dadosTreino) {
     try {
-      const response = await api.put(`/treinos/${idTreino}`, dadosTreino);
+      const response = await api.put(`/treinos/atualizar/${idTreino}`, dadosTreino);
       return response.data;
     } catch (error) {
       console.error("Erro ao atualizar treino:", error);
@@ -86,7 +95,7 @@ const personalService = {
   // deleta um treino
   async deleteTreino(idTreino) {
     try {
-      const response = await api.delete(`/treinos/${idTreino}`);
+      const response = await api.delete(`/treinos/excluir/${idTreino}`);
       return response.data;
     } catch (error) {
       console.error("Erro ao deletar treino:", error);
@@ -103,7 +112,6 @@ const personalService = {
       throw err;
     }
   },
-
 };
 
 export default personalService;
