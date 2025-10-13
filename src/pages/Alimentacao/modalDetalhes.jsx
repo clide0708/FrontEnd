@@ -143,6 +143,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
                 value={alimentoDetalhes.calorias || 0}
                 onChange={handleInputChange}
                 disabled={loading}
+                readOnly
               />
               <span className="input-label">kcal</span>
             </div>
@@ -154,6 +155,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
                 value={alimentoDetalhes.proteinas || 0}
                 onChange={handleInputChange}
                 disabled={loading}
+                readOnly
               />
               <span className="input-label">gramas</span>
             </div>
@@ -165,6 +167,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
                 value={alimentoDetalhes.carboidratos || 0}
                 onChange={handleInputChange}
                 disabled={loading}
+                readOnly
               />
               <span className="input-label">gramas</span>
             </div>
@@ -176,6 +179,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
                 value={alimentoDetalhes.gorduras || 0}
                 onChange={handleInputChange}
                 disabled={loading}
+                readOnly
               />
               <span className="input-label">gramas</span>
             </div>
@@ -191,7 +195,7 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
               onClick={handleDelete}
               disabled={loading}
             >
-              'Remover'
+              Remover
             </button>
           </div>
         </div>
