@@ -6,6 +6,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
   const [sugestoes, setSugestoes] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [dropdownAberto, setDropdownAberto] = useState(false);
+  const [buscaRealizada, setBuscaRealizada] = useState(false);
   const containerRef = useRef(null);
 
   // Fecha dropdown se clicar fora
@@ -23,12 +24,13 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
   const handleBuscar = async () => {
     if (termo.length < 2) {
       setSugestoes([]);
+      setBuscaRealizada(false); // Reseta o estado
       alert("Digite pelo menos 2 caracteres para buscar");
       return;
     }
 
     setCarregando(true);
-    setDropdownAberto(true);
+    setBuscaRealizada(false); // Reseta antes da nova busca
 
     try {
       console.log("🔍 Buscando alimentos:", termo);
@@ -36,14 +38,20 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
       
       if (data.success && data.resultados) {
         setSugestoes(data.resultados);
+        setDropdownAberto(true); // Abre o dropdown apenas quando tem resultados
+        setBuscaRealizada(true); // Marca que a busca foi realizada
         console.log(`✅ ${data.resultados.length} sugestões encontradas`);
       } else {
         setSugestoes([]);
+        setDropdownAberto(true); // Abre o dropdown mesmo sem resultados
+        setBuscaRealizada(true); // Marca que a busca foi realizada
         console.log("❌ Nenhuma sugestão encontrada");
       }
     } catch (error) {
       console.error("❌ Erro ao buscar sugestões:", error);
       setSugestoes([]);
+      setDropdownAberto(true); // Abre o dropdown para mostrar erro
+      setBuscaRealizada(true); // Marca que a busca foi realizada
     } finally {
       setCarregando(false);
     }
@@ -64,6 +72,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
     setDropdownAberto(false);
     setTermo("");
     setSugestoes([]);
+    setBuscaRealizada(false); // Reseta o estado após seleção
   };
 
   return (
@@ -75,7 +84,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
           value={termo}
           onChange={(e) => setTermo(e.target.value)}
           onKeyPress={handleKeyPress}
-          onFocus={() => setDropdownAberto(true)}
+          // Remove o onFocus que abria o dropdown automaticamente
           style={{ flex: 1 }}
         />
         
@@ -101,8 +110,8 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
         </button>
       </div>
 
-      {/* Dropdown de sugestões */}
-      {dropdownAberto && (
+      {/* Dropdown de sugestões - APENAS quando busca foi realizada */}
+      {dropdownAberto && buscaRealizada && (
         <div className="sugestao-container">
           {carregando ? (
             <div className="sugestao-item" style={{ color: '#888', textAlign: 'center' }}>
@@ -134,13 +143,9 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
                 </div>
               </div>
             ))
-          ) : termo.length >= 2 ? (
-            <div className="sugestao-item" style={{ color: '#888', textAlign: 'center' }}>
-              Nenhum alimento encontrado para "{termo}"
-            </div>
           ) : (
             <div className="sugestao-item" style={{ color: '#888', textAlign: 'center' }}>
-              Digite pelo menos 2 caracteres e clique em Buscar
+              Nenhum alimento encontrado para "{termo}"
             </div>
           )}
         </div>

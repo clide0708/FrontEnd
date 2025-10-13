@@ -265,10 +265,16 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
     "especifico"
   );
 
-  const voltarParaSelecao = () => {
-    setModo("selecao");
-    setIdRefeicaoAtual(null);
-    setItensAdicionados([]);
+  // const voltarParaSelecao = () => {
+  //   setModo("selecao");
+  //   setIdRefeicaoAtual(null);
+  //   setItensAdicionados([]);
+  // };
+
+  const voltarParaRefeicao = () => {
+    fechar(); // Fecha o modal
+    // Não precisa resetar os estados pois o modal será fechado
+    // e quando reabrir, os estados serão reinicializados
   };
 
   const nomeExibicao = modoCriacao ? 'Adicionar Refeição' : mapearNomeRefeicao(currentMealList);
@@ -287,7 +293,7 @@ export default function ModalAdd({ fechar, currentMealList, abrirModalDetalhes, 
           {/* Botão voltar quando não está no modo seleção */}
           {modo !== "selecao" && (
             <button 
-              onClick={voltarParaSelecao}
+              onClick={voltarParaRefeicao}
               style={{
                 background: 'transparent',
                 color: '#368dd9',
