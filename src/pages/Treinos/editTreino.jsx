@@ -20,6 +20,7 @@ export default function EditarTreino({
   const [selectedExercicio, setSelectedExercicio] = useState(null);
   const [editExercicioTemp, setEditExercicioTemp] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isReadOnly = abaAtiva === "Personal";
 
@@ -27,71 +28,58 @@ export default function EditarTreino({
   useEffect(() => {
     const fetchExerciciosDoTreino = async () => {
       if (!treino || !treino.idTreino) return;
+      
       try {
-        const res = await exerciciosService.buscarExerciciosDoTreino(
-          treino.idTreino
-        );
-
-        // No useEffect que busca exercícios, atualize o mapeamento:
-        const exerciciosFormatados = Array.isArray(res)
-        ? res.map((ex) => {
-            const isExercicioNormal = ex.idExercicio !== null;
-
-            return {
-              id: ex.idTreino_Exercicio,
-              idExercicio: ex.idExercicio,
-              idExercAdaptado: ex.idExercAdaptado,
-              nome: isExercicioNormal
-                ? ex.nomeExercicio
-                : ex.nomeExercAdaptado,
-              descricao: isExercicioNormal
-                ? ex.descricaoExercicio
-                : ex.descricaoExercAdaptado,
-              grupoMuscular: isExercicioNormal
-                ? ex.grupoMuscularExercicio
-                : ex.grupoMuscularExercAdaptado,
-              series: ex.series || 0,
-              repeticoes: ex.repeticoes || 0,
-              carga: ex.carga || 0, // ← MANTER como 'carga' para consistência
-              descanso: ex.descanso || 0,
-              ordem: ex.ordem || 0,
-              url: ex.video_url,
-              informacoes: [
-                ex.observacoes,
-                isExercicioNormal
-                  ? ex.descricaoExercicio
-                  : ex.descricaoExercAdaptado,
-                ex.comoExecutar,
-              ]
-                .filter(Boolean)
-                .join(" - "),
-              _rawData: ex,
-            };
-          })
-        : [];
+        setLoading(true);
+        console.log("Buscando exercícios do treino:", treino.idTreino);
+        
+        const res = await exerciciosService.buscarExerciciosDoTreino(treino.idTreino);
+        console.log("Exercícios retornados da API:", res);
+        
+        // CORREÇÃO: Garantir que os vídeos estejam incluídos
+        const exerciciosFormatados = Array.isArray(res) ? res.map(ex => ({
+          ...ex,
+          // Garantir que a URL do vídeo esteja disponível
+          url: ex.video_url || ex.url || "",
+          // Garantir que as propriedades necessárias para o treinando.jsx existam
+          series: ex.series || 0,
+          repeticoes: ex.repeticoes || 0,
+          descanso: ex.descanso || 0,
+          carga: ex.carga || 0,
+          grupo: ex.grupoMuscular || "",
+          informacoes: ex.descricao || ex.informacoes || "",
+        })) : [];
+        
+        console.log("Exercícios formatados com vídeos:", exerciciosFormatados);
 
         setCurrentTreino((prev) => ({
           ...prev,
           exercicios: exerciciosFormatados,
+          tipo_treino: treino.tipo_treino || 'normal'
         }));
 
         if (exerciciosFormatados.length > 0) {
           setSelectedExercicio(exerciciosFormatados[0]);
           setEditExercicioTemp(exerciciosFormatados[0]);
+        } else {
+          setSelectedExercicio(null);
+          setEditExercicioTemp(null);
         }
       } catch (err) {
         console.error("Erro ao buscar exercícios do treino", err);
         setCurrentTreino((prev) => ({ ...prev, exercicios: [] }));
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchExerciciosDoTreino();
   }, [treino]);
 
+
   // Quando seleciona outro exercício
   const handleSelectExercicio = (ex) => {
     setSelectedExercicio(ex);
-    // reinicia edição temporária
     setEditExercicioTemp(ex);
   };
 
@@ -127,82 +115,71 @@ export default function EditarTreino({
     }
   };
 
-  // Adicionar exercício
+  // Adicionar exercício - CORREÇÃO
   const handleAddExercicio = async (novoEx) => {
     if (!treino?.idTreino) return;
 
     try {
+      console.log("Adicionando exercício:", novoEx);
+      
       const resultado = await exerciciosService.adicionarExercicioAoTreino(
         treino.idTreino,
-        {
-          idExercicio: novoEx.idExercicio || novoEx.id,
-          series: novoEx.series || 3,
-          repeticoes: novoEx.repeticoes || 10,
-          carga: novoEx.carga || 0, // ← MUDAR de 'peso' para 'carga'
-          descanso: novoEx.descanso || 0,
-          ordem: novoEx.ordem || 0,
-          observacoes: novoEx.informacoes || "",
-        }
+        novoEx
       );
 
-      if (resultado.success !== false) {
-        // busca tudo de novo do backend pra atualizar corretamente
-        const exerciciosAtualizados =
-          await exerciciosService.buscarExerciciosDoTreino(treino.idTreino);
+      console.log("Resultado da adição:", resultado);
 
-        const exerciciosFormatados = Array.isArray(exerciciosAtualizados)
-          ? exerciciosAtualizados.map((ex) => {
-              const isExercicioNormal = ex.idExercicio !== null;
-              return {
-                id: ex.idTreino_Exercicio,
-                idExercicio: ex.idExercicio,
-                idExercAdaptado: ex.idExercAdaptado,
-                nome: isExercicioNormal
-                  ? ex.nomeExercicio
-                  : ex.nomeExercAdaptado,
-                descricao: isExercicioNormal
-                  ? ex.descricaoExercicio
-                  : ex.descricaoExercAdaptado,
-                grupoMuscular: isExercicioNormal
-                  ? ex.grupoMuscularExercicio
-                  : ex.grupoMuscularExercAdaptado,
-                series: ex.series || 0,
-                repeticoes: ex.repeticoes || 0,
-                peso: ex.carga || 0,
-                descanso: ex.descanso || 0,
-                url: ex.video_url,
-                informacoes: [
-                  ex.observacoes,
-                  isExercicioNormal
-                    ? ex.descricaoExercicio
-                    : ex.descricaoExercAdaptado,
-                  ex.comoExecutar,
-                ]
-                  .filter(Boolean)
-                  .join(" - "),
-                _rawData: ex,
-              };
-            })
-          : [];
+      if (resultado.success !== false) {
+        // CORREÇÃO: Buscar exercícios atualizados do backend
+        const exerciciosAtualizados = await exerciciosService.buscarExerciciosDoTreino(treino.idTreino);
+        console.log("Exercícios atualizados:", exerciciosAtualizados);
 
         setCurrentTreino((prev) => ({
           ...prev,
-          exercicios: exerciciosFormatados,
+          exercicios: Array.isArray(exerciciosAtualizados) ? exerciciosAtualizados : [],
         }));
 
-        if (exerciciosFormatados.length > 0) {
-          setSelectedExercicio(
-            exerciciosFormatados[exerciciosFormatados.length - 1]
-          );
-          setEditExercicioTemp(
-            exerciciosFormatados[exerciciosFormatados.length - 1]
-          );
+        if (exerciciosAtualizados.length > 0) {
+          const ultimoExercicio = exerciciosAtualizados[exerciciosAtualizados.length - 1];
+          setSelectedExercicio(ultimoExercicio);
+          setEditExercicioTemp(ultimoExercicio);
         }
+        
+        // Fechar modal de adicionar
+        setShowAdd(false);
+      } else {
+        alert("Erro ao adicionar exercício: " + (resultado.error || "Erro desconhecido"));
       }
     } catch (err) {
       console.error("Erro ao adicionar exercício:", err);
-      alert("Erro ao adicionar exercício");
+      alert("Erro ao adicionar exercício: " + err.message);
     }
+  };
+
+  const handleIniciarTreino = () => {
+    if (currentTreino.exercicios.length === 0) return;
+    
+    // CORREÇÃO: Garantir que todos os dados necessários estejam presentes
+    const treinoParaExecutar = {
+      ...currentTreino,
+      exercicios: currentTreino.exercicios.map(ex => ({
+        ...ex,
+        id: ex.id || ex.idTreino_Exercicio,
+        series: ex.series || 3,
+        repeticoes: ex.repeticoes || 10,
+        descanso: ex.descanso || 60,
+        carga: ex.carga || 0,
+        url: ex.video_url || ex.url || "",
+        grupo: ex.grupoMuscular || ex.grupo || "",
+        informacoes: ex.descricao || ex.informacoes || "",
+      }))
+    };
+    
+    console.log("Treino para executar:", treinoParaExecutar);
+    
+    navigate("/treinando", {
+      state: { treino: treinoParaExecutar },
+    });
   };
 
   // Salvar todos os exercícios temporários
@@ -216,7 +193,7 @@ export default function EditarTreino({
           {
             series: editExercicioTemp.series,
             repeticoes: editExercicioTemp.repeticoes,
-            carga: editExercicioTemp.carga, // ← MUDAR para 'carga'
+            carga: editExercicioTemp.carga,
             descanso: editExercicioTemp.descanso,
             ordem: editExercicioTemp.ordem || 0,
           }
@@ -230,7 +207,7 @@ export default function EditarTreino({
                   ...item,
                   series: editExercicioTemp.series,
                   repeticoes: editExercicioTemp.repeticoes,
-                  carga: editExercicioTemp.carga, // ← MUDAR para 'carga'
+                  carga: editExercicioTemp.carga,
                   descanso: editExercicioTemp.descanso,
                   ordem: editExercicioTemp.ordem || 0,
                 }
@@ -250,8 +227,15 @@ export default function EditarTreino({
     <div className="editar-treino-container">
       <div className="btnhd">
         <button onClick={onVoltar}>← Voltar</button>
-        <h2>{currentTreino.nome}</h2>
+        <h2>
+          {currentTreino.nome}
+          {currentTreino.tipo_treino === 'adaptado' && (
+            <span className="badge-adaptado">Adaptado</span>
+          )}
+        </h2>
       </div>
+
+      {loading && <div>Carregando exercícios...</div>}
 
       <div className="headertrn">
         <h3
@@ -304,9 +288,9 @@ export default function EditarTreino({
                 <input
                   type="number"
                   step="0.01"
-                  value={editExercicioTemp.carga || 0} // ← MUDAR de 'peso' para 'carga'
+                  value={editExercicioTemp.carga || 0}
                   onChange={(e) =>
-                    handleEditChange("carga", parseFloat(e.target.value) || 0) // ← MUDAR aqui também
+                    handleEditChange("carga", parseFloat(e.target.value) || 0)
                   }
                   disabled={isReadOnly}
                 />
@@ -325,9 +309,9 @@ export default function EditarTreino({
               {editExercicioTemp.informacoes && (
                 <p>Informações: {editExercicioTemp.informacoes}</p>
               )}
-              {editExercicioTemp.url && (
+              {editExercicioTemp.video_url && (
                 <a
-                  href={editExercicioTemp.url}
+                  href={editExercicioTemp.video_url}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -362,6 +346,7 @@ export default function EditarTreino({
                 onClick={() => handleSelectExercicio(ex)}
               >
                 {ex.nome}
+                {ex.tipo_exercicio === 'adaptado' && ' [Adaptado]'}
                 {!isReadOnly && (
                   <button
                     className="dltaex"
@@ -386,12 +371,7 @@ export default function EditarTreino({
             <div className="bttcmc">
               {!hideIniciar && currentTreino.exercicios.length > 0 && (
                 <button
-                  onClick={() => {
-                    if (currentTreino.exercicios.length === 0) return;
-                    navigate("/treinando", {
-                      state: { treino: currentTreino },
-                    });
-                  }}
+                  onClick={handleIniciarTreino}
                   disabled={currentTreino.exercicios.length === 0}
                   style={{
                     opacity: currentTreino.exercicios.length === 0 ? 0.5 : 1,
@@ -413,6 +393,7 @@ export default function EditarTreino({
         <AddExercicio
           onAdd={handleAddExercicio}
           onClose={() => setShowAdd(false)}
+          tipoTreino={currentTreino.tipo_treino || 'normal'}
         />
       )}
     </div>

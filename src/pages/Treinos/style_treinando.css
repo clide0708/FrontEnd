@@ -1,0 +1,439 @@
+/* Container principal do treino */
+.adjustfoda {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.barra-progresso {
+  width: 100% !important;
+  max-width: 1200px;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 0 auto 20px auto;
+}
+
+.treinando {
+  display: flex;
+  gap: 20px;
+  min-height: 80vh;
+}
+
+/* Lista de exercícios */
+#lista-exercicios {
+  width: 300px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.exnm {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+#lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ex-item {
+  padding: 12px 15px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ex-item:hover {
+  border-color: #368dd9;
+  transform: translateY(-2px);
+}
+
+.ex-item.active {
+  background: #368dd9;
+  color: white;
+  border-color: #368dd9;
+}
+
+.ex-item.concluido {
+  opacity: 0.6;
+  background: #e9ecef;
+}
+
+.video-indicator {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.ext {
+  width: 100%;
+  padding: 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.ext:hover {
+  background: #c82333;
+}
+
+/* Conteúdo principal */
+#conteudo {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  min-height: 600px;
+}
+
+/* View de execução */
+#view-execucao {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f3f4;
+}
+
+#ex-nome, #descanso-titulo {
+  margin: 0;
+  color: #333;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+.series {
+  background: #368dd9;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+/* Container de vídeo - CORREÇÃO PRINCIPAL */
+#video-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 30px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  min-height: 350px;
+}
+
+
+
+#ex-cover:hover {
+  opacity: 0.9;
+}
+
+#playerex {
+  width: 100%;
+  height: 450px;
+  border: none;
+}
+
+.no-video-message {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+/* Informações do exercício */
+.infos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.controls {
+  flex: 1;
+}
+
+.reps {
+  flex: 2;
+  text-align: center;
+}
+
+.reps strong {
+  font-size: 2.5em;
+  color: #368dd9;
+  display: block;
+}
+
+.reps span {
+  font-size: 3em;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.reps h1 {
+  margin: 5px 0 0 0;
+  font-size: 1.2em;
+  color: #666;
+  font-weight: normal;
+}
+
+.peso {
+  flex: 1;
+  text-align: center;
+  font-size: 1.3em;
+  color: #333;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.btn-voltar {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-voltar:hover {
+  background: #5a6268;
+}
+
+.btn-avancar {
+  background: #28a745;
+  color: white;
+}
+
+.btn-avancar:hover {
+  background: #218838;
+}
+
+/* View de descanso */
+#view-descanso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px 0;
+}
+
+.descansano {
+  text-align: center;
+  max-width: 500px;
+}
+
+.circulozin {
+  margin: 30px 0;
+}
+
+.timer-wrapper {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(90deg);
+  transform-origin: 50% 50%;
+}
+
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  font-weight: bold;
+  color: #368dd9;
+}
+
+#btnAdd10 {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+#btnAdd10:hover {
+  background: #5a6268;
+}
+
+.btns {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.small-muted {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.btnplr {
+  padding: 12px 30px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.btnplr:hover {
+  background: #218838;
+}
+
+.btnvtl {
+  padding: 12px 30px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.btnvtl:hover {
+  background: #5a6268;
+}
+
+/* View finalizado */
+#view-finalizado {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+#view-finalizado h2 {
+  color: #28a745;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+#view-finalizado p {
+  color: #666;
+  font-size: 1.2em;
+}
+
+/* Informações adicionais do exercício */
+.exercicio-info {
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border-left: 5px solid #368dd9;
+}
+
+.exercicio-info h4 {
+  margin: 0 0 12px 0;
+  color: #368dd9;
+  font-size: 1.2em;
+}
+
+.exercicio-info p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 1em;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .treinando {
+    flex-direction: column;
+  }
+  
+  #lista-exercicios {
+    width: 100%;
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  #video-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .adjustfoda {
+    padding: 10px;
+  }
+  
+  .infos {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .controls, .reps, .peso {
+    flex: none;
+  }
+  
+  #ex-cover, #playerex {
+    height: 300px;
+  }
+  
+  .timer-wrapper {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .timer-text {
+    font-size: 2.5em;
+  }
+}

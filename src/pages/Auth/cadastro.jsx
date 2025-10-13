@@ -183,7 +183,7 @@ export default function CadastroPage() {
     <div className="cadastroCC">
       <div className="cntrcds">
         <div className="topppp-global">
-          <h2>ClideFit</h2>
+          <h2>CLIDE Fit</h2>
         </div>
         <div className="cad-container">
           <h2>Cadastro</h2>

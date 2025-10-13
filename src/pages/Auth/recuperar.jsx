@@ -78,7 +78,7 @@ export default function RecuperarSenha() {
     <div className="recuperarCC">
       <div className="cntrcds">
         <div className="topppp-global">
-          <h2>ClideFit</h2>
+          <h2>CLIDE Fit</h2>
         </div>
         <div className="rs-container-main">
           <h2 className="rs-title">Esqueci minha senha</h2>

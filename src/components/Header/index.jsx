@@ -54,7 +54,7 @@ export default function Header() {
         <div className="nav-bar">
           <h1>
             <Link className="nav-CF" to="/home">
-              ClideFit
+              CLIDE Fit
             </Link>
           </h1>
 

@@ -986,7 +986,7 @@ a:hover {
 
 #video-container {
   position: relative;
-  width: 100%;
+  width: 88%;
   padding-bottom: 56.25%;
   height: 0;
 }
@@ -1636,4 +1636,262 @@ a:hover {
     font-size: 1.3em;
     font-weight: bold;
   }
+}
+
+
+
+
+
+
+
+
+/* Abas de exercícios */
+.abas-exercicios {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.aba {
+  flex: 1;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.aba.active {
+  border-bottom-color: #368dd9;
+  color: #368dd9;
+  font-weight: bold;
+}
+
+.aba.cadastrar {
+  flex: 0 0 auto;
+  background: #28a745;
+  color: white;
+  border-radius: 4px;
+  margin-left: 10px;
+  border: none;
+}
+
+.aba.cadastrar:hover {
+  background: #218838;
+}
+
+/* Descrição do exercício */
+.descricao-exercicio {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  border-left: 4px solid #368dd9;
+}
+
+.descricao-exercicio p {
+  margin: 8px 0 0 0;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Configurações do treino */
+.configuracoes-treino {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  margin: 15px 0;
+}
+
+.configuracoes-treino h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.linha-configuracoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.iptex {
+  display: flex;
+  flex-direction: column;
+}
+
+.iptex label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+.iptex input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.iptex input:focus {
+  border-color: #368dd9;
+  outline: none;
+}
+
+/* Informações de vídeo */
+.video-info {
+  background: #e7f3ff;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  border-left: 4px solid #368dd9;
+}
+
+/* Botão cadastrar exercício */
+.btn-cadastrar-exercicio {
+  transition: all 0.3s ease;
+}
+
+.btn-cadastrar-exercicio:hover {
+  background: #2b7bb9 !important;
+  transform: translateY(-1px);
+}
+
+/* Estados de desabilitado */
+.btns-add-ex button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .linha-configuracoes {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .abas-exercicios {
+    flex-direction: column;
+  }
+  
+  .aba.cadastrar {
+    margin: 10px 0 0 0;
+  }
+}
+
+/* Indicador de exercício pessoal */
+.exercicio-pessoal {
+  position: relative;
+}
+
+.exercicio-pessoal::after {
+  content: "Meu";
+  background: #368dd9;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* Mensagens de informação */
+.info-message {
+  background: #e7f3ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.info-message.warning {
+  background: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+/* Destaque para treinos adaptados */
+.treino-adaptado {
+  border-left: 4px solid #28a745 !important;
+}
+
+.treino-adaptado .badge-adaptado {
+  background: #28a745;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+
+
+
+
+
+
+
+/* Indicador de vídeo na lista */
+.video-indicator {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+/* Mensagem quando não há vídeo */
+.no-video-message {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Informações do exercício */
+.exercicio-info {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #368dd9;
+}
+
+.exercicio-info h4 {
+  margin: 0 0 8px 0;
+  color: #368dd9;
+}
+
+.exercicio-info p {
+  margin: 0;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Container de vídeo */
+#video-container {
+  position: relative;
+  margin: 20px 0;
+}
+
+#ex-cover {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Estado dos itens da lista */
+.ex-item.concluido {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.ex-item.active {
+  background-color: #368dd9;
+  color: white;
 }

@@ -12,45 +12,64 @@ export default function Treino() {
   }
 
   function getYoutubeThumbnail(url) {
+    if (!url) return "https://via.placeholder.com/300x200?text=Sem+Vídeo";
+    
     try {
       const u = new URL(url);
       let id = "";
       if (u.hostname.includes("youtube.com"))
         id = u.searchParams.get("v") || "";
       else if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
-      if (!id) return "https://via.placeholder.com/300x200";
+      if (!id) return "https://via.placeholder.com/300x200?text=Sem+Vídeo";
       return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
     } catch (e) {
-      return "https://via.placeholder.com/300x200";
+      return "https://via.placeholder.com/300x200?text=Sem+Vídeo";
     }
   }
 
-  const [exercicios, setExercicios] = useState(
-    treino.exercicios.map((e) => ({
+  function getYoutubeId(url) {
+    if (!url) return "";
+    
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes("youtube.com"))
+        return u.searchParams.get("v") || "";
+      if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
+    } catch (e) {
+      console.error("Erro ao extrair ID do YouTube:", e);
+    }
+    return "";
+  }
+
+  // CORREÇÃO: Inicialização melhorada dos exercícios
+  const [exercicios, setExercicios] = useState(() => {
+    return treino.exercicios.map((e) => ({
       ...e,
-      id: parseInt(e.id),
-      num_series: parseInt(e.series) || 1,
-      num_repeticoes: parseInt(e.repeticoes) || 0,
-      tempo_descanso: parseInt(e.descanso) || 0,
-      peso: parseInt(e.peso) || 0,
+      id: parseInt(e.id) || parseInt(e.idTreino_Exercicio) || 0,
+      num_series: parseInt(e.series) || 3,
+      num_repeticoes: parseInt(e.repeticoes) || 10,
+      tempo_descanso: parseInt(e.descanso) || 60,
+      peso: parseInt(e.carga) || 0, // CORREÇÃO: usar 'carga' em vez de 'peso'
       concluido: false,
-      cover: e.url
-        ? getYoutubeThumbnail(e.url)
-        : e.cover || "https://via.placeholder.com/300x200",
-      url: e.url || "",
-      informacoes: e.informacoes || "",
-      grupo: e.grupo || "",
-    }))
-  );
+      // CORREÇÃO: Garantir que a URL do vídeo seja usada corretamente
+      url: e.video_url || e.url || "",
+      cover: getYoutubeThumbnail(e.video_url || e.url),
+      informacoes: e.descricao || e.informacoes || "",
+      grupo: e.grupoMuscular || e.grupo || "",
+      nome: e.nome || "Exercício sem nome",
+    }));
+  });
 
   const [exIndex, setExIndex] = useState(0);
   const [serieAtual, setSerieAtual] = useState(1);
   const [estado, setEstado] = useState("execucao");
   const [timerRemaining, setTimerRemaining] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
+  const [showVideo, setShowVideo] = useState(false);
 
   const timerRef = useRef(null);
   const circleRef = useRef(null);
+  const videoContainerRef = useRef(null);
 
   const ex = exercicios[exIndex] || {};
 
@@ -72,6 +91,7 @@ export default function Treino() {
       setEstado("execucao");
       setTimerRemaining(0);
       setTotalTime(0);
+      setShowVideo(false); // Resetar vídeo ao avançar
     } else {
       novosExercicios[exIndex].concluido = true;
       setExercicios(novosExercicios);
@@ -83,6 +103,7 @@ export default function Treino() {
         setEstado("execucao");
         setTimerRemaining(0);
         setTotalTime(0);
+        setShowVideo(false); // Resetar vídeo ao mudar exercício
       } else {
         setEstado("finalizado");
         setTimeout(() => navigate("/treinos", { replace: true }), 1500);
@@ -126,7 +147,6 @@ export default function Treino() {
     const circumference = 2 * Math.PI * radius;
     circleRef.current.style.strokeDasharray = circumference;
 
-    // essa merda não vai pra sentido horário
     const percent = totalTime ? timerRemaining / totalTime : 0;
     circleRef.current.style.strokeDashoffset = circumference * (1 - percent);
   }, [timerRemaining, totalTime]);
@@ -134,6 +154,7 @@ export default function Treino() {
   useEffect(() => {
     setTimerRemaining(0);
     setTotalTime(0);
+    setShowVideo(false); // Resetar vídeo ao mudar exercício
   }, [exIndex]);
 
   function formatTime(sec) {
@@ -154,6 +175,7 @@ export default function Treino() {
     if (estado === "descanso") {
       clearInterval(timerRef.current);
       setEstado("execucao");
+      setShowVideo(false); // Esconder vídeo ao voltar
       return;
     }
     if (estado === "execucao") {
@@ -162,18 +184,22 @@ export default function Treino() {
         setExIndex((prev) => prev - 1);
         setSerieAtual(exercicios[exIndex - 1].num_series || 1);
       }
+      setShowVideo(false); // Esconder vídeo ao voltar
     }
   }
 
-  function getYoutubeId(url) {
-    try {
-      const u = new URL(url);
-      if (u.hostname.includes("youtube.com"))
-        return u.searchParams.get("v") || "";
-      if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-    } catch (e) {}
-    return "";
-  }
+  // CORREÇÃO: Função para lidar com o clique no vídeo
+  const handleVideoClick = () => {
+    const youtubeId = getYoutubeId(ex.url);
+    console.log("YouTube ID:", youtubeId, "URL:", ex.url);
+    
+    if (!youtubeId) {
+      console.log("Nenhum vídeo disponível para este exercício");
+      return;
+    }
+
+    setShowVideo(true);
+  };
 
   const renderDescanso = () => {
     if (!ex.tempo_descanso || ex.tempo_descanso <= 0) return null;
@@ -213,8 +239,7 @@ export default function Treino() {
           </div>
           <div className="btns">
             <div className="small-muted" id="descanso-info">
-              Série {serieAtual} / {ex.num_series} • {ex.tempo_descanso}s de
-              descanso
+              Série {serieAtual} / {ex.num_series} • {ex.tempo_descanso}s de descanso
             </div>
             <button className="btnplr" onClick={handleAvancar}>
               Avançar
@@ -259,9 +284,11 @@ export default function Treino() {
                   setExIndex(i);
                   setSerieAtual(1);
                   setEstado("execucao");
+                  setShowVideo(false);
                 }}
               >
                 <strong>{e.nome}</strong>
+                {e.url && <span className="video-indicator">🎥</span>}
               </div>
             ))}
           </div>
@@ -285,27 +312,37 @@ export default function Treino() {
                 </div>
               </div>
 
-              <div id="video-container">
-                <img
-                  id="ex-cover"
-                  src={ex.cover}
-                  alt="Capa do exercício"
-                  onClick={() => {
-                    const id = getYoutubeId(ex.url);
-                    if (!id) return;
-                    const container =
-                      document.getElementById("video-container");
-                    if (!document.getElementById("playerex")) {
-                      const iframe = document.createElement("iframe");
-                      iframe.id = "playerex";
-                      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-                      iframe.frameBorder = "0";
-                      iframe.allow = "autoplay; encrypted-media";
-                      iframe.allowFullscreen = true;
-                      container.appendChild(iframe);
-                    }
-                  }}
-                />
+              <div id="video-container" ref={videoContainerRef}>
+                {showVideo ? (
+                  <iframe
+                    id="playerex"
+                    src={`https://www.youtube.com/embed/${getYoutubeId(ex.url)}?autoplay=1`}
+                    frameBorder="0"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    style={{
+                      width: "100%",
+                      height: "400px",
+                      borderRadius: "8px"
+                    }}
+                  ></iframe>
+                ) : (
+                  <img
+                    id="ex-cover"
+                    src={ex.cover}
+                    alt="Capa do exercício"
+                    onClick={handleVideoClick}
+                    style={{
+                      cursor: ex.url ? "pointer" : "default",
+                      opacity: ex.url ? 1 : 0.7
+                    }}
+                  />
+                )}
+                {!ex.url && (
+                  <div className="no-video-message">
+                    Nenhum vídeo disponível para este exercício
+                  </div>
+                )}
               </div>
 
               <div className="infos">
@@ -337,6 +374,13 @@ export default function Treino() {
                   </button>
                 </div>
               </div>
+
+              {ex.informacoes && (
+                <div className="exercicio-info">
+                  <h4>Informações:</h4>
+                  <p>{ex.informacoes}</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -345,6 +389,7 @@ export default function Treino() {
           {estado === "finalizado" && (
             <div id="view-finalizado">
               <h2>Treino finalizado!</h2>
+              <p>Parabéns por completar o treino!</p>
             </div>
           )}
         </div>

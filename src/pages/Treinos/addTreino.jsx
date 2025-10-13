@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 export default function ModalAddTreino({ onClose, onSave, treino }) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [tipo, setTipo] = useState("Musculação"); // valor padrão
+  const [tipo, setTipo] = useState("Musculação");
+  const [tipoTreino, setTipoTreino] = useState("normal"); // normal ou adaptado
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
@@ -12,13 +13,13 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
       setNome(treino.nome || "");
       setDescricao(treino.descricao || "");
       setTipo(treino.tipo || "Musculação");
+      setTipoTreino(treino.tipo_treino || "normal");
     }
   }, [treino]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // valida campos obrigatórios
     if (!nome.trim()) {
       alert("Nome é obrigatório");
       return;
@@ -32,6 +33,7 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
       idTreino: treino ? treino.idTreino : undefined,
       nome: nome.trim(),
       tipo,
+      tipo_treino: tipoTreino,
       descricao: descricao.trim() || null,
       criadoPor: usuario.email,
       idAluno: usuario.tipo === "aluno" ? usuario.id : null,
@@ -39,7 +41,6 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
       exercicios: treino ? treino.exercicios : [],
     };
 
-    // espera salvar antes de fechar
     await onSave(novoTreino);
     onClose();
   };
@@ -60,8 +61,29 @@ export default function ModalAddTreino({ onClose, onSave, treino }) {
             />
           </label>
 
+          {usuario.tipo === 'personal' && (
+            <label className="label-add-treino">
+              Tipo de Treino:
+              <select
+                className="input-add-treino"
+                value={tipoTreino}
+                onChange={(e) => setTipoTreino(e.target.value)}
+                required
+              >
+                <option value="normal">Normal</option>
+                <option value="adaptado">Adaptado</option>
+              </select>
+              <small>
+                {tipoTreino === 'adaptado' 
+                  ? 'Treino para pessoas com necessidades especiais, mobilidade reduzida, etc.'
+                  : 'Treino convencional'
+                }
+              </small>
+            </label>
+          )}
+
           <label className="label-add-treino" style={{ display: "none" }}>
-            Tipo:
+            Modalidade:
             <select
               className="input-add-treino"
               value={tipo}
