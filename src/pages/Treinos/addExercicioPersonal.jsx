@@ -13,7 +13,7 @@ export default function AddExercicioPersonal({ onAdd, onClose, tipoTreino }) {
   const [loading, setLoading] = useState(false);
 
   const gruposMusculares = [
-    "peitoral", "Peito", "Costas", "Ombros", "Bíceps", "Tríceps", 
+    "Peito", "Costas", "Ombros", "Bíceps", "Tríceps", 
     "Antebraço", "Abdomen", "Quadríceps", "Posterior de Coxa",
     "Glúteos", "Panturrilha", "Adutores", "Abductores", "Lombar"
   ];
