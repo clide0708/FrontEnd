@@ -37,7 +37,7 @@ export default function NotificacoesModal({ isOpen, onClose, notificacoes, refre
   };
 
   return (
-    <div className="notification">
+    <div className="notificationCC">
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h2>Notificações</h2>

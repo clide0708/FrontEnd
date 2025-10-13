@@ -21,25 +21,38 @@ function Treinos() {
 
   const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-  const abas = ["Meus Treinos", "MarketPlace"];
-  if (usuario.tipo === "aluno") {
-    abas.splice(1, 0, "Personal");
-  }
+  const getAbas = () => {
+    if (usuario.tipo === "personal") {
+      return ["Meus Treinos", "Treinos Atribuídos", "MarketPlace"];
+    } else {
+      return ["Meus Treinos", "Personal", "MarketPlace"];
+    }
+  }; 
+
+  const abas = getAbas();
 
   const carregarTreinos = async () => {
     try {
-      if (activeTab === "Meus Treinos") {
-        const data = await treinosService.listarMeus();
-        setTreinos((prev) => ({ ...prev, "Meus Treinos": data }));
-      } else if (activeTab === "Personal" && usuario.tipo === "aluno") {
-        const data = await treinosService.listarTreinosPersonalDoAluno();
-        setTreinos((prev) => ({ ...prev, Personal: data || [] }));
-      } else if (activeTab === "MarketPlace") {
-        setTreinos((prev) => ({ ...prev, MarketPlace: [] }));
-      }
+        console.log("Carregando treinos para aba:", activeTab);
+        
+        if (activeTab === "Meus Treinos") {
+            const data = await treinosService.listarMeus();
+            console.log("Meus treinos:", data);
+            setTreinos((prev) => ({ ...prev, "Meus Treinos": data }));
+        } else if (activeTab === "Treinos Atribuídos" && usuario.tipo === "personal") {
+            const data = await treinosService.listarAtribuidos();
+            console.log("Treinos atribuídos:", data);
+            setTreinos((prev) => ({ ...prev, "Treinos Atribuídos": data || [] }));
+        } else if (activeTab === "Personal" && usuario.tipo === "aluno") {
+            const data = await treinosService.listarTreinosPersonalDoAluno();
+            console.log("Treinos do personal (aluno):", data);
+            setTreinos((prev) => ({ ...prev, Personal: data || [] }));
+        } else if (activeTab === "MarketPlace") {
+            setTreinos((prev) => ({ ...prev, MarketPlace: [] }));
+        }
     } catch (err) {
-      console.error("Erro ao carregar treinos:", err);
-      alert("Erro ao carregar treinos");
+        console.error("Erro ao carregar treinos:", err);
+        alert("Erro ao carregar treinos");
     }
   };
 
@@ -85,6 +98,94 @@ function Treinos() {
     }
   };
 
+  const handleDesatribuirTreino = async (idTreino) => {
+    if (!window.confirm("Tem certeza que deseja desatribuir este treino?")) {
+      return;
+    }
+
+    try {
+      await treinosService.desatribuir(idTreino);
+      await carregarTreinos(); // Recarrega a lista
+      alert("Treino desatribuído com sucesso!");
+    } catch (err) {
+      console.error("Erro ao desatribuir treino:", err);
+      alert(err?.response?.data?.error || "Erro ao desatribuir treino");
+    }
+  };
+
+  const renderTreinoCard = (treino) => {
+        const isAbaAtribuidos = activeTab === "Treinos Atribuídos";
+        
+        return (
+            <div
+                key={treino.idTreino}
+                className="treino-card popopoptata"
+                onClick={() => {
+                    setTreinoSelecionado(treino);
+                    setShowEditar(true);
+                }}
+            >
+                <div className="card-actions">
+                    {activeTab === "Meus Treinos" && (
+                        <>
+                            <button
+                                className="edit-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setTreinoEditando(treino);
+                                    setShowModalAdd(true);
+                                }}
+                            >
+                                <FiEdit size={18} />
+                            </button>
+                            <button
+                                className="delete-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTreino(treino.idTreino);
+                                }}
+                            >
+                                <FiTrash2 size={18} />
+                            </button>
+                        </>
+                    )}
+                    
+                    {isAbaAtribuidos && (
+                        <button
+                            className="desatribuir-btn"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDesatribuirTreino(treino.idTreino);
+                            }}
+                            title="Desatribuir treino"
+                        >
+                            <FiUser size={16} />
+                            Desatribuir
+                        </button>
+                    )}
+                </div>
+
+                <h3>{treino.nome}</h3>
+                <p>{treino.descricao}</p>
+                
+                {isAbaAtribuidos && treino.nomeAluno && (
+                    <div className="aluno-info">
+                        <small>
+                            <FiUser size={12} /> Atribuído para: {treino.nomeAluno}
+                        </small>
+                        {treino.emailAluno && (
+                            <small>Email: {treino.emailAluno}</small>
+                        )}
+                    </div>
+                )}
+                
+                {treino.tipo_treino === 'adaptado' && (
+                    <span className="badge-adaptado">Adaptado</span>
+                )}
+            </div>
+        );
+    };
+
   const handleDeleteTreino = async (idTreino) => {
     try {
       await treinosService.deletar(idTreino);
@@ -114,134 +215,105 @@ function Treinos() {
   };
 
   return (
-    <div className="treino treinos-container">
-      <div className="PT1">
-        <h2>{activeTab}</h2>
-        <div className="navlinktn">
-          {abas.map((tab) => (
-            <a
-              key={tab}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleTabClick(tab);
-              }}
-              className={activeTab === tab ? "active" : ""}
-            >
-              {tab}
-            </a>
-          ))}
-        </div>
-        {activeTab === "Meus Treinos" && (
-          <div
-            className={`pflidc fufufa fade-container ${
-              fade ? "fade-in" : "fade-out"
-            }`}
-          >
-            <button
-              onClick={() => {
-                setTreinoEditando(null);
-                setShowModalAdd(true);
-              }}
-            >
-              Criar novo Treino
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className={`PT2 fade-container ${fade ? "fade-in" : "fade-out"}`}>
-        <div className="containertnvw">
-          {treinos[activeTab].length === 0 ? (
-            <h1 className="ntnnnntast">Sem treinos atribuídos</h1>
-          ) : (
-            treinos[activeTab].map((treino) => (
-              <div
-                key={treino.idTreino}
-                className="treino-card popopoptata"
-                onClick={() => {
-                  setTreinoSelecionado(treino);
-                  setShowEditar(true);
-                }}
-              >
-                <div className="card-actions">
-                  {activeTab === "Meus Treinos" && (
-                    <>
-                      <button
-                        className="edit-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setTreinoEditando(treino);
-                          setShowModalAdd(true);
-                        }}
-                      >
-                        <FiEdit size={18} />
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteTreino(treino.idTreino);
-                        }}
-                      >
-                        <FiTrash2 size={18} />
-                      </button>
-                    </>
-                  )}
+        <div className="treino treinos-container">
+            <div className="PT1">
+                <h2>{activeTab}</h2>
+                <div className="navlinktn">
+                    {abas.map((tab) => (
+                        <a
+                            key={tab}
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleTabClick(tab);
+                            }}
+                            className={activeTab === tab ? "active" : ""}
+                        >
+                            {tab}
+                        </a>
+                    ))}
                 </div>
+                {activeTab === "Meus Treinos" && (
+                    <div
+                        className={`pflidc fufufa fade-container ${
+                            fade ? "fade-in" : "fade-out"
+                        }`}
+                    >
+                        <button
+                            onClick={() => {
+                                setTreinoEditando(null);
+                                setShowModalAdd(true);
+                            }}
+                        >
+                            Criar novo Treino
+                        </button>
+                    </div>
+                )}
+            </div>
 
-                <h3>{treino.nome}</h3>
-                <p>{treino.descricao}</p>
-              </div>
-            ))
-          )}
+       {/* SEÇÃO DE LISTAGEM DE TREINOS */}
+            <div className={`PT2 fade-container ${fade ? "fade-in" : "fade-out"}`}>
+                <div className="containertnvw">
+                    {treinos[activeTab].length === 0 ? (
+                        <h1 className="ntnnnntast">
+                            {activeTab === "Treinos Atribuídos" 
+                                ? "Nenhum treino atribuído" 
+                                : activeTab === "Meus Treinos"
+                                ? "Nenhum treino criado"
+                                : activeTab === "Personal"
+                                ? "Nenhum treino atribuído pelo personal"
+                                : "Nenhum treino disponível"}
+                        </h1>
+                    ) : (
+                        treinos[activeTab].map(renderTreinoCard)
+                    )}
+                </div>
+            </div>
+
+            {showModalAdd && activeTab === "Meus Treinos" && (
+                <ModalAddTreino
+                    onClose={() => {
+                        setShowModalAdd(false);
+                        setTreinoEditando(null);
+                    }}
+                    onSave={handleSaveTreino}
+                    treino={treinoEditando}
+                />
+            )}
+
+            {showEditar && treinoSelecionado && (
+                <div
+                    className="modal-overlay"
+                    style={{
+                        height: "100vh",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "flex-start",
+                        paddingTop: "120px",
+                    }}
+                >
+                    <div className="editcontttttent">
+                        <EditarTreino
+                            treino={{
+                                ...treinoSelecionado,
+                                idTreino: treinoSelecionado.idTreino,
+                            }}
+                            abaAtiva={activeTab}
+                            onVoltar={() => {
+                                setShowEditar(false);
+                                setTreinoSelecionado(null);
+                            }}
+                            onSave={handleSaveTreino}
+                            onDelete={() =>
+                                treinoSelecionado &&
+                                handleDeleteTreino(treinoSelecionado.idTreino)
+                            }
+                        />
+                    </div>
+                </div>
+            )}
         </div>
-      </div>
-
-      {showModalAdd && activeTab === "Meus Treinos" && (
-        <ModalAddTreino
-          onClose={() => {
-            setShowModalAdd(false);
-            setTreinoEditando(null);
-          }}
-          onSave={handleSaveTreino}
-          treino={treinoEditando}
-        />
-      )}
-
-      {showEditar && treinoSelecionado && (
-        <div
-          className="modal-overlay"
-          style={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            paddingTop: "120px",
-          }}
-        >
-          <div className="editcontttttent">
-            <EditarTreino
-              treino={{
-                ...treinoSelecionado,
-                idTreino: treinoSelecionado.idTreino,
-              }}
-              abaAtiva={activeTab}
-              onVoltar={() => {
-                setShowEditar(false);
-                setTreinoSelecionado(null);
-              }}
-              onSave={handleSaveTreino}
-              onDelete={() =>
-                treinoSelecionado &&
-                handleDeleteTreino(treinoSelecionado.idTreino)
-              }
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default Treinos;
