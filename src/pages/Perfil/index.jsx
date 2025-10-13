@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import perfilService from "../../services/Perfil/perfil.jsx";
+import perfilService from "../../services/Perfil/perfil";
 import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";

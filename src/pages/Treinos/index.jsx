@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./style.css";
 import EditarTreino from "./editTreino";
 import ModalAddTreino from "./addTreino";
-import treinosService from "../../services/Treinos/treinos.jsx";
+import treinosService from "../../services/Treinos/treinos";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 function Treinos() {
