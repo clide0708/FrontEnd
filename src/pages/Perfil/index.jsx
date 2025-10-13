@@ -6,6 +6,8 @@ import "./style.css";
 import PlanModal from "./modalPlano.jsx";
 import CropModal from "./modalCrop.jsx";
 import { FiLogOut } from "react-icons/fi"; // engrenagemzinha
+import perfilService from "../../services/Perfil/perfil.jsx"; // Já existe
+import { useNavigate } from "react-router-dom"; // Adicione
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -17,6 +19,9 @@ export default function Profile() {
     const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
     return usuario.email || "";
   });
+  const [historico, setHistorico] = useState([]);
+  const [loadingHistorico, setLoadingHistorico] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPerfil = async () => {
@@ -39,6 +44,34 @@ export default function Profile() {
     };
     fetchPerfil();
   }, [email]);
+
+  useEffect(() => {
+    const fetchHistorico = async () => {
+      setLoadingHistorico(true);
+      const data = await perfilService.getHistoricoTreinos();
+      if (data.success) {
+        setHistorico(data.historico || []);
+      }
+      setLoadingHistorico(false);
+    };
+    fetchHistorico();
+  }, []);
+
+  const handleRetomar = async (idSessao) => {
+    const data = await perfilService.retomarTreino(idSessao);
+    if (data.success) {
+      // Navegar para página de treino com estado
+      navigate('/treinando', { 
+        state: { 
+          treino: data.treino, 
+          progresso: data.progresso,
+          idSessao: data.idSessao  // Para salvar progresso ao retomar
+        } 
+      });
+    } else {
+      alert('Erro ao retomar treino');
+    }
+  };
 
   useEffect(() => {
     const fetchPersonal = async () => {
@@ -294,58 +327,38 @@ export default function Profile() {
               )}
             </div>
 
-            {/* TREINOS RECENTES */}
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="clips">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="heading-section">
-                        <h4>Treinos recentes</h4>
+            // Na renderização, adicione a seção abaixo da seção "Treinos recentes"
+            {loadingHistorico ? (
+              <p>Carregando histórico...</p>
+            ) : (
+              <div className="historico-section">
+                <h4>Histórico de Treinos (Último Mês)</h4>
+                {historico.length === 0 ? (
+                  <p>Nenhum treino registrado no último mês.</p>
+                ) : (
+                  <div className="historico-grid">
+                    {historico.map((item) => (
+                      <div key={item.idSessao} className="historico-card">
+                        <h5>{item.nome_treino}</h5>
+                        <p>{item.descricao}</p>
+                        <p>Data: {new Date(item.data_inicio).toLocaleDateString('pt-BR')}</p>
+                        <span className={`status ${item.status}`}>
+                          {item.status === 'concluido' ? 'Concluído' : 'Em Progresso'}
+                          {item.status === 'concluido' && item.duracao_total && (
+                            <span> ({item.duracao_total}s)</span>
+                          )}
+                        </span>
+                        {item.status === 'em_progresso' && (
+                          <button onClick={() => handleRetomar(item.idSessao)}>
+                            Retomar
+                          </button>
+                        )}
                       </div>
-                    </div>
-                    <div className="row">
-                      {[
-                        {
-                          img: "costasbiceps.webp",
-                          title: "Costas e bíceps",
-                          date: "20/05",
-                        },
-                        {
-                          img: "pernas.webp",
-                          title: "Pernas conjunto",
-                          date: "19/05",
-                        },
-                        {
-                          img: "ombrotrapezio.webp",
-                          title: "Ombros e trapézio",
-                          date: "17/05",
-                        },
-                        {
-                          img: "peitotriceps.jpg",
-                          title: "Peito e tríceps",
-                          date: "16/05",
-                        },
-                      ].map((treino, idx) => (
-                        <div className="col-lg-3 col-sm-6" key={idx}>
-                          <div className="item">
-                            <img
-                              src={`assets/images/${treino.img}`}
-                              alt={treino.title}
-                            />
-                            <h4>Concluido</h4>
-                            <ul>
-                              <li>{treino.title}</li>
-                              <li>{treino.date}</li>
-                            </ul>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
-                </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
