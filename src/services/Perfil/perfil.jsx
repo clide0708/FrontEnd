@@ -43,5 +43,25 @@ const perfilService = {
       return null;
     }
   },
+
+  getHistoricoTreinos: async () => {
+    try {
+      const response = await api.get('/perfil/historico-treinos');
+      return response.data;
+    } catch (err) {
+      console.error('Erro ao buscar histórico:', err);
+      return { success: false, historico: [] };
+    }
+  },
+
+  retomarTreino: async (idSessao) => {
+    try {
+      const response = await api.get(`/perfil/retomar-treino/${idSessao}`);
+      return response.data;
+    } catch (err) {
+      console.error('Erro ao retomar treino:', err);
+      return { success: false };
+    }
+  },
 };
 export default perfilService;
