@@ -1,7 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
-import alimentosService from '../../services/Alimentos/alimentosService';
+import { useState, useRef, useEffect } from "react";
+import alimentosService from "../../services/Alimentos/alimentosService";
+import { FaSearch } from "react-icons/fa";
 
-const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) => {
+const SearchWithButton = ({
+  onSearch,
+  placeholder = "Pesquisar alimento...",
+}) => {
   const [termo, setTermo] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
   const [carregando, setCarregando] = useState(false);
@@ -12,7 +16,10 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
   // Fecha dropdown se clicar fora
   useEffect(() => {
     function handleClickFora(event) {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
         setDropdownAberto(false);
       }
     }
@@ -35,7 +42,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
     try {
       console.log("🔍 Buscando alimentos:", termo);
       const data = await alimentosService.buscarAlimentos(termo);
-      
+
       if (data.success && data.resultados) {
         setSugestoes(data.resultados);
         setDropdownAberto(true); // Abre o dropdown apenas quando tem resultados
@@ -59,7 +66,7 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
 
   // Enter também dispara a busca
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleBuscar();
     }
   };
@@ -77,7 +84,10 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
 
   return (
     <div className="SearchWithButton" ref={containerRef}>
-      <div className="input-group" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <div
+        className="input-group"
+        style={{ display: "flex", gap: "10px", alignItems: "center" }}
+      >
         <input
           className="inmputmodal"
           placeholder={placeholder}
@@ -87,26 +97,13 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
           // Remove o onFocus que abria o dropdown automaticamente
           style={{ flex: 1 }}
         />
-        
+
         <button
           onClick={handleBuscar}
           disabled={carregando || termo.length < 2}
           className="btn-lupa"
-          style={{
-            background: '#368dd9',
-            color: 'white',
-            border: 'none',
-            padding: '10px 15px',
-            borderRadius: '5px',
-            cursor: termo.length < 2 ? 'not-allowed' : 'pointer',
-            opacity: termo.length < 2 ? 0.6 : 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px'
-          }}
         >
-          {carregando ? '⏳' : '🔍'}
-          {carregando ? 'Buscando...' : 'Buscar'}
+          {carregando ? "Buscando..." : <FaSearch size={25}/>}
         </button>
       </div>
 
@@ -114,7 +111,10 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
       {dropdownAberto && buscaRealizada && (
         <div className="sugestao-container">
           {carregando ? (
-            <div className="sugestao-item" style={{ color: '#888', textAlign: 'center' }}>
+            <div
+              className="sugestao-item"
+              style={{ color: "#888", textAlign: "center" }}
+            >
               ⏳ Buscando alimentos...
             </div>
           ) : sugestoes.length > 0 ? (
@@ -124,27 +124,46 @@ const SearchWithButton = ({ onSearch, placeholder = "Pesquisar alimento..." }) =
                 className="sugestao-item"
                 onClick={() => handleSelectItem(item)}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
                   <span>
                     {index + 1}. {item.nome}
                     {item.nome_original && item.nome_original !== item.nome && (
-                      <span style={{ fontSize: '0.8em', color: '#888', marginLeft: '8px' }}>
+                      <span
+                        style={{
+                          fontSize: "0.8em",
+                          color: "#888",
+                          marginLeft: "8px",
+                        }}
+                      >
                         ({item.nome_original})
                       </span>
                     )}
                   </span>
                   {item.imagem && (
-                    <img 
-                      src={item.imagem} 
+                    <img
+                      src={item.imagem}
                       alt={item.nome}
-                      style={{ width: '30px', height: '30px', borderRadius: '4px' }}
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "4px",
+                      }}
                     />
                   )}
                 </div>
               </div>
             ))
           ) : (
-            <div className="sugestao-item" style={{ color: '#888', textAlign: 'center' }}>
+            <div
+              className="sugestao-item"
+              style={{ color: "#888", textAlign: "center" }}
+            >
               Nenhum alimento encontrado para "{termo}"
             </div>
           )}

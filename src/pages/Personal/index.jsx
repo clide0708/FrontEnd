@@ -3,7 +3,7 @@ import "./style.css";
 import { FiEdit } from "react-icons/fi";
 import { Trash2, Plus } from "lucide-react";
 import personalService from "../../services/Personal/personal";
-import treinosService from "../../services/Treinos/treinos.jsx"; // criar/editar
+import treinosService from "../../services/Treinos/treinos"; // criar/editar
 import InviteModal from "../Personal/modalConvite.jsx";
 import EditarTreino from "../Treinos/editTreino";
 import ModalAddTreino from "../Treinos/addTreino";

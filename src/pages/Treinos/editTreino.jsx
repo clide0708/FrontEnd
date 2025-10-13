@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import AddExercicio from "./addExercicio";
-import exerciciosService from "../../services/Treinos/exercicios.jsx";
+import exerciciosService from "../../services/Treinos/exercicios";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 

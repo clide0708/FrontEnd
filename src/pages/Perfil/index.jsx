@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import perfilService from "../../services/Perfil/perfil.jsx";
+import perfilService from "../../services/Perfil/perfil";
 import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
 import PlanModal from "./modalPlano.jsx";
 import CropModal from "./modalCrop.jsx";
 import { FiLogOut } from "react-icons/fi"; // engrenagemzinha
-import perfilService from "../../services/Perfil/perfil.jsx"; // Já existe
 import { useNavigate } from "react-router-dom"; // Adicione
 
 export default function Profile() {
