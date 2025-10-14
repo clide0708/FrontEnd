@@ -5,7 +5,9 @@ import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
 import PlanModal from "./modalPlano.jsx";
 import CropModal from "./modalCrop.jsx";
-import { FiLogOut } from "react-icons/fi"; // engrenagemzinha
+import { FiLogOut } from "react-icons/fi";
+import treinosService from "../../services/Treinos/treinos";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -13,6 +15,9 @@ export default function Profile() {
   const [editingPlan, setEditingPlan] = useState(false);
   const [form, setForm] = useState({});
   const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [historicoTreinos, setHistoricoTreinos] = useState([]);
+  const [loadingHistorico, setLoadingHistorico] = useState(true);
+  const navigate = useNavigate();
   const [email, setEmail] = useState(() => {
     const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
     return usuario.email || "";
@@ -39,6 +44,20 @@ export default function Profile() {
     };
     fetchPerfil();
   }, [email]);
+
+  useEffect(() => {
+    const fetchHistorico = async () => {
+      try {
+        const response = await treinosService.getHistoricoTreinos();
+        setHistoricoTreinos(response.treinos || []);
+      } catch (err) {
+        console.error("Erro ao buscar histórico:", err);
+      } finally {
+        setLoadingHistorico(false);
+      }
+    };
+    fetchHistorico();
+  }, []);
 
   useEffect(() => {
     const fetchPersonal = async () => {
@@ -69,6 +88,41 @@ export default function Profile() {
       setEditing(false);
     } else {
       alert("Erro ao atualizar perfil: " + result.error);
+    }
+  };
+
+  // Nova função: Clique no card do histórico
+  const handleCardClick = async (treino) => {
+    if (treino.porcentagem_concluida >= 100) {
+      // Treino concluído: Visualizar detalhes (ajuste a rota conforme sua app)
+      navigate(`/treinos/visualizar/${treino.idTreino}`);
+    } else {
+      // Em progresso: Retomar de onde parou
+      try {
+        const response = await treinosService.getSessaoParaRetomar(treino.idSessao);
+        navigate('/treinando', { state: { treino: response.sessao } });
+      } catch (err) {
+        console.error("Erro ao retomar treino:", err);
+        alert("Erro ao retomar treino. Tente novamente.");
+      }
+    }
+  };
+
+  // Função auxiliar para thumbnail do YouTube (do primeiro exercício)
+  const getYoutubeThumbnail = (url) => {
+    if (!url) return "/assets/images/no-video-placeholder.jpg"; // Fallback local
+    
+    try {
+      const u = new URL(url);
+      let id = "";
+      if (u.hostname.includes("youtube.com")) id = u.searchParams.get("v") || "";
+      else if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+      
+      if (!id) return "/assets/images/no-video-placeholder.jpg";
+      
+      return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    } catch (e) {
+      return "/assets/images/no-video-placeholder.jpg";
     }
   };
 
@@ -294,7 +348,80 @@ export default function Profile() {
               )}
             </div>
 
-            {/* TREINOS RECENTES */}
+            {/* NOVA SEÇÃO: HISTÓRICO DE TREINOS COM CARDS (SUBSTITUI A LISTA SIMPLES) */}
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="clips">
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <div className="heading-section">
+                        <h4>Histórico de Treinos (Último Mês)</h4>
+                      </div>
+                    </div>
+                    {loadingHistorico ? (
+                      <div className="col-lg-12">
+                        <p>Carregando...</p>
+                      </div>
+                    ) : historicoTreinos.length > 0 ? (
+                      <div className="row">
+                        {historicoTreinos.map((treino, idx) => {
+                          const statusText = treino.porcentagem_concluida >= 100 
+                            ? "Concluído" 
+                            : `Em Progresso: ${treino.porcentagem_concluida}%`;
+                          const thumbnail = getYoutubeThumbnail(treino.primeiro_video_url || "");
+
+                          return (
+                            <div className="col-lg-3 col-sm-6" key={idx}>
+                              <div 
+                                className="item" 
+                                onClick={() => handleCardClick(treino)}
+                                style={{ cursor: "pointer", transition: "transform 0.2s" }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                              >
+                                <img
+                                  src={thumbnail}
+                                  alt={treino.nome_treino}
+                                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                />
+                                <h4>{statusText}</h4>
+                                <ul>
+                                  <li>
+                                    <strong>{treino.nome_treino}</strong>
+                                    <br />
+                                    <small>{treino.descricao || "Sem descrição"}</small>
+                                  </li>
+                                  <li>{treino.data_formatada}</li>
+                                  <li>
+                                    <small>
+                                      Tipo: {treino.tipo_display} | Criador: {treino.nome_criador || "Desconhecido"}
+                                    </small>
+                                  </li>
+                                  {treino.porcentagem_concluida < 100 && (
+                                    <li>
+                                      <small style={{ color: "#ffc107" }}>
+                                        {treino.porcentagem_concluida}% concluído
+                                      </small>
+                                    </li>
+                                  )}
+                                </ul>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="col-lg-12">
+                        <p>Nenhum treino recente.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TREINOS RECENTES - COMENTADO COMO NO SEU CÓDIGO ORIGINAL */}
+            {/* 
             <div className="row">
               <div className="col-lg-12">
                 <div className="clips">
@@ -345,7 +472,8 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> 
+            */}
           </div>
         </div>
       </div>

@@ -2184,3 +2184,42 @@
   background-color: #368dd9;
   color: white;
 }
+
+
+
+
+
+
+
+
+.btn-parar {
+  background-color: #dc3545;  /* Vermelho padrão */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 10px;  /* Espaçamento do botão anterior */
+  transition: background-color 0.3s ease;
+}
+.btn-parar:hover {
+  background-color: #c82333;  /* Vermelho mais escuro no hover */
+}
+.btn-parar:focus {
+  outline: 2px solid #dc3545;
+  outline-offset: 2px;
+}
+.btn-parar:disabled {
+  background-color: #6c757d;  /* Cinza se desabilitado */
+  cursor: not-allowed;
+}
+/* Responsivo: Ajuste para telas menores */
+@media (max-width: 768px) {
+  .btn-parar {
+    padding: 8px 15px;
+    font-size: 12px;
+    margin-left: 5px;
+  }
+}
