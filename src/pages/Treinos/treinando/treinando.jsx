@@ -402,9 +402,9 @@ export default function Treino() {
                   >
                     ⮞
                   </button>
-                  <button onClick={handlePararTreino} className="btn btn-parar">
+                  {/* <button onClick={handlePararTreino} className="btn btn-parar">
                     Parar Treino
-                  </button>
+                  </button> */}
                 </div>
               </div>
                 {/* {ex.informacoes && (
@@ -421,7 +421,6 @@ export default function Treino() {
           {estado === "finalizado" && (
             <div id="view-finalizado">
               <h2>Treino finalizado!</h2>
-              <p>Parabéns por completar o treino!</p>
             </div>
           )}
         </div>

@@ -1092,7 +1092,7 @@
     font-size: 150%;
     font-weight: bold;
     width: 150px;
-    margin-top: 60px;
+    margin-top: 20px;
     margin-left: 300px;
   }
 
@@ -1371,7 +1371,7 @@
 .peso {
   font-size: 200%;
   font-weight: bold;
-  width: 60%;
+  width: 30%;
   margin-left: 10%;
   margin-right: 5%;
   text-align: end;
@@ -1399,10 +1399,11 @@
 }
 
 .controls {
-  width: 10%;
+  width: 60%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-bottom: 40px;
 }
 
 .ext {
