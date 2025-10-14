@@ -311,7 +311,7 @@ export default function Treino() {
                 }}
               >
                 <strong>{e.nome}</strong>
-                {e.url && <span className="video-indicator">🎥</span>}
+                {e.url && <span className="video-indicator"></span>}
               </div>
             ))}
           </div>
@@ -402,17 +402,17 @@ export default function Treino() {
                   >
                     ⮞
                   </button>
-                  <button onClick={handlePararTreino} className="btn btn-parar">
+                  {/* <button onClick={handlePararTreino} className="btn btn-parar">
                     Parar Treino
-                  </button>
+                  </button> */}
                 </div>
               </div>
-                {ex.informacoes && (
+                {/* {ex.informacoes && (
                   <div className="exercicio-info">
                     <h4>Informações:</h4>
                     <p>{ex.informacoes}</p>
                   </div>
-                )}
+                )} */}
             </div>
           )}
 
@@ -421,7 +421,6 @@ export default function Treino() {
           {estado === "finalizado" && (
             <div id="view-finalizado">
               <h2>Treino finalizado!</h2>
-              <p>Parabéns por completar o treino!</p>
             </div>
           )}
         </div>
