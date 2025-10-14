@@ -249,7 +249,7 @@ function Personal() {
               onClick={() => setShowInviteModal(true)}
               className="btnAbrirModalConvite"
             >
-              Abrir modal de convite
+              Convidar
             </button>
           </div>
 
