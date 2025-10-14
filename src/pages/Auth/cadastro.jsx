@@ -156,7 +156,6 @@ export default function CadastroPage() {
         await cadastrarAluno(basePayload);
       }
 
-      alert("Cadastro realizado com sucesso!");
       navigate("/login");
     } catch (err) {
       console.error("Erro no cadastro:", err);

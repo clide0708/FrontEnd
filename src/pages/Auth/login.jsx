@@ -13,7 +13,6 @@ export default function LoginPage() {
     const result = await loginUsuario(email, senha);
 
     if (result.success) {
-      alert("Login feito com sucesso 😎");
       window.location.href = "/home";
     } else {
       setError(result.error);

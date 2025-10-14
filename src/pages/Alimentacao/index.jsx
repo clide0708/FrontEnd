@@ -525,23 +525,6 @@ function Alimentacao() {
             <div className="pflidc">
               <ul>
                 <li>
-                  IDR:
-                  <span>
-                    {user.peso > 0 &&
-                    user.altura > 0 &&
-                    user.idade > 0 &&
-                    user.genero
-                      ? calcularIDR(
-                          user.peso,
-                          user.altura,
-                          user.idade,
-                          user.genero,
-                          user.treinoTipo
-                        )
-                      : "-"}
-                  </span>
-                </li>
-                <li>
                   Meta calórica:
                   <span>{metaCalorica > 0 ? metaCalorica + " kcal" : "-"}</span>
                 </li>
