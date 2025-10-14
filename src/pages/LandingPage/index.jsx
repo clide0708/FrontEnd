@@ -2,6 +2,7 @@
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import banner from "./banner.jpg";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div id="inicio"  className="landingPage">
+    <div id="inicio" className="landingPage">
       <header className={`lp-header ${scrolled ? "scrolled" : ""}`}>
         <div className="logo">ClideFit</div>
         <nav>
@@ -26,14 +27,31 @@ export default function LandingPage() {
       </header>
 
       {/* banner vindo da pasta public */}
-      <section  className="lp-banner">
-        <img src="assets/images/banner-landing.png" alt="Banner ClideFit" className="banner-img" />
+      <section className="lp-banner">
+        <div
+          className="main-banner"
+          style={{
+            backgroundImage: `url(${banner})`,
+            backgroundSize: "cover",
+          }}
+        >
+          <div className="row">
+            <div className="col-lg-7">
+              <div className="header-text">
+                <h4>ClideFit</h4>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section  className="lp-hero">
+      <section className="lp-hero">
         <div className="hero-content">
           <h1>Treinos acessíveis para todos</h1>
-          <p>Transforme sua rotina com treinos adaptados ao seu ritmo e realidade.</p>
+          <p>
+            Transforme sua rotina com treinos adaptados ao seu ritmo e
+            realidade.
+          </p>
           <button onClick={() => navigate("/cadastro")}>Comece agora</button>
         </div>
       </section>
@@ -76,23 +94,27 @@ export default function LandingPage() {
       <section id="sobre" className="lp-sobre">
         <h2>Sobre Nós</h2>
         <p>
-          A ClideFit nasceu com o propósito de tornar o bem-estar acessível. Nossa missão é oferecer treinos
-          inclusivos e personalizados, com tecnologia e cuidado humano. Buscamos inspirar pessoas de todas as
-          idades, corpos e realidades a se moverem e encontrarem equilíbrio. Nosso compromisso vai além da
-          saúde física — acreditamos no impacto social e sustentável do movimento.
+          A ClideFit nasceu com o propósito de tornar o bem-estar acessível.
+          Nossa missão é oferecer treinos inclusivos e personalizados, com
+          tecnologia e cuidado humano. Buscamos inspirar pessoas de todas as
+          idades, corpos e realidades a se moverem e encontrarem equilíbrio.
+          Nosso compromisso vai além da saúde física — acreditamos no impacto
+          social e sustentável do movimento.
         </p>
 
         <div className="ods-container">
           <div className="ods-card">
             <h3>ODS 3 - Saúde e Bem-estar</h3>
             <p>
-              Promover o bem-estar físico e mental através do acesso democrático a treinos e hábitos saudáveis.
+              Promover o bem-estar físico e mental através do acesso democrático
+              a treinos e hábitos saudáveis.
             </p>
           </div>
           <div className="ods-card">
             <h3>ODS 10 - Redução das Desigualdades</h3>
             <p>
-              Tornar o acesso à atividade física inclusivo para todos, valorizando a diversidade e acessibilidade.
+              Tornar o acesso à atividade física inclusivo para todos,
+              valorizando a diversidade e acessibilidade.
             </p>
           </div>
         </div>
@@ -111,7 +133,9 @@ export default function LandingPage() {
           </div>
           <div className="card">
             <h3>Plataforma Acessível</h3>
-            <p>Interface intuitiva, ideal para todos os perfis e necessidades.</p>
+            <p>
+              Interface intuitiva, ideal para todos os perfis e necessidades.
+            </p>
           </div>
         </div>
       </section>
@@ -121,18 +145,26 @@ export default function LandingPage() {
           <div className="footer-left">
             <h3>ClideFit</h3>
             <p>
-              Tornando o bem-estar acessível a todos.  
-              Junte-se a nós e transforme sua rotina de treinos.
+              Tornando o bem-estar acessível a todos. Junte-se a nós e
+              transforme sua rotina de treinos.
             </p>
           </div>
 
           <div className="footer-center">
             <h4>Links Rápidos</h4>
             <ul>
-              <li><a href="#inicio">Início</a></li>
-              <li><a href="#sobre">Sobre</a></li>
-              <li><a href="#planos">Planos</a></li>
-              <li><a href="#contato">Contato</a></li>
+              <li>
+                <a href="#inicio">Início</a>
+              </li>
+              <li>
+                <a href="#sobre">Sobre</a>
+              </li>
+              <li>
+                <a href="#planos">Planos</a>
+              </li>
+              <li>
+                <a href="#contato">Contato</a>
+              </li>
             </ul>
           </div>
 
@@ -144,7 +176,9 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <p className="footer-bottom">© 2025 ClideFit. Todos os direitos reservados.</p>
+        <p className="footer-bottom">
+          © 2025 ClideFit. Todos os direitos reservados.
+        </p>
       </footer>
     </div>
   );
