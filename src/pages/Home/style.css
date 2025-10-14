@@ -8,9 +8,63 @@
         color: white;
         border: white 1px solid;
         background-color: transparent;
-        &:hover{
+
+        &:hover {
             background-color: white;
             color: black;
+        }
+    }
+
+    .frase-motivacional {
+        /* background-color:rgba(0, 0, 0, 0.5); */
+        justify-content: center;
+        margin-top: 100px;
+        text-align: center;
+
+        .blockquote {
+            color: white, 0.5;
+        }
+    }
+
+    .novidades {
+        margin: auto;
+        margin-top: 100px;
+        width: 1000px;
+
+        .novidade-item {
+            background-color: rgb(41, 41, 41);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        h4 {
+            border-left: 8px solid #337fd6;
+            font-size: 200%;
+            padding-left: 5px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        h5 {
+            color: white;
+            font-size: 100%;
+        }
+
+        p {
+            color: rgb(197, 197, 197);
+        }
+    }
+
+    footer {
+        margin-top: 100px;
+        .container {
+            p {
+                color: white;
+                a{
+                    color: #337fd6;
+                }
+            }
         }
     }
 }
