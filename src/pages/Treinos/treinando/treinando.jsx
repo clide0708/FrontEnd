@@ -311,7 +311,7 @@ export default function Treino() {
                 }}
               >
                 <strong>{e.nome}</strong>
-                {e.url && <span className="video-indicator">🎥</span>}
+                {e.url && <span className="video-indicator"></span>}
               </div>
             ))}
           </div>
@@ -407,12 +407,12 @@ export default function Treino() {
                   </button>
                 </div>
               </div>
-                {ex.informacoes && (
+                {/* {ex.informacoes && (
                   <div className="exercicio-info">
                     <h4>Informações:</h4>
                     <p>{ex.informacoes}</p>
                   </div>
-                )}
+                )} */}
             </div>
           )}
 
