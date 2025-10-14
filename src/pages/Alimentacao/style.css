@@ -602,8 +602,28 @@
   align-items: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease;
-}
 
+  .addalm{
+    display: flex;
+    justify-content: space-between;
+    
+    button{
+      background-color: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      text-align: center;
+      display: flex;
+      justify-content: start;
+
+      &:hover{
+        scale: 1.2;
+        transition: all 0.2s;
+      }
+    }
+  }
+
+}
 
 .modalalm2-content {
   display: flex;
@@ -778,20 +798,19 @@
 }
 
 .btn2 {
-  background: #368dd9;
+  background: transparent;
   color: #fff;
   border: none;
-  padding: 10px 25px;
   border-radius: 10px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 100px;
+  min-width: 50px;
 
   &:hover:not(:disabled) {
-    background: #4ea2f0;
     transform: scale(1.05);
+    color: #368dd9;
   }
 
   &:disabled {
@@ -802,10 +821,11 @@
 }
 
 .btn2-remove {
-  background: #e74c3c;
+  background: transparent;
 
   &:hover:not(:disabled) {
-    background: #c0392b;
+    background: transparent;
+    color: red;
   }
 }
 

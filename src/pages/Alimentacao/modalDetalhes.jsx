@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import alimentosService from "../../services/Alimentos/alimentosService";
+import { IoIosSave } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+import { FiTrash2 } from "react-icons/fi";
 
 export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
   const [alimentoDetalhes, setAlimentoDetalhes] = useState(item);
@@ -86,6 +89,10 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
     }
   };
 
+  const handleSair = () => {
+    fechar();
+  };
+
   if (loading && !alimentoDetalhes) {
     return (
       <div className="modalDetalhes show">
@@ -105,6 +112,10 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
       <div className="modalalm2-content">
         <div className="addalm">
           <h4 className="h4modal2">Detalhes do Alimento</h4>
+          <button onClick={handleSair}>
+            {" "}
+            <IoMdClose size={30} />
+          </button>
         </div>
 
         {/* Informações do alimento - NOVA VERSÃO */}
@@ -188,14 +199,14 @@ export default function ModalDetalhes({ item, fechar, onUpdate, onDelete }) {
           {/* Botões - NOVA VERSÃO */}
           <div className="btndv-grid">
             <button className="btn2" onClick={handleSave} disabled={loading}>
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "..." : <IoIosSave size={30} />}
             </button>
             <button
               className="btn2 btn2-remove"
               onClick={handleDelete}
               disabled={loading}
             >
-              Remover
+              <FiTrash2 size={30} />
             </button>
           </div>
         </div>
