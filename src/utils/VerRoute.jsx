@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import api from "../services/api";
 
-// rota privada: só entra se estiver logado com token válido
+// rota privada: só entra se estiver logado
 export const PrivateRoute = () => {
   const [loading, setLoading] = useState(true);
   const [autenticado, setAutenticado] = useState(false);
@@ -42,13 +42,13 @@ export const PrivateRoute = () => {
   return autenticado ? <Outlet /> : <Navigate to="/" />;
 };
 
-// rota pública: se tiver logado, manda pra /home
+// rota pública
 export const PublicRoute = () => {
   const token = localStorage.getItem("token");
   return token ? <Navigate to="/home" /> : <Outlet />;
 };
 
-// rota com role específica: só entra se a role do user for permitida
+// rota com role
 export const RoleRoute = ({ allowedRoles }) => {
   const token = localStorage.getItem("token");
   const usuario = JSON.parse(localStorage.getItem("usuario"));

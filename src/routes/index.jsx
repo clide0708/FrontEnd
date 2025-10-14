@@ -78,9 +78,12 @@ const routes = createBrowserRouter([
                 path: "/alimentacao",
                 element: (
                   <PageTransition>
-                    <Paginas.AlimentacaoPage />
+                    <RoleRoute allowedRoles={["aluno"]} />
                   </PageTransition>
                 ),
+                children: [
+                  { path: "/alimentacao", element: <Paginas.AlimentacaoPage /> },
+                ],
               },
               {
                 element: (
