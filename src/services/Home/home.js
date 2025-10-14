@@ -16,7 +16,7 @@ const homeService = {
       // Retorna o conteúdo e o significado
       return {
         content: data.content || "Mantenha-se firme e continue tentando!",
-        meaning: data.meaning || "CLIDE Fit",
+        meaning: data.meaning || "ClideFit",
       };
     } catch (err) {
       console.error(
@@ -26,7 +26,7 @@ const homeService = {
       // Retorna uma frase padrão caso a API falhe
       return {
         content: "Mantenha-se firme e continue tentando!",
-        meaning: "CLIDE Fit",
+        meaning: "ClideFit",
       };
     }
   },

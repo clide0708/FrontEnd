@@ -23,7 +23,7 @@ export default function LoginPage() {
   return (
     <div className="loginCC">
       <div className="topppp-global">
-        <h2>CLIDE Fit</h2>
+        <h2>ClideFit</h2>
       </div>
       <div className="login-container-global">
         <h2 className="login-title-global">Login</h2>

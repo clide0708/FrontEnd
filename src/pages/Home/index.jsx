@@ -24,7 +24,7 @@ function Home() {
       console.error("Erro ao buscar ditado:", err.message);
       setFrase({
         content: "Mantenha-se firme e continue tentando!",
-        meaning: "CLIDE Fit",
+        meaning: "ClideFit",
       });
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ function Home() {
           <div className="row">
             <div className="col-lg-7">
               <div className="header-text">
-                <h6>Bem-vindo novamente ao CLIDE Fit</h6>
+                <h6>Bem-vindo novamente ao ClideFit</h6>
                 <h4>Vamos começar?</h4>
                 <div className="main-button">
                   <Link
@@ -121,7 +121,7 @@ function Home() {
       <footer>
         <div className="container">
           <p>
-            Copyright © 2025<a href="#"> Clide Fit</a> - Todos os direitos
+            Copyright © 2025<a href="#"> ClideFit</a> - Todos os direitos
             reservados.
           </p>
         </div>

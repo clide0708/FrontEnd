@@ -16,7 +16,7 @@ export default function LandingPage() {
   return (
     <div id="inicio"  className="landingPage">
       <header className={`lp-header ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">CLIDE Fit</div>
+        <div className="logo">ClideFit</div>
         <nav>
           <button onClick={() => navigate("/login")}>Entrar</button>
           <button onClick={() => navigate("/cadastro")} className="secondary">
@@ -27,7 +27,7 @@ export default function LandingPage() {
 
       {/* banner vindo da pasta public */}
       <section  className="lp-banner">
-        <img src="assets/images/banner-landing.png" alt="Banner CLIDE Fit" className="banner-img" />
+        <img src="assets/images/banner-landing.png" alt="Banner ClideFit" className="banner-img" />
       </section>
 
       <section  className="lp-hero">
@@ -64,7 +64,7 @@ export default function LandingPage() {
           <div className="plano-card">
             <h3>Academia Parceira</h3>
             <ul>
-              <li>✔️ Integração com CLIDE Fit</li>
+              <li>✔️ Integração com ClideFit</li>
               <li>✔️ Divulgação na plataforma</li>
               <li>✔️ Suporte dedicado</li>
             </ul>
@@ -76,7 +76,7 @@ export default function LandingPage() {
       <section id="sobre" className="lp-sobre">
         <h2>Sobre Nós</h2>
         <p>
-          A CLIDE Fit nasceu com o propósito de tornar o bem-estar acessível. Nossa missão é oferecer treinos
+          A ClideFit nasceu com o propósito de tornar o bem-estar acessível. Nossa missão é oferecer treinos
           inclusivos e personalizados, com tecnologia e cuidado humano. Buscamos inspirar pessoas de todas as
           idades, corpos e realidades a se moverem e encontrarem equilíbrio. Nosso compromisso vai além da
           saúde física — acreditamos no impacto social e sustentável do movimento.
@@ -119,7 +119,7 @@ export default function LandingPage() {
       <footer id="contato" className="lp-footer">
         <div className="footer-content">
           <div className="footer-left">
-            <h3>CLIDE Fit</h3>
+            <h3>ClideFit</h3>
             <p>
               Tornando o bem-estar acessível a todos.  
               Junte-se a nós e transforme sua rotina de treinos.
@@ -144,7 +144,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-        <p className="footer-bottom">© 2025 CLIDE Fit. Todos os direitos reservados.</p>
+        <p className="footer-bottom">© 2025 ClideFit. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
