@@ -79,7 +79,7 @@ export default function AddExercicioPersonal({ onAdd, onClose, tipoTreino }) {
   };
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay addExercicio">
       <div className="modal-content">
         <span className="close-button" onClick={onClose}>&times;</span>
         <h2>Cadastrar Novo Exercício {tipoTreino === 'adaptado' ? 'Adaptado' : 'Normal'}</h2>

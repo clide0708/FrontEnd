@@ -4,7 +4,11 @@ import exerciciosPersonalService from "../../services/Treinos/exerciciosPersonal
 import AddExercicioPersonal from "./addExercicioPersonal";
 import "./style.css";
 
-export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) {
+export default function AddExercicio({
+  onAdd,
+  onClose,
+  tipoTreino = "normal",
+}) {
   const [grupo, setGrupo] = useState("");
   const [exercicio, setExercicio] = useState(null);
   const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([]);
@@ -28,24 +32,26 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
       try {
         setLoading(true);
         setError(null);
-        
+
         if (isPersonal) {
           // Personal: busca exercícios conforme o tipo do treino
           let resGlobal, resPersonal;
-          
-          if (tipoTreino === 'normal') {
+
+          if (tipoTreino === "normal") {
             // Para treino normal: exercícios normais (globais + pessoais)
             resGlobal = await exerciciosService.buscarTodosExercicios();
-            resPersonal = await exerciciosPersonalService.buscarMeusExercicios();
+            resPersonal =
+              await exerciciosPersonalService.buscarMeusExercicios();
           } else {
             // Para treino adaptado: exercícios adaptados (apenas pessoais)
             resGlobal = []; // Treinos adaptados só usam exercícios adaptados pessoais
-            resPersonal = await exerciciosPersonalService.buscarMeusExerciciosAdaptados();
+            resPersonal =
+              await exerciciosPersonalService.buscarMeusExerciciosAdaptados();
           }
-          
+
           setTodosExercicios(resGlobal || []);
           setMeusExercicios(resPersonal || []);
-          
+
           // Definir lista inicial
           if (abaAtiva === "global") {
             setExerciciosDisponiveis(resGlobal || []);
@@ -60,8 +66,8 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
           setExerciciosDisponiveis(resGlobal || []);
         }
       } catch (error) {
-        console.error('Erro ao buscar exercícios:', error);
-        setError('Erro ao carregar exercícios. Tente novamente.');
+        console.error("Erro ao buscar exercícios:", error);
+        setError("Erro ao carregar exercícios. Tente novamente.");
         setTodosExercicios([]);
         setMeusExercicios([]);
         setExerciciosDisponiveis([]);
@@ -76,20 +82,20 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
   // CORREÇÃO: Filtragem por grupo muscular - FUNCIONANDO
   useEffect(() => {
     let exerciciosFiltrados = [];
-    
+
     if (abaAtiva === "global") {
       exerciciosFiltrados = todosExercicios;
     } else {
       exerciciosFiltrados = meusExercicios;
     }
-    
+
     // Aplicar filtro de grupo se selecionado
     if (grupo) {
-      exerciciosFiltrados = exerciciosFiltrados.filter(ex => 
-        ex.grupoMuscular && ex.grupoMuscular === grupo
+      exerciciosFiltrados = exerciciosFiltrados.filter(
+        (ex) => ex.grupoMuscular && ex.grupoMuscular === grupo
       );
     }
-    
+
     setExerciciosDisponiveis(exerciciosFiltrados);
     setExercicio(null);
   }, [grupo, todosExercicios, meusExercicios, abaAtiva]);
@@ -114,71 +120,95 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
   };
 
   const handleAddExercicioPersonal = (novoExercicio) => {
-    setMeusExercicios(prev => [...prev, novoExercicio]);
+    setMeusExercicios((prev) => [...prev, novoExercicio]);
     setAbaAtiva("personal");
     setExercicio(novoExercicio);
     setGrupo(novoExercicio.grupoMuscular || "");
   };
 
-  if (loading) return <div className="modal-overlay">Carregando exercícios...</div>;
+  if (loading)
+    return <div className="modal-overlay">Carregando exercícios...</div>;
 
   // CORREÇÃO: Grupos musculares de TODOS os exercícios disponíveis - FUNCIONANDO
-  const gruposUnicos = [...new Set([
-    ...todosExercicios.map((ex) => ex.grupoMuscular).filter(Boolean),
-    ...meusExercicios.map((ex) => ex.grupoMuscular).filter(Boolean)
-  ])].sort();
+  const gruposUnicos = [
+    ...new Set([
+      ...todosExercicios.map((ex) => ex.grupoMuscular).filter(Boolean),
+      ...meusExercicios.map((ex) => ex.grupoMuscular).filter(Boolean),
+    ]),
+  ].sort();
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '600px' }}>
-        <span className="close-button" onClick={onClose}>&times;</span>
+    <div className="modal-overlay addExercicio">
+      <div className="modal-content" style={{ maxWidth: "600px" }}>
+        <span className="close-button" onClick={onClose}>
+          &times;
+        </span>
         <h2>
-          Adicionar Exercício {tipoTreino === 'adaptado' ? 'Adaptado' : 'Normal'}
-          <small style={{ display: 'block', fontSize: '14px', color: '#666', marginTop: '5px' }}>
-            {tipoTreino === 'adaptado' 
-              ? 'Exercícios adaptados para necessidades especiais' 
-              : 'Exercícios convencionais'
-            }
+          Adicionar Exercício{" "}
+          {tipoTreino === "adaptado" ? "Adaptado" : "Normal"}
+          <small
+            style={{
+              display: "block",
+              fontSize: "14px",
+              color: "#666",
+              marginTop: "5px",
+            }}
+          >
+            {tipoTreino === "adaptado"
+              ? "Exercícios adaptados para necessidades especiais"
+              : "Exercícios convencionais"}
           </small>
         </h2>
 
         {error && (
-          <div className="error-message" style={{ 
-            background: '#ffe6e6', 
-            color: '#d63031', 
-            padding: '10px', 
-            borderRadius: '4px', 
-            marginBottom: '15px',
-            border: '1px solid #ff7675'
-          }}>
+          <div
+            className="error-message"
+            style={{
+              background: "#ffe6e6",
+              color: "#d63031",
+              padding: "10px",
+              borderRadius: "4px",
+              marginBottom: "15px",
+              border: "1px solid #ff7675",
+            }}
+          >
             {error}
           </div>
         )}
 
         {isPersonal && (
           <div className="abas-exercicios">
-            <button type="button" className={`aba ${abaAtiva === 'global' ? 'active' : ''}`}
+            <button
+              type="button"
+              className={`aba ${abaAtiva === "global" ? "active" : ""}`}
               onClick={() => {
-                setAbaAtiva('global');
+                setAbaAtiva("global");
                 setExerciciosDisponiveis(todosExercicios);
-                setGrupo('');
+                setGrupo("");
                 setExercicio(null);
                 setError(null);
-              }}>
-              Exercícios {tipoTreino === 'normal' ? 'Globais' : 'Disponíveis'}
+              }}
+            >
+              Exercícios {tipoTreino === "normal" ? "Globais" : "Disponíveis"}
             </button>
-            <button type="button" className={`aba ${abaAtiva === 'personal' ? 'active' : ''}`}
+            <button
+              type="button"
+              className={`aba ${abaAtiva === "personal" ? "active" : ""}`}
               onClick={() => {
-                setAbaAtiva('personal');
+                setAbaAtiva("personal");
                 setExerciciosDisponiveis(meusExercicios);
-                setGrupo('');
+                setGrupo("");
                 setExercicio(null);
                 setError(null);
-              }}>
+              }}
+            >
               Meus Exercícios
             </button>
-            <button type="button" className="aba cadastrar"
-              onClick={() => setShowCadastrarExercicio(true)}>
+            <button
+              type="button"
+              className="aba cadastrar"
+              onClick={() => setShowCadastrarExercicio(true)}
+            >
               + Cadastrar Novo
             </button>
           </div>
@@ -186,25 +216,30 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
 
         {!isPersonal && (
           <div className="info-message">
-            <strong>Exercícios Disponíveis:</strong> Lista de exercícios {tipoTreino === 'adaptado' ? 'adaptados' : 'globais'} da plataforma.
+            <strong>Exercícios Disponíveis:</strong> Lista de exercícios{" "}
+            {tipoTreino === "adaptado" ? "adaptados" : "globais"} da plataforma.
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Grupo Muscular:</label>
-            <select 
-              value={grupo} 
+            <select
+              value={grupo}
               onChange={(e) => setGrupo(e.target.value)}
               disabled={loading}
             >
               <option value="">Todos os grupos musculares</option>
               {gruposUnicos.map((g) => (
-                <option key={g} value={g}>{g}</option>
+                <option key={g} value={g}>
+                  {g}
+                </option>
               ))}
             </select>
             {gruposUnicos.length === 0 && !loading && (
-              <small style={{color: '#666'}}>Nenhum grupo muscular disponível</small>
+              <small style={{ color: "#666" }}>
+                Nenhum grupo muscular disponível
+              </small>
             )}
           </div>
 
@@ -215,49 +250,60 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
               onChange={(e) => {
                 const selectedId = e.target.value;
                 const selectedEx = exerciciosDisponiveis.find(
-                  ex => (ex.idExercicio || ex.idExercAdaptado || ex.id) == selectedId
+                  (ex) =>
+                    (ex.idExercicio || ex.idExercAdaptado || ex.id) ==
+                    selectedId
                 );
                 setExercicio(selectedEx || null);
               }}
               disabled={exerciciosDisponiveis.length === 0 || loading}
             >
               <option value="" disabled hidden>
-                {loading ? "Carregando..." : 
-                 exerciciosDisponiveis.length > 0
+                {loading
+                  ? "Carregando..."
+                  : exerciciosDisponiveis.length > 0
                   ? "Selecione o exercício"
-                  : abaAtiva === 'global'
+                  : abaAtiva === "global"
                   ? `Nenhum exercício ${tipoTreino} disponível`
                   : "Nenhum exercício pessoal cadastrado"}
               </option>
               {exerciciosDisponiveis.map((ex) => (
-                <option 
-                  key={ex.idExercicio || ex.idExercAdaptado || ex.id} 
+                <option
+                  key={ex.idExercicio || ex.idExercAdaptado || ex.id}
                   value={ex.idExercicio || ex.idExercAdaptado || ex.id}
                 >
                   {ex.nome}
-                  {ex.visibilidade === 'personal' && ' (Meu)'}
-                  {ex.tipo_exercicio === 'adaptado' && ' [Adaptado]'}
+                  {ex.visibilidade === "personal" && " (Meu)"}
+                  {ex.tipo_exercicio === "adaptado" && " [Adaptado]"}
                 </option>
               ))}
             </select>
-            
-            {exerciciosDisponiveis.length === 0 && isPersonal && abaAtiva === 'personal' && (
-              <div style={{ marginTop: '10px', padding: '10px', background: '#f0f8ff', borderRadius: '4px' }}>
-                <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
-                  {tipoTreino === 'adaptado' 
-                    ? 'Você ainda não cadastrou exercícios adaptados.'
-                    : 'Você ainda não cadastrou exercícios pessoais.'
-                  }
-                </p>
-                <button
-                  type="button"
-                  className="btn-cadastrar-exercicio"
-                  onClick={() => setShowCadastrarExercicio(true)}
+
+            {exerciciosDisponiveis.length === 0 &&
+              isPersonal &&
+              abaAtiva === "personal" && (
+                <div
+                  style={{
+                    marginTop: "10px",
+                    padding: "10px",
+                    background: "#f0f8ff",
+                    borderRadius: "4px",
+                  }}
                 >
-                  Cadastrar Primeiro Exercício
-                </button>
-              </div>
-            )}
+                  <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>
+                    {tipoTreino === "adaptado"
+                      ? "Você ainda não cadastrou exercícios adaptados."
+                      : "Você ainda não cadastrou exercícios pessoais."}
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-cadastrar-exercicio"
+                    onClick={() => setShowCadastrarExercicio(true)}
+                  >
+                    Cadastrar Primeiro Exercício
+                  </button>
+                </div>
+              )}
           </div>
 
           {exercicio && (
@@ -271,27 +317,31 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
 
               <div className="configuracoes-treino">
                 <h4>Configurações do Treino</h4>
-                
+
                 <div className="linha-configuracoes">
                   <div className="iptex">
                     <label>Séries*</label>
-                    <input 
-                      type="number" 
-                      min="1" 
-                      max="10" 
-                      value={numSeries} 
-                      onChange={(e) => setNumSeries(parseInt(e.target.value) || 1)} 
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={numSeries}
+                      onChange={(e) =>
+                        setNumSeries(parseInt(e.target.value) || 1)
+                      }
                     />
                   </div>
 
                   <div className="iptex">
                     <label>Repetições*</label>
-                    <input 
-                      type="number" 
-                      min="1" 
-                      max="50" 
-                      value={numRepeticoes} 
-                      onChange={(e) => setNumRepeticoes(parseInt(e.target.value) || 1)} 
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={numRepeticoes}
+                      onChange={(e) =>
+                        setNumRepeticoes(parseInt(e.target.value) || 1)
+                      }
                     />
                   </div>
                 </div>
@@ -299,24 +349,24 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
                 <div className="linha-configuracoes">
                   <div className="iptex">
                     <label>Peso (kg)</label>
-                    <input 
-                      type="number" 
-                      step="0.5" 
+                    <input
+                      type="number"
+                      step="0.5"
                       min="0"
-                      value={peso} 
-                      onChange={(e) => setPeso(e.target.value)} 
+                      value={peso}
+                      onChange={(e) => setPeso(e.target.value)}
                       placeholder="Opcional"
                     />
                   </div>
 
                   <div className="iptex">
                     <label>Descanso (segundos)</label>
-                    <input 
-                      type="number" 
-                      min="0" 
-                      max="300" 
-                      value={descanso} 
-                      onChange={(e) => setDescanso(e.target.value)} 
+                    <input
+                      type="number"
+                      min="0"
+                      max="300"
+                      value={descanso}
+                      onChange={(e) => setDescanso(e.target.value)}
                     />
                   </div>
                 </div>
@@ -325,11 +375,15 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
               {exercicio.video_url && (
                 <div className="video-info">
                   <strong>Vídeo disponível:</strong>
-                  <a 
-                    href={exercicio.video_url} 
-                    target="_blank" 
+                  <a
+                    href={exercicio.video_url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: 'block', marginTop: '5px', color: '#368dd9' }}
+                    style={{
+                      display: "block",
+                      marginTop: "5px",
+                      color: "#368dd9",
+                    }}
                   >
                     Assistir vídeo de execução
                   </a>
@@ -342,9 +396,9 @@ export default function AddExercicio({ onAdd, onClose, tipoTreino = "normal" }) 
             <button type="button" className="clcbt" onClick={onClose}>
               Cancelar
             </button>
-            <button 
-              type="submit" 
-              className="mdnbt" 
+            <button
+              type="submit"
+              className="mdnbt"
               disabled={!exercicio || loading}
             >
               Adicionar ao Treino
