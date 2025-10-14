@@ -716,7 +716,6 @@
   }
 
   .addexbtn:hover {
-    background-color: #368dd9;
     color: white;
   }
 
@@ -1209,79 +1208,80 @@
   pointer-events: auto;
   margin-left: auto;
 }
-  .ex-item {
-    padding: 8px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-    color: white;
-    font-size: 120%;
-    font-weight: 400;
-  }
 
-  .ex-item.active {
-    color: #368DD9;
-  }
+.ex-item {
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: white;
+  font-size: 120%;
+  font-weight: 400;
+}
 
-  .ex-item.concluido {
-    color: #888888;
-  }
+.ex-item.active {
+  color: #368DD9;
+}
 
-  .ex-item.active.concluido {
-    color: #368DD9;
-  }
+.ex-item.concluido {
+  color: #888888;
+}
 
-  /* <CHANGE> Renomeado de .treinando para .treinandorr */
-  .treinandorr {
-    display: flex;
-    flex-direction: row;
-    width: 1350px;
-    position: absolute;
-    pointer-events: auto;
-    margin: auto;
-  }
+.ex-item.active.concluido {
+  color: #368DD9;
+}
 
-  #lista-exercicios {
-    margin-top: auto;
-    margin-bottom: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 2%;
-    margin-right: 2%;
-    width: 30%;
-    height: 800px;
-  }
+/* <CHANGE> Renomeado de .treinando para .treinandorr */
+.treinandorr {
+  display: flex;
+  flex-direction: row;
+  width: 1350px;
+  position: absolute;
+  pointer-events: auto;
+  margin: auto;
+}
 
-  #lista-exercicios h3 {
-    background-color: #27292A;
-    padding-top: 6%;
-    padding-bottom: 6%;
-    margin-bottom: 10%;
-    border-radius: 20px;
-    text-align: center;
-    color: white;
-    font-size: 150%;
-  }
+#lista-exercicios {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 2%;
+  margin-right: 2%;
+  width: 30%;
+  height: 800px;
+}
 
-  #lista {
-    background-color: #27292A;
-    padding: 6%;
-    max-width: 100%;
-    border-radius: 20px;
-    height: 100%;
-    box-shadow: 0 0.5px 20px #111111;
-  }
+#lista-exercicios h3 {
+  background-color: #27292A;
+  padding-top: 6%;
+  padding-bottom: 6%;
+  margin-bottom: 10%;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  font-size: 150%;
+}
 
-  #conteudo {
-    background-color: #27292A;
-    width: 1400px;
-    margin: 2%;
-    height: 800px;
-    border-radius: 20px;
-    box-shadow: 0 0.5px 20px #111111;
-  }
+#lista {
+  background-color: #27292A;
+  padding: 6%;
+  max-width: 100%;
+  border-radius: 20px;
+  height: 100%;
+  box-shadow: 0 0.5px 20px #111111;
+}
+
+#conteudo {
+  background-color: #27292A;
+  width: 1400px;
+  margin: 2%;
+  height: 800px;
+  border-radius: 20px;
+  box-shadow: 0 0.5px 20px #111111;
+}
 
 #video-container {
   position: relative;
@@ -1290,291 +1290,291 @@
   height: 0;
 }
 
-  #ex-cover,
-  #playerex {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 850px;
-    aspect-ratio: 16 / 9;
-    border-radius: 15px;
-    margin-left: 57px;
-    object-fit: cover;
-  }
+#ex-cover,
+#playerex {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 850px;
+  aspect-ratio: 16 / 9;
+  border-radius: 15px;
+  margin-left: 57px;
+  object-fit: cover;
+}
 
-  .titulo {
-    background-color: #27292A;
-    display: flex;
-    border-radius: 20px;
-    padding: 2% 0;
-    align-items: center;
-    font-size: 120%;
-    margin-bottom: 2%;
-  }
+.titulo {
+  background-color: #27292A;
+  display: flex;
+  border-radius: 20px;
+  padding: 2% 0;
+  align-items: center;
+  font-size: 120%;
+  margin-bottom: 2%;
+}
 
-  .titulo h2 {
-    border-left: 10px solid #368dd9;
-    padding-left: 2%;
-    margin-left: 3%;
-    font-size: 240%;
-    width: 80%;
-    color: white;
-  }
+.titulo h2 {
+  border-left: 10px solid #368dd9;
+  padding-left: 2%;
+  margin-left: 3%;
+  font-size: 240%;
+  width: 80%;
+  color: white;
+}
 
-  .series {
-    width: 25%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-  }
+.series {
+  width: 25%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
 
-  .series span {
-    width: 75%;
-    font-size: 250%;
-    margin-right: 5%;
-    text-align: right;
-    font-weight: 900;
-    color: white;
-  }
+.series span {
+  width: 75%;
+  font-size: 250%;
+  margin-right: 5%;
+  text-align: right;
+  font-weight: 900;
+  color: white;
+}
 
-  .infos {
-    display: flex;
-    padding-top: 6%;
-    align-items: center;
-    justify-content: center;
-    border-top: 2px white solid;
-    height: 80px;
-  }
+.infos {
+  display: flex;
+  padding-top: 6%;
+  align-items: center;
+  justify-content: center;
+  border-top: 2px white solid;
+  height: 80px;
+}
 
-  .reps {
-    display: flex;
-    align-items: end;
-    width: auto;
-    height: 80px;
-    color: white;
-    padding-right: 20%;
-  }
+.reps {
+  display: flex;
+  align-items: end;
+  width: auto;
+  height: 80px;
+  color: white;
+  padding-right: 20%;
+}
 
-  .reps strong {
-    font-size: 300%;
-    font-weight: bold;
-    margin-left: 30%;
-    height: 65px;
-  }
+.reps strong {
+  font-size: 300%;
+  font-weight: bold;
+  margin-left: 30%;
+  height: 65px;
+}
 
-  .reps h1 {
-    font-size: 150%;
-    margin-left: 10%;
-    color: white;
-  }
+.reps h1 {
+  font-size: 150%;
+  margin-left: 10%;
+  color: white;
+}
 
-  .peso {
-    font-size: 200%;
-    font-weight: bold;
-    width: 60%;
-    margin-left: 10%;
-    margin-right: 5%;
-    text-align: end;
-  }
+.peso {
+  font-size: 200%;
+  font-weight: bold;
+  width: 60%;
+  margin-left: 10%;
+  margin-right: 5%;
+  text-align: end;
+}
 
-  .b1,
-  .b2 {
-    color: white;
-    font-size: 500%;
-    font-weight: bolder;
-    background: none;
-    border: none;
-  }
+.b1,
+.b2 {
+  color: white;
+  font-size: 500%;
+  font-weight: bolder;
+  background: none;
+  border: none;
+}
 
-  .b2 {
-    float: right;
-    width: 100%;
-    display: flex;
-  }
+.b2 {
+  float: right;
+  width: 100%;
+  display: flex;
+}
 
-  .b1:hover,
-  .b2:hover {
-    color: #368dd9;
-    cursor: pointer;
-  }
+.b1:hover,
+.b2:hover {
+  color: #368dd9;
+  cursor: pointer;
+}
 
-  .controls {
-    width: 10%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.controls {
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .ext {
-    margin-top: 10%;
-    padding: 8%;
-    font-size: 220%;
-    font-weight: 900;
-    border-radius: 20px;
-    border: 2px solid #27292A;
-    background-color: #27292A;
-    color: white;
-  }
+.ext {
+  margin-top: 10%;
+  padding: 8%;
+  font-size: 220%;
+  font-weight: 900;
+  border-radius: 20px;
+  border: 2px solid #27292A;
+  background-color: #27292A;
+  color: white;
+}
 
-  .ext:hover {
-    border: 2px solid white;
-    cursor: pointer;
-  }
+.ext:hover {
+  border: 2px solid white;
+  cursor: pointer;
+}
 
-  .adjustfoda {
-    position: absolute;
-    display: flex;
-    width: 100%;
-    height: 80%;
-    justify-content: center;
-    top: 1;
-    left: 1;
-  }
+.adjustfoda {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 80%;
+  justify-content: center;
+  top: 1;
+  left: 1;
+}
 
-  .timer-wrapper {
-    position: relative;
-    width: 400px;
-    height: 400px;
-  }
+.timer-wrapper {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
 
-  .timer-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 300%;
-    font-weight: bold;
-    color: white;
-  }
+.timer-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 300%;
+  font-weight: bold;
+  color: white;
+}
 
-  .progress-ring__circle {
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
-    width: 400px;
-    height: 400px;
-    transition: stroke-dashoffset 1s linear;
-  }
+.progress-ring__circle {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  width: 400px;
+  height: 400px;
+  transition: stroke-dashoffset 1s linear;
+}
 
-  .progress-ring {
-    width: 400px;
-    height: 400px;
-  }
+.progress-ring {
+  width: 400px;
+  height: 400px;
+}
 
-  .circulozin {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding-left: 291.5px;
-  }
+.circulozin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 291.5px;
+}
 
-  .btns {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
+.btns {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
-  .btnplr {
-    background-color: #368dd9;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    margin-top: 80px;
-    padding: 1.5%;
-    font-size: 120%;
-    font-weight: bold;
-    margin-bottom: 10px;
-    border: #368dd9 2px solid;
-  }
+.btnplr {
+  background-color: #368dd9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 80px;
+  padding: 1.5%;
+  font-size: 120%;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border: #368dd9 2px solid;
+}
 
-  .btnplr:hover {
-    border: white solid 2px;
-  }
+.btnplr:hover {
+  border: white solid 2px;
+}
 
-  .btnvtl {
-    background: none;
-    color: white;
-    border: none;
-    font-size: 110%;
-    cursor: pointer;
-  }
+.btnvtl {
+  background: none;
+  color: white;
+  border: none;
+  font-size: 110%;
+  cursor: pointer;
+}
 
-  #btnAdd30 {
-    position: absolute;
-    color: black;
-    border-radius: 10px;
-    padding: 2%;
-    font-size: 80%;
-    border: none;
-    top: -5;
-  }
+#btnAdd30 {
+  position: absolute;
+  color: black;
+  border-radius: 10px;
+  padding: 2%;
+  font-size: 80%;
+  border: none;
+  top: -5;
+}
 
-  .adjustfoda {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    padding-top: 100px;
-    pointer-events: none;
-  }
+.adjustfoda {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding-top: 100px;
+  pointer-events: none;
+}
 
-  .editor-exercicio h1 {
-    color: white;
-    margin-top: 60px;
-    font-size: 150%;
-  }
+.editor-exercicio h1 {
+  color: white;
+  margin-top: 60px;
+  font-size: 150%;
+}
 
-  #ex-reps {
-    font-size: 370%;
-    font-weight: bold;
-  }
+#ex-reps {
+  font-size: 370%;
+  font-weight: bold;
+}
 
-  .reps strong {
-    font-size: 250%;
-  }
+.reps strong {
+  font-size: 250%;
+}
 
-  .reps h1 {
-    margin-bottom: 15px;
-  }
+.reps h1 {
+  margin-bottom: 15px;
+}
 
-  #view-finalizado h2 {
-    width: 100%;
-    font-size: 200%;
-    text-align: center;
-    color: white;
-    margin-top: 40px;
-  }
+#view-finalizado h2 {
+  width: 100%;
+  font-size: 200%;
+  text-align: center;
+  color: white;
+  margin-top: 40px;
+}
 
-  .btnplr {
-    background-color: transparent;
-    border: #368DD9 3px solid;
-    padding: 10px;
-    color: #368DD9;
-    border-radius: 10px;
-    font-size: 100%;
-    font-weight: bold;
-    width: 120px;
-  }
+.btnplr {
+  background-color: transparent;
+  border: #368DD9 3px solid;
+  padding: 10px;
+  color: #368DD9;
+  border-radius: 10px;
+  font-size: 100%;
+  font-weight: bold;
+  width: 120px;
+}
 
-  .btnplr:hover {
-    background-color: #368DD9;
-    border: #368DD9 3px solid;
-    color: #27292a;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-  }
+.btnplr:hover {
+  background-color: #368DD9;
+  border: #368DD9 3px solid;
+  color: #27292a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
 
-  #btnAdd10 {
-    width: 60px;
-    height: 40px;
-    background: none;
-    border-radius: 10px;
-    border: #368DD9 3px solid;
-    color: white;
-    position: absolute;
-  }
+#btnAdd10 {
+  width: 60px;
+  height: 40px;
+  background: none;
+  border-radius: 10px;
+  border: #368DD9 3px solid;
+  color: white;
+  position: absolute;
+}
 
 #btnAdd10:hover {
   cursor: pointer;
@@ -1868,7 +1868,6 @@
 }
 
 .addexbtn:hover {
-  background-color: #368dd9;
   color: white;
 }
 
@@ -1978,6 +1977,10 @@
   border-radius: 8px;
   margin: 15px 0;
   border-left: 4px solid #368dd9;
+
+  strong{
+    color: black;
+  }
 }
 
 .descricao-exercicio p {
@@ -1988,16 +1991,23 @@
 
 /* Configurações do treino */
 .configuracoes-treino {
-  background: white;
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #e9ecef;
   margin: 15px 0;
 }
 
+.linha-configuracoes {
+  iptex {
+    label {
+      color: white;
+    }
+  }
+}
+
 .configuracoes-treino h4 {
   margin: 0 0 15px 0;
-  color: #333;
+  color: white;
   font-size: 16px;
 }
 
@@ -2016,7 +2026,7 @@
 .iptex label {
   font-weight: 600;
   margin-bottom: 5px;
-  color: #333;
+  color: white;
   font-size: 14px;
 }
 
@@ -2034,11 +2044,9 @@
 
 /* Informações de vídeo */
 .video-info {
-  background: #e7f3ff;
   padding: 12px;
   border-radius: 6px;
   margin: 10px 0;
-  border-left: 4px solid #368dd9;
 }
 
 /* Botão cadastrar exercício */
@@ -2063,11 +2071,11 @@
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  
+
   .abas-exercicios {
     flex-direction: column;
   }
-  
+
   .aba.cadastrar {
     margin: 10px 0 0 0;
   }
@@ -2090,7 +2098,6 @@
 
 /* Mensagens de informação */
 .info-message {
-  background: #e7f3ff;
   border: 1px solid #b3d9ff;
   border-radius: 6px;
   padding: 12px;
@@ -2171,7 +2178,7 @@
   height: auto;
   object-fit: cover;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Estado dos itens da lista */
@@ -2193,7 +2200,8 @@
 
 
 .btn-parar {
-  background-color: #dc3545;  /* Vermelho padrão */
+  background-color: #dc3545;
+  /* Vermelho padrão */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -2201,20 +2209,27 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
-  margin-left: 10px;  /* Espaçamento do botão anterior */
+  margin-left: 10px;
+  /* Espaçamento do botão anterior */
   transition: background-color 0.3s ease;
 }
+
 .btn-parar:hover {
-  background-color: #c82333;  /* Vermelho mais escuro no hover */
+  background-color: #c82333;
+  /* Vermelho mais escuro no hover */
 }
+
 .btn-parar:focus {
   outline: 2px solid #dc3545;
   outline-offset: 2px;
 }
+
 .btn-parar:disabled {
-  background-color: #6c757d;  /* Cinza se desabilitado */
+  background-color: #6c757d;
+  /* Cinza se desabilitado */
   cursor: not-allowed;
 }
+
 /* Responsivo: Ajuste para telas menores */
 @media (max-width: 768px) {
   .btn-parar {
@@ -2230,9 +2245,17 @@
 
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .badge-adaptado-imediato {
@@ -2245,5 +2268,5 @@
 
 .treino-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
