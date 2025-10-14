@@ -53,7 +53,7 @@ function Home() {
           <div className="row">
             <div className="col-lg-7">
               <div className="header-text">
-                <h6>Bem-vindo novamente ao ClideFit</h6>
+                <h6>Bem-vindo(a) novamente ao ClideFit</h6>
                 <h4>Vamos começar?</h4>
                 <div className="main-button">
                   <Link
