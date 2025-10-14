@@ -86,39 +86,46 @@ function Treinos() {
 
   const handleSaveTreino = async (novoTreino) => {
     try {
-      let treinoSalvo;
-      if (novoTreino.idTreino) {
+        let treinoSalvo;
+        if (novoTreino.idTreino) {
         treinoSalvo = await treinosService.editar(novoTreino);
-      } else {
+        } else {
         treinoSalvo = await treinosService.criar(novoTreino);
-      }
+        }
 
-      setTreinos((prev) => {
+        // ✅ CORREÇÃO: Garantir que o tipo_treino seja preservado
+        const treinoComTipo = {
+        ...treinoSalvo,
+        tipo_treino: novoTreino.tipo_treino || treinoSalvo.tipo_treino || 'normal'
+        };
+
+        setTreinos((prev) => {
         const lista = prev[activeTab];
         const index = lista.findIndex(
-          (t) => t.idTreino === treinoSalvo.idTreino
+            (t) => t.idTreino === treinoComTipo.idTreino
         );
 
         let novaLista;
         if (index >= 0) {
-          novaLista = [...lista];
-          novaLista[index] = treinoSalvo;
+            novaLista = [...lista];
+            novaLista[index] = treinoComTipo;
         } else {
-          novaLista = [...lista, treinoSalvo];
+            novaLista = [...lista, treinoComTipo];
         }
 
         return { ...prev, [activeTab]: novaLista };
-      });
+        });
 
-      setShowModalAdd(false);
-      setTreinoEditando(null);
-      setShowEditar(false);
-      setTreinoSelecionado(null);
+        setShowModalAdd(false);
+        setTreinoEditando(null);
+        setShowEditar(false);
+        setTreinoSelecionado(null);
+        
     } catch (err) {
-      console.error("Erro ao salvar treino:", err);
-      alert(err?.response?.data?.error || "Erro ao salvar treino");
+        console.error("Erro ao salvar treino:", err);
+        alert(err?.response?.data?.error || "Erro ao salvar treino");
     }
-  };
+    };
 
   const handleDesatribuirTreino = async (idTreino) => {
     if (!window.confirm("Tem certeza que deseja desatribuir este treino?")) {
@@ -135,7 +142,7 @@ function Treinos() {
     }
   };
 
-  const renderTreinoCard = (treino) => {
+    const renderTreinoCard = (treino) => {
         const isAbaAtribuidos = activeTab === "Treinos Atribuídos";
         
         return (
@@ -143,10 +150,14 @@ function Treinos() {
                 key={treino.idTreino}
                 className="treino-card popopoptata"
                 onClick={() => {
-                    setTreinoSelecionado(treino);
+                    // ✅ CORREÇÃO: Passar o tipo_treino explicitamente
+                    setTreinoSelecionado({
+                    ...treino,
+                    tipo_treino: treino.tipo_treino || 'normal'
+                    });
                     setShowEditar(true);
                 }}
-            >
+                >
                 <div className="card-actions">
                     {activeTab === "Meus Treinos" && (
                         <>
@@ -187,7 +198,26 @@ function Treinos() {
                     )}
                 </div>
 
-                <h3>{treino.nome}</h3>
+                <h3>
+                {treino.nome}
+                {treino.tipo_treino === 'adaptado' && (
+                    <span 
+                    className="badge-adaptado-imediato"
+                    style={{
+                        marginLeft: '8px', 
+                        fontSize: '12px', 
+                        background: '#e67e22', 
+                        padding: '2px 8px', 
+                        borderRadius: '12px', 
+                        color: 'white',
+                        fontWeight: 'bold',
+                        animation: 'pulse 0.6s ease-in-out' // Adiciona animação
+                    }}
+                    >
+                    🎯 Adaptado
+                    </span>
+                )}
+                </h3>
                 <p>{treino.descricao}</p>
                 
                 {isAbaAtribuidos && treino.nomeAluno && (
@@ -201,42 +231,42 @@ function Treinos() {
                     </div>
                 )}
                 
-                {treino.tipo_treino === 'adaptado' && (
-                    <span className="badge-adaptado">Adaptado</span>
-                )}
+                {/* {treino.tipo_treino === 'adaptado' && (
+                    <span className="badge-adaptado"></span>
+                )} */}
             </div>
         );
     };
 
-  const handleDeleteTreino = async (idTreino) => {
-    try {
-      await treinosService.deletar(idTreino);
-      setTreinos((prev) => ({
-        ...prev,
-        [activeTab]: prev[activeTab].filter((t) => t.idTreino !== idTreino),
-      }));
-      if (treinoSelecionado?.idTreino === idTreino) {
-        setShowEditar(false);
+    const handleDeleteTreino = async (idTreino) => {
+        try {
+        await treinosService.deletar(idTreino);
+        setTreinos((prev) => ({
+            ...prev,
+            [activeTab]: prev[activeTab].filter((t) => t.idTreino !== idTreino),
+        }));
+        if (treinoSelecionado?.idTreino === idTreino) {
+            setShowEditar(false);
+            setTreinoSelecionado(null);
+        }
+        } catch (err) {
+        console.error("Erro ao deletar treino:", err);
+        alert(err?.response?.data?.error || "Erro ao deletar treino");
+        }
+    };
+
+    const handleTabClick = (tab) => {
+        if (tab === activeTab) return;
+        setFade(false);
+        setTimeout(() => {
+        setActiveTab(tab);
         setTreinoSelecionado(null);
-      }
-    } catch (err) {
-      console.error("Erro ao deletar treino:", err);
-      alert(err?.response?.data?.error || "Erro ao deletar treino");
-    }
-  };
+        setShowEditar(false);
+        setFade(true);
+        }, 200);
+    };
 
-  const handleTabClick = (tab) => {
-    if (tab === activeTab) return;
-    setFade(false);
-    setTimeout(() => {
-      setActiveTab(tab);
-      setTreinoSelecionado(null);
-      setShowEditar(false);
-      setFade(true);
-    }, 200);
-  };
-
-  return (
+    return (
         <div className="treino treinos-container">
             <div className="PT1">
                 <h2>{activeTab}</h2>

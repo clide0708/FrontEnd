@@ -34,19 +34,16 @@ export default function AddExercicio({
         setError(null);
 
         if (isPersonal) {
-          // Personal: busca exercícios conforme o tipo do treino
           let resGlobal, resPersonal;
 
           if (tipoTreino === "normal") {
             // Para treino normal: exercícios normais (globais + pessoais)
-            resGlobal = await exerciciosService.buscarTodosExercicios();
-            resPersonal =
-              await exerciciosPersonalService.buscarMeusExercicios();
+            resGlobal = await exerciciosService.buscarTodosExerciciosComFiltro('normal');
+            resPersonal = await exerciciosPersonalService.buscarMeusExerciciosPorTipo('normal');
           } else {
-            // Para treino adaptado: exercícios adaptados (apenas pessoais)
-            resGlobal = []; // Treinos adaptados só usam exercícios adaptados pessoais
-            resPersonal =
-              await exerciciosPersonalService.buscarMeusExerciciosAdaptados();
+            // Para treino adaptado: exercícios adaptados (pessoais) + globais normais
+            resGlobal = await exerciciosService.buscarTodosExerciciosComFiltro('normal');
+            resPersonal = await exerciciosPersonalService.buscarMeusExerciciosPorTipo('adaptado');
           }
 
           setTodosExercicios(resGlobal || []);
@@ -60,7 +57,14 @@ export default function AddExercicio({
           }
         } else {
           // Aluno: busca apenas exercícios disponíveis para aluno
-          const resGlobal = await exerciciosService.buscarTodosExercicios();
+          let resGlobal;
+          
+          if (tipoTreino === "normal") {
+            resGlobal = await exerciciosService.buscarTodosExerciciosComFiltro('normal');
+          } else {
+            resGlobal = await exerciciosService.buscarTodosExerciciosComFiltro('normal');
+          }
+          
           setTodosExercicios(resGlobal || []);
           setMeusExercicios([]);
           setExerciciosDisponiveis(resGlobal || []);

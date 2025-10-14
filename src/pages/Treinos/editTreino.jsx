@@ -32,17 +32,14 @@ export default function EditarTreino({
       
       try {
         setLoading(true);
-        console.log("Buscando exercícios do treino:", treino.idTreino);
+        console.log("Buscando exercícios do treino:", treino.idTreino, "Tipo:", treino.tipo_treino);
         
         const res = await exerciciosService.buscarExerciciosDoTreino(treino.idTreino);
         console.log("Exercícios retornados da API:", res);
         
-        // CORREÇÃO: Garantir que os vídeos estejam incluídos
         const exerciciosFormatados = Array.isArray(res) ? res.map(ex => ({
           ...ex,
-          // Garantir que a URL do vídeo esteja disponível
           url: ex.video_url || ex.url || "",
-          // Garantir que as propriedades necessárias para o treinando.jsx existam
           series: ex.series || 0,
           repeticoes: ex.repeticoes || 0,
           descanso: ex.descanso || 0,
@@ -51,12 +48,13 @@ export default function EditarTreino({
           informacoes: ex.descricao || ex.informacoes || "",
         })) : [];
         
-        console.log("Exercícios formatados com vídeos:", exerciciosFormatados);
+        console.log("Exercícios formatados:", exerciciosFormatados);
 
+        // ✅ CORREÇÃO: Atualizar estado com tipo_treino garantido
         setCurrentTreino((prev) => ({
           ...prev,
           exercicios: exerciciosFormatados,
-          tipo_treino: treino.tipo_treino || 'normal'
+          tipo_treino: treino.tipo_treino || prev.tipo_treino || 'normal'
         }));
 
         if (exerciciosFormatados.length > 0) {
@@ -68,7 +66,11 @@ export default function EditarTreino({
         }
       } catch (err) {
         console.error("Erro ao buscar exercícios do treino", err);
-        setCurrentTreino((prev) => ({ ...prev, exercicios: [] }));
+        setCurrentTreino((prev) => ({ 
+          ...prev, 
+          exercicios: [],
+          tipo_treino: treino.tipo_treino || prev.tipo_treino || 'normal'
+        }));
       } finally {
         setLoading(false);
       }
@@ -116,7 +118,6 @@ export default function EditarTreino({
     }
   };
 
-  // Adicionar exercício - CORREÇÃO
   const handleAddExercicio = async (novoEx) => {
     if (!treino?.idTreino) return;
 
@@ -242,7 +243,9 @@ export default function EditarTreino({
         <h2>
           {currentTreino.nome}
           {currentTreino.tipo_treino === 'adaptado' && (
-            <span className="badge-adaptado">Adaptado</span>
+            <span className="badge-adaptado" style={{marginLeft: '10px', fontSize: '14px', background: '#e67e22', padding: '2px 8px', borderRadius: '4px', color: 'white'}}>
+              Adaptado
+            </span>
           )}
         </h2>
       </div>
@@ -376,8 +379,14 @@ export default function EditarTreino({
 
           <div className="ftltex">
             {!isReadOnly && (
-              <button className="addexbtn" onClick={() => setShowAdd(true)}>
-                Adicionar exercício +
+              <button 
+                className="addexbtn" 
+                onClick={() => {
+                  console.log("Abrindo modal para treino:", currentTreino.tipo_treino);
+                  setShowAdd(true);
+                }}
+              >
+                Adicionar exercício {currentTreino.tipo_treino === 'adaptado' ? 'Adaptado' : 'Normal'} +
               </button>
             )}
             <div className="bttcmc">

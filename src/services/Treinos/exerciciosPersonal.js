@@ -34,7 +34,17 @@ const exerciciosPersonalService = {
       console.error('Erro ao cadastrar exercício:', error);
       throw error;
     }
-  }
+  },
+
+  buscarMeusExerciciosPorTipo: async (tipo) => {
+    try {
+      const response = await api.get(`/exercicios/por-tipo/${tipo}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao buscar exercícios do tipo ${tipo}:`, error);
+      return [];
+    }
+  },
 };
 
 export default exerciciosPersonalService;

@@ -2223,3 +2223,27 @@
     margin-left: 5px;
   }
 }
+
+
+
+
+
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.badge-adaptado-imediato {
+  animation: pulse 0.6s ease-in-out;
+}
+
+.treino-card {
+  transition: all 0.3s ease;
+}
+
+.treino-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}

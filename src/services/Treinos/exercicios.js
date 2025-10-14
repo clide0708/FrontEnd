@@ -84,9 +84,38 @@ const removerExercicioDoTreino = async (idExercicio) => {
   }
 };
 
+const buscarExerciciosGlobaisPorTipo = async (tipo) => {
+  try {
+    const res = await api.get(`/exercicios/por-tipo/${tipo}`);
+    return res.data || [];
+  } catch (err) {
+    console.error(`Erro ao buscar exercícios globais do tipo ${tipo}:`, err);
+    return [];
+  }
+};
+
+const buscarTodosExerciciosComFiltro = async (tipoFiltro = null) => {
+  try {
+    const res = await api.get(`/exercicios/buscarTodos`);
+    let exercicios = res.data || [];
+    
+    // Aplicar filtro se especificado
+    if (tipoFiltro) {
+      exercicios = exercicios.filter(ex => ex.tipo_exercicio === tipoFiltro);
+    }
+    
+    return exercicios;
+  } catch (err) {
+    console.error("Erro ao buscar exercícios com filtro:", err);
+    return [];
+  }
+};
+
 export default {
   buscarTodosExercicios,
   buscarExerciciosDoTreino,
+  buscarExerciciosGlobaisPorTipo,
+  buscarTodosExerciciosComFiltro,
   adicionarExercicioAoTreino,
   atualizarExercicioNoTreino,
   removerExercicioDoTreino,
