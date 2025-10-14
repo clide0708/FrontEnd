@@ -418,6 +418,15 @@
     margin-bottom: 1.2rem;
     display: flex;
     flex-direction: column;
+
+    input, textarea {
+      color: black;
+      padding: 10px;
+      border: none;
+      border-radius: 10px
+    }
+
+    ;
   }
 
   .form-group label {
@@ -1941,6 +1950,7 @@
 }
 
 .aba {
+  color: white;
   flex: 1;
   padding: 10px 15px;
   background: none;
@@ -1978,7 +1988,7 @@
   margin: 15px 0;
   border-left: 4px solid #368dd9;
 
-  strong{
+  strong {
     color: black;
   }
 }
@@ -2051,11 +2061,18 @@
 
 /* Botão cadastrar exercício */
 .btn-cadastrar-exercicio {
-  transition: all 0.3s ease;
+  background-color: white;
+  border: 3px solid black;
+  padding: 0.8rem 1.4rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: bold;
+
 }
 
 .btn-cadastrar-exercicio:hover {
-  background: #2b7bb9 !important;
   transform: translateY(-1px);
 }
 
