@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import treinosService from "../../../services/Treinos/treinos";
 
 export default function Treino() {
   const navigate = useNavigate();
@@ -41,7 +42,9 @@ export default function Treino() {
     return "";
   }
 
-  // CORREÇÃO: Inicialização melhorada dos exercícios
+  const [duracaoTotal, setDuracaoTotal] = useState(0);  // Inicializa em 0
+
+  // Inicialização melhorada dos exercícios
   const [exercicios, setExercicios] = useState(() => {
     return treino.exercicios.map((e) => ({
       ...e,
@@ -112,6 +115,16 @@ export default function Treino() {
   }
 
   useEffect(() => {
+    if (estado === "execucao" || estado === "descanso") {
+      const startTime = Date.now();  // Marca o início do timer
+      const interval = setInterval(() => {
+        setDuracaoTotal((prev) => prev + 1);  // Incrementa a cada segundo
+      }, 1000);
+      return () => clearInterval(interval);  // Limpa quando o estado muda
+    }
+  }, [estado]);  // Roda quando o estado muda
+
+  useEffect(() => {
     if (
       estado === "descanso" &&
       (!ex.tempo_descanso || ex.tempo_descanso <= 0)
@@ -162,6 +175,16 @@ export default function Treino() {
     const s = sec % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
+
+  const handlePararTreino = async () => {
+    try {
+      await treinosService.finalizarSessao(treino.idSessao, progresso, duracaoTotal);
+      navigate('/treinos');
+    } catch (err) {
+      console.error("Erro ao parar treino:", err);
+      alert("Não foi possível parar o treino. Tente novamente.");  // Opcional: Alerta para feedback
+    }
+  };
 
   function handleAvancar() {
     if (estado === "execucao") setEstado("descanso");
@@ -339,8 +362,15 @@ export default function Treino() {
                   />
                 )}
                 {!ex.url && (
-                  <div className="no-video-message">
-                    Nenhum vídeo disponível para este exercício
+                  <div className="no-video-message" style={{
+                    textAlign: 'center', 
+                    padding: '20px', 
+                    color: '#666',
+                    fontStyle: 'italic'
+                  }}>
+                    🏋️ Nenhum vídeo disponível para este exercício
+                    <br />
+                    <small>Execute o movimento conforme as instruções</small>
                   </div>
                 )}
               </div>
@@ -372,15 +402,17 @@ export default function Treino() {
                   >
                     ⮞
                   </button>
+                  <button onClick={handlePararTreino} className="btn btn-parar">
+                    Parar Treino
+                  </button>
                 </div>
               </div>
-
-              {ex.informacoes && (
-                <div className="exercicio-info">
-                  <h4>Informações:</h4>
-                  <p>{ex.informacoes}</p>
-                </div>
-              )}
+                {ex.informacoes && (
+                  <div className="exercicio-info">
+                    <h4>Informações:</h4>
+                    <p>{ex.informacoes}</p>
+                  </div>
+                )}
             </div>
           )}
 

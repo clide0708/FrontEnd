@@ -111,6 +111,57 @@ const treinosService = {
     const { data } = await api.get(`/treinos/aluno/personal/${usuario.id}`);
     return data.treinosAtribuidos || [];
   },
+
+  getHistoricoTreinos: async (dias = 30) => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      const { data } = await api.get(`/treinos/historico?dias=${dias}`);
+      return data;  // Retorna { success: true, treinos: [...] }
+    } catch (err) {
+      console.error("Erro ao obter histórico de treinos:", err);
+      throw err;
+    }
+  },
+  // Nova função: Criar sessão de treino (POST /treinos/criar-sessao)
+  criarSessao: async (idTreino) => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      const { data } = await api.post("/treinos/criar-sessao", {
+        idTreino: idTreino,
+        idUsuario: usuario.id,
+        tipo_usuario: usuario.tipo,  // 'aluno' ou 'personal'
+      });
+      return data;  // Retorna { success: true, idSessao: ... }
+    } catch (err) {
+      console.error("Erro ao criar sessão:", err);
+      throw err;
+    }
+  },
+  // Nova função: Finalizar sessão de treino (POST /treinos/finalizar-sessao/{idSessao})
+  finalizarSessao: async (idSessao, progresso, duracao, notas = null) => {
+    try {
+      const { data } = await api.post(`/treinos/finalizar-sessao/${idSessao}`, {
+        progresso: progresso,  // Array ou objeto de progresso
+        duracao: duracao,  // Tempo total em segundos
+        notas: notas,  // Opcional
+      });
+      return data;  // Retorna { success: true }
+    } catch (err) {
+      console.error("Erro ao finalizar sessão:", err);
+      throw err;
+    }
+  },
+  // Nova função: Obter sessão para retomar (GET /treinos/retomar-sessao/{idSessao})
+  getSessaoParaRetomar: async (idSessao) => {
+    try {
+      const { data } = await api.get(`/treinos/retomar-sessao/${idSessao}`);
+      return data;  // Retorna { success: true, sessao: { ... } }
+    } catch (err) {
+      console.error("Erro ao obter sessão para retomar:", err);
+      throw err;
+    }
+  },
+  
 };
 
 export default treinosService;

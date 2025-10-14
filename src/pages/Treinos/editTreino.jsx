@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddExercicio from "./addExercicio";
 import exerciciosService from "../../services/Treinos/exercicios";
+import treinosService from "../../services/Treinos/treinos";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 
@@ -156,30 +157,41 @@ export default function EditarTreino({
     }
   };
 
-  const handleIniciarTreino = () => {
-    if (currentTreino.exercicios.length === 0) return;
+  const handleIniciarTreino = async () => {
+    if (currentTreino.exercicios.length === 0) return;  // Mantém a verificação original
     
-    // CORREÇÃO: Garantir que todos os dados necessários estejam presentes
-    const treinoParaExecutar = {
-      ...currentTreino,
-      exercicios: currentTreino.exercicios.map(ex => ({
-        ...ex,
-        id: ex.id || ex.idTreino_Exercicio,
-        series: ex.series || 3,
-        repeticoes: ex.repeticoes || 10,
-        descanso: ex.descanso || 60,
-        carga: ex.carga || 0,
-        url: ex.video_url || ex.url || "",
-        grupo: ex.grupoMuscular || ex.grupo || "",
-        informacoes: ex.descricao || ex.informacoes || "",
-      }))
-    };
-    
-    console.log("Treino para executar:", treinoParaExecutar);
-    
-    navigate("/treinando", {
-      state: { treino: treinoParaExecutar },
-    });
+    try {
+      // Chama o backend para criar a sessão
+      const response = await treinosService.criarSessao(currentTreino.idTreino);
+      const idSessao = response.idSessao;  // Extrai o ID da sessão da resposta
+      
+      // Preparação de dados como na sua função original
+      const treinoParaExecutar = {
+        ...currentTreino,
+        idSessao: idSessao,  // Adiciona o ID da sessão ao objeto
+        exercicios: currentTreino.exercicios.map(ex => ({
+          ...ex,
+          id: ex.id || ex.idTreino_Exercicio,
+          series: ex.series || 3,
+          repeticoes: ex.repeticoes || 10,
+          descanso: ex.descanso || 60,
+          carga: ex.carga || 0,
+          url: ex.video_url || ex.url || "",
+          grupo: ex.grupoMuscular || ex.grupo || "",
+          informacoes: ex.descricao || ex.informacoes || "",
+        }))
+      };
+      
+      console.log("Treino para executar:", treinoParaExecutar);
+      
+      navigate("/treinando", {
+        state: { treino: treinoParaExecutar },  // Navega com o treino atualizado
+      });
+    } catch (err) {
+      console.error("Erro ao iniciar treino:", err);
+      // Opcional: Adicione um alerta ou mensagem para o usuário, ex:
+      alert("Não foi possível iniciar o treino. Tente novamente.");
+    }
   };
 
   // Salvar todos os exercícios temporários

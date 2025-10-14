@@ -6,7 +6,7 @@ import "./style.css";
 import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification";
 import convitesService from "../../services/Notification/convites";
-import perfilService from "../../services/Perfil/perfil.jsx";
+import perfilService from "../../services/Perfil/perfil";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
