@@ -9,23 +9,19 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
-  // Função para buscar a frase motivacional
+  // Função para buscar ditado da API
   const fetchFrase = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://cors-anywhere.herokuapp.com/https://allugofrases.herokuapp.com/frases/random"
+        "https://ditado-api.fly.dev/ditados/random"
       );
-
-      // API retorna um objeto com content e meaning
-      const data = Array.isArray(response.data) ? response.data[0] : response.data;
-
       setFrase({
-        content: data.content || "Mantenha-se firme e continue tentando!",
-        meaning: data.meaning || "CLIDE Fit",
+        content: response.data.content,
+        meaning: response.data.meaning,
       });
     } catch (err) {
-      console.error("Erro ao buscar frase motivacional:", err.message);
+      console.error("Erro ao buscar ditado:", err.message);
       setFrase({
         content: "Mantenha-se firme e continue tentando!",
         meaning: "CLIDE Fit",
@@ -57,7 +53,7 @@ function Home() {
           <div className="row">
             <div className="col-lg-7">
               <div className="header-text">
-                <h6>Bem vindo novamente ao CLIDE Fit</h6>
+                <h6>Bem-vindo novamente ao CLIDE Fit</h6>
                 <h4>Vamos começar?</h4>
                 <div className="main-button">
                   <Link
@@ -77,21 +73,46 @@ function Home() {
           </div>
         </div>
 
-        {/* Frase Motivacional */}
-        <div className="gaming-library">
-          <div className="heading-section">
-            <h4>Frase do Dia</h4>
-            {loading ? (
-              <p>Carregando frase motivacional...</p>
-            ) : (
-              <div className="frase-motivacional">
-                <blockquote>“{frase.content}”</blockquote>
-                <p>{frase.meaning}</p>
-                <button className="btn-refresh" onClick={fetchFrase}>
-                  Outra frase
-                </button>
-              </div>
-            )}
+        {/* Ditado Popular */}
+        <div className="motivacional-section">
+          {loading ? (
+            <p>Carregando ditado...</p>
+          ) : (
+            <div className="frase-motivacional">
+              <blockquote>“{frase.content}”</blockquote>
+              <p>{frase.meaning}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="novidades">
+        <h4>Novidades</h4>
+        <div className="novidades-lista">
+          <div className="novidade-item">
+            <h5>Novo treino de pernas disponível!</h5>
+            <p>Confira a nova rotina intensa focada em quadríceps e glúteos.</p>
+          </div>
+
+          <div
+            className="novidade-item"
+            onClick={() =>
+              window.open(
+                "https://open.spotify.com/playlist/7uJiRvoz3rha3X1Neqi3po?si=8adb98b263b14e8f",
+                "_blank"
+              )
+            }
+            style={{ cursor: "pointer" }}
+          >
+            <h5>Playlist motivacional</h5>
+            <p>Nova playlist no Spotify com músicas pra te manter no ritmo!</p>
+          </div>
+
+          <div className="novidade-item">
+            <h5>Desafios semanais atualizados</h5>
+            <p>
+              Ganhe pontos extras ao completar todos os desafios desta semana.
+            </p>
           </div>
         </div>
       </div>
@@ -99,23 +120,10 @@ function Home() {
       {/* Footer */}
       <footer>
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <p>
-                Copyright © 2025 <a href="#">CLIDE Fit</a> Todos os direitos
-                reservados.
-                <br />
-                Design:{" "}
-                <a
-                  href="https://templatemo.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  TemplateMo
-                </a>
-              </p>
-            </div>
-          </div>
+          <p>
+            Copyright © 2025<a href="#"> Clide Fit</a> - Todos os direitos
+            reservados.
+          </p>
         </div>
       </footer>
     </div>
