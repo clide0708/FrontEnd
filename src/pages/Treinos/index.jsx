@@ -6,55 +6,77 @@ import treinosService from "../../services/Treinos/treinos";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 function Treinos() {
-  const [activeTab, setActiveTab] = useState("Meus Treinos");
-  const [fade, setFade] = useState(true);
-  const [showModalAdd, setShowModalAdd] = useState(false);
-  const [treinoEditando, setTreinoEditando] = useState(null);
-  const [treinos, setTreinos] = useState({
-    "Meus Treinos": [],
-    Personal: [],
-    MarketPlace: [],
-  });
+    const [activeTab, setActiveTab] = useState("Meus Treinos");
+    const [fade, setFade] = useState(true);
+    const [showModalAdd, setShowModalAdd] = useState(false);
+    const [treinoEditando, setTreinoEditando] = useState(null);
+    const [treinos, setTreinos] = useState({
+        "Meus Treinos": [],
+        "Treinos Atribuídos": [],
+        Personal: [],
+        MarketPlace: [],
+    });
 
-  const [showEditar, setShowEditar] = useState(false);
-  const [treinoSelecionado, setTreinoSelecionado] = useState(null);
+    const treinosDaAbaAtual = treinos[activeTab] || [];
+    const [showEditar, setShowEditar] = useState(false);
+    const [treinoSelecionado, setTreinoSelecionado] = useState(null);
 
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-  const getAbas = () => {
-    if (usuario.tipo === "personal") {
-      return ["Meus Treinos", "Treinos Atribuídos", "MarketPlace"];
-    } else {
-      return ["Meus Treinos", "Personal", "MarketPlace"];
-    }
-  }; 
-
-  const abas = getAbas();
-
-  const carregarTreinos = async () => {
-    try {
-        console.log("Carregando treinos para aba:", activeTab);
+    const getAbas = () => {
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
         
-        if (activeTab === "Meus Treinos") {
+        if (usuario.tipo === "personal") {
+            return ["Meus Treinos", "Treinos Atribuídos", "MarketPlace"];
+        } else {
+            return ["Meus Treinos", "Personal", "MarketPlace"];
+        }
+    };
+
+    const abas = getAbas();
+
+    const carregarTreinos = async () => {
+        try {
+            console.log("Carregando treinos para aba:", activeTab);
+            const usuario = JSON.parse(localStorage.getItem("usuario"));
+            
+            if (activeTab === "Meus Treinos") {
             const data = await treinosService.listarMeus();
             console.log("Meus treinos:", data);
-            setTreinos((prev) => ({ ...prev, "Meus Treinos": data }));
-        } else if (activeTab === "Treinos Atribuídos" && usuario.tipo === "personal") {
+            setTreinos((prev) => ({ 
+                ...prev, 
+                "Meus Treinos": Array.isArray(data) ? data : [] 
+            }));
+            
+            } else if (activeTab === "Treinos Atribuídos" && usuario.tipo === "personal") {
+            // ✅ CORREÇÃO: Buscar treinos atribuídos do personal
             const data = await treinosService.listarAtribuidos();
             console.log("Treinos atribuídos:", data);
-            setTreinos((prev) => ({ ...prev, "Treinos Atribuídos": data || [] }));
-        } else if (activeTab === "Personal" && usuario.tipo === "aluno") {
+            setTreinos((prev) => ({ 
+                ...prev, 
+                "Treinos Atribuídos": Array.isArray(data) ? data : [] 
+            }));
+            
+            } else if (activeTab === "Personal" && usuario.tipo === "aluno") {
             const data = await treinosService.listarTreinosPersonalDoAluno();
             console.log("Treinos do personal (aluno):", data);
-            setTreinos((prev) => ({ ...prev, Personal: data || [] }));
-        } else if (activeTab === "MarketPlace") {
+            setTreinos((prev) => ({ 
+                ...prev, 
+                Personal: Array.isArray(data) ? data : [] 
+            }));
+            
+            } else if (activeTab === "MarketPlace") {
             setTreinos((prev) => ({ ...prev, MarketPlace: [] }));
+            }
+        } catch (err) {
+            console.error("Erro ao carregar treinos:", err);
+            // ✅ CORREÇÃO: Garantir que não fique undefined em caso de erro
+            setTreinos((prev) => ({ 
+            ...prev, 
+            [activeTab]: [] 
+            }));
         }
-    } catch (err) {
-        console.error("Erro ao carregar treinos:", err);
-        alert("Erro ao carregar treinos");
-    }
-  };
+    };
 
   useEffect(() => {
     carregarTreinos();
@@ -251,21 +273,21 @@ function Treinos() {
                 )}
             </div>
 
-       {/* SEÇÃO DE LISTAGEM DE TREINOS */}
+            {/* SEÇÃO DE LISTAGEM DE TREINOS */}
             <div className={`PT2 fade-container ${fade ? "fade-in" : "fade-out"}`}>
                 <div className="containertnvw">
-                    {treinos[activeTab].length === 0 ? (
-                        <h1 className="ntnnnntast">
-                            {activeTab === "Treinos Atribuídos" 
-                                ? "Nenhum treino atribuído" 
-                                : activeTab === "Meus Treinos"
-                                ? "Nenhum treino criado"
-                                : activeTab === "Personal"
-                                ? "Nenhum treino atribuído pelo personal"
-                                : "Nenhum treino disponível"}
-                        </h1>
+                    {treinosDaAbaAtual.length === 0 ? (
+                    <h1 className="ntnnnntast">
+                        {activeTab === "Treinos Atribuídos" 
+                        ? "Nenhum treino atribuído" 
+                        : activeTab === "Meus Treinos"
+                        ? "Nenhum treino criado"
+                        : activeTab === "Personal"
+                        ? "Nenhum treino atribuído pelo personal"
+                        : "Nenhum treino disponível"}
+                    </h1>
                     ) : (
-                        treinos[activeTab].map(renderTreinoCard)
+                    treinosDaAbaAtual.map(renderTreinoCard)
                     )}
                 </div>
             </div>

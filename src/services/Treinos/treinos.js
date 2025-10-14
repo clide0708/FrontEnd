@@ -74,18 +74,20 @@ const treinosService = {
   },
   
   listarAtribuidos: async () => {
-      const usuario = JSON.parse(localStorage.getItem("usuario"));
-      if (usuario.tipo !== "personal") return [];
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario.tipo !== "personal") return [];
+    
+    try {
+      console.log("Buscando treinos atribuídos para personal:", usuario.id);
+      const { data } = await api.get(`/treinos/personal/${usuario.id}/atribuidos`);
+      console.log("Treinos atribuídos retornados:", data);
       
-      try {
-          console.log("Buscando treinos atribuídos para personal:", usuario.id);
-          const { data } = await api.get(`/treinos/personal/${usuario.id}/atribuidos`);
-          console.log("Treinos atribuídos retornados:", data);
-          return data.treinosAtribuidos || [];
-      } catch (err) {
-          console.error("Erro ao buscar treinos atribuídos:", err);
-          return [];
-      }
+      // ✅ GARANTIR que sempre retorne um array
+      return Array.isArray(data.treinosAtribuidos) ? data.treinosAtribuidos : [];
+    } catch (err) {
+      console.error("Erro ao buscar treinos atribuídos:", err);
+      return []; // ✅ Sempre retornar array vazio em caso de erro
+    }
   },
 
   // Desatribuir treino
