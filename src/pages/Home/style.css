@@ -39,8 +39,14 @@
             background-color: rgb(41, 41, 41);
             padding: 10px;
             margin-bottom: 10px;
+            transition: 0.2s;
             border-radius: 10px;
             width: 50%;
+
+            &:hover {
+                scale: 1.05;
+                transition: 0.2s
+            }
         }
 
         h4 {
@@ -77,5 +83,15 @@
 
     .main-banner {
         box-shadow: 0 10px 30px rgb(49, 49, 49);
+        transition: 1s;
+
+        &:hover {
+            scale: 1.05;
+            transition: 1s;
+        }
+    }
+
+    .novidades-lista {
+        padding-left: auto;
     }
 }

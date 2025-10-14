@@ -68,25 +68,38 @@ export default function Header() {
             <li>
               <Link
                 to="/home"
-                className={location.pathname === "/" || location.pathname === "/home" ? "active" : ""}
+                className={
+                  location.pathname === "/" || location.pathname === "/home"
+                    ? "active"
+                    : ""
+                }
               >
                 Início
               </Link>
             </li>
 
-            <li>
-              <Link
-                to="/alimentacao"
-                className={location.pathname === "/alimentacao" ? "active" : ""}
-              >
-                Alimentação
-              </Link>
-            </li>
+            {userRole === "aluno" && (
+              <li>
+                <Link
+                  to="/alimentacao"
+                  className={
+                    location.pathname === "/alimentacao" ? "active" : ""
+                  }
+                >
+                  Alimentação
+                </Link>
+              </li>
+            )}
 
             <li>
               <Link
                 to="/treinos"
-                className={location.pathname === "/treinos" || location.pathname === "/treinando" ? "active" : ""}
+                className={
+                  location.pathname === "/treinos" ||
+                  location.pathname === "/treinando"
+                    ? "active"
+                    : ""
+                }
               >
                 Treinos
               </Link>
@@ -141,7 +154,9 @@ export default function Header() {
               <li className="profile-item">
                 <Link
                   to="/perfil"
-                  className={`profile-link ${location.pathname === "/perfil" ? "pfact" : ""}`}
+                  className={`profile-link ${
+                    location.pathname === "/perfil" ? "pfact" : ""
+                  }`}
                 >
                   <span>Perfil</span>
                   <img src={fotoPerfil} alt="Foto de perfil" />
