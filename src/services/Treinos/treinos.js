@@ -57,13 +57,19 @@ const treinosService = {
   // Meus treinos (aluno)
   listarMeus: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const { data } =
-      usuario.tipo === "aluno"
-        ? await api.get(`/treinos/aluno/${usuario.id}`)
-        : await api.get(`/treinos/personal/${usuario.id}`);
-    return data.meusTreinos || []; // remove o filtro que excluía idPersonal
+    
+    if (usuario.tipo === "aluno") {
+      const { data } = await api.get(`/treinos/aluno/${usuario.id}`);
+      // ✅ CORREÇÃO: Combinar meusTreinos + treinosPersonal para alunos
+      const meusTreinos = data.meusTreinos || [];
+      const treinosPersonal = data.treinosPersonal || [];
+      return [...meusTreinos, ...treinosPersonal];
+    } else {
+      // Para personal, manter a lógica original
+      const { data } = await api.get(`/treinos/personal/${usuario.id}`);
+      return data.meusTreinos || [];
+    }
   },
-
   // Treinos atribuídos pelo personal
   listarPersonal: async () => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));

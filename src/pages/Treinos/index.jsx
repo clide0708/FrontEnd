@@ -27,7 +27,7 @@ function Treinos() {
         const usuario = JSON.parse(localStorage.getItem("usuario"));
         
         if (usuario.tipo === "personal") {
-            return ["Meus Treinos", "Treinos Atribuídos", "MarketPlace"];
+            return ["Meus Treinos", "MarketPlace"];
         } else {
             return ["Meus Treinos", "Personal", "MarketPlace"];
         }
@@ -82,7 +82,15 @@ function Treinos() {
     carregarTreinos();
   }, [activeTab]);
 
-  
+    useEffect(() => {
+    // Recarregar treinos quando o componente montar (após F5)
+    carregarTreinos();
+    }, []); // ← array vazio = executa apenas na montagem
+
+    useEffect(() => {
+    // Recarregar quando a aba mudar (comportamento existente)
+    carregarTreinos();
+    }, [activeTab]);
 
   const handleSaveTreino = async (novoTreino) => {
     try {
