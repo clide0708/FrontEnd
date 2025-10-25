@@ -86,7 +86,7 @@ function Personal() {
     
     const confirmar = window.confirm(
         `Tem certeza que deseja desatribuir o treino "${treino.nome}"?\n\n` +
-        `⚠️  Se o aluno já executou este treino, o histórico será mantido.`
+        `⚠️  Se o aluno já executou este treino, o histórico não será mantido.`
     );
     
     if (!confirmar) return;
