@@ -8,6 +8,7 @@ import CropModal from "./modalCrop.jsx";
 import { FiLogOut } from "react-icons/fi";
 import treinosService from "../../services/Treinos/treinos";
 import { useNavigate } from "react-router-dom";
+import { color } from "framer-motion";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -49,9 +50,16 @@ export default function Profile() {
     const fetchHistorico = async () => {
       try {
         const response = await treinosService.getHistoricoTreinos();
-        setHistoricoTreinos(response.treinos || []);
+        
+        // CORREÇÃO: Acessar a estrutura correta
+        if (response.success) {
+          setHistoricoTreinos(response.treinos || []);
+        } else {
+          setHistoricoTreinos([]);
+        }
       } catch (err) {
         console.error("Erro ao buscar histórico:", err);
+        setHistoricoTreinos([]);
       } finally {
         setLoadingHistorico(false);
       }
@@ -91,24 +99,62 @@ export default function Profile() {
     }
   };
 
-  // Nova função: Clique no card do histórico
   const handleCardClick = async (treino) => {
-    if (treino.porcentagem_concluida >= 100) {
-      // Treino concluído: Visualizar detalhes (ajuste a rota conforme sua app)
-      navigate(`/treinos/visualizar/${treino.idTreino}`);
+    console.log("Treino clicado:", treino);
+    
+    if (treino.porcentagem_concluida >= 90) {
+        navigate(`/treinos/visualizar/${treino.idTreino}`);
     } else {
-      // Em progresso: Retomar de onde parou
-      try {
-        const response = await treinosService.getSessaoParaRetomar(treino.idSessao);
-        navigate('/treinando', { state: { treino: response.sessao } });
-      } catch (err) {
-        console.error("Erro ao retomar treino:", err);
-        alert("Erro ao retomar treino. Tente novamente.");
-      }
+        try {
+            console.log("Buscando sessão para retomar:", treino.idSessao);
+            const response = await treinosService.getSessaoParaRetomar(treino.idSessao);
+            console.log("Resposta completa da sessão:", response);
+            
+            if (!response.success) {
+                throw new Error(response.error || "Erro ao buscar sessão");
+            }
+
+            const { sessao, treino: treinoData, progresso } = response;
+            
+            if (!treinoData || !treinoData.exercicios) {
+                console.error("Dados do treino incompletos:", treinoData);
+                throw new Error("Dados do treino incompletos");
+            }
+
+            console.log("Exercícios encontrados:", treinoData.exercicios.length);
+
+            const treinoParaRetomar = {
+                ...treinoData,
+                idSessao: sessao.idSessao,
+                exercicios: treinoData.exercicios.map(ex => ({
+                    ...ex,
+                    id: ex.id || ex.idTreino_Exercicio,
+                    series: ex.series || 3,
+                    repeticoes: ex.repeticoes || 10,
+                    descanso: ex.descanso || 60,
+                    carga: ex.carga || 0,
+                    url: ex.video_url || ex.url || "",
+                    grupo: ex.grupoMuscular || ex.grupo || "",
+                    informacoes: ex.descricao || ex.informacoes || "",
+                    nome: ex.nome || "Exercício sem nome"
+                }))
+            };
+            
+            console.log("Treino preparado para retomar:", treinoParaRetomar);
+            
+            navigate("/treinando", {
+                state: { 
+                    treino: treinoParaRetomar,
+                    progresso: progresso 
+                }
+            });
+        } catch (err) {
+            console.error("Erro detalhado ao retomar treino:", err);
+            alert(`Erro ao retomar treino: ${err.message}`);
+        }
     }
   };
 
-  // Função auxiliar para thumbnail do YouTube (do primeiro exercício)
   const getYoutubeThumbnail = (url) => {
     if (!url) return "/assets/images/no-video-placeholder.jpg"; // Fallback local
     
@@ -121,7 +167,7 @@ export default function Profile() {
       if (!id) return "/assets/images/no-video-placeholder.jpg";
       
       return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-    } catch (e) {
+    } catch (error) {
       return "/assets/images/no-video-placeholder.jpg";
     }
   };
@@ -348,11 +394,8 @@ export default function Profile() {
               )}
             </div>
 
-            {/* NOVA SEÇÃO: HISTÓRICO DE TREINOS COM CARDS (SUBSTITUI A LISTA SIMPLES) */}
-            <div className="row">
-              <div className="col-lg-12">
+            {/* NOVA SEÇÃO: HISTÓRICO DE TREINOS COM CARDS */}
                 <div className="clips">
-                  <div className="row">
                     <div className="col-lg-12">
                       <div className="heading-section">
                         <h4>Histórico de Treinos (Último Mês)</h4>
@@ -365,11 +408,10 @@ export default function Profile() {
                     ) : historicoTreinos.length > 0 ? (
                       <div className="row">
                         {historicoTreinos.map((treino, idx) => {
-                          const statusText = treino.porcentagem_concluida >= 100 
+                          const statusText = treino.porcentagem_concluida >= 90 
                             ? "Concluído" 
-                            : `Em Progresso: ${treino.porcentagem_concluida}%`;
+                            : `Em Progresso`;
                           const thumbnail = getYoutubeThumbnail(treino.primeiro_video_url || "");
-
                           return (
                             <div className="col-lg-3 col-sm-6" key={idx}>
                               <div 
@@ -379,32 +421,59 @@ export default function Profile() {
                                 onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
                               >
+                                <strong style={{fontSize: "2.5rem"}}>{treino.nome_treino}</strong>
+                                <br />
+                                <br />
                                 <img
                                   src={thumbnail}
                                   alt={treino.nome_treino}
-                                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                                  style={{ width: "100%", height: "18rem", objectFit: "cover" }}
                                 />
-                                <h4>{statusText}</h4>
-                                <ul>
-                                  <li>
-                                    <strong>{treino.nome_treino}</strong>
+                                <br />
+                                <div className="row">
+                                  <div className="col-lg-12">
+                                    <h4 style={{fontSize: "2rem", color: "#2d74c4", padding: "5px" }}>{statusText}</h4>
                                     <br />
-                                    <small>{treino.descricao || "Sem descrição"}</small>
-                                  </li>
-                                  <li>{treino.data_formatada}</li>
-                                  <li>
-                                    <small>
-                                      Tipo: {treino.tipo_display} | Criador: {treino.nome_criador || "Desconhecido"}
-                                    </small>
-                                  </li>
-                                  {treino.porcentagem_concluida < 100 && (
-                                    <li>
-                                      <small style={{ color: "#ffc107" }}>
-                                        {treino.porcentagem_concluida}% concluído
-                                      </small>
-                                    </li>
-                                  )}
-                                </ul>
+                                    <h4 style={{fontSize: "1.8rem", color: "#ffffffff" }}>{treino.data_formatada}</h4>
+                                  </div>
+                                  <div className="col-lg-12">
+                                    <ul>
+                                      <li style={{marginBottom: "10px", marginTop: "20px", paddingBottom: "10px", paddingTop: "20px"}}>
+                                        <strong style={{fontSize: "1.5rem", padding: "10px"}}>
+                                        Descrição:
+                                        </strong>
+                                        <br />
+                                        <small style={{fontSize: "1rem"}}>{treino.descricao || "Sem descrição"}</small>
+                                      </li>
+                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
+                                        <strong style={{fontSize: "1.5rem"}}> 
+                                          Tipo do treino:
+                                        </strong>
+                                        <br />
+                                        <small style={{fontSize: "1.2rem"}}>
+                                          {treino.tipo_display}
+                                        </small>
+                                      </li>
+                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
+                                        <strong style={{fontSize: "1.5rem"}}> 
+                                          Cadastrado por: 
+                                        </strong>
+                                        <br />
+                                        <small style={{fontSize: "1.2rem"}}>
+                                          {treino.nome_criador || "Desconhecido"}
+                                        </small>
+                                      </li>
+                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
+                                        {treino.porcentagem_concluida < 100 && (
+                                          <strong style={{fontSize: "1.5rem", color: "#2d74c4", padding: "10px"}}>
+                                            {treino.porcentagem_concluida}% concluído
+                                          </strong>
+                                        )}
+                                      </li>
+                                      <br />
+                                    </ul>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           );
@@ -419,64 +488,6 @@ export default function Profile() {
                 </div>
               </div>
             </div>
-
-            {/* TREINOS RECENTES - COMENTADO COMO NO SEU CÓDIGO ORIGINAL */}
-            {/* 
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="clips">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="heading-section">
-                        <h4>Treinos recentes</h4>
-                      </div>
-                    </div>
-                    <div className="row">
-                      {[
-                        {
-                          img: "costasbiceps.webp",
-                          title: "Costas e bíceps",
-                          date: "20/05",
-                        },
-                        {
-                          img: "pernas.webp",
-                          title: "Pernas conjunto",
-                          date: "19/05",
-                        },
-                        {
-                          img: "ombrotrapezio.webp",
-                          title: "Ombros e trapézio",
-                          date: "17/05",
-                        },
-                        {
-                          img: "peitotriceps.jpg",
-                          title: "Peito e tríceps",
-                          date: "16/05",
-                        },
-                      ].map((treino, idx) => (
-                        <div className="col-lg-3 col-sm-6" key={idx}>
-                          <div className="item">
-                            <img
-                              src={`assets/images/${treino.img}`}
-                              alt={treino.title}
-                            />
-                            <h4>Concluido</h4>
-                            <ul>
-                              <li>{treino.title}</li>
-                              <li>{treino.date}</li>
-                            </ul>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> 
-            */}
           </div>
-        </div>
-      </div>
-    </div>
   );
 }

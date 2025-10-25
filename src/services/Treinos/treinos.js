@@ -109,8 +109,13 @@ const treinosService = {
 
   // Buscar treino completo
   buscarCompleto: async (idTreino) => {
-    const { data } = await api.get(`/treinos/buscarCompleto/${idTreino}`);
-    return data;
+    try {
+      const { data } = await api.get(`/treinos/buscarCompleto/${idTreino}`);
+      return data;
+    } catch (error) {
+      console.error("Erro ao buscar treino completo:", error);
+      return { success: false, error: "Erro ao carregar treino" };
+    }
   },
 
   listarTreinosPersonalDoAluno: async () => {
@@ -122,15 +127,17 @@ const treinosService = {
 
   getHistoricoTreinos: async (dias = 30) => {
     try {
-      const usuario = JSON.parse(localStorage.getItem("usuario"));
       const { data } = await api.get(`/treinos/historico?dias=${dias}`);
-      return data;  // Retorna { success: true, treinos: [...] }
+      return {
+        success: data.success,
+        treinos: data.treinos || data.historico || []
+      };
     } catch (err) {
       console.error("Erro ao obter histórico de treinos:", err);
-      throw err;
+      return { success: false, treinos: [] };
     }
   },
-  // Nova função: Criar sessão de treino (POST /treinos/criar-sessao)
+  
   criarSessao: async (idTreino) => {
     try {
       const usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -163,7 +170,7 @@ const treinosService = {
   getSessaoParaRetomar: async (idSessao) => {
     try {
       const { data } = await api.get(`/treinos/retomar-sessao/${idSessao}`);
-      return data;  // Retorna { success: true, sessao: { ... } }
+      return data;
     } catch (err) {
       console.error("Erro ao obter sessão para retomar:", err);
       throw err;

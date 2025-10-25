@@ -2288,3 +2288,116 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+
+
+
+
+/* Estilos para a página de visualização de treino */
+.visualizar-treino {
+  padding: 20px;
+  min-height: 100vh;
+  background: #1f1f1f;
+  color: white;
+}
+
+.visualizar-treino .header-treino {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #333;
+}
+
+.visualizar-treino .btn-voltar {
+  background: #368dd9;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.visualizar-treino .btn-voltar:hover {
+  background: #2a6fb0;
+}
+
+.visualizar-treino .badge-adaptado {
+  background: #e67e22;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  margin-left: 10px;
+}
+
+.visualizar-treino .info-treino {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.visualizar-treino .info-treino p {
+  margin: 5px 0;
+}
+
+.visualizar-treino .exercicios-lista h2 {
+  margin-bottom: 20px;
+  color: #368dd9;
+}
+
+.visualizar-treino .lista-exercicios {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.visualizar-treino .exercicio-card {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #368dd9;
+}
+
+.visualizar-treino .exercicio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.visualizar-treino .exercicio-header h3 {
+  margin: 0;
+  color: #368dd9;
+}
+
+.visualizar-treino .badge-exercicio-adaptado {
+  background: #e67e22;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7em;
+}
+
+.visualizar-treino .exercicio-info p {
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
+.visualizar-treino .btn-video {
+  background: #e74c3c;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.visualizar-treino .btn-video:hover {
+  background: #c0392b;
+}

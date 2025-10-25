@@ -83,13 +83,30 @@ function Personal() {
   // desatribuir treino do aluno
   async function handleDesatribuirTreino(treino) {
     if (!treino?.idTreino) return;
+    
+    const confirmar = window.confirm(
+        `Deseja desatribuir o treino "${treino.nome}"?\n\n` +
+        `⚠️ O histórico de execução do aluno será mantido.`
+    );
+    
+    if (!confirmar) return;
+    
     try {
-      await personalService.desatribuirTreino(treino.idTreino);
-      setTreinosAluno((prev) =>
-        prev.filter((t) => t.idTreino !== treino.idTreino)
-      );
+        const resultado = await personalService.desatribuirTreino(treino.idTreino);
+        
+        // Mostrar mensagem apropriada
+        if (resultado.soft_delete) {
+            alert('Treino desatribuído! O histórico foi preservado.');
+        } else {
+            alert('Treino excluído completamente.');
+        }
+        
+        setTreinosAluno((prev) =>
+            prev.filter((t) => t.idTreino !== treino.idTreino)
+        );
     } catch (err) {
-      console.error(err);
+        console.error(err);
+        alert("Erro ao desatribuir treino: " + (err.response?.data?.error || err.message));
     }
   }
 
