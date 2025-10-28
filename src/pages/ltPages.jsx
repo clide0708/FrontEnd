@@ -10,10 +10,11 @@ import { default as TreinandoPage } from "./Treinos/treinando/treinando.jsx";
 import { default as Login } from "./Auth/login";
 import { default as Cadastro } from "./Auth/cadastro";
 import { default as RecuperarSenha} from "./Auth/recuperar";
+import { default as ConectarPersonalPage} from "./ConectarPersonal/index.jsx";
 
 const PaginaNaoEncontrada = () => <div>404 - Página Não Encontrada</div>;
 const TelaEmManutencao = () => <div>Em Manutenção</div>;
-const TelaErro = () => <div>deu erro kkkkkkkkkkk se fudeu</div>;
+const TelaErro = () => <div>deu erro kkkkkkkkkkk</div>;
 
 export const Paginas = {
     LandingPage,
@@ -29,5 +30,6 @@ export const Paginas = {
     Login,
     Cadastro,
     RecuperarSenha,
+    ConectarPersonalPage,
     // adicionar outras quando criar essa merda
 };

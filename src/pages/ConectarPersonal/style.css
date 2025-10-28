@@ -1,0 +1,416 @@
+.ConnectPersonal {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+  
+  .containerPS {
+    width: 95%;
+    max-width: 1200px;
+    display: flex;
+    gap: 30px;
+    margin: 0 auto;
+  }
+  
+  .SC1 {
+    flex: 3;
+    background: #27292a;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 400px;
+  }
+  
+  .SC2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 280px;
+  }
+  
+  .tituloSection {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 20px;
+  }
+  
+  .tituloSection .Titulo {
+    color: white;
+    font-size: 2em;
+    margin: 0 0 10px 0;
+    border-left: solid 8px #368dd9;
+    padding-left: 15px;
+  }
+  
+  .tituloSection p {
+    color: #aaa;
+    margin: 0;
+    font-size: 1.1em;
+  }
+  
+  /* Filtros */
+  .filtrosSection {
+    background: #1e1f20;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .filtrosHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  
+  .filtrosHeader h3 {
+    margin: 0;
+    color: white;
+  }
+  
+  .filtrosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .filtroGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .filtroGroup label {
+    color: white;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .filtroGroup select,
+  .filtroGroup input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #333;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .filtroGroup.fullWidth {
+    grid-column: 1 / -1;
+  }
+  
+  .localizacaoInput {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .localizacaoInput input {
+    flex: 1;
+  }
+  
+  .btnLocalizacao {
+    background: #368dd9;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modalidadesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .checkboxLabel input {
+    margin: 0;
+  }
+  
+  /* Lista de Personais */
+  .personaisSection {
+    margin-top: 20px;
+  }
+  
+  .loading,
+  .emptyState {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+  }
+  
+  .emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .personaisGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+  
+  .personalCard {
+    background: #1e1f20;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .personalCard:hover {
+    border-color: #368dd9;
+    transform: translateY(-2px);
+  }
+  
+  .personalHeader {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .personalFoto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #368dd9;
+  }
+  
+  .personalInfo h3 {
+    color: white;
+    margin: 0 0 5px 0;
+    font-size: 1.3em;
+  }
+  
+  .personalCREF {
+    color: #368dd9;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+  }
+  
+  .personalAcademia {
+    color: #aaa;
+    margin: 0;
+    font-size: 0.9em;
+  }
+  
+  .personalDetails {
+    margin-bottom: 20px;
+  }
+  
+  .modalidadesList {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .modalidadesList strong {
+    color: white;
+    font-size: 0.9em;
+  }
+  
+  .modalidadesList span {
+    color: #aaa;
+    font-size: 0.9em;
+  }
+  
+  .distancia {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #aaa;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+  }
+  
+  .treinosInfo {
+    color: #4CAF50;
+    font-size: 0.9em;
+  }
+  
+  .personalActions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .btnConectar {
+    background: #368dd9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  .btnConectar:hover {
+    background: #2a6dad;
+  }
+  
+  .btnConviteEnviado {
+    background: #666;
+    color: #aaa;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: not-allowed;
+  }
+  
+  /* Cards do painel direito */
+  .infoCard,
+  .statsCard {
+    background: #27292a;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .infoCard h3,
+  .statsCard h3 {
+    color: white;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+  }
+  
+  .infoCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .infoCard li {
+    color: #aaa;
+    padding: 8px 0;
+    border-bottom: 1px solid #444;
+  }
+  
+  .infoCard li:last-child {
+    border-bottom: none;
+  }
+  
+  .statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #444;
+  }
+  
+  .statItem:last-child {
+    border-bottom: none;
+  }
+  
+  .statItem strong {
+    color: #368dd9;
+    font-size: 2em;
+    margin-bottom: 5px;
+  }
+  
+  .statItem span {
+    color: #aaa;
+    font-size: 0.9em;
+  }
+  
+  /* Modal */
+  .mensagemInput {
+    margin: 20px 0;
+  }
+  
+  .mensagemInput textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #333;
+    color: white;
+    font-size: 14px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .contadorCaracteres {
+    text-align: right;
+    color: #aaa;
+    font-size: 0.8em;
+    margin-top: 5px;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 1024px) {
+    .containerPS {
+      width: 90%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .containerPS {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .SC1,
+    .SC2 {
+      flex: 1;
+      width: 100%;
+      min-width: auto;
+    }
+  
+    .filtrosGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .personaisGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .personalHeader {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .personalFoto {
+      align-self: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .ConnectPersonal {
+      padding: 15px 10px;
+    }
+  
+    .SC1 {
+      padding: 20px;
+    }
+  
+    .filtrosSection {
+      padding: 20px;
+    }
+  
+    .modalidadesGrid {
+      grid-template-columns: 1fr;
+    }
+  }

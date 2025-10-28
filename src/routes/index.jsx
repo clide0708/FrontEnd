@@ -119,6 +119,14 @@ const routes = createBrowserRouter([
                   </BGanm>
                 ),
               },
+              {
+                path: "/conectar",
+                element: (
+                  <PageTransition>
+                    <Paginas.ConectarPersonalPage />
+                  </PageTransition>
+                ),
+              },
             ],
           },
         ],

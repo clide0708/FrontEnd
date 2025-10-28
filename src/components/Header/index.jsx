@@ -7,6 +7,7 @@ import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification";
 import convitesService from "../../services/Notification/convites";
 import perfilService from "../../services/Perfil/perfil";
+import ConectarPersonalPage from "../../pages/ConectarPersonal";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function Header() {
         <div className="nav-bar">
           <h1>
             <Link className="nav-CF" to="/home">
-              ClideFit
+              CLIDE Fit
             </Link>
           </h1>
 
@@ -87,6 +88,19 @@ export default function Header() {
                   }
                 >
                   Alimentação
+                </Link>
+              </li>
+            )}
+
+            {userRole === "aluno" && (
+              <li>
+                <Link
+                  to="/conectar"
+                  className={
+                    location.pathname === "/conectar" ? "active" : ""
+                  }
+                >
+                  Conectar a um Personal
                 </Link>
               </li>
             )}
