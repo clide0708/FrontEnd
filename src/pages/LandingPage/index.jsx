@@ -17,7 +17,7 @@ export default function LandingPage() {
   return (
     <div id="inicio" className="landingPage">
       <header className={`lp-header ${scrolled ? "scrolled" : ""}`}>
-        <div className="logo">ClideFit</div>
+        <div className="logo">CLIDE Fit</div>
         <nav>
           <button onClick={() => navigate("/login")}>Entrar</button>
           <button onClick={() => navigate("/cadastro")} className="secondary">
@@ -38,7 +38,7 @@ export default function LandingPage() {
           <div className="row">
             <div className="col-lg-7">
               <div className="header-text">
-                <h4>ClideFit</h4>
+                <h4>CLIDE Fit</h4>
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function LandingPage() {
           <div className="plano-card">
             <h3>Academia Parceira</h3>
             <ul>
-              <li>✔️ Integração com ClideFit</li>
+              <li>✔️ Integração com CLIDE Fit</li>
               <li>✔️ Divulgação na plataforma</li>
               <li>✔️ Suporte dedicado</li>
             </ul>
@@ -94,7 +94,7 @@ export default function LandingPage() {
       <section id="sobre" className="lp-sobre">
         <h2>Sobre Nós</h2>
         <p>
-          A ClideFit nasceu com o propósito de tornar o bem-estar acessível.
+          A CLIDE Fit nasceu com o propósito de tornar o bem-estar acessível.
           Nossa missão é oferecer treinos inclusivos e personalizados, com
           tecnologia e cuidado humano. Buscamos inspirar pessoas de todas as
           idades, corpos e realidades a se moverem e encontrarem equilíbrio.
@@ -143,7 +143,7 @@ export default function LandingPage() {
       <footer id="contato" className="lp-footer">
         <div className="footer-content">
           <div className="footer-left">
-            <h3>ClideFit</h3>
+            <h3>CLIDE Fit</h3>
             <p>
               Tornando o bem-estar acessível a todos. Junte-se a nós e
               transforme sua rotina de treinos.
@@ -177,7 +177,7 @@ export default function LandingPage() {
           </div>
         </div>
         <p className="footer-bottom">
-          © 2025 ClideFit. Todos os direitos reservados.
+          © 2025 CLIDE Fit. Todos os direitos reservados.
         </p>
       </footer>
     </div>
