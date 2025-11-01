@@ -1,45 +1,63 @@
 import { useState, useEffect } from "react";
 import "./style.css";
 import connectService from "../../services/Personal/conectar";
-import { Search, MapPin, Filter, User } from "lucide-react";
+import { Search, MapPin, Filter, User, Users, Navigation } from "lucide-react";
 
 function ConectarPersonalPage() {
-  const [personais, setPersonais] = useState([]);
+  const [dados, setDados] = useState([]);
   const [filtros, setFiltros] = useState({
     academia_id: "",
-    cref_tipo: "",
+    genero: "",
     localizacao: "",
     modalidades: [],
-    personalizado: ""
+    treinosAdaptados: "",
+    // Filtros específicos para alunos
+    idade_min: "",
+    idade_max: "",
+    meta: "",
+    // Filtros específicos para personais
+    cref_tipo: "",
+    raio_km: 50
   });
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [personalSelecionado, setPersonalSelecionado] = useState(null);
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState("");
   const [academias, setAcademias] = useState([]);
+  const [modalidades, setModalidades] = useState([]);
+  const [localizacaoUsuario, setLocalizacaoUsuario] = useState(null);
+  
   const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const isPersonal = usuario?.tipo === 'personal';
+  const tituloPagina = isPersonal ? "Encontre Alunos" : "Conecte-se a um Personal";
+  const descricaoPagina = isPersonal 
+    ? "Encontre alunos ideais para seu método de trabalho" 
+    : "Encontre o personal trainer ideal para seus objetivos";
 
-  // Carrega personais e academias
+  // Carrega dados iniciais
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
-        const [personaisData, academiasData] = await Promise.all([
-          connectService.getPersonais(filtros),
-          connectService.getAcademias()
+        const [dadosData, academiasData, modalidadesData] = await Promise.all([
+          isPersonal ? connectService.getAlunos(filtros) : connectService.getPersonais(filtros),
+          connectService.getAcademias(),
+          connectService.getModalidades()
         ]);
-        setPersonais(personaisData || []);
+        setDados(dadosData || []);
         setAcademias(academiasData || []);
+        setModalidades(modalidadesData || []);
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
-        setPersonais([]);
+        setDados([]);
         setAcademias([]);
+        setModalidades([]);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [filtros]);
+  }, [filtros, isPersonal]);
 
   // Detectar localização automática
   const detectarLocalizacao = () => {
@@ -47,6 +65,7 @@ function ConectarPersonalPage() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          setLocalizacaoUsuario({ latitude, longitude });
           setFiltros(prev => ({
             ...prev,
             latitude,
@@ -61,40 +80,54 @@ function ConectarPersonalPage() {
     }
   };
 
-  // Verificar se já existe convite pendente
-  const temConvitePendente = (idPersonal) => {
-    return personais.some(p => 
-      p.idPersonal === idPersonal && p.convitePendente
-    );
+  // Buscar endereço por CEP
+  const buscarEnderecoPorCEP = async (cep) => {
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await response.json();
+      
+      if (!data.erro) {
+        setFiltros(prev => ({
+          ...prev,
+          localizacao: `${data.localidade}, ${data.uf}`
+        }));
+      } else {
+        alert("CEP não encontrado.");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar CEP:", error);
+      alert("Erro ao buscar endereço.");
+    }
   };
 
   // Enviar convite
   const enviarConvite = async () => {
-    if (!personalSelecionado || !mensagem.trim()) {
-      alert("Por favor, escreva uma mensagem para o personal.");
+    if (!usuarioSelecionado || !mensagem.trim()) {
+      alert("Por favor, escreva uma mensagem personalizada.");
       return;
     }
 
-    try {
-      await connectService.enviarConvite({
-        id_remetente: usuario.id,
-        tipo_remetente: 'aluno',
-        id_destinatario: personalSelecionado.idPersonal,
-        tipo_destinatario: 'personal',
-        mensagem: mensagem.trim()
-      });
+    const dadosConvite = {
+      id_remetente: usuario.id,
+      tipo_remetente: usuario.tipo,
+      id_destinatario: isPersonal ? usuarioSelecionado.idAluno : usuarioSelecionado.idPersonal,
+      tipo_destinatario: isPersonal ? 'aluno' : 'personal',
+      mensagem: mensagem.trim()
+    };
 
+    try {
+      await connectService.enviarConvite(dadosConvite);
       alert("Convite enviado com sucesso!");
       setShowModal(false);
       setMensagem("");
-      setPersonalSelecionado(null);
+      setUsuarioSelecionado(null);
 
       // Atualizar lista para mostrar convite pendente
-      setPersonais(prev => 
-        prev.map(p => 
-          p.idPersonal === personalSelecionado.idPersonal 
-            ? { ...p, convitePendente: true }
-            : p
+      setDados(prev => 
+        prev.map(item => 
+          (isPersonal ? item.idAluno === usuarioSelecionado.idAluno : item.idPersonal === usuarioSelecionado.idPersonal)
+            ? { ...item, convitePendente: true }
+            : item
         )
       );
     } catch (err) {
@@ -104,19 +137,16 @@ function ConectarPersonalPage() {
   };
 
   // Modalidades pré-definidas
-  const modalidadesOptions = [
-    "Musculação", "CrossFit", "Calistenia", "Pilates", 
-    "Funcional", "Yoga", "Alongamento", "Reabilitação"
-  ];
+  const modalidadesOptions = modalidades.map(m => m.nome);
 
   return (
     <div className="ConectarPersonal">
       <div className="containerPS">
-        {/* Painel esquerdo - Lista de Personais */}
+        {/* Painel esquerdo - Lista */}
         <div className="SC1">
           <div className="tituloSection">
-            <h1 className="Titulo">Conecte-se a um Personal</h1>
-            <p>Encontre o personal trainer ideal para seus objetivos</p>
+            <h1 className="Titulo">{tituloPagina}</h1>
+            <p>{descricaoPagina}</p>
           </div>
 
           {/* Filtros */}
@@ -143,18 +173,69 @@ function ConectarPersonalPage() {
                 </select>
               </div>
 
-              {/* Tipo CREF */}
+              {/* Gênero */}
               <div className="filtroGroup">
-                <label>Tipo CREF</label>
+                <label>Gênero</label>
                 <select 
-                  value={filtros.cref_tipo}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, cref_tipo: e.target.value }))}
+                  value={filtros.genero}
+                  onChange={(e) => setFiltros(prev => ({ ...prev, genero: e.target.value }))}
                 >
                   <option value="">Todos</option>
-                  <option value="G">Graduado (G)</option>
-                  <option value="P">Provisionado (P)</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Outro">Outro</option>
                 </select>
               </div>
+
+              {/* Filtros específicos para personais */}
+              {!isPersonal && (
+                <div className="filtroGroup">
+                  <label>Tipo CREF</label>
+                  <select 
+                    value={filtros.cref_tipo}
+                    onChange={(e) => setFiltros(prev => ({ ...prev, cref_tipo: e.target.value }))}
+                  >
+                    <option value="">Todos</option>
+                    <option value="G">Graduado (G)</option>
+                    <option value="P">Provisionado (P)</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Filtros específicos para alunos */}
+              {isPersonal && (
+                <>
+                  <div className="filtroGroup">
+                    <label>Idade Mínima</label>
+                    <input
+                      type="number"
+                      placeholder="Ex: 18"
+                      value={filtros.idade_min}
+                      onChange={(e) => setFiltros(prev => ({ ...prev, idade_min: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="filtroGroup">
+                    <label>Idade Máxima</label>
+                    <input
+                      type="number"
+                      placeholder="Ex: 60"
+                      value={filtros.idade_max}
+                      onChange={(e) => setFiltros(prev => ({ ...prev, idade_max: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="filtroGroup">
+                    <label>Meta</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Ganhar massa"
+                      value={filtros.meta}
+                      onChange={(e) => setFiltros(prev => ({ ...prev, meta: e.target.value }))}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Localização */}
               <div className="filtroGroup">
@@ -162,30 +243,52 @@ function ConectarPersonalPage() {
                 <div className="localizacaoInput">
                   <input
                     type="text"
-                    placeholder="Cidade ou endereço"
+                    placeholder="Cidade, estado ou CEP"
                     value={filtros.localizacao}
                     onChange={(e) => setFiltros(prev => ({ ...prev, localizacao: e.target.value }))}
+                    onBlur={(e) => {
+                      const cep = e.target.value.replace(/\D/g, '');
+                      if (cep.length === 8) {
+                        buscarEnderecoPorCEP(cep);
+                      }
+                    }}
                   />
                   <button 
                     type="button" 
                     className="btnLocalizacao"
                     onClick={detectarLocalizacao}
+                    title="Usar minha localização atual"
                   >
-                    <MapPin size={16} />
+                    <Navigation size={16} />
                   </button>
                 </div>
               </div>
 
+              {/* Raio de busca */}
+              <div className="filtroGroup">
+                <label>Raio de busca</label>
+                <select 
+                  value={filtros.raio_km}
+                  onChange={(e) => setFiltros(prev => ({ ...prev, raio_km: e.target.value }))}
+                >
+                  <option value="10">10 km</option>
+                  <option value="25">25 km</option>
+                  <option value="50">50 km</option>
+                  <option value="100">100 km</option>
+                  <option value="0">Todo Brasil</option>
+                </select>
+              </div>
+
               {/* Tipo Trabalho */}
               <div className="filtroGroup">
-                <label>Tipo de Trabalho</label>
+                <label>Treinos Adaptados</label>
                 <select 
-                  value={filtros.personalizado}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, personalizado: e.target.value }))}
+                  value={filtros.treinosAdaptados}
+                  onChange={(e) => setFiltros(prev => ({ ...prev, treinosAdaptados: e.target.value }))}
                 >
                   <option value="">Todos</option>
-                  <option value="true">Com treinos personalizados</option>
-                  <option value="false">Sem treinos personalizados</option>
+                  <option value="true">Com treinos adaptados</option>
+                  <option value="false">Sem treinos adaptados</option>
                 </select>
               </div>
             </div>
@@ -213,56 +316,78 @@ function ConectarPersonalPage() {
             </div>
           </div>
 
-          {/* Lista de Personais */}
+          {/* Lista de Usuários */}
           <div className="personaisSection">
             {loading ? (
-              <div className="loading">Carregando personais...</div>
-            ) : personais.length === 0 ? (
+              <div className="loading">Carregando {isPersonal ? 'alunos' : 'personais'}...</div>
+            ) : dados.length === 0 ? (
               <div className="emptyState">
                 <User size={48} />
-                <p>Nenhum personal encontrado com os filtros selecionados.</p>
+                <p>Nenhum {isPersonal ? 'aluno' : 'personal'} encontrado com os filtros selecionados.</p>
               </div>
             ) : (
               <div className="personaisGrid">
-                {personais.map(personal => (
-                  <div key={personal.idPersonal} className="personalCard">
+                {dados.map(item => (
+                  <div key={isPersonal ? item.idAluno : item.idPersonal} className="personalCard">
                     <div className="personalHeader">
                       <img
-                        src={personal.foto_perfil || "/assets/images/profilefoto.png"}
-                        alt={personal.nome}
+                        src={item.foto_perfil || "/assets/images/profilefoto.png"}
+                        alt={item.nome}
                         className="personalFoto"
                       />
                       <div className="personalInfo">
-                        <h3>{personal.nome}</h3>
-                        <p className="personalCREF">{personal.cref}</p>
-                        <p className="personalAcademia">{personal.nomeAcademia}</p>
+                        <h3>{item.nome}</h3>
+                        {!isPersonal && (
+                          <p className="personalCREF">{item.cref}</p>
+                        )}
+                        <p className="personalAcademia">
+                          {item.cidade && `${item.cidade}, ${item.estado}`}
+                          {item.nomeAcademia && ` • ${item.nomeAcademia}`}
+                        </p>
+                        {isPersonal && item.meta && (
+                          <p className="personalMeta"><strong>Meta:</strong> {item.meta}</p>
+                        )}
                       </div>
                     </div>
 
                     <div className="personalDetails">
-                      {personal.modalidades && personal.modalidades.length > 0 && (
+                      {item.modalidades && item.modalidades.length > 0 && (
                         <div className="modalidadesList">
                           <strong>Modalidades:</strong>
-                          <span>{personal.modalidades.join(", ")}</span>
+                          <span>{item.modalidades.join(", ")}</span>
                         </div>
                       )}
                       
-                      {personal.distancia_km && (
+                      {item.distancia_km && (
                         <div className="distancia">
                           <MapPin size={14} />
-                          <span>{personal.distancia_km} km de distância</span>
+                          <span>{item.distancia_km} km de distância</span>
                         </div>
                       )}
 
-                      {personal.treinos_count !== undefined && (
+                      {!isPersonal && item.treinos_count !== undefined && (
                         <div className="treinosInfo">
-                          <strong>{personal.treinos_count}</strong> treinos criados
+                          <strong>{item.treinos_count}</strong> treinos criados
+                        </div>
+                      )}
+
+                      {item.treinosAdaptados && (
+                        <div className="adaptadoInfo">
+                          <strong>✓</strong> Trabalha com treinos adaptados
+                        </div>
+                      )}
+
+                      {isPersonal && (
+                        <div className="dadosAluno">
+                          {item.idade && <span><strong>Idade:</strong> {item.idade} anos</span>}
+                          {item.altura && <span><strong>Altura:</strong> {item.altura}cm</span>}
+                          {item.peso && <span><strong>Peso:</strong> {item.peso}kg</span>}
                         </div>
                       )}
                     </div>
 
                     <div className="personalActions">
-                      {temConvitePendente(personal.idPersonal) ? (
+                      {item.convitePendente ? (
                         <button className="btnConviteEnviado" disabled>
                           Convite Enviado
                         </button>
@@ -270,11 +395,11 @@ function ConectarPersonalPage() {
                         <button
                           className="btnConectar"
                           onClick={() => {
-                            setPersonalSelecionado(personal);
+                            setUsuarioSelecionado(item);
                             setShowModal(true);
                           }}
                         >
-                          Conectar
+                          {isPersonal ? 'Convidar' : 'Conectar'}
                         </button>
                       )}
                     </div>
@@ -290,7 +415,7 @@ function ConectarPersonalPage() {
           <div className="infoCard">
             <h3>💡 Como funciona?</h3>
             <ul>
-              <li>Encontre personais qualificados</li>
+              <li>{isPersonal ? 'Encontre alunos qualificados' : 'Encontre personais qualificados'}</li>
               <li>Filtre por especialidade e localização</li>
               <li>Envie convites personalizados</li>
               <li>Aguarde a confirmação</li>
@@ -300,38 +425,59 @@ function ConectarPersonalPage() {
           <div className="statsCard">
             <h3>📊 Estatísticas</h3>
             <div className="statItem">
-              <strong>{personais.length}</strong>
-              <span>Personais disponíveis</span>
+              <strong>{dados.length}</strong>
+              <span>{isPersonal ? 'Alunos' : 'Personais'} disponíveis</span>
             </div>
+            {!isPersonal && (
+              <div className="statItem">
+                <strong>
+                  {dados.filter(p => p.cref_tipo === 'G').length}
+                </strong>
+                <span>Graduados (CREF-G)</span>
+              </div>
+            )}
             <div className="statItem">
               <strong>
-                {personais.filter(p => p.cref_tipo === 'G').length}
+                {dados.filter(p => p.treinosAdaptados).length}
               </strong>
-              <span>Graduados (CREF-G)</span>
+              <span>Com treinos adaptados</span>
             </div>
           </div>
+
+          {localizacaoUsuario && (
+            <div className="localizacaoCard">
+              <h3>📍 Sua Localização</h3>
+              <p>Busca baseada na sua localização atual</p>
+              <button 
+                onClick={detectarLocalizacao}
+                className="btnAtualizarLocalizacao"
+              >
+                Atualizar Localização
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Modal de Envio de Convite */}
-      {showModal && personalSelecionado && (
+      {showModal && usuarioSelecionado && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Enviar Convite</h2>
             <p>
-              Envie uma mensagem para <strong>{personalSelecionado.nome}</strong>
+              Envie uma mensagem para <strong>{usuarioSelecionado.nome}</strong>
             </p>
             
             <div className="mensagemInput">
               <textarea
-                placeholder="Escreva uma mensagem personalizada explicando por que você gostaria de se conectar..."
+                placeholder={`Escreva uma mensagem personalizada explicando por que você gostaria de se conectar com ${usuarioSelecionado.nome}...`}
                 value={mensagem}
                 onChange={(e) => setMensagem(e.target.value)}
                 rows={6}
-                maxLength={255}
+                maxLength={500}
               />
               <div className="contadorCaracteres">
-                {mensagem.length}/255 caracteres
+                {mensagem.length}/500 caracteres
               </div>
             </div>
 
@@ -339,7 +485,7 @@ function ConectarPersonalPage() {
               <button 
                 onClick={() => {
                   setShowModal(false);
-                  setPersonalSelecionado(null);
+                  setUsuarioSelecionado(null);
                   setMensagem("");
                 }}
                 className="btnCancelar"

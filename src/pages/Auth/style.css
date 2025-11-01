@@ -1,325 +1,19 @@
-.cadastroCC, .loginCC, .recuperarCC{
-    width: 100%;
-    height: 100%;
-    padding-bottom: 5%;
-    background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
+/* ======================= */
+/* RESET E ESTILOS GLOBAIS */
+/* ======================= */
 
-    /* Container principal (Layout Global, centralizando o conteúdo) */
-    /* Unifica seletores para o container principal que garante o fundo escuro e centraliza */
-
-    /* ======================= */
-    /* Título Global (topppp-global) */
-    /* ======================= */
-    .topppp-global {
-        /* Cores padronizadas para o destaque global */
-        color: white;
-        /* Laranja de destaque */
-        width: 100%;
-        /* Removendo top/left desnecessários para um bloco centralizado */
-        padding-bottom: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .topppp-global h2 {
-        color: white;
-        font-size: 400%;
-        margin-top: 80px;
-    }
-
-    /* ======================= */
-    /* Estilos Comuns de Container de Formulário */
-    /* Unifica estilos visuais para cad, login, e rs containers */
-    /* ======================= */
-    .cad-container,
-    .login-container-global,
-    .cad-container-main,
-    /* (Não usado no seu último bloco, mas mantido por segurança) */
-    .rs-container-main {
-        background-color: #333;
-        color: #eee;
-        padding: 40px;
-        border-radius: 15px;
-        /* Sombra padronizada */
-        box-shadow: 0 10px 20px rgba(73, 167, 255, 0.6);
-        text-align: center;
-        width: 90%;
-        max-width: 450px;
-        /* Max-width padronizado */
-        /* Margem adaptada para centralizar e dar espaço */
-        margin: 30px auto;
-    }
-
-    /* Sobrescreve a margem para login/recuperar se houver necessidade (de acordo com um dos seus blocos) */
-    .login-container-global,
-    .rs-container-main {
-        margin: 0 auto;
-    }
-
-    /* ======================= */
-    /* Estilos Comuns de Título do Formulário */
-    /* Unifica h2 em .cad-container e classes .cad-title, .login-title-global, .rs-title */
-    /* ======================= */
-    .cad-container h2,
-    .cad-title,
-    .login-title-global,
-    .rs-title {
-        color: white;
-        margin-bottom: 30px;
-        font-size: 2.2em;
-        /* Tamanho padronizado */
-    }
-
-
-    /* ======================= */
-    /* Estilos Comuns de Input de Formulário */
-    /* Unifica inputs de cad, login e rs */
-    /* ======================= */
-    .cad-input,
-    .login-input-global,
-    .cad-form input,
-    /* Seletor de input dentro do form de cadastro */
-    .rs-input-email,
-    .rs-input-codigo,
-    .rs-input-nova-senha {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid white;
-        border-radius: 8px;
-        font-size: 1em;
-        box-sizing: border-box;
-        background-color: #444;
-        color: #eee;
-    }
-
-    /* Estilo para placeholder */
-    .cad-input::placeholder,
-    .login-input-global::placeholder {
-        color: #aaa;
-    }
-
-    /* ======================= */
-    /* Estilos Comuns de Botão Primário (Enviar/Login/Reset) */
-    /* Unifica botões de ação principal */
-    /* ======================= */
-    .cad-button,
-    .login-button-global,
-    .cad-btn-enviar,
-    /* Botão de cadastro */
-    .rs-btn-enviar,
-    .rs-btn-reset {
-        background-color: white;
-        color: #111;
-        padding: 15px 30px;
-        border: 1px transparent solid;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1.1em;
-        font-weight: bold;
-        width: 100%;
-        transition: all 0.3s ease;
-    }
-
-    .cad-button:hover,
-    .login-button-global:hover,
-    .cad-btn-enviar:hover,
-    .rs-btn-enviar:hover:not(:disabled),
-    /* Hover padronizado */
-    .rs-btn-reset:hover {
-        background-color: #368DD9;
-        color: #fff;
-        transform: scale(1.01);
-    }
-
-    .rs-btn-enviar:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-    /* ======================= */
-    /* Estilos Comuns de Link/Botão Secundário (Trocar tela/Voltar) */
-    /* Unifica links de voltar ou ir para outra tela */
-    /* ======================= */
-    .cad-link-button,
-    .login-link-button-global,
-    .rs-btn-voltar {
-        background-color: transparent;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 1em;
-        margin-top: 15px;
-        padding: 5px;
-        transition: color 0.3s ease;
-    }
-
-    .cad-link-button:hover,
-    .login-link-button-global:hover,
-    .rs-btn-voltar:hover {
-        color: #368DD9;
-    }
-
-    /* ======================= */
-    /* Estilos Comuns de Mensagens e Erros */
-    /* Unifica mensagens de erro e status */
-    /* ======================= */
-    .cad-error,
-    .login-error-global,
-    .rs-msg,
-    .cad-msg {
-        /* cad-msg é mais fraco, rs-msg e cad-error são mais fortes */
-        color: #368DD9;
-        /* Laranja para erros/destaque */
-        font-weight: bold;
-        margin-top: 15px;
-        font-size: 0.9em;
-        display: block;
-        /* Garante que ocupe a linha para alinhamento */
-    }
-
-    /* Pequeno ajuste para erro de cadastro se necessário */
-    .cad-error {
-        margin-top: 5px;
-        text-align: left;
-        padding-left: 5px;
-    }
-
-    /* Estilo para a mensagem de sucesso que não foi unificada (cad-success) */
-    .cad-success {
-        color: #4CAF50;
-        /* Verde para sucesso */
-        margin-top: 15px;
-        font-weight: bold;
-    }
-
-    /* ======================= */
-    /* Checkbox (Cadastro) */
-    /* ======================= */
-    .cad-checkbox-label {
-        color: #eee;
-        font-weight: bold;
-        display: block;
-        margin-bottom: 20px;
-        font-size: 1.1em;
-    }
-
-    .cad-checkbox-label input {
-        margin-right: 10px;
-    }
-
-    /* ======================= */
-    /* Modal Recuperar Senha */
-    /* ======================= */
-    .rs-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.85);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .rs-modal-box {
-        background-color: #333;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 0 25px rgba(73, 167, 255, 0.6);
-        width: 90%;
-        max-width: 380px;
-        text-align: center;
-        transform: scale(1);
-        transition: transform 0.3s ease-out;
-    }
-
-    .rs-modal-title {
-        color: #368DD9;
-        margin-bottom: 20px;
-        font-size: 1.8em;
-    }
-
-    /* Botão Fechar Modal */
-    .rs-btn-fechar {
-        background-color: transparent;
-        color: #777;
-        /* Cor menos chamativa */
-        border: none;
-        cursor: pointer;
-        font-size: 0.9em;
-        margin-top: 20px;
-        padding: 5px;
-        transition: color 0.3s ease;
-    }
-
-    .rs-btn-fechar:hover {
-        color: #fff;
-    }
-
-    /* Loading/Spin */
-    .rs-loading {
-        color: #368DD9;
-        /* Cor de destaque */
-        font-weight: bold;
-        animation: spin 1s infinite linear;
-        display: inline-block;
-    }
-
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* Formulários específicos de recuperação (dentro ou fora do modal) */
-    .rs-form-email,
-    .rs-form-codigo {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* ======================= */
-    /* Mensagens de Cadastro (Opcional, de um bloco específico) */
-    /* ======================= */
-    .cadastro-mensagem {
-        padding: 15px 25px;
-        margin-top: 20px;
-        border-radius: 8px;
-        font-size: 1.1em;
-        font-weight: bold;
-        text-align: center;
-        width: 90%;
-        max-width: 400px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        transition: all 0.4s ease-in-out;
-    }
-
-    .cadastro-mensagem.sucesso {
-        background-color: rgba(30, 180, 50, 0.15);
-        color: #4CAF50;
-        border: 1px solid #4CAF50;
-    }
-
-    .cadastro-mensagem.erro {
-        background-color: rgba(255, 111, 0, 0.15);
-        color: #368DD9;
-        border: 1px solid #1f1f1f;
-    }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* ======================= */
+/* CONTAINER PRINCIPAL */
+/* ======================= */
 
-
-
-/* Estilos gerais para auth */
-.cadastroCC, .loginCC {
+.loginCC {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -327,79 +21,201 @@
   justify-content: center;
   background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
   padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
+/* ======================= */
+/* BACKGROUND ANIMADO */
+/* ======================= */
+
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.floating-shapes {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(54, 141, 217, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+  animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 80px;
+  height: 80px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 120px;
+  height: 120px;
+  top: 60%;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+.shape-3 {
+  width: 60px;
+  height: 60px;
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+.shape-4 {
+  width: 100px;
+  height: 100px;
+  top: 20%;
+  right: 20%;
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* ======================= */
+/* HEADER E LOGO */
+/* ======================= */
+
 .topppp-global {
+  width: 100%;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  padding: 0 20px;
+  z-index: 2;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .topppp-global h2 {
-  color: #368dd9;
+  color: white;
   font-size: 2.5em;
   margin: 0;
   font-weight: bold;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Container de cadastro */
-.cad-container {
-  background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
-  padding: 40px 30px;
+/* ======================= */
+/* CONTAINER DO LOGIN */
+/* ======================= */
+
+.login-container-global {
+  background: rgba(39, 41, 42, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px 25px;
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   width: 100%;
+  max-width: 380px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 2;
 }
 
-.cad-container h2 {
-  color: white;
+/* ======================= */
+/* HEADER DO LOGIN */
+/* ======================= */
+
+.login-header {
   text-align: center;
   margin-bottom: 25px;
-  font-size: 1.8em;
-}
-
-/* Container de login */
-.login-container-global {
-  background: #27292a;
-  padding: 40px 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 400px;
 }
 
 .login-title-global {
   color: white;
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 1.8em;
+  margin-bottom: 8px;
+  font-size: 1.6em;
+  font-weight: 600;
 }
 
-/* Inputs */
-.cad-input, .login-input-global {
+.login-subtitle {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+/* ======================= */
+/* INPUTS */
+/* ======================= */
+
+.input-group-animated {
+  position: relative;
+  margin-bottom: 20px;
   width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  border: 1px solid #444;
+}
+
+.login-input-global {
+  width: 100%;
+  padding: 14px 15px;
+  border: 2px solid transparent;
   border-radius: 8px;
-  background: #1e1f20;
+  background: rgba(30, 31, 32, 0.9);
   color: white;
   font-size: 14px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-.cad-input:focus, .login-input-global:focus {
+.login-input-global::placeholder {
+  color: #888;
+}
+
+.login-input-global:focus {
   outline: none;
-  border-color: #368dd9;
+  border-color: #368DD9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(54, 141, 217, 0.3);
 }
 
-/* Container para inputs de senha */
+.input-focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #368DD9;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.login-input-global:focus ~ .input-focus-border {
+  width: 100%;
+}
+
+/* ======================= */
+/* PASSWORD INPUT */
+/* ======================= */
+
 .password-input-container {
   position: relative;
+  width: 100%;
 }
 
 .password-input {
-  padding-right: 45px;
+  padding-right: 45px !important;
 }
 
 .password-toggle {
@@ -413,120 +229,786 @@
   cursor: pointer;
   padding: 5px;
   border-radius: 4px;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 2;
 }
 
 .password-toggle:hover {
-  color: #368dd9;
+  color: #368DD9;
   background: rgba(54, 141, 217, 0.1);
 }
 
-/* Checkbox labels */
-.cad-checkbox-label, .login-checkbox-label {
+/* ======================= */
+/* CHECKBOX */
+/* ======================= */
+
+.login-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: white;
   margin-bottom: 20px;
   cursor: pointer;
   font-size: 14px;
-}
-
-.cad-checkbox-label input, .login-checkbox-label input {
-  margin: 0;
-  width: 16px;
-  height: 16px;
-}
-
-/* Botões */
-.cad-button, .login-button-global {
   width: 100%;
-  padding: 12px;
-  background: #368dd9;
+}
+
+.animated-checkbox input {
+  display: none;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.animated-checkbox input:checked + .checkmark {
+  background: #368DD9;
+  border-color: #368DD9;
+}
+
+.animated-checkbox input:checked + .checkmark::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ======================= */
+/* BOTÕES */
+/* ======================= */
+
+.login-button-global {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #368DD9, #2a6dad);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
   margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.cad-button:hover:not(:disabled), .login-button-global:hover:not(:disabled) {
-  background: #2a6dad;
+.login-button-global:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(54, 141, 217, 0.4);
 }
 
-.cad-button:disabled, .login-button-global:disabled {
-  background: #666;
-  cursor: not-allowed;
+.login-button-global:disabled {
   opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
-/* Botões de link */
-.cad-link-button, .login-link-button-global {
+.login-button-global.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ======================= */
+/* LINKS */
+/* ======================= */
+
+.login-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
   width: 100%;
-  padding: 10px;
+}
+
+button.entrar{
+  margin-top: 20px
+}
+
+.login-link-button-global {
+  width: 100%;
+  padding: 12px;
   background: transparent;
-  color: #368dd9;
-  border: 1px solid #368dd9;
+  color: #368DD9;
+  border: 1px solid rgba(54, 141, 217, 0.3);
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.cad-link-button:hover, .login-link-button-global:hover {
-  background: #368dd9;
+.login-link-button-global:hover {
+  background: #368DD9;
   color: white;
+  transform: translateY(-1px);
 }
 
-/* Mensagens de erro */
-.cad-error, .login-error-global {
-  color: #ff6b6b;
-  font-size: 12px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  display: block;
+.login-link-button-global span {
+  color: inherit;
+  transition: color 0.3s ease;
 }
 
-/* Mensagem de sucesso */
+/* ======================= */
+/* MENSAGENS */
+/* ======================= */
+
 .login-success-message {
-  background: #4CAF50;
-  color: white;
-  padding: 12px;
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  padding: 12px 15px;
   border-radius: 8px;
   margin-bottom: 20px;
   text-align: center;
+  width: 100%;
   font-size: 14px;
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Opções de login */
-.login-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.login-error-global {
+  color: #ff6b6b;
   font-size: 14px;
+  margin: 15px 0;
+  padding: 12px 15px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
+  text-align: center;
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Responsividade */
+.error-persistent {
+  opacity: 1 !important;
+  display: block !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================= */
+/* ANIMAÇÕES */
+/* ======================= */
+
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shake-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.pulse-animation {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* ======================= */
+/* RESPONSIVIDADE */
+/* ======================= */
+
 @media (max-width: 480px) {
-  .cad-container, .login-container-global {
-    padding: 30px 20px;
+  .loginCC {
+    padding: 15px;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+  
+  .login-container-global {
+    padding: 25px 20px;
+    max-width: 90%;
   }
   
   .topppp-global h2 {
     font-size: 2em;
   }
   
-  .cad-container h2, .login-title-global {
-    font-size: 1.5em;
+  .login-title-global {
+    font-size: 1.4em;
+  }
+  
+  .login-subtitle {
+    font-size: 0.85em;
+  }
+  
+  /* Remove animações pesadas em mobile para performance */
+  .floating-shapes {
+    display: none;
+  }
+  
+  .login-input-global {
+    padding: 16px 15px;
+    font-size: 16px;
   }
 }
 
-/* Estilos para selects */
-.cad-input[type="select"] {
+@media (max-width: 320px) {
+  .login-container-global {
+    padding: 20px 15px;
+  }
+  
+  .topppp-global h2 {
+    font-size: 1.8em;
+  }
+  
+  .login-title-global {
+    font-size: 1.3em;
+  }
+}
+
+/* Para telas muito pequenas em altura */
+@media (max-height: 600px) {
+  .loginCC {
+    justify-content: flex-start;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .topppp-global {
+    margin-bottom: 10px;
+  }
+  
+  .topppp-global h2 {
+    font-size: 2em;
+  }
+  
+  .login-container-global {
+    padding: 20px;
+  }
+}
+
+/* ======================= */
+/* ACESSIBILIDADE */
+/* ======================= */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.login-input-global:focus-visible {
+  outline: 2px solid #368DD9;
+  outline-offset: 2px;
+}
+
+/* ======================= */
+/* SCROLL SUAVE */
+/* ======================= */
+
+.loginCC {
+  overflow-y: auto;
+}
+
+/* Garante que o scroll seja suave */
+.loginCC::-webkit-scrollbar {
+  width: 6px;
+}
+
+.loginCC::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.loginCC::-webkit-scrollbar-thumb {
+  background: rgba(54, 141, 217, 0.5);
+  border-radius: 3px;
+}
+
+.loginCC::-webkit-scrollbar-thumb:hover {
+  background: rgba(54, 141, 217, 0.7);
+}
+
+
+
+
+
+
+
+
+
+/* ======================= */
+/* ESTILOS ESPECÍFICOS PARA CADASTRO */
+/* ======================= */
+
+.cadastroCC {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
+  padding: 20px;
+  position: relative;
+  overflow-y: auto;
+}
+
+.cad-container-global {
+  background: rgba(39, 41, 42, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 30px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 2;
+  margin: 20px auto;
+}
+
+.cad-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.cad-title-global {
+  color: white;
+  margin-bottom: 8px;
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+.cad-subtitle {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+/* Seletor de Tipo de Usuário */
+.user-type-selector {
+  margin-bottom: 30px;
+}
+
+.user-type-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-type-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.user-type-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.user-type-card.active {
+  border-color: #368DD9;
+  background: rgba(54, 141, 217, 0.1);
+}
+
+.user-type-icon-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  transition: all 0.3s ease;
+}
+
+.user-type-card.active .user-type-icon-container {
+  transform: scale(1.1);
+}
+
+.user-type-info {
+  flex: 1;
+  text-align: left;
+}
+
+.user-type-label {
+  display: block;
+  color: white;
+  font-weight: 600;
+  font-size: 1em;
+  margin-bottom: 4px;
+}
+
+.user-type-description {
+  display: block;
+  color: #aaa;
+  font-size: 0.8em;
+}
+
+.user-type-radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #666;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.user-type-card.active .user-type-radio {
+  border-color: #368DD9;
+  background: #368DD9;
+}
+
+.radio-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.user-type-card.active .radio-dot {
+  opacity: 1;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+  color: white;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+/* Inputs do Cadastro */
+.cad-input-global {
+  width: 100%;
+  padding: 14px 15px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: rgba(30, 31, 32, 0.9);
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.cad-input-global::placeholder {
+  color: #888;
+}
+
+.cad-input-global:focus {
+  outline: none;
+  border-color: #368DD9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(54, 141, 217, 0.3);
+}
+
+/* Botão de Buscar CEP */
+.btn-buscar-cep {
+  background: #368DD9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.btn-buscar-cep:hover:not(:disabled) {
+  background: #2a6dad;
+  transform: translateY(-1px);
+}
+
+.btn-buscar-cep:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botão de Cadastro */
+.cad-button-global {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #368DD9, #2a6dad);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px 0 15px 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cad-button-global:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(54, 141, 217, 0.4);
+}
+
+.cad-button-global:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.cad-button-global.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* Links do Cadastro */
+.cad-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cad-link-button-global {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #368DD9;
+  border: 1px solid rgba(54, 141, 217, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cad-link-button-global:hover {
+  background: #368DD9;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Mensagens de Erro do Cadastro */
+.cad-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+  text-align: left;
+  padding-left: 5px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Form Rows e Cols */
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Responsividade para Cadastro */
+@media (max-width: 480px) {
+  .cad-container-global {
+    padding: 25px 20px;
+    max-width: 100%;
+  }
+  
+  .cad-title-global {
+    font-size: 1.5em;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .input-group {
+    flex-direction: column;
+  }
+  
+  .btn-buscar-cep {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  
+  .user-type-card {
+    padding: 12px;
+  }
+  
+  .user-type-icon-container {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+  
+  .user-type-label {
+    font-size: 0.9em;
+  }
+  
+  .user-type-description {
+    font-size: 0.75em;
+  }
+}
+
+@media (max-width: 320px) {
+  .cad-container-global {
+    padding: 20px 15px;
+  }
+  
+  .form-section {
+    padding: 15px;
+  }
+}
+
+/* Animações Específicas para Cadastro */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-section {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.form-section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.form-section:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.form-section:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Transição suave entre tipos de usuário */
+.user-type-card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading states melhorados */
+.cad-button-global .spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Efeito de foco nos inputs do cadastro */
+.cad-input-global:focus-visible {
+  outline: 2px solid #368DD9;
+  outline-offset: 2px;
+}
+
+/* Select estilizado */
+.cad-input-global[type="select"] {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
   background-repeat: no-repeat;
@@ -534,7 +1016,397 @@
   background-size: 12px;
 }
 
-.cad-input option {
+.cad-input-global option {
   background: #1e1f20;
   color: white;
+}
+
+
+
+
+
+
+
+
+/* ======================= */
+/* SELETOR DE TIPO COMPACTO */
+/* ======================= */
+
+.user-type-selector-compact {
+  margin-bottom: 30px;
+}
+
+.user-type-slider {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slider-track {
+  position: relative;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.333%;
+  height: 100%;
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.user-type-buttons {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.user-type-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-type-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.user-type-btn:hover::before {
+  left: 100%;
+}
+
+.user-type-btn:hover {
+  color: white;
+  transform: translateY(-2px);
+}
+
+.user-type-btn.active {
+  color: white;
+  font-weight: 600;
+}
+
+.user-type-btn span {
+  font-size: 0.75em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.user-type-btn.active span {
+  transform: scale(1.05);
+}
+
+/* Indicador do Tipo Atual */
+.current-type-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px;
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.current-type-indicator.switching {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+.indicator-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.current-type-indicator.switching .indicator-icon {
+  animation: bounce 0.6s ease;
+}
+
+.indicator-label {
+  color: white;
+  font-weight: 600;
+  font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+.current-type-indicator.switching .indicator-label {
+  animation: slideInUp 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================= */
+/* BOTÕES ANIMADOS (PARA LOGIN E CADASTRO) */
+/* ======================= */
+
+/* Botão de login/cadastro animado */
+.login-button-global,
+.cad-button-global {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #368DD9, #2a6dad) !important;
+}
+
+.login-button-global::before,
+.cad-button-global::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.login-button-global:hover::before,
+.cad-button-global:hover::before {
+  left: 100%;
+}
+
+.login-button-global:hover:not(:disabled),
+.cad-button-global:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(54, 141, 217, 0.4);
+}
+
+.login-button-global.loading,
+.cad-button-global.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Links animados */
+.login-links-container,
+.cad-links-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.link-animated {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.link-animated span {
+  color: #368DD9;
+  transition: color 0.3s ease;
+}
+
+.link-animated:hover {
+  border-color: #368DD9 !important;
+  transform: translateY(-1px);
+}
+
+.link-animated:hover span {
+  color: white;
+}
+
+/* Animações de entrada */
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shake-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.pulse-animation {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* ======================= */
+/* RESPONSIVIDADE MELHORADA */
+/* ======================= */
+
+@media (max-width: 480px) {
+  .logo-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .user-type-slider {
+    padding: 6px;
+  }
+  
+  .user-type-btn {
+    padding: 10px 6px;
+    gap: 4px;
+  }
+  
+  .user-type-btn span {
+    font-size: 0.7em;
+  }
+  
+  .current-type-indicator {
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .indicator-label {
+    font-size: 0.9em;
+  }
+  
+  .shape {
+    display: none;
+  }
+}
+
+/* Melhorias de acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Efeito de glassmorphism para containers */
+.login-container-global,
+.cad-container-global {
+  backdrop-filter: blur(10px);
+  background: rgba(39, 41, 42, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradientes dinâmicos baseados no tipo de usuário */
+.user-type-aluno .user-type-icon { color: #368DD9; }
+.user-type-personal .user-type-icon { color: #4CAF50; }
+.user-type-academia .user-type-icon { color: #FF6B35; }
+
+/* ======================= */
+/* ANIMAÇÕES ESPECÍFICAS PARA CADASTRO */
+/* ======================= */
+
+.form-section {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.form-section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.form-section:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.form-section:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Transição suave entre tipos de usuário */
+.user-type-btn {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

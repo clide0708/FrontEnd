@@ -22,6 +22,17 @@ export const cadastrarPersonal = async (dados) => {
   }
 };
 
+// cadastrar academia - FUNÇÃO ADICIONADA
+export const cadastrarAcademia = async (dados) => {
+  try {
+    const response = await api.post("/cadastro/academia", dados);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao cadastrar academia:", error);
+    throw error;
+  }
+};
+
 // verificar se o email já existe
 export const verificarEmail = async (dados) => {
   try {
@@ -51,6 +62,17 @@ export const verificarRg = async (dados) => {
     return res.data; // { success: true, disponivel: true/false, rg: "..." }
   } catch (err) {
     console.error("Erro ao verificar RG:", err);
+    return { success: false, disponivel: false };
+  }
+};
+
+// verificar se o CNPJ já existe - FUNÇÃO ADICIONADA
+export const verificarCnpj = async (dados) => {
+  try {
+    const res = await api.post("/cadastro/verificar-cnpj", dados);
+    return res.data; // { success: true, disponivel: true/false, cnpj: "..." }
+  } catch (err) {
+    console.error("Erro ao verificar CNPJ:", err);
     return { success: false, disponivel: false };
   }
 };

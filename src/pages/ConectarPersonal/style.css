@@ -414,3 +414,152 @@
       grid-template-columns: 1fr;
     }
   }
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* Novos estilos para a funcionalidade de conexão */
+
+.dadosAluno {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+.dadosAluno span {
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+.personalMeta {
+    color: #4CAF50;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.adaptadoInfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #4CAF50;
+    font-size: 0.9em;
+    margin-top: 8px;
+}
+
+.localizacaoCard {
+    background: #27292a;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.localizacaoCard h3 {
+    color: white;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.localizacaoCard p {
+    color: #aaa;
+    margin: 0 0 15px 0;
+    font-size: 0.9em;
+}
+
+.btnAtualizarLocalizacao {
+    background: #368dd9;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+    width: 100%;
+}
+
+.btnAtualizarLocalizacao:hover {
+    background: #2a6dad;
+}
+
+/* Melhorias nos filtros */
+.filtrosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filtroGroup.fullWidth {
+    grid-column: 1 / -1;
+}
+
+.modalidadesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.localizacaoInput {
+    display: flex;
+    gap: 8px;
+}
+
+.localizacaoInput input {
+    flex: 1;
+}
+
+.btnLocalizacao {
+    background: #368dd9;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .filtrosGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modalidadesGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .dadosAluno {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalidadesGrid {
+        grid-template-columns: 1fr;
+    }
+}

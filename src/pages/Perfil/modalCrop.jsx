@@ -3,8 +3,8 @@ import Cropper from "react-easy-crop";
 import getCroppedImg from "../../utils/cropImage.js";
 import "./style.css";
 
-export default function CropModal({ onClose, onSave }) {
-  const [imageSrc, setImageSrc] = useState(null);
+// USE ESTA VERSÃO - sintaxe correta
+const CropModal = ({ imagem, onClose, onSave, loading = false }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
@@ -13,19 +13,10 @@ export default function CropModal({ onClose, onSave }) {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImageSrc(reader.result);
-    reader.readAsDataURL(file);
-  };
-
   const handleSave = async () => {
-    if (!imageSrc || !croppedAreaPixels) return;
+    if (!imagem || !croppedAreaPixels) return;
     try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-      onSave(croppedImage);
+      onSave(croppedAreaPixels);
     } catch (e) {
       console.error(e);
     }
@@ -34,17 +25,13 @@ export default function CropModal({ onClose, onSave }) {
   return (
     <div className="modalCrop crop-modal-overlay">
       <div className="crop-modal">
-        <h3>{imageSrc ? "Cortar Imagem" : "Selecionar Imagem"}</h3>
-
-        {!imageSrc && (
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        )}
-
-        {imageSrc && (
+        <h3>{loading ? "Salvando Imagem..." : "Cortar Imagem"}</h3>
+        
+        {!loading ? (
           <>
             <div className="crop-container">
               <Cropper
-                image={imageSrc}
+                image={imagem}
                 crop={crop}
                 zoom={zoom}
                 aspect={1}
@@ -54,31 +41,44 @@ export default function CropModal({ onClose, onSave }) {
               />
             </div>
             <div className="controls">
+              <label>Zoom:</label>
               <input
                 type="range"
                 min={1}
                 max={3}
                 step={0.1}
                 value={zoom}
-                onChange={(e) => setZoom(e.target.value)}
+                onChange={(e) => setZoom(parseFloat(e.target.value))}
               />
+              <span>{zoom.toFixed(1)}x</span>
             </div>
           </>
+        ) : (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Preparando download da imagem...</p>
+          </div>
         )}
 
         <div className="buttons">
-          <button
-            className="btn-save"
-            onClick={imageSrc ? handleSave : () => {}}
-            disabled={!imageSrc}
-          >
-            {imageSrc ? "Salvar" : "Selecionar"}
-          </button>
-          <button className="btn-cancel" onClick={onClose}>
-            Cancelar
-          </button>
+          {!loading && (
+            <>
+              <button
+                className="btn-save"
+                onClick={handleSave}
+                disabled={!imagem}
+              >
+                Cortar e Salvar
+              </button>
+              <button className="btn-cancel" onClick={onClose}>
+                Cancelar
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default CropModal;

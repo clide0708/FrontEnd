@@ -23,12 +23,44 @@ const conectarService = {
     } catch (error) {
       console.error('Erro ao buscar personais:', error);
       
-      // Tratamento específico de erros
       if (error.response) {
         if (error.response.status === 401) {
           throw new Error('Não autorizado. Faça login novamente.');
         } else if (error.response.status === 404) {
-          return []; // Retorna array vazio se não encontrar
+          return [];
+        }
+      }
+      
+      throw error;
+    }
+  },
+
+  // Buscar alunos com filtros
+  async getAlunos(filtros = {}) {
+    try {
+      const params = new URLSearchParams();
+      
+      Object.keys(filtros).forEach(key => {
+        const value = filtros[key];
+        if (value !== null && value !== undefined && value !== '') {
+          if (Array.isArray(value)) {
+            value.forEach(v => params.append(`${key}[]`, v));
+          } else {
+            params.append(key, value);
+          }
+        }
+      });
+
+      const response = await api.get(`/alunos?${params.toString()}`);
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar alunos:', error);
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          throw new Error('Não autorizado. Faça login novamente.');
+        } else if (error.response.status === 404) {
+          return [];
         }
       }
       
@@ -47,6 +79,17 @@ const conectarService = {
     }
   },
 
+  // Buscar modalidades
+  async getModalidades() {
+    try {
+      const response = await api.get('/modalidades');
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Erro ao buscar modalidades:', error);
+      return [];
+    }
+  },
+
   // Enviar convite
   async enviarConvite(dadosConvite) {
     try {
@@ -55,7 +98,6 @@ const conectarService = {
     } catch (error) {
       console.error('Erro ao enviar convite:', error);
       
-      // Tratamento específico de erros
       if (error.response && error.response.data) {
         throw new Error(error.response.data.error || 'Erro ao enviar convite');
       }
@@ -97,7 +139,7 @@ const conectarService = {
     }
   },
 
-  // Buscar academias ativas (para cadastro)
+  // Buscar academias ativas
   async getAcademiasAtivas() {
     try {
       const response = await api.get('/academias-ativas');

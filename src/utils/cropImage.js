@@ -1,4 +1,4 @@
-export default async function getCroppedImg(imageSrc, pixelCrop) {
+const getCroppedImg = async (imageSrc, pixelCrop) => {
   const image = await new Promise((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = "anonymous"
@@ -58,17 +58,12 @@ export default async function getCroppedImg(imageSrc, pixelCrop) {
           return
         }
         console.log("[v0] Blob size:", (blob.size / 1024).toFixed(2), "KB")
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          console.log("[v0] Base64 length:", reader.result.length, "characters")
-          console.log("[v0] Estimated size:", (reader.result.length / 1024).toFixed(2), "KB")
-          resolve(reader.result)
-        }
-        reader.onerror = reject
-        reader.readAsDataURL(blob)
+        resolve(blob)
       },
       "image/jpeg",
-      0.8, // Reduced quality from 0.95 to 0.8 to reduce file size
+      0.8,
     )
   })
 }
+
+export default getCroppedImg;
