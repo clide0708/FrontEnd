@@ -315,3 +315,234 @@
         border: 1px solid #1f1f1f;
     }
 }
+
+
+
+
+/* Estilos gerais para auth */
+.cadastroCC, .loginCC {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
+  padding: 20px;
+}
+
+.topppp-global {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.topppp-global h2 {
+  color: #368dd9;
+  font-size: 2.5em;
+  margin: 0;
+  font-weight: bold;
+}
+
+.cntrcds {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Container de cadastro */
+.cad-container {
+  background: #27292a;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  width: 100%;
+}
+
+.cad-container h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8em;
+}
+
+/* Container de login */
+.login-container-global {
+  background: #27292a;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-title-global {
+  color: white;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8em;
+}
+
+/* Inputs */
+.cad-input, .login-input-global {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #1e1f20;
+  color: white;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.cad-input:focus, .login-input-global:focus {
+  outline: none;
+  border-color: #368dd9;
+}
+
+/* Container para inputs de senha */
+.password-input-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.password-input {
+  padding-right: 45px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: #368dd9;
+  background: rgba(54, 141, 217, 0.1);
+}
+
+/* Checkbox labels */
+.cad-checkbox-label, .login-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cad-checkbox-label input, .login-checkbox-label input {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* Botões */
+.cad-button, .login-button-global {
+  width: 100%;
+  padding: 12px;
+  background: #368dd9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.cad-button:hover:not(:disabled), .login-button-global:hover:not(:disabled) {
+  background: #2a6dad;
+}
+
+.cad-button:disabled, .login-button-global:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botões de link */
+.cad-link-button, .login-link-button-global {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #368dd9;
+  border: 1px solid #368dd9;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.cad-link-button:hover, .login-link-button-global:hover {
+  background: #368dd9;
+  color: white;
+}
+
+/* Mensagens de erro */
+.cad-error, .login-error-global {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Mensagem de sucesso */
+.login-success-message {
+  background: #4CAF50;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Opções de login */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .cad-container, .login-container-global {
+    padding: 30px 20px;
+  }
+  
+  .topppp-global h2 {
+    font-size: 2em;
+  }
+  
+  .cad-container h2, .login-title-global {
+    font-size: 1.5em;
+  }
+}
+
+/* Estilos para selects */
+.cad-input[type="select"] {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+.cad-input option {
+  background: #1e1f20;
+  color: white;
+}

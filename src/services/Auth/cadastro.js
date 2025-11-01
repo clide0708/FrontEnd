@@ -2,12 +2,24 @@ import api from "../api";
 
 // cadastrar aluno
 export const cadastrarAluno = async (dados) => {
-  return await api.post("/cadastro/aluno", dados);
+  try {
+    const response = await api.post("/cadastro/aluno", dados);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao cadastrar aluno:", error);
+    throw error;
+  }
 };
 
 // cadastrar personal
 export const cadastrarPersonal = async (dados) => {
-  return await api.post("/cadastro/personal", dados);
+  try {
+    const response = await api.post("/cadastro/personal", dados);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao cadastrar personal:", error);
+    throw error;
+  }
 };
 
 // verificar se o email já existe
@@ -29,5 +41,27 @@ export const verificarCpf = async (dados) => {
   } catch (err) {
     console.error("Erro ao verificar CPF:", err);
     return { success: false, disponivel: false };
+  }
+};
+
+// verificar se o RG já existe
+export const verificarRg = async (dados) => {
+  try {
+    const res = await api.post("/cadastro/verificar-rg", dados);
+    return res.data; // { success: true, disponivel: true/false, rg: "..." }
+  } catch (err) {
+    console.error("Erro ao verificar RG:", err);
+    return { success: false, disponivel: false };
+  }
+};
+
+// buscar academias ativas para select
+export const buscarAcademiasAtivas = async () => {
+  try {
+    const response = await api.get("/academias-ativas");
+    return response.data; // { success: true, data: [...] }
+  } catch (error) {
+    console.error("Erro ao buscar academias:", error);
+    return { success: false, data: [] };
   }
 };

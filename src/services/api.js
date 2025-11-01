@@ -40,6 +40,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expirado - redireciona para login
       localStorage.removeItem("token");
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("lembrarLogin");
       window.location.href = '/login';
     }
     
