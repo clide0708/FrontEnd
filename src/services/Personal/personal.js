@@ -112,6 +112,28 @@ const personalService = {
       throw err;
     }
   },
+
+  // NOVO: Buscar dados completos do personal (incluindo academia)
+  async getDadosCompletos(idPersonal) {
+    try {
+      const response = await api.get(`/perfil/personal/${idPersonal}`);
+      return response.data.data || null;
+    } catch (error) {
+      console.error("Erro ao buscar dados completos do personal:", error);
+      throw error;
+    }
+  },
+
+  // NOVO: Atualizar dados do personal (incluindo academia)
+  async atualizarDados(idPersonal, dados) {
+    try {
+      const response = await api.put(`/perfil/personal/${idPersonal}`, dados);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao atualizar dados do personal:", error);
+      throw error;
+    }
+  }
 };
 
 export default personalService;

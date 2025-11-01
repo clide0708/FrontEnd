@@ -2,6 +2,7 @@
     width: 100%;
     height: 100%;
     padding-bottom: 5%;
+    background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
 
     /* Container principal (Layout Global, centralizando o conteúdo) */
     /* Unifica seletores para o container principal que garante o fundo escuro e centraliza */
@@ -84,7 +85,6 @@
     .rs-input-nova-senha {
         width: 100%;
         padding: 12px;
-        margin-top: 15px;
         border: 1px solid white;
         border-radius: 8px;
         font-size: 1em;
@@ -117,7 +117,6 @@
         cursor: pointer;
         font-size: 1.1em;
         font-weight: bold;
-        margin-top: 25px;
         width: 100%;
         transition: all 0.3s ease;
     }
@@ -342,14 +341,9 @@
   font-weight: bold;
 }
 
-.cntrcds {
-  width: 100%;
-  max-width: 400px;
-}
-
 /* Container de cadastro */
 .cad-container {
-  background: #27292a;
+  background: linear-gradient(135deg, #1e1f20 0%, #27292a 100%);
   padding: 40px 30px;
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -402,7 +396,6 @@
 /* Container para inputs de senha */
 .password-input-container {
   position: relative;
-  margin-bottom: 15px;
 }
 
 .password-input {
@@ -514,7 +507,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
   font-size: 14px;
 }
 

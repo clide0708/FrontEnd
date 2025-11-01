@@ -14,38 +14,49 @@ export default function RecuperarSenha() {
   const [loading, setLoading] = useState(false);
 
   const handleEnviarEmail = async (e) => {
-    e.preventDefault();
-    if (!email) return setMensagem("digita teu email ai 😅");
+  e.preventDefault();
+  if (!email) return setMensagem("Digite seu email:");
 
-    setLoading(true);
-    try {
-      await recuperarSenhaService.esqueciSenha(email);
-      setMensagem("código enviado pro teu email 🔥");
-      setMostrarModal(true);
-    } catch (err) {
-      console.error(err);
-      setMensagem("opa, deu ruim 😓 tenta de novo");
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    await recuperarSenhaService.esqueciSenha(email);
+    
+    // Mensagem mais informativa para desenvolvimento
+    if (window.location.hostname === 'localhost') {
+      setMensagem("✅ Código gerado! Verifique o console do backend ou arquivo de logs.");
+    } else {
+      setMensagem(" ✅ Código enviado para seu email!");
     }
-  };
+    
+    setMostrarModal(true);
+  } catch (err) {
+    console.error(err);
+    if (err.response?.data?.error) {
+      setMensagem(`erro: ${err.response.data.error}`);
+    } else {
+      setMensagem("Erro ao enviar código, verifique as informações e tenta novamente.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleResetSenha = async (e) => {
     e.preventDefault();
 
     if (!email || !codigo || !novaSenha) {
-      setMensagemModal("preenche todos os campos 😅"); // <- só pro modal
+      setMensagemModal("Preencha todos os campos!"); // <- só pro modal
       return;
     }
 
     if (codigo.length !== 6) {
-      setMensagemModal("o código deve ter 6 dígitos 😅"); // <- só pro modal
+      setMensagemModal("O código deve ter 6 dígitos 😅!"); // <- só pro modal
       return;
     }
 
     try {
       await recuperarSenhaService.resetarSenha(email, codigo, novaSenha);
-      setMensagem("senha resetada com sucesso 🔥");
+      setMensagem("Senha resetada com sucesso 🔥!");
       setMensagemModal(""); // limpa a mensagem do modal
 
       setTimeout(() => {
@@ -57,11 +68,11 @@ export default function RecuperarSenha() {
       }, 1000);
     } catch (err) {
       if (err.response) {
-        console.log("erro do backend:", err.response.data);
+        console.log("Erro no servidro:", err.response.data);
         setMensagemModal(`erro: ${err.response.status} - ${err.response.data}`);
       } else {
         console.log(err);
-        setMensagemModal("erro de conexão 😓");
+        setMensagemModal("Erro de conexão 😓");
       }
     }
   };
@@ -78,7 +89,7 @@ export default function RecuperarSenha() {
     <div className="recuperarCC">
       <div className="cntrcds">
         <div className="topppp-global">
-          <h2>ClideFit</h2>
+          <h2>CLIDE Fit</h2>
         </div>
         <div className="rs-container-main">
           <h2 className="rs-title">Esqueci minha senha</h2>
@@ -86,7 +97,7 @@ export default function RecuperarSenha() {
             <input
               className="rs-input-email"
               type="email"
-              placeholder="seu email"
+              placeholder="Seu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -94,7 +105,7 @@ export default function RecuperarSenha() {
               {loading ? (
                 <span className="rs-loading">⏳</span>
               ) : (
-                "enviar código"
+                "Enviar código"
               )}
             </button>
           </form>
@@ -132,7 +143,7 @@ export default function RecuperarSenha() {
                   <input
                     className="rs-input-codigo"
                     type="text"
-                    placeholder="código"
+                    placeholder="Código"
                     value={codigo}
                     onChange={handleCodigoChange}
                     autoComplete="off"
@@ -141,7 +152,7 @@ export default function RecuperarSenha() {
                   <input
                     className="rs-input-nova-senha"
                     type="password"
-                    placeholder="nova senha"
+                    placeholder="Nova senha"
                     value={novaSenha}
                     onChange={(e) => setNovaSenha(e.target.value)}
                     autoComplete="new-password"
@@ -155,7 +166,7 @@ export default function RecuperarSenha() {
                   className="rs-btn-fechar"
                   onClick={() => setMostrarModal(false)}
                 >
-                  fechar
+                  Fechar
                 </button>
               </div>
             </div>

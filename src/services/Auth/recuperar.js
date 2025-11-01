@@ -3,7 +3,12 @@ import api from "../api";
 const recuperarSenhaService = {
   esqueciSenha: async (email) => {
     try {
-      const response = await api.post(`/recuperacao-senha/esqueci-senha`, { email });
+      // Para rotas públicas, não usar withCredentials
+      const response = await api.post(`/recuperacao-senha/esqueci-senha`, { 
+        email 
+      }, {
+        withCredentials: false // IMPORTANTE: desabilita credentials para rotas públicas
+      });
       return response.data;
     } catch (error) {
       console.error("Erro ao solicitar recuperação de senha:", error);
@@ -17,25 +22,12 @@ const recuperarSenhaService = {
         email,
         codigo,
         nova_senha: novaSenha,
+      }, {
+        withCredentials: false // IMPORTANTE: desabilita credentials para rotas públicas
       });
       return response.data;
     } catch (error) {
       console.error("Erro ao resetar senha:", error);
-      throw error;
-    }
-  },
-
-  // Nova função para validar código
-  validarCodigo: async (email, codigo) => {
-    try {
-      // Esta é uma implementação básica - você pode precisar criar um endpoint específico
-      const response = await api.post(`/recuperacao-senha/validar-codigo`, {
-        email,
-        codigo
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao validar código:", error);
       throw error;
     }
   }

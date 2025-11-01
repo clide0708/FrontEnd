@@ -5,25 +5,34 @@ const api = axios.create({
   headers: { 
     "Content-Type": "application/json",
   },
-  withCredentials: true, // IMPORTANTE: envia cookies/token entre domínios
-  timeout: 30000, // Aumenta timeout para APIs externas
+  // REMOVA withCredentials da configuração global
+  timeout: 30000,
 });
 
-// Interceptor para injetar token
+// Interceptor para injetar token APENAS para rotas autenticadas
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  
+  // Apenas rotas autenticadas precisam de credentials
+  const publicRoutes = [
+    '/auth/login',
+    '/cadastro/',
+    '/recuperacao-senha/',
+    '/config/'
+  ];
+  
+  const isPublicRoute = publicRoutes.some(route => config.url?.includes(route));
+  
+  if (!isPublicRoute && token) {
     config.headers.Authorization = `Bearer ${token}`;
+    config.withCredentials = true; // Apenas para rotas autenticadas
   }
-  config.withCredentials = true; // Apenas para requests autenticadas
   
-  // Log para debug (remova em produção)
   console.log(`🔄 API Request: ${config.method?.toUpperCase()} ${config.url}`);
-  
   return config;
 });
 
-// Interceptor para tratamento global de erros
+// Interceptor de resposta mantém o mesmo
 api.interceptors.response.use(
   (response) => {
     console.log(`✅ API Response: ${response.status} ${response.config.url}`);
@@ -38,7 +47,6 @@ api.interceptors.response.use(
     });
     
     if (error.response?.status === 401) {
-      // Token expirado - redireciona para login
       localStorage.removeItem("token");
       localStorage.removeItem("usuario");
       localStorage.removeItem("lembrarLogin");

@@ -8,6 +8,7 @@ import {
 } from "../../services/Auth/cadastro";
 import { Eye, EyeOff } from "lucide-react";
 import "./style.css";
+import { color } from "framer-motion";
 
 export default function CadastroPage() {
   const navigate = useNavigate();
@@ -258,7 +259,7 @@ export default function CadastroPage() {
     <div className="cadastroCC">
       <div className="cntrcds">
         <div className="topppp-global">
-          <h2>ClideFit</h2>
+          <h2>CLIDE Fit</h2>
         </div>
         <div className="cad-container">
           <h2>Cadastro</h2>
@@ -271,6 +272,10 @@ export default function CadastroPage() {
             />
             Conta Personal
           </label>
+
+          <br />
+          <h3 style={{color: "white"}}>Dados Pessoais</h3>
+          <br />
 
           <form onSubmit={handleSubmit}>
             <input
@@ -303,6 +308,22 @@ export default function CadastroPage() {
               onBlur={handleBlur}
             />
             {errors.rg && <span className="cad-error">{errors.rg}</span>}
+
+            <input
+              className="cad-input"
+              name="numTel"
+              placeholder="Telefone"
+              value={form.numTel}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            {errors.numTel && (
+              <span className="cad-error">{errors.numTel}</span>
+            )}
+
+            <br />
+            <h3 style={{color: "white"}}>Informações de login</h3>
+            <br />
 
             <input
               className="cad-input"
@@ -355,20 +376,11 @@ export default function CadastroPage() {
             </div>
             {errors.confirmarSenha && <span className="cad-error">{errors.confirmarSenha}</span>}
 
-            <input
-              className="cad-input"
-              name="numTel"
-              placeholder="Telefone"
-              value={form.numTel}
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            {errors.numTel && (
-              <span className="cad-error">{errors.numTel}</span>
-            )}
-
             {isPersonal && (
               <>
+                <h3 style={{color: "white"}}>Informações CREF</h3>
+                <br />
+
                 <input
                   className="cad-input"
                   name="cref_numero"
@@ -406,6 +418,10 @@ export default function CadastroPage() {
                 {errors.cref_regional && (
                   <span className="cad-error">{errors.cref_regional}</span>
                 )}
+
+                <br />
+                <h3 style={{color: "white"}}>Selecione uma academia (Opcional)</h3>
+                <br />
 
                 <select
                   className="cad-input"
