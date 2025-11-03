@@ -123,9 +123,26 @@ const routes = createBrowserRouter([
                 path: "/conectar",
                 element: (
                   <PageTransition>
-                    <Paginas.ConectarPersonalPage />
+                    <RoleRoute allowedRoles={["aluno", "personal"]} />
                   </PageTransition>
                 ),
+                children: [
+                  { path: "/conectar", element: <Paginas.ConectarPersonalPage /> },
+                ],
+              },
+              {
+                path: "/painel-controle",
+                element: (
+                  <BGanm>
+                    <RoleRoute allowedRoles={["academia"]} />
+                  </BGanm>
+                ),
+                children: [
+                  { 
+                    path: "/painel-controle", 
+                    element: <Paginas.PainelControleAcademiaPage /> 
+                  },
+                ],
               },
             ],
           },

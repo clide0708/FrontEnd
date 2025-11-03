@@ -3,38 +3,31 @@
  */
 export const uploadImagemParaServidor = async (blob, nomeArquivo = null) => {
   try {
-    // Gerar nome único para o arquivo
     const nomeFinal = nomeArquivo || `perfil_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.jpg`;
     
-    // Criar FormData para upload
     const formData = new FormData();
     formData.append('foto', blob, nomeFinal);
 
-    console.log('📤 Iniciando upload da imagem...');
+    console.log('📤 Iniciando upload da imagem para:', `${import.meta.env.VITE_API_URL}upload/foto-perfil`);
 
-    // Fazer upload para o servidor - REMOVA o /api/ da URL
     const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
       method: 'POST',
       body: formData,
+      // Não definir headers - o browser define automaticamente para FormData
     });
 
-    // Verificar se a resposta é válida
+    console.log('📨 Resposta do servidor:', response.status, response.statusText);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Erro detalhado:', errorText);
       throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
     }
 
-    // Verificar se é JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
-      console.error('Resposta não é JSON:', text.substring(0, 200));
-      throw new Error('Resposta do servidor não é JSON válido');
-    }
-
     const result = await response.json();
+    console.log('✅ Resultado do upload:', result);
 
     if (result.success) {
-      console.log('✅ Upload realizado com sucesso:', result.nome_arquivo);
       return {
         success: true,
         url: result.url,
@@ -46,17 +39,12 @@ export const uploadImagemParaServidor = async (blob, nomeArquivo = null) => {
     }
     
   } catch (error) {
-    console.error('❌ Erro no upload:', error);
+    console.error('❌ Erro completo no upload:', error);
     
-    // Fallback: usar blob URL localmente
-    const urlBlob = URL.createObjectURL(blob);
-    console.warn('⚠️ Usando fallback com blob URL local');
-    
+    // Fallback mais robusto
     return {
-      success: true, // Marcamos como sucesso para continuar o processo
-      url: urlBlob,
-      nome_arquivo: nomeArquivo || `perfil_local_${Date.now()}.jpg`,
-      message: 'Imagem salva localmente (fallback)',
+      success: false,
+      error: error.message,
       fallback: true
     };
   }

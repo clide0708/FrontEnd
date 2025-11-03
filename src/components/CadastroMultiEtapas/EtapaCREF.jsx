@@ -12,15 +12,16 @@ const [carregandoAcademias, setCarregandoAcademias] = useState(false);
     const carregarAcademias = async () => {
         setCarregandoAcademias(true);
         try {
-        const response = await fetch('/api/academias-ativas');
-        const data = await response.json();
-        if (data.success) {
-            setAcademias(data.data);
-        }
+            // CORRIGIDO: Remove /api/ da URL
+            const response = await fetch(`${import.meta.env.VITE_API_URL}academias-ativas`);
+            const data = await response.json();
+            if (data.success) {
+                setAcademias(data.data);
+            }
         } catch (error) {
-        console.error('Erro ao carregar academias:', error);
+            console.error('Erro ao carregar academias:', error);
         } finally {
-        setCarregandoAcademias(false);
+            setCarregandoAcademias(false);
         }
     };
 

@@ -111,41 +111,39 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     setSalvandoImagem(true);
     
     try {
-      // Cortar imagem
-      const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
-      
-      // Fazer upload para o servidor
-      const uploadResult = await uploadImagemParaServidor(blob);
-      
-      if (uploadResult.success) {
-        // Gerar preview local
-        const dataURL = await blobParaDataURL(blob);
+        const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
+        const uploadResult = await uploadImagemParaServidor(blob);
         
-        // Atualizar dados do formulário com a URL do servidor
-        onChange({ 
-          foto_url: uploadResult.url,
-          foto_data: dataURL, // Para preview
-          foto_nome: uploadResult.nome_arquivo,
-          foto_fallback: uploadResult.fallback || false
-        });
-
-        console.log('✅ Foto processada e salva no servidor:', uploadResult.nome_arquivo);
-        
-        if (uploadResult.fallback) {
-          console.warn('⚠️ Imagem salva localmente (fallback)');
+        if (uploadResult.success) {
+            const dataURL = await blobParaDataURL(blob);
+            onChange({ 
+                foto_url: uploadResult.url,
+                foto_data: dataURL,
+                foto_nome: uploadResult.nome_arquivo
+            });
+            console.log('✅ Foto salva com sucesso');
+        } else {
+            // Se o upload falhar, use apenas o blob local
+            const dataURL = await blobParaDataURL(blob);
+            const nomeFinal = `perfil_local_${Date.now()}.jpg`;
+            
+            onChange({ 
+                foto_url: dataURL, // Usar dataURL como fallback
+                foto_data: dataURL,
+                foto_nome: nomeFinal,
+                foto_fallback: true
+            });
+            
+            console.warn('⚠️ Upload falhou, usando imagem local');
         }
         
-      } else {
-        throw new Error(uploadResult.error || 'Erro no upload');
-      }
-      
     } catch (error) {
-      console.error('❌ Erro ao processar imagem:', error);
-      alert('Erro ao salvar imagem. Tente novamente.');
+        console.error('❌ Erro ao processar imagem:', error);
+        alert('Erro ao salvar imagem: ' + error.message);
     } finally {
-      setSalvandoImagem(false);
-      setCropModalAberto(false);
-      setImagemParaCortar(null);
+        setSalvandoImagem(false);
+        setCropModalAberto(false);
+        setImagemParaCortar(null);
     }
   };
 
@@ -327,6 +325,20 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
           <div className="caracteres-restantes">
             {dados.sobre?.length || 0}/500 caracteres
           </div>
+        </div>
+      )}
+      
+      {/* Sobre (apenas academia) */}
+      {tipoUsuario === 'academia' && (
+        <div className="input-group full-width">
+          <label>Sobre a Academia</label>
+          <textarea
+            placeholder="Conte sobre sua academia, equipamentos, metodologia..."
+            value={dados.sobre}
+            onChange={(e) => onChange({ sobre: e.target.value })}
+            rows={4}
+            maxLength={500}
+          />
         </div>
       )}
 

@@ -36,27 +36,60 @@ function ConectarPersonalPage() {
 
   // Carrega dados iniciais
   useEffect(() => {
+    let isMounted = true;
+    
     async function fetchData() {
-      setLoading(true);
-      try {
-        const [dadosData, academiasData, modalidadesData] = await Promise.all([
-          isPersonal ? connectService.getAlunos(filtros) : connectService.getPersonais(filtros),
-          connectService.getAcademias(),
-          connectService.getModalidades()
-        ]);
-        setDados(dadosData || []);
-        setAcademias(academiasData || []);
-        setModalidades(modalidadesData || []);
-      } catch (err) {
-        console.error("Erro ao carregar dados:", err);
-        setDados([]);
-        setAcademias([]);
-        setModalidades([]);
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true);
+        try {
+            console.log('🔄 Buscando dados...', { isPersonal, filtros });
+            
+            const [dadosData, academiasData, modalidadesData] = await Promise.all([
+                isPersonal ? connectService.getAlunos(filtros) : connectService.getPersonais(filtros),
+                connectService.getAcademias(),
+                connectService.getModalidades()
+            ]);
+            
+            // ⭐⭐ CORREÇÃO: Só atualiza estado se componente ainda estiver montado
+            if (isMounted) {
+                console.log('✅ Dados carregados:', {
+                    dados: dadosData?.length || 0,
+                    academias: academiasData?.length || 0, 
+                    modalidades: modalidadesData?.length || 0
+                });
+                
+                // ⭐⭐ CORREÇÃO: Remove duplicatas por ID
+                const dadosUnicos = Array.isArray(dadosData) 
+                    ? dadosData.filter((item, index, array) => 
+                          array.findIndex(i => 
+                              (isPersonal ? i.idAluno === item.idAluno : i.idPersonal === item.idPersonal)
+                          ) === index
+                      )
+                    : [];
+                
+                setDados(dadosUnicos);
+                setAcademias(academiasData || []);
+                setModalidades(modalidadesData || []);
+            }
+            
+        } catch (err) {
+            console.error("❌ Erro ao carregar dados:", err);
+            if (isMounted) {
+                setDados([]);
+                setAcademias([]);
+                setModalidades([]);
+            }
+        } finally {
+            if (isMounted) {
+                setLoading(false);
+            }
+        }
     }
+    
     fetchData();
+    
+    return () => {
+        isMounted = false; // ⭐⭐ CORREÇÃO: Cleanup para evitar atualizações em componente desmontado
+    };
   }, [filtros, isPersonal]);
 
   // Detectar localização automática
@@ -329,6 +362,15 @@ function ConectarPersonalPage() {
               <div className="personaisGrid">
                 {dados.map(item => (
                   <div key={isPersonal ? item.idAluno : item.idPersonal} className="personalCard">
+                    
+                    {/* ⭐⭐ NOVO: Distância no topo direito */}
+                    {item.distancia_km && (
+                      <div className="distanciaTopo">
+                        <MapPin size={14} />
+                        <span>{item.distancia_km} km</span>
+                      </div>
+                    )}
+
                     <div className="personalHeader">
                       <img
                         src={item.foto_perfil || "/assets/images/profilefoto.png"}
@@ -337,53 +379,105 @@ function ConectarPersonalPage() {
                       />
                       <div className="personalInfo">
                         <h3>{item.nome}</h3>
+                        
+                        {/* Informações específicas do Personal */}
                         {!isPersonal && (
-                          <p className="personalCREF">{item.cref}</p>
+                          <>
+                            <p className="personalCREF">{item.cref}</p>
+                            {item.sobre && (
+                              <p className="personalAcademia">{item.sobre}</p>
+                            )}
+                          </>
                         )}
+                        
+                        {/* Informações específicas do Aluno */}
+                        {isPersonal && item.meta && (
+                          <p className="personalMeta"><strong>Meta:</strong> {item.meta}</p>
+                        )}
+                        
                         <p className="personalAcademia">
                           {item.cidade && `${item.cidade}, ${item.estado}`}
                           {item.nomeAcademia && ` • ${item.nomeAcademia}`}
                         </p>
-                        {isPersonal && item.meta && (
-                          <p className="personalMeta"><strong>Meta:</strong> {item.meta}</p>
-                        )}
+
+                        {/* Informações adicionais em linha */}
+                        <div className={isPersonal ? "infoAluno" : "infoPersonal"}>
+                          {isPersonal ? (
+                            <>
+                              {item.idade && (
+                                <div className="infoAlunoItem">
+                                  <strong>Idade:</strong> {item.idade} anos
+                                </div>
+                              )}
+                              {item.altura && (
+                                <div className="infoAlunoItem">
+                                  <strong>Altura:</strong> {item.altura}cm
+                                </div>
+                              )}
+                              {item.peso && (
+                                <div className="infoAlunoItem">
+                                  <strong>Peso:</strong> {item.peso}kg
+                                </div>
+                              )}
+                              {item.treinoTipo && (
+                                <div className="infoAlunoItem">
+                                  <strong>Nível:</strong> {item.treinoTipo}
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {item.idade && (
+                                <div className="infoPersonalItem">
+                                  <strong>Idade:</strong> {item.idade} anos
+                                </div>
+                              )}
+                              {item.cref_tipo && (
+                                <div className="infoPersonalItem">
+                                  <strong>Categoria:</strong> {item.cref_tipo === 'G' ? 'Graduado' : 'Provisionado'}
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     <div className="personalDetails">
-                      {item.modalidades && item.modalidades.length > 0 && (
-                        <div className="modalidadesList">
-                          <strong>Modalidades:</strong>
-                          <span>{item.modalidades.join(", ")}</span>
+                      {/* Modalidades */}
+                      <div className="detalhesColuna">
+                        <div className="detalhesItem">
+                          <strong>Modalidades</strong>
+                          {item.modalidades && item.modalidades.length > 0 ? (
+                            <div className="modalidadesList">
+                              {item.modalidades.map((modalidade, index) => (
+                                <span key={index}>{modalidade}</span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span>Não informado</span>
+                          )}
                         </div>
-                      )}
-                      
-                      {item.distancia_km && (
-                        <div className="distancia">
-                          <MapPin size={14} />
-                          <span>{item.distancia_km} km de distância</span>
-                        </div>
-                      )}
+                      </div>
 
-                      {!isPersonal && item.treinos_count !== undefined && (
-                        <div className="treinosInfo">
-                          <strong>{item.treinos_count}</strong> treinos criados
-                        </div>
-                      )}
-
-                      {item.treinosAdaptados && (
-                        <div className="adaptadoInfo">
-                          <strong>✓</strong> Trabalha com treinos adaptados
-                        </div>
-                      )}
-
-                      {isPersonal && (
-                        <div className="dadosAluno">
-                          {item.idade && <span><strong>Idade:</strong> {item.idade} anos</span>}
-                          {item.altura && <span><strong>Altura:</strong> {item.altura}cm</span>}
-                          {item.peso && <span><strong>Peso:</strong> {item.peso}kg</span>}
-                        </div>
-                      )}
+                      {/* Informações profissionais */}
+                      <div className="detalhesColuna">
+                        {!isPersonal && item.treinos_count !== undefined && (
+                          <div className="detalhesItem">
+                            <strong>Treinos Criados</strong>
+                            <span className="treinosInfo">{item.treinos_count} treinos</span>
+                          </div>
+                        )}
+                        
+                        {item.treinosAdaptados && (
+                          <div className="detalhesItem">
+                            <strong>Especialidade</strong>
+                            <span className="adaptadoInfo">
+                              <strong>✓</strong> Treinos Adaptados
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div className="personalActions">
@@ -399,7 +493,7 @@ function ConectarPersonalPage() {
                             setShowModal(true);
                           }}
                         >
-                          {isPersonal ? 'Convidar' : 'Conectar'}
+                          {isPersonal ? 'Convidar Aluno' : 'Conectar com Personal'}
                         </button>
                       )}
                     </div>

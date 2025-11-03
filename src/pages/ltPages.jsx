@@ -11,6 +11,7 @@ import { default as Login } from "./Auth/login";
 import { default as Cadastro } from "./Auth/cadastro";
 import { default as RecuperarSenha} from "./Auth/recuperar";
 import { default as ConectarPersonalPage} from "./ConectarPersonal/index.jsx";
+import { default as PainelControleAcademiaPage } from "./Academia/PainelControle.jsx";
 
 const PaginaNaoEncontrada = () => <div>404 - Página Não Encontrada</div>;
 const TelaEmManutencao = () => <div>Em Manutenção</div>;
@@ -31,5 +32,6 @@ export const Paginas = {
     Cadastro,
     RecuperarSenha,
     ConectarPersonalPage,
+    PainelControleAcademiaPage,
     // adicionar outras quando criar essa merda
 };

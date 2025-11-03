@@ -218,7 +218,38 @@ html {
 }
 
 .pipipiripii {
-  padding-left: 250px;
+  padding-left: 150px; /* Reduzido para melhor responsividade */
   display: flex;
   align-items: center;
+  gap: 15px;
+}
+
+/* Estilo específico para academia no menu */
+.nav-menu li a[href="/painel-controle"] {
+  background: linear-gradient(135deg, #368DD9, #2a6dad);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.nav-menu li a[href="/painel-controle"]:hover {
+  background: linear-gradient(135deg, #2a6dad, #368DD9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(54, 141, 217, 0.3);
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .pipipiripii {
+    padding-left: 0;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .nav-menu li a[href="/painel-controle"] {
+    padding: 10px 20px;
+    text-align: center;
+    margin: 5px 0;
+  }
 }

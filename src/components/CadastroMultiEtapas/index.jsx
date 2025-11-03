@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import EtapaDadosPessoais from "./EtapaDadosPessoais";
 import EtapaPerfil from "./EtapaPerfil";
 import EtapaEndereco from "./EtapaEndereco";
+import EtapaAcademia from "./EtapaAcademia";
 import EtapaLogin from "./EtapaLogin";
 import EtapaCREF from "./EtapaCREF";
 import BarraProgresso from "./BarraProgresso";
-import { cadastrarAluno, cadastrarPersonal } from "../../services/Auth/cadastro";
+import { cadastrarAluno, cadastrarPersonal, cadastrarAcademia } from "../../services/Auth/cadastro";
+import academiaService from "../../services/Academia/academia";
 import { User, Dumbbell, Building, Loader2 } from "lucide-react";
 import "./style.css";
 
@@ -85,21 +87,46 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     cref_numero: "",
     cref_categoria: "",
     cref_regional: "",
-    idAcademia: ""
+    idAcademia: "",
   });
 
-  const totalEtapas = selectedUserType === "personal" ? 5 : 4;
+  const getTotalEtapas = () => {
+    switch (selectedUserType) {
+      case "personal": return 6;
+      case "aluno": return 5;
+      case "academia": return 4;
+      default: return 4;
+    }
+  };
 
-  const etapas = [
-    { numero: 1, titulo: "Dados Pessoais", icone: "👤" },
-    { numero: 2, titulo: "Perfil", icone: "🎯" },
-    { numero: 3, titulo: "Endereço", icone: "📍" },
-    { numero: 4, titulo: "Login", icone: "🔐" },
-  ];
+  const totalEtapas = getTotalEtapas();
 
-  if (selectedUserType === "personal") {
-    etapas.push({ numero: 5, titulo: "CREF", icone: "📋" });
-  }
+  const getEtapas = () => {
+    const etapasBase = [
+      { numero: 1, titulo: "Dados Pessoais", icone: "👤" },
+      { numero: 2, titulo: "Perfil", icone: "🎯" },
+      { numero: 3, titulo: "Endereço", icone: "📍" },
+    ];
+
+    // Adiciona etapa de academia para aluno e personal
+    if (selectedUserType === "aluno" || selectedUserType === "personal") {
+      etapasBase.push({ numero: 4, titulo: "Academia", icone: "🏢" });
+    }
+
+    // ⭐⭐ CORREÇÃO: CREF vem ANTES do Login para personal
+    if (selectedUserType === "personal") {
+      etapasBase.push({ numero: 5, titulo: "CREF", icone: "📋" });
+    }
+
+    // Adiciona etapa de login (sempre a última antes do cadastro)
+    const etapaLoginNumero = selectedUserType === "personal" ? 6 : 
+                          selectedUserType === "aluno" ? 5 : 4;
+    etapasBase.push({ numero: etapaLoginNumero, titulo: "Login", icone: "🔐" });
+
+    return etapasBase;
+  };
+
+  const etapas = getEtapas();
 
   // Função para mudar o tipo de usuário
   const handleUserTypeChange = async (type) => {
@@ -110,18 +137,54 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     // Animação de transição
     await new Promise(resolve => setTimeout(resolve, 200));
     
+    // ⭐⭐ NOVA LÓGICA INTELIGENTE DE REAPROVEITAMENTO ⭐⭐
+    setDadosFormulario(prev => {
+      const novosDados = { ...prev };
+      
+      // Se mudando PARA academia, remove dados pessoais específicos
+      if (type === 'academia') {
+        delete novosDados.cpf;
+        delete novosDados.rg;
+        delete novosDados.data_nascimento;
+        delete novosDados.genero;
+        delete novosDados.altura;
+        delete novosDados.meta;
+      }
+      
+      // Se mudando DE academia, remove dados empresariais  
+      if (selectedUserType === 'academia') {
+        delete novosDados.nome_fantasia;
+        delete novosDados.razao_social;
+      }
+      
+      // Se mudando PARA aluno/personal DE academia, ajusta nome
+      if ((type === 'aluno' || type === 'personal') && selectedUserType === 'academia') {
+        // Se o nome atual for provavelmente nome fantasia, limpa para dados pessoais
+        if (novosDados.nome && !novosDados.nome.includes('Academia') && !novosDados.nome.includes('Studio')) {
+          // Mantém o nome se parecer com nome pessoal
+        } else {
+          novosDados.nome = '';
+        }
+      }
+      
+      // Limpa campos específicos do novo tipo
+      return {
+        ...novosDados,
+        cref_numero: "", 
+        cref_categoria: "", 
+        cref_regional: "",
+        cnpj: "", 
+        nome_fantasia: "", 
+        razao_social: "", 
+        idAcademia: "",
+        
+        // Limpa campos específicos que não fazem sentido no novo contexto
+        ...(type !== 'aluno' && { altura: "", meta: "" }),
+        ...(type !== 'personal' && { sobre: "" })
+      };
+    });
+    
     setSelectedUserType(type);
-    // Limpar campos específicos ao mudar o tipo
-    setDadosFormulario(prev => ({
-      ...prev,
-      cref_numero: "",
-      cref_categoria: "",
-      cref_regional: "",
-      idAcademia: "",
-      cnpj: "",
-      nome_fantasia: "",
-      razao_social: ""
-    }));
     
     // Finalizar animação
     setTimeout(() => setIsSwitching(false), 300);
@@ -147,12 +210,11 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     switch (etapa) {
       case 1: // Dados pessoais
         if (selectedUserType === 'academia') {
-            return dadosFormulario.nome && 
+          return dadosFormulario.nome && 
                 dadosFormulario.cnpj && 
-                dadosFormulario.nome_fantasia && 
                 dadosFormulario.razao_social;
         } else {
-            return dadosFormulario.nome && 
+          return dadosFormulario.nome && 
                 dadosFormulario.cpf && 
                 dadosFormulario.rg && 
                 dadosFormulario.numTel;
@@ -160,72 +222,137 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
       
       case 2: // Perfil
         return dadosFormulario.data_nascimento && 
-               dadosFormulario.genero &&
-               dadosFormulario.modalidades.length > 0;
+              dadosFormulario.genero &&
+              dadosFormulario.modalidades.length > 0;
       
       case 3: // Endereço
         return dadosFormulario.cep && 
-               dadosFormulario.cidade && 
-               dadosFormulario.estado;
+              dadosFormulario.cidade && 
+              dadosFormulario.estado;
       
-      case 4: // Login
+      case 4: // Academia (opcional para aluno/personal)
+        if (selectedUserType === "aluno" || selectedUserType === "personal") {
+          return true; // Academia é opcional, sempre válida
+        } else {
+          return dadosFormulario.email && 
+                dadosFormulario.senha && 
+                dadosFormulario.senha === dadosFormulario.confirmarSenha &&
+                dadosFormulario.senha.length >= 6;
+        }
+      
+      case 5: // CREF para personal, Login para aluno
+        if (selectedUserType === "personal") {
+          return dadosFormulario.cref_numero && 
+                dadosFormulario.cref_categoria && 
+                dadosFormulario.cref_regional;
+        } else {
+          return dadosFormulario.email && 
+                dadosFormulario.senha && 
+                dadosFormulario.senha === dadosFormulario.confirmarSenha &&
+                dadosFormulario.senha.length >= 6;
+        }
+
+      case 6: // Login apenas para personal
         return dadosFormulario.email && 
-               dadosFormulario.senha && 
-               dadosFormulario.senha === dadosFormulario.confirmarSenha &&
-               dadosFormulario.senha.length >= 6;
-      
-      case 5: // CREF
-        return dadosFormulario.cref_numero && 
-               dadosFormulario.cref_categoria && 
-               dadosFormulario.cref_regional;
+              dadosFormulario.senha && 
+              dadosFormulario.senha === dadosFormulario.confirmarSenha &&
+              dadosFormulario.senha.length >= 6;
       
       default:
         return false;
     }
   };
 
-  // Cadastro inicial (apenas dados básicos)
   const handleCadastroInicial = async () => {
     setLoading(true);
     setIsAnimating(true);
     
     try {
-      const dadosCadastro = {
-        nome: dadosFormulario.nome,
-        cpf: dadosFormulario.cpf.replace(/\D/g, ""),
-        rg: dadosFormulario.rg,
-        numTel: dadosFormulario.numTel.replace(/\D/g, ""),
-        email: dadosFormulario.email,
-        senha: dadosFormulario.senha,
-        // Endereço
-        cep: dadosFormulario.cep.replace(/\D/g, ""),
-        logradouro: dadosFormulario.logradouro,
-        numero: dadosFormulario.numero,
-        complemento: dadosFormulario.complemento,
-        bairro: dadosFormulario.bairro,
-        cidade: dadosFormulario.cidade,
-        estado: dadosFormulario.estado,
-        pais: dadosFormulario.pais
-      };
+      let dadosCadastro;
+
+      if (selectedUserType === "academia") {
+        // Dados específicos para academia
+        dadosCadastro = {
+          nome: dadosFormulario.nome,
+          razao_social: dadosFormulario.razao_social,
+          cnpj: dadosFormulario.cnpj.replace(/\D/g, ""),
+          email: dadosFormulario.email,
+          senha: dadosFormulario.senha,
+          telefone: dadosFormulario.numTel.replace(/\D/g, ""),
+          // Endereço
+          cep: dadosFormulario.cep.replace(/\D/g, ""),
+          logradouro: dadosFormulario.logradouro,
+          numero: dadosFormulario.numero,
+          complemento: dadosFormulario.complemento,
+          bairro: dadosFormulario.bairro,
+          cidade: dadosFormulario.cidade,
+          estado: dadosFormulario.estado,
+          pais: dadosFormulario.pais
+        };
+      } else {
+        // Dados para aluno e personal
+        dadosCadastro = {
+          nome: dadosFormulario.nome,
+          cpf: dadosFormulario.cpf.replace(/\D/g, ""),
+          rg: dadosFormulario.rg,
+          numTel: dadosFormulario.numTel.replace(/\D/g, ""),
+          email: dadosFormulario.email,
+          senha: dadosFormulario.senha,
+          // Endereço
+          cep: dadosFormulario.cep.replace(/\D/g, ""),
+          logradouro: dadosFormulario.logradouro,
+          numero: dadosFormulario.numero,
+          complemento: dadosFormulario.complemento,
+          bairro: dadosFormulario.bairro,
+          cidade: dadosFormulario.cidade,
+          estado: dadosFormulario.estado,
+          pais: dadosFormulario.pais
+        };
+
+        if (selectedUserType === "personal") {
+          dadosCadastro.cref_numero = dadosFormulario.cref_numero.replace(/\D/g, "");
+          dadosCadastro.cref_categoria = dadosFormulario.cref_categoria;
+          dadosCadastro.cref_regional = dadosFormulario.cref_regional;
+          dadosCadastro.idAcademia = dadosFormulario.idAcademia || null;
+        }
+      }
+
+      console.log('📤 Dados sendo enviados para cadastro:', dadosCadastro);
 
       let resultado;
       if (selectedUserType === "aluno") {
         resultado = await cadastrarAluno(dadosCadastro);
-      } else {
-        // Adicionar dados específicos do personal
-        dadosCadastro.cref_numero = dadosFormulario.cref_numero.replace(/\D/g, "");
-        dadosCadastro.cref_categoria = dadosFormulario.cref_categoria;
-        dadosCadastro.cref_regional = dadosFormulario.cref_regional;
-        dadosCadastro.idAcademia = dadosFormulario.idAcademia;
-        
+      } else if (selectedUserType === "personal") {
         resultado = await cadastrarPersonal(dadosCadastro);
+      } else {
+        resultado = await cadastrarAcademia(dadosCadastro);
       }
 
       if (resultado.success) {
+        const usuarioId = selectedUserType === "aluno" ? resultado.idAluno : 
+                         selectedUserType === "personal" ? resultado.idPersonal : 
+                         resultado.idAcademia;
+        
         setUsuarioCadastrado({
-          id: selectedUserType === "aluno" ? resultado.idAluno : resultado.idPersonal,
+          id: usuarioId,
           tipo: selectedUserType
         });
+
+        // ENVIAR SOLICITAÇÃO DE VINCULAÇÃO SE ACADEMIA FOI SELECIONADA
+        if (dadosFormulario.idAcademia && selectedUserType !== "academia") {
+          try {
+            await academiaService.enviarSolicitacaoVinculacao({
+              idAcademia: dadosFormulario.idAcademia,
+              idUsuario: usuarioId,
+              tipoUsuario: selectedUserType,
+              mensagem: "Solicitação enviada durante o cadastro"
+            });
+            console.log('✅ Solicitação de vinculação enviada para a academia');
+          } catch (error) {
+            console.warn('⚠️ Erro ao enviar solicitação de vinculação:', error);
+            // Não impede o cadastro se a solicitação falhar
+          }
+        }
         
         // Avançar para completar perfil
         avancarEtapa();
@@ -234,76 +361,82 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
       }
     } catch (error) {
       console.error("Erro no cadastro inicial:", error);
-      alert("Erro ao realizar cadastro. Tente novamente.");
+      if (error.response?.data?.error) {
+        alert(`Erro: ${error.response.data.error}`);
+      } else {
+        alert("Erro ao realizar cadastro. Tente novamente.");
+      }
     } finally {
       setLoading(false);
       setIsAnimating(false);
     }
   };
 
-  // Completar cadastro (dados do perfil)
-  // No método handleCompletarCadastro, atualize as URLs:
   const handleCompletarCadastro = async () => {
     if (!usuarioCadastrado) {
-        alert("Erro: usuário não cadastrado.");
-        return;
+      alert("Erro: usuário não cadastrado.");
+      return;
     }
 
     setLoading(true);
     
     try {
-        const dadosPerfil = {
+      const dadosPerfil = {
         [selectedUserType === "aluno" ? "idAluno" : "idPersonal"]: usuarioCadastrado.id,
         data_nascimento: dadosFormulario.data_nascimento,
         genero: dadosFormulario.genero,
         foto_url: dadosFormulario.foto_url,
         treinos_adaptados: dadosFormulario.treinos_adaptados ? 1 : 0,
         modalidades: dadosFormulario.modalidades
-        };
+      };
 
-        // Adicionar campos específicos
-        if (selectedUserType === "aluno") {
+      // Adicionar campos específicos
+      if (selectedUserType === "aluno") {
         dadosPerfil.altura = dadosFormulario.altura ? parseFloat(dadosFormulario.altura) : null;
         dadosPerfil.meta = dadosFormulario.meta;
-        } else {
+      } else {
         dadosPerfil.sobre = dadosFormulario.sobre;
-        }
+      }
 
-        // CORRIGIDO: Remove /api/ da URL
-        const endpoint = selectedUserType === "aluno" 
+      const endpoint = selectedUserType === "aluno" 
         ? "cadastro/completar-aluno" 
         : "cadastro/completar-personal";
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+      // Use fetch diretamente SEM headers de autorização
+      const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(dadosPerfil),
-        });
+      });
 
-        const resultado = await response.json();
+      const resultado = await response.json();
 
-        if (resultado.success) {
+      if (resultado.success) {
         navigate("/login", {
-            state: {
+          state: {
             message: "Cadastro realizado com sucesso! Faça login para continuar.",
             email: dadosFormulario.email
-            }
+          }
         });
-        } else {
+      } else {
         alert(resultado.error || "Erro ao completar cadastro");
-        }
+      }
     } catch (error) {
-        console.error("Erro ao completar cadastro:", error);
-        alert("Erro ao completar cadastro. Tente novamente.");
+      console.error("Erro ao completar cadastro:", error);
+      alert("Erro ao completar cadastro. Tente novamente.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleFinalizar = () => {
-    if (etapaAtual === 4 && !usuarioCadastrado) {
+    // Determinar qual etapa finaliza o cadastro inicial
+    const etapaCadastroInicial = selectedUserType === "personal" ? 6 : 
+                                selectedUserType === "aluno" ? 5 : 4;
+
+    if (etapaAtual === etapaCadastroInicial && !usuarioCadastrado) {
       // Primeira parte do cadastro (dados básicos + login)
       handleCadastroInicial();
     } else if (etapaAtual === totalEtapas && usuarioCadastrado) {
@@ -315,60 +448,73 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
   const renderizarEtapa = () => {
     switch (etapaAtual) {
       case 1:
-        return (
-          <EtapaDadosPessoais
-            dados={dadosFormulario}
-            onChange={atualizarDados}
-            tipoUsuario={selectedUserType}
-          />
-        );
+        return <EtapaDadosPessoais dados={dadosFormulario} onChange={atualizarDados} tipoUsuario={selectedUserType} />;
       
       case 2:
-        return (
-          <EtapaPerfil
-            dados={dadosFormulario}
-            onChange={atualizarDados}
-            tipoUsuario={selectedUserType}
-          />
-        );
+        return <EtapaPerfil dados={dadosFormulario} onChange={atualizarDados} tipoUsuario={selectedUserType} />;
       
       case 3:
-        return (
-          <EtapaEndereco
-            dados={dadosFormulario}
-            onChange={atualizarDados}
-          />
-        );
+        return <EtapaEndereco dados={dadosFormulario} onChange={atualizarDados} />;
       
       case 4:
-        return (
-          <EtapaLogin
-            dados={dadosFormulario}
-            onChange={atualizarDados}
-          />
-        );
+        if (selectedUserType === "aluno" || selectedUserType === "personal") {
+          return <EtapaAcademia dados={dadosFormulario} onChange={atualizarDados} tipoUsuario={selectedUserType} />;
+        } else {
+          return <EtapaLogin dados={dadosFormulario} onChange={atualizarDados} />;
+        }
       
       case 5:
-        return (
-          <EtapaCREF
-            dados={dadosFormulario}
-            onChange={atualizarDados}
-          />
-        );
+        // ⭐⭐ CORREÇÃO: Etapa 5 é CREF para personal, Login para aluno
+        if (selectedUserType === "personal") {
+          return <EtapaCREF dados={dadosFormulario} onChange={atualizarDados} />;
+        } else if (selectedUserType === "aluno") {
+          return <EtapaLogin dados={dadosFormulario} onChange={atualizarDados} />;
+        }
+        return null;
+      
+      case 6:
+        // ⭐⭐ CORREÇÃO: Etapa 6 é APENAS Login para personal
+        if (selectedUserType === "personal") {
+          return <EtapaLogin dados={dadosFormulario} onChange={atualizarDados} />;
+        }
+        return null;
       
       default:
         return null;
     }
   };
 
-  const getTextoBotao = () => {
-    if (etapaAtual === 4 && !usuarioCadastrado) {
-      return loading ? "Cadastrando..." : "Cadastrar e Continuar";
-    } else if (etapaAtual === totalEtapas && usuarioCadastrado) {
-      return loading ? "Finalizando..." : "Finalizar Cadastro";
-    } else {
-      return "Próximo";
+  const getAcaoBotao = () => {
+    // Se já fez cadastro inicial e está completando perfil
+    if (usuarioCadastrado && etapaAtual === totalEtapas) {
+      return 'completar';
     }
+    
+    // Se está na última etapa ANTES do cadastro inicial
+    if (!usuarioCadastrado && etapaAtual === totalEtapas) {
+      return 'cadastrar';
+    }
+    
+    // Se é academia na etapa 4 (login) - última etapa para academia
+    if (!usuarioCadastrado && selectedUserType === 'academia' && etapaAtual === 4) {
+      return 'cadastrar';
+    }
+    
+    // Para todas outras situações, é "Próximo"
+    return 'avancar';
+  };
+
+  const acaoBotao = getAcaoBotao();
+
+  // Texto do botão baseado na ação
+  const getTextoBotao = () => {
+    if (loading) {
+      return acaoBotao === 'completar' ? 'Finalizando...' : 
+            acaoBotao === 'cadastrar' ? 'Cadastrando...' : 'Próximo';
+    }
+    
+    return acaoBotao === 'completar' ? 'Finalizar Cadastro' :
+          acaoBotao === 'cadastrar' ? 'Cadastrar e Continuar' : 'Próximo';
   };
 
   const CurrentIcon = userTypes.find(type => type.id === selectedUserType)?.icon || User;
@@ -442,11 +588,15 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
             Voltar
           </button>
         )}
-    
+
         <button
           type="button"
-          className={etapaAtual === totalEtapas ? "btn-finalizar" : "btn-avancar"}
-          onClick={etapaAtual === 4 || etapaAtual === totalEtapas ? handleFinalizar : avancarEtapa}
+          className={acaoBotao !== 'avancar' ? "btn-finalizar" : "btn-avancar"}
+          onClick={
+            acaoBotao === 'completar' ? handleCompletarCadastro :
+            acaoBotao === 'cadastrar' ? handleCadastroInicial :
+            avancarEtapa
+          }
           disabled={!validarEtapa(etapaAtual) || loading}
         >
           {loading ? (

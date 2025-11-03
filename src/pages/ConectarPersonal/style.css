@@ -563,3 +563,550 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+
+
+
+
+
+
+
+
+.ConectarPersonal {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: #1a1a1a;
+}
+
+.containerPS {
+    width: 95%;
+    display: flex;
+    gap: 25px;
+    margin: 0 auto;
+    height: auto;
+}
+
+.SC1 {
+    flex: 3;
+    background: #27292a;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 0; /* ⭐⭐ CORREÇÃO: Permite que o flex shrink funcione */
+    overflow: hidden; /* ⭐⭐ CORREÇÃO: Previne conteúdo saindo */
+}
+
+.SC2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 280px;
+    max-width: 320px; /* ⭐⭐ CORREÇÃO: Limita largura máxima */
+}
+
+/* ⭐⭐ CORREÇÃO: Cards mais compactos */
+.personaisGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 15px;
+}
+
+.personalCard {
+    background: #1e1f20;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    max-width: 100%; /* ⭐⭐ CORREÇÃO: Não ultrapassa o container */
+}
+
+/* ⭐⭐ CORREÇÃO: Header mais compacto */
+.personalHeader {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+}
+
+.personalFoto {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #368dd9;
+    flex-shrink: 0; /* ⭐⭐ CORREÇÃO: Não reduz tamanho */
+}
+
+.personalInfo {
+    flex: 1;
+    min-width: 0; /* ⭐⭐ CORREÇÃO: Permite texto quebrar */
+}
+
+
+/* ⭐⭐ CORREÇÃO: Dados do aluno mais compactos */
+.dadosAluno {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 8px;
+}
+
+.dadosAluno span {
+    font-size: 0.85em;
+    color: #aaa;
+    line-height: 1.2;
+}
+
+.personalMeta {
+    color: #4CAF50;
+    font-size: 0.85em;
+    margin: 4px 0;
+    line-height: 1.2;
+}
+
+/* ⭐⭐ CORREÇÃO: Ações mais compactas */
+.personalActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* ⭐⭐ CORREÇÃO: Cards do painel direito mais compactos */
+.infoCard,
+.statsCard,
+.localizacaoCard {
+    background: #27292a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.infoCard h3,
+.statsCard h3,
+.localizacaoCard h3 {
+    color: white;
+    margin: 0 0 12px 0;
+    font-size: 1.1em;
+}
+
+.infoCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.infoCard li {
+    color: #aaa;
+    padding: 6px 0;
+    border-bottom: 1px solid #444;
+    font-size: 0.9em;
+}
+
+.infoCard li:last-child {
+    border-bottom: none;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #444;
+}
+
+.statItem:last-child {
+    border-bottom: none;
+}
+
+.statItem strong {
+    color: #368dd9;
+    font-size: 1.5em;
+    margin-bottom: 4px;
+}
+
+.statItem span {
+    color: #aaa;
+    font-size: 0.85em;
+    text-align: center;
+}
+
+/* ⭐⭐ CORREÇÃO: Responsividade melhorada */
+@media (max-width: 1200px) {
+    .containerPS {
+        width: 98%;
+        gap: 20px;
+    }
+    
+    .personaisGrid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .containerPS {
+        flex-direction: column;
+    }
+    
+    .SC2 {
+        max-width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .SC2 > * {
+        flex: 1;
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ConectarPersonal {
+        padding: 15px 10px;
+    }
+    
+    .SC1 {
+        padding: 20px;
+    }
+    
+    .filtrosGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .personaisGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modalidadesGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .personalHeader {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .personalInfo {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalidadesGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .SC2 {
+        flex-direction: column;
+    }
+    
+    .SC2 > * {
+        min-width: auto;
+    }
+    
+    .filtrosSection {
+        max-height: 400px;
+    }
+}
+
+
+
+
+
+
+
+
+
+/* ⭐⭐ NOVO LAYOUT: Cards largos - 1 por linha */
+.personaisGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.personalCard {
+    background: #1e1f20;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    width: 100%;
+    position: relative; /* Para posicionar a distância */
+    display: flex;
+    flex-direction: column;
+}
+
+.personalCard:hover {
+    border-color: #368dd9;
+    transform: translateY(-2px);
+}
+
+/* ⭐⭐ NOVO: Distância no topo direito */
+.distanciaTopo {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #368dd9;
+    font-weight: bold;
+    font-size: 0.9em;
+    background: rgba(54, 141, 217, 0.1);
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #368dd9;
+}
+
+/* ⭐⭐ NOVO: Layout do header com todas as informações */
+.personalHeader {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding-right: 100px; /* Espaço para a distância */
+}
+
+.personalFoto {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #368dd9;
+    flex-shrink: 0;
+}
+
+.personalInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.personalInfo h3 {
+    color: white;
+    margin: 0 0 8px 0;
+    font-size: 1.4em;
+    line-height: 1.2;
+}
+
+.personalCREF {
+    color: #368dd9;
+    font-weight: bold;
+    margin: 0 0 6px 0;
+    font-size: 1em;
+}
+
+.personalAcademia {
+    color: #aaa;
+    margin: 0 0 8px 0;
+    font-size: 0.95em;
+}
+
+.personalMeta {
+    color: #4CAF50;
+    font-size: 0.95em;
+    margin: 4px 0;
+    font-weight: 500;
+}
+
+/* ⭐⭐ NOVO: Grid para informações detalhadas */
+.personalDetails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+/* ⭐⭐ NOVO: Estilos para cada seção de informações */
+.detalhesColuna {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detalhesItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detalhesItem strong {
+    color: white;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.detalhesItem span {
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+/* ⭐⭐ NOVO: Informações específicas para alunos */
+.infoAluno {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.infoAlunoItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+/* ⭐⭐ NOVO: Informações específicas para personais */
+.infoPersonal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.infoPersonalItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+/* ⭐⭐ NOVO: Modalidades em linha */
+.modalidadesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.modalidadesList strong {
+    color: white;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.modalidadesList span {
+    color: #aaa;
+    font-size: 0.9em;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid #444;
+}
+
+/* ⭐⭐ NOVO: Status e informações adicionais */
+.statusInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.treinosInfo {
+    color: #4CAF50;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.adaptadoInfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #4CAF50;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* ⭐⭐ NOVO: Ações no final do card */
+.personalActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #444;
+}
+
+.btnConectar {
+    background: #368dd9;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    transition: background 0.3s ease;
+    min-width: 120px;
+}
+
+.btnConectar:hover {
+    background: #2a6dad;
+    transform: translateY(-1px);
+}
+
+.btnConviteEnviado {
+    background: #666;
+    color: #aaa;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: not-allowed;
+    font-size: 1em;
+    min-width: 120px;
+}
+
+/* ⭐⭐ NOVO: Responsividade para cards largos */
+@media (max-width: 768px) {
+    .personalDetails {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .personalHeader {
+        padding-right: 0;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .distanciaTopo {
+        position: static;
+        margin-bottom: 10px;
+        align-self: flex-end;
+    }
+    
+    .infoAluno,
+    .infoPersonal {
+        justify-content: center;
+    }
+    
+    .modalidadesList {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .personalCard {
+        padding: 15px;
+    }
+    
+    .personalDetails {
+        padding: 10px;
+    }
+    
+    .btnConectar,
+    .btnConviteEnviado {
+        width: 100%;
+        min-width: auto;
+    }
+}

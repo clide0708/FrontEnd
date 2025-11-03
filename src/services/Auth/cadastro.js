@@ -1,17 +1,22 @@
 import api from "../api";
 
-// cadastrar aluno
 export const cadastrarAluno = async (dados) => {
   try {
+    console.log('🔄 Enviando dados para cadastro de aluno:', dados);
     const response = await api.post("/cadastro/aluno", dados);
+    console.log('✅ Resposta do cadastro:', response.data);
     return response.data;
   } catch (error) {
-    console.error("Erro ao cadastrar aluno:", error);
+    console.error("❌ Erro detalhado ao cadastrar aluno:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    
     throw error;
   }
 };
 
-// cadastrar personal
 export const cadastrarPersonal = async (dados) => {
   try {
     const response = await api.post("/cadastro/personal", dados);
@@ -22,7 +27,6 @@ export const cadastrarPersonal = async (dados) => {
   }
 };
 
-// cadastrar academia - FUNÇÃO ADICIONADA
 export const cadastrarAcademia = async (dados) => {
   try {
     const response = await api.post("/cadastro/academia", dados);
@@ -33,7 +37,6 @@ export const cadastrarAcademia = async (dados) => {
   }
 };
 
-// verificar se o email já existe
 export const verificarEmail = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-email", dados);
@@ -44,7 +47,6 @@ export const verificarEmail = async (dados) => {
   }
 };
 
-// verificar se o CPF já existe
 export const verificarCpf = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-cpf", dados);
@@ -55,7 +57,6 @@ export const verificarCpf = async (dados) => {
   }
 };
 
-// verificar se o RG já existe
 export const verificarRg = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-rg", dados);
@@ -66,7 +67,6 @@ export const verificarRg = async (dados) => {
   }
 };
 
-// verificar se o CNPJ já existe - FUNÇÃO ADICIONADA
 export const verificarCnpj = async (dados) => {
   try {
     const res = await api.post("/cadastro/verificar-cnpj", dados);
@@ -77,11 +77,10 @@ export const verificarCnpj = async (dados) => {
   }
 };
 
-// buscar academias ativas para select
 export const buscarAcademiasAtivas = async () => {
   try {
     const response = await api.get("/academias-ativas");
-    return response.data; // { success: true, data: [...] }
+    return response.data;
   } catch (error) {
     console.error("Erro ao buscar academias:", error);
     return { success: false, data: [] };

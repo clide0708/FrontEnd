@@ -1,3 +1,4 @@
+// components/Header/index.jsx
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import profileImg from "/assets/images/profilefoto.png";
@@ -7,7 +8,6 @@ import { FaBell } from "react-icons/fa";
 import NotificacoesModal from "../Notification";
 import convitesService from "../../services/Notification/convites";
 import perfilService from "../../services/Perfil/perfil";
-import ConectarPersonalPage from "../../pages/ConectarPersonal";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,8 +32,13 @@ export default function Header() {
   }, []);
 
   const carregarNotificacoes = async (email) => {
-    const dados = await convitesService.getConvitesByEmail(email);
-    setNotificacoes(dados); // pega só o array
+    try {
+      const dados = await convitesService.getConvitesByEmail(email);
+      setNotificacoes(dados || []);
+    } catch (error) {
+      console.error("Erro ao carregar notificações:", error);
+      setNotificacoes([]);
+    }
   };
 
   const carregarFotoPerfil = async (email) => {
@@ -79,32 +84,33 @@ export default function Header() {
               </Link>
             </li>
 
+            {/* Menu específico para alunos */}
             {userRole === "aluno" && (
-              <li>
-                <Link
-                  to="/alimentacao"
-                  className={
-                    location.pathname === "/alimentacao" ? "active" : ""
-                  }
-                >
-                  Alimentação
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/alimentacao"
+                    className={
+                      location.pathname === "/alimentacao" ? "active" : ""
+                    }
+                  >
+                    Alimentação
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/conectar"
+                    className={
+                      location.pathname === "/conectar" ? "active" : ""
+                    }
+                  >
+                    Conectar a um Personal
+                  </Link>
+                </li>
+              </>
             )}
 
-            {userRole === "aluno" && (
-              <li>
-                <Link
-                  to="/conectar"
-                  className={
-                    location.pathname === "/conectar" ? "active" : ""
-                  }
-                >
-                  Conectar a um Personal
-                </Link>
-              </li>
-            )}
-
+            {/* Menu para treinos (disponível para todos) */}
             <li>
               <Link
                 to="/treinos"
@@ -119,6 +125,7 @@ export default function Header() {
               </Link>
             </li>
 
+            {/* Menu específico para personais */}
             {userRole === "personal" && (
               <li>
                 <Link
@@ -130,41 +137,70 @@ export default function Header() {
               </li>
             )}
 
-            <div className="pipipiripii">
-              <li
-                className="notif-item"
-                style={{
-                  position: "relative",
-                  display: "inline-block",
-                  marginRight: "20px",
-                }}
-              >
-                <FaBell
-                  className="notif-icon"
-                  onClick={() => setNotModalOpen(true)}
-                  size={24}
-                />
-                {notificacoes.length > 0 && (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "-5px",
-                      right: "-5px",
-                      background: "red",
-                      color: "white",
-                      borderRadius: "50%",
-                      padding: "2px 6px",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      minWidth: "18px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {notificacoes.length}
-                  </span>
-                )}
+            {userRole === "personal" && (
+              <li>
+                <Link
+                  to="/conectar"
+                  className={location.pathname === "/conectar" ? "active" : ""}
+                >
+                  Encontre um Aluno
+                </Link>
               </li>
+            )}
 
+            {/* Menu específico para academia */}
+            {userRole === "academia" && (
+              <li>
+                <Link
+                  to="/painel-controle"
+                  className={
+                    location.pathname === "/painel-controle" ? "active" : ""
+                  }
+                >
+                  Painel de Controle
+                </Link>
+              </li>
+            )}
+
+            <div className="pipipiripii">
+              {/* Notificações (apenas para alunos e personais) */}
+              {(userRole === "aluno" || userRole === "personal") && (
+                <li
+                  className="notif-item"
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginRight: "20px",
+                  }}
+                >
+                  <FaBell
+                    className="notif-icon"
+                    onClick={() => setNotModalOpen(true)}
+                    size={24}
+                  />
+                  {notificacoes.length > 0 && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: "-5px",
+                        right: "-5px",
+                        background: "red",
+                        color: "white",
+                        borderRadius: "50%",
+                        padding: "2px 6px",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        minWidth: "18px",
+                        textAlign: "center",
+                      }}
+                    >
+                      {notificacoes.length}
+                    </span>
+                  )}
+                </li>
+              )}
+
+              {/* Perfil (disponível para todos) */}
               <li className="profile-item">
                 <Link
                   to="/perfil"
@@ -181,12 +217,15 @@ export default function Header() {
         </div>
       </div>
 
-      <NotificacoesModal
-        isOpen={notModalOpen}
-        onClose={() => setNotModalOpen(false)}
-        notificacoes={notificacoes}
-        refresh={() => carregarNotificacoes(usuario?.email)}
-      />
+      {/* Modal de notificações (apenas para alunos e personais) */}
+      {(userRole === "aluno" || userRole === "personal") && (
+        <NotificacoesModal
+          isOpen={notModalOpen}
+          onClose={() => setNotModalOpen(false)}
+          notificacoes={notificacoes}
+          refresh={() => carregarNotificacoes(usuario?.email)}
+        />
+      )}
     </header>
   );
 }

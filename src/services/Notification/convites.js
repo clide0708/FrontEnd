@@ -4,10 +4,21 @@ const convitesService = {
   // Buscar convites por email (para aluno)
   getConvitesByEmail: async (email) => {
     try {
-      const res = await api.get(`/convites/${email}`);
-      return res.data.success ? res.data.data : [];
-    } catch (err) {
-      console.error("Erro ao carregar convites:", err);
+      console.log('🔄 Buscando convites para:', email);
+      
+      // ⭐⭐ CORREÇÃO: Use a nova rota com email
+      const response = await api.get(`/convites/email/${encodeURIComponent(email)}`);
+      
+      console.log('✅ Convites carregados:', response.data.data?.length || 0);
+      return response.data.data || [];
+      
+    } catch (error) {
+      console.error('❌ Erro ao carregar convites:', {
+        status: error.response?.status,
+        message: error.message
+      });
+      
+      // Fallback para não quebrar
       return [];
     }
   },
