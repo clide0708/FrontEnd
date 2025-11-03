@@ -1,129 +1,279 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./style.css";
 import connectService from "../../services/Personal/conectar";
 import { Search, MapPin, Filter, User, Users, Navigation } from "lucide-react";
 
 function ConectarPersonalPage() {
   const [dados, setDados] = useState([]);
+  const [dadosComDistancia, setDadosComDistancia] = useState([]);
   const [filtros, setFiltros] = useState({
     academia_id: "",
     genero: "",
     localizacao: "",
     modalidades: [],
     treinosAdaptados: "",
-    // Filtros específicos para alunos
     idade_min: "",
     idade_max: "",
     meta: "",
-    // Filtros específicos para personais
     cref_tipo: "",
-    raio_km: 50
+    raio_km: 50,
+    latitude: null,
+    longitude: null
   });
+  
   const [loading, setLoading] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [mensagem, setMensagem] = useState("");
   const [academias, setAcademias] = useState([]);
   const [modalidades, setModalidades] = useState([]);
   const [localizacaoUsuario, setLocalizacaoUsuario] = useState(null);
+  const [tipoLocalizacao, setTipoLocalizacao] = useState(null);
   
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const isPersonal = usuario?.tipo === 'personal';
-  const tituloPagina = isPersonal ? "Encontre Alunos" : "Conecte-se a um Personal";
-  const descricaoPagina = isPersonal 
-    ? "Encontre alunos ideais para seu método de trabalho" 
-    : "Encontre o personal trainer ideal para seus objetivos";
+  const cacheGeocodificacao = useRef({});
+  const cacheCalculoDistancia = useRef({});
 
-  // Carrega dados iniciais
+  // ⭐⭐ DEBOUNCE otimizado
+  const atualizarFiltrosComDebounce = useCallback((novosFiltros) => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    const timeout = setTimeout(() => setFiltros(novosFiltros), 500);
+    setSearchTimeout(timeout);
+  }, [searchTimeout]);
+
+  const handleFiltroChange = useCallback((campo, valor) => {
+    const novosFiltros = { ...filtros, [campo]: valor };
+    ['localizacao', 'meta'].includes(campo) 
+      ? atualizarFiltrosComDebounce(novosFiltros)
+      : setFiltros(novosFiltros);
+  }, [filtros, atualizarFiltrosComDebounce]);
+
+  // ⭐⭐ CÁLCULO DE DISTÂNCIA - Função para calcular distância entre coordenadas
+  const calcularDistancia = (lat1, lon1, lat2, lon2) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    
+    const R = 6371; // Raio da Terra em km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distancia = R * c;
+    
+    return Math.round(distancia * 10) / 10; // Arredonda para 1 casa decimal
+  };
+
+  // ⭐⭐ GEOCODIFICAÇÃO com cache
+  const geocodificarComCache = async (endereco) => {
+    if (!endereco) return null;
+    
+    const cacheKey = endereco.toLowerCase().trim();
+    if (cacheGeocodificacao.current[cacheKey]) {
+      return cacheGeocodificacao.current[cacheKey];
+    }
+    
+    try {
+      const resultado = await connectService.geocodificarEndereco(endereco);
+      if (resultado) {
+        cacheGeocodificacao.current[cacheKey] = resultado;
+        return resultado;
+      }
+    } catch (error) {
+      console.error('❌ Erro na geocodificação:', error);
+    }
+    return null;
+  };
+
+  // ⭐⭐ DETECTAR LOCALIZAÇÃO otimizada
+  const detectarLocalizacao = async (tipo = 'geolocalizacao') => {
+    try {
+      console.log(`📍 Detectando localização via: ${tipo}`);
+      
+      let localizacaoData = null;
+
+      if (tipo === 'geolocalizacao') {
+        localizacaoData = await connectService.obterCoordenadasUsuario(usuario);
+      } else if (tipo === 'endereco_cadastrado') {
+        localizacaoData = await connectService.obterCoordenadasFallback(usuario);
+      } else if (tipo === 'localizacao_digitada' && filtros.localizacao) {
+        const resultado = await geocodificarComCache(filtros.localizacao);
+        if (resultado) {
+          localizacaoData = {
+            latitude: resultado.latitude,
+            longitude: resultado.longitude,
+            tipo: 'localizacao_digitada',
+            descricao: `Localização: ${resultado.endereco_formatado}`,
+            precisao: resultado.precisao || 'media'
+          };
+        }
+      }
+
+      if (localizacaoData && localizacaoData.latitude && localizacaoData.longitude) {
+        console.log('✅ Localização obtida:', localizacaoData);
+        setLocalizacaoUsuario(localizacaoData);
+        setFiltros(prev => ({
+          ...prev,
+          latitude: localizacaoData.latitude,
+          longitude: localizacaoData.longitude,
+          ...(tipo !== 'localizacao_digitada' && { localizacao: '' })
+        }));
+        setTipoLocalizacao(tipo);
+        
+        // Recalcular distâncias quando a localização muda
+        if (dados.length > 0) {
+          calcularDistanciasParaDados(dados, localizacaoData);
+        }
+      } else {
+        console.warn('⚠️ Não foi possível obter localização');
+        alert('Não foi possível obter a localização. Tente outro método.');
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro ao detectar localização:', error);
+      alert('Erro ao detectar localização. Tente novamente.');
+    }
+  };
+
+  // ⭐⭐ CALCULAR DISTÂNCIAS para todos os dados
+  const calcularDistanciasParaDados = useCallback((dadosArray, localizacao) => {
+    if (!localizacao?.latitude || !localizacao?.longitude) {
+      console.log('📍 Sem localização para calcular distâncias');
+      setDadosComDistancia(dadosArray);
+      return;
+    }
+
+    console.log('📏 Calculando distâncias para', dadosArray.length, 'itens');
+    
+    const dadosComDistanciaCalculada = dadosArray.map(item => {
+      // Verificar se o item tem coordenadas
+      if (!item.latitude || !item.longitude) {
+        return { ...item, distancia_km: null, precisao_distancia: null };
+      }
+
+      // Calcular distância
+      const distancia = calcularDistancia(
+        localizacao.latitude,
+        localizacao.longitude,
+        item.latitude,
+        item.longitude
+      );
+
+      // Determinar precisão baseada na fonte da localização
+      let precisao = 'baixa';
+      if (localizacao.precisao === 'alta' || tipoLocalizacao === 'geolocalizacao') {
+        precisao = item.precisao_coordenadas === 'exata' ? 'alta' : 'media';
+      } else if (localizacao.precisao === 'media' || tipoLocalizacao === 'endereco_cadastrado') {
+        precisao = 'media';
+      }
+
+      return {
+        ...item,
+        distancia_km: distancia,
+        precisao_distancia: precisao
+      };
+    });
+
+    setDadosComDistancia(dadosComDistanciaCalculada);
+  }, [tipoLocalizacao]);
+
+  // ⭐⭐ CARREGAR DADOS otimizado
   useEffect(() => {
     let isMounted = true;
-    
+    const controller = new AbortController();
+
     async function fetchData() {
-        setLoading(true);
-        try {
-            console.log('🔄 Buscando dados...', { isPersonal, filtros });
-            
-            const [dadosData, academiasData, modalidadesData] = await Promise.all([
-                isPersonal ? connectService.getAlunos(filtros) : connectService.getPersonais(filtros),
-                connectService.getAcademias(),
-                connectService.getModalidades()
-            ]);
-            
-            // ⭐⭐ CORREÇÃO: Só atualiza estado se componente ainda estiver montado
-            if (isMounted) {
-                console.log('✅ Dados carregados:', {
-                    dados: dadosData?.length || 0,
-                    academias: academiasData?.length || 0, 
-                    modalidades: modalidadesData?.length || 0
-                });
-                
-                // ⭐⭐ CORREÇÃO: Remove duplicatas por ID
-                const dadosUnicos = Array.isArray(dadosData) 
-                    ? dadosData.filter((item, index, array) => 
-                          array.findIndex(i => 
-                              (isPersonal ? i.idAluno === item.idAluno : i.idPersonal === item.idPersonal)
-                          ) === index
-                      )
-                    : [];
-                
-                setDados(dadosUnicos);
-                setAcademias(academiasData || []);
-                setModalidades(modalidadesData || []);
-            }
-            
-        } catch (err) {
-            console.error("❌ Erro ao carregar dados:", err);
-            if (isMounted) {
-                setDados([]);
-                setAcademias([]);
-                setModalidades([]);
-            }
-        } finally {
-            if (isMounted) {
-                setLoading(false);
-            }
+      if (!isMounted) return;
+      
+      setLoading(true);
+      try {
+        console.log('🔄 Buscando dados com filtros:', filtros);
+        
+        const [dadosData, academiasData, modalidadesData] = await Promise.all([
+          isPersonal 
+            ? connectService.getAlunos({ ...filtros, signal: controller.signal })
+            : connectService.getPersonais({ ...filtros, signal: controller.signal }),
+          connectService.getAcademias(),
+          connectService.getModalidades()
+        ]);
+        
+        if (!isMounted) return;
+
+        console.log('✅ Dados carregados:', {
+          dados: dadosData?.length || 0,
+          academias: academiasData?.length || 0, 
+          modalidades: modalidadesData?.length || 0
+        });
+
+        // Remover duplicatas
+        const dadosUnicos = Array.isArray(dadosData) 
+          ? dadosData.filter((item, index, array) => 
+                array.findIndex(i => 
+                    (isPersonal ? i.idAluno === item.idAluno : i.idPersonal === item.idPersonal)
+                ) === index
+            )
+          : [];
+
+        setDados(dadosUnicos);
+        setAcademias(academiasData || []);
+        setModalidades(modalidadesData || []);
+
+        // Calcular distâncias se tivermos localização
+        if (localizacaoUsuario && dadosUnicos.length > 0) {
+          calcularDistanciasParaDados(dadosUnicos, localizacaoUsuario);
+        } else {
+          setDadosComDistancia(dadosUnicos);
         }
+        
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          console.log('✅ Requisição cancelada');
+          return;
+        }
+        console.error("❌ Erro ao carregar dados:", err);
+        if (isMounted) {
+          setDados([]);
+          setDadosComDistancia([]);
+          setAcademias([]);
+          setModalidades([]);
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
     }
     
     fetchData();
     
     return () => {
-        isMounted = false; // ⭐⭐ CORREÇÃO: Cleanup para evitar atualizações em componente desmontado
+      isMounted = false;
+      controller.abort();
     };
-  }, [filtros, isPersonal]);
+  }, [filtros, isPersonal, localizacaoUsuario, calcularDistanciasParaDados]);
 
-  // Detectar localização automática
-  const detectarLocalizacao = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocalizacaoUsuario({ latitude, longitude });
-          setFiltros(prev => ({
-            ...prev,
-            latitude,
-            longitude
-          }));
-        },
-        (error) => {
-          console.error("Erro ao obter localização:", error);
-          alert("Não foi possível obter sua localização automaticamente.");
-        }
-      );
+  // ⭐⭐ ATUALIZAR DISTÂNCIAS quando localização mudar
+  useEffect(() => {
+    if (localizacaoUsuario && dados.length > 0) {
+      console.log('🔄 Atualizando distâncias com nova localização');
+      calcularDistanciasParaDados(dados, localizacaoUsuario);
     }
-  };
+  }, [localizacaoUsuario, dados, calcularDistanciasParaDados]);
 
   // Buscar endereço por CEP
   const buscarEnderecoPorCEP = async (cep) => {
+    const cepLimpo = cep.replace(/\D/g, '');
+    if (cepLimpo.length !== 8) return;
+
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
       const data = await response.json();
       
       if (!data.erro) {
-        setFiltros(prev => ({
-          ...prev,
-          localizacao: `${data.localidade}, ${data.uf}`
-        }));
+        handleFiltroChange('localizacao', `${data.localidade}, ${data.uf}`);
+        // Disparar detecção de localização após um breve delay
+        setTimeout(() => detectarLocalizacao('localizacao_digitada'), 100);
       } else {
         alert("CEP não encontrado.");
       }
@@ -132,6 +282,20 @@ function ConectarPersonalPage() {
       alert("Erro ao buscar endereço.");
     }
   };
+
+  // Componente de input com debounce
+  const FiltroInput = useCallback(({ label, campo, tipo = 'text', placeholder, onBlur }) => (
+    <div className="filtroGroup">
+      {label && <label>{label}</label>}
+      <input
+        type={tipo}
+        placeholder={placeholder}
+        value={filtros[campo] || ''}
+        onChange={(e) => handleFiltroChange(campo, e.target.value)}
+        onBlur={onBlur}
+      />
+    </div>
+  ), [filtros, handleFiltroChange]);
 
   // Enviar convite
   const enviarConvite = async () => {
@@ -155,8 +319,7 @@ function ConectarPersonalPage() {
       setMensagem("");
       setUsuarioSelecionado(null);
 
-      // Atualizar lista para mostrar convite pendente
-      setDados(prev => 
+      setDadosComDistancia(prev => 
         prev.map(item => 
           (isPersonal ? item.idAluno === usuarioSelecionado.idAluno : item.idPersonal === usuarioSelecionado.idPersonal)
             ? { ...item, convitePendente: true }
@@ -169,17 +332,25 @@ function ConectarPersonalPage() {
     }
   };
 
-  // Modalidades pré-definidas
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) clearTimeout(searchTimeout);
+    };
+  }, [searchTimeout]);
+
   const modalidadesOptions = modalidades.map(m => m.nome);
+  const dadosParaExibir = dadosComDistancia.length > 0 ? dadosComDistancia : dados;
 
   return (
     <div className="ConectarPersonal">
       <div className="containerPS">
-        {/* Painel esquerdo - Lista */}
         <div className="SC1">
           <div className="tituloSection">
-            <h1 className="Titulo">{tituloPagina}</h1>
-            <p>{descricaoPagina}</p>
+            <h1 className="Titulo">{isPersonal ? "Encontre Alunos" : "Conecte-se a um Personal"}</h1>
+            <p>{isPersonal 
+              ? "Encontre alunos ideais para seu método de trabalho" 
+              : "Encontre o personal trainer ideal para seus objetivos"}</p>
           </div>
 
           {/* Filtros */}
@@ -190,12 +361,12 @@ function ConectarPersonalPage() {
             </div>
             
             <div className="filtrosGrid">
-              {/* Academia */}
+              {/* Filtros básicos */}
               <div className="filtroGroup">
                 <label>Academia</label>
                 <select 
                   value={filtros.academia_id}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, academia_id: e.target.value }))}
+                  onChange={(e) => handleFiltroChange('academia_id', e.target.value)}
                 >
                   <option value="">Todas as academias</option>
                   {academias.map(academia => (
@@ -206,12 +377,11 @@ function ConectarPersonalPage() {
                 </select>
               </div>
 
-              {/* Gênero */}
               <div className="filtroGroup">
                 <label>Gênero</label>
                 <select 
                   value={filtros.genero}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, genero: e.target.value }))}
+                  onChange={(e) => handleFiltroChange('genero', e.target.value)}
                 >
                   <option value="">Todos</option>
                   <option value="Masculino">Masculino</option>
@@ -220,13 +390,12 @@ function ConectarPersonalPage() {
                 </select>
               </div>
 
-              {/* Filtros específicos para personais */}
               {!isPersonal && (
                 <div className="filtroGroup">
                   <label>Tipo CREF</label>
                   <select 
                     value={filtros.cref_tipo}
-                    onChange={(e) => setFiltros(prev => ({ ...prev, cref_tipo: e.target.value }))}
+                    onChange={(e) => handleFiltroChange('cref_tipo', e.target.value)}
                   >
                     <option value="">Todos</option>
                     <option value="G">Graduado (G)</option>
@@ -235,7 +404,6 @@ function ConectarPersonalPage() {
                 </div>
               )}
 
-              {/* Filtros específicos para alunos */}
               {isPersonal && (
                 <>
                   <div className="filtroGroup">
@@ -244,7 +412,7 @@ function ConectarPersonalPage() {
                       type="number"
                       placeholder="Ex: 18"
                       value={filtros.idade_min}
-                      onChange={(e) => setFiltros(prev => ({ ...prev, idade_min: e.target.value }))}
+                      onChange={(e) => handleFiltroChange('idade_min', e.target.value)}
                     />
                   </div>
 
@@ -254,56 +422,82 @@ function ConectarPersonalPage() {
                       type="number"
                       placeholder="Ex: 60"
                       value={filtros.idade_max}
-                      onChange={(e) => setFiltros(prev => ({ ...prev, idade_max: e.target.value }))}
+                      onChange={(e) => handleFiltroChange('idade_max', e.target.value)}
                     />
                   </div>
 
-                  <div className="filtroGroup">
-                    <label>Meta</label>
-                    <input
-                      type="text"
-                      placeholder="Ex: Ganhar massa"
-                      value={filtros.meta}
-                      onChange={(e) => setFiltros(prev => ({ ...prev, meta: e.target.value }))}
-                    />
-                  </div>
+                  <FiltroInput
+                    label="Meta"
+                    campo="meta"
+                    placeholder="Ex: Ganhar massa"
+                  />
                 </>
               )}
 
-              {/* Localização */}
-              <div className="filtroGroup">
-                <label>Localização</label>
-                <div className="localizacaoInput">
-                  <input
-                    type="text"
-                    placeholder="Cidade, estado ou CEP"
-                    value={filtros.localizacao}
-                    onChange={(e) => setFiltros(prev => ({ ...prev, localizacao: e.target.value }))}
-                    onBlur={(e) => {
-                      const cep = e.target.value.replace(/\D/g, '');
-                      if (cep.length === 8) {
-                        buscarEnderecoPorCEP(cep);
-                      }
-                    }}
-                  />
+              {/* Seção de Localização */}
+              <div className="localizacaoSection">
+                <div className="localizacaoHeader">
+                  <Navigation size={20} />
+                  <h3>Como calcular distâncias?</h3>
+                </div>
+                
+                <div className="opcoesLocalizacao">
                   <button 
-                    type="button" 
-                    className="btnLocalizacao"
-                    onClick={detectarLocalizacao}
-                    title="Usar minha localização atual"
+                    className={`btnLocalizacaoOpcao ${tipoLocalizacao === 'geolocalizacao' ? 'ativo' : ''}`}
+                    onClick={() => detectarLocalizacao('geolocalizacao')}
                   >
                     <Navigation size={16} />
+                    <span>Usar GPS</span>
+                    <small>Mais preciso</small>
                   </button>
+                  
+                  <button 
+                    className={`btnLocalizacaoOpcao ${tipoLocalizacao === 'endereco_cadastrado' ? 'ativo' : ''}`}
+                    onClick={() => detectarLocalizacao('endereco_cadastrado')}
+                  >
+                    <MapPin size={16} />
+                    <span>Meu endereço</span>
+                    <small>Cadastrado no perfil</small>
+                  </button>
+                  
+                  <div className="localizacaoDigitada">
+                    <FiltroInput
+                      campo="localizacao"
+                      placeholder="Digite cidade, estado ou CEP"
+                      onBlur={(e) => {
+                        const valor = e.target.value;
+                        // Verificar se é CEP
+                        if (valor.replace(/\D/g, '').length === 8) {
+                          buscarEnderecoPorCEP(valor);
+                        } else if (valor.trim()) {
+                          detectarLocalizacao('localizacao_digitada');
+                        }
+                      }}
+                    />
+                    <small>Pressione Enter ou mude do campo</small>
+                  </div>
                 </div>
+
+                {localizacaoUsuario && (
+                  <div className="infoLocalizacao">
+                    <MapPin size={16} />
+                    <span>
+                      {localizacaoUsuario.descricao}
+                      {tipoLocalizacao === 'geolocalizacao' && ' (GPS - Mais preciso)'}
+                      {tipoLocalizacao === 'endereco_cadastrado' && ' (Endereço cadastrado - Menos preciso)'}
+                      {tipoLocalizacao === 'localizacao_digitada' && ' (Localização digitada)'}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Raio de busca */}
               <div className="filtroGroup">
                 <label>Raio de busca</label>
                 <select 
                   value={filtros.raio_km}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, raio_km: e.target.value }))}
+                  onChange={(e) => handleFiltroChange('raio_km', e.target.value)}
                 >
+                  <option value="5">5 km</option>
                   <option value="10">10 km</option>
                   <option value="25">25 km</option>
                   <option value="50">50 km</option>
@@ -312,12 +506,11 @@ function ConectarPersonalPage() {
                 </select>
               </div>
 
-              {/* Tipo Trabalho */}
               <div className="filtroGroup">
                 <label>Treinos Adaptados</label>
                 <select 
                   value={filtros.treinosAdaptados}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, treinosAdaptados: e.target.value }))}
+                  onChange={(e) => handleFiltroChange('treinosAdaptados', e.target.value)}
                 >
                   <option value="">Todos</option>
                   <option value="true">Com treinos adaptados</option>
@@ -339,7 +532,7 @@ function ConectarPersonalPage() {
                         const newModalidades = e.target.checked
                           ? [...filtros.modalidades, modalidade]
                           : filtros.modalidades.filter(m => m !== modalidade);
-                        setFiltros(prev => ({ ...prev, modalidades: newModalidades }));
+                        handleFiltroChange('modalidades', newModalidades);
                       }}
                     />
                     {modalidade}
@@ -353,24 +546,35 @@ function ConectarPersonalPage() {
           <div className="personaisSection">
             {loading ? (
               <div className="loading">Carregando {isPersonal ? 'alunos' : 'personais'}...</div>
-            ) : dados.length === 0 ? (
+            ) : dadosParaExibir.length === 0 ? (
               <div className="emptyState">
                 <User size={48} />
                 <p>Nenhum {isPersonal ? 'aluno' : 'personal'} encontrado com os filtros selecionados.</p>
+                {localizacaoUsuario && (
+                  <p className="info-text">
+                    💡 Dica: Tente aumentar o raio de busca ou usar uma localização diferente.
+                  </p>
+                )}
               </div>
             ) : (
               <div className="personaisGrid">
-                {dados.map(item => (
+                {dadosParaExibir.map(item => (
                   <div key={isPersonal ? item.idAluno : item.idPersonal} className="personalCard">
-                    
-                    {/* ⭐⭐ NOVO: Distância no topo direito */}
-                    {item.distancia_km && (
-                      <div className="distanciaTopo">
+                    {/* DISTÂNCIA */}
+                    {item.distancia_km !== null && item.distancia_km !== undefined && (
+                      <div className="distanciaBadge">
                         <MapPin size={14} />
                         <span>{item.distancia_km} km</span>
+                        {item.precisao_distancia && (
+                          <span className="precisaoInfo" title={`Precisão: ${item.precisao_distancia}`}>
+                            {item.precisao_distancia === 'alta' ? '📍' : 
+                             item.precisao_distancia === 'media' ? '📌' : '🏢'}
+                          </span>
+                        )}
                       </div>
                     )}
 
+                    {/* Resto do card permanece igual */}
                     <div className="personalHeader">
                       <img
                         src={item.foto_perfil || "/assets/images/profilefoto.png"}
@@ -380,17 +584,13 @@ function ConectarPersonalPage() {
                       <div className="personalInfo">
                         <h3>{item.nome}</h3>
                         
-                        {/* Informações específicas do Personal */}
                         {!isPersonal && (
                           <>
                             <p className="personalCREF">{item.cref}</p>
-                            {item.sobre && (
-                              <p className="personalAcademia">{item.sobre}</p>
-                            )}
+                            {item.sobre && <p className="personalAcademia">{item.sobre}</p>}
                           </>
                         )}
                         
-                        {/* Informações específicas do Aluno */}
                         {isPersonal && item.meta && (
                           <p className="personalMeta"><strong>Meta:</strong> {item.meta}</p>
                         )}
@@ -400,38 +600,17 @@ function ConectarPersonalPage() {
                           {item.nomeAcademia && ` • ${item.nomeAcademia}`}
                         </p>
 
-                        {/* Informações adicionais em linha */}
                         <div className={isPersonal ? "infoAluno" : "infoPersonal"}>
                           {isPersonal ? (
                             <>
-                              {item.idade && (
-                                <div className="infoAlunoItem">
-                                  <strong>Idade:</strong> {item.idade} anos
-                                </div>
-                              )}
-                              {item.altura && (
-                                <div className="infoAlunoItem">
-                                  <strong>Altura:</strong> {item.altura}cm
-                                </div>
-                              )}
-                              {item.peso && (
-                                <div className="infoAlunoItem">
-                                  <strong>Peso:</strong> {item.peso}kg
-                                </div>
-                              )}
-                              {item.treinoTipo && (
-                                <div className="infoAlunoItem">
-                                  <strong>Nível:</strong> {item.treinoTipo}
-                                </div>
-                              )}
+                              {item.idade && <div className="infoAlunoItem"><strong>Idade:</strong> {item.idade} anos</div>}
+                              {item.altura && <div className="infoAlunoItem"><strong>Altura:</strong> {item.altura}cm</div>}
+                              {item.peso && <div className="infoAlunoItem"><strong>Peso:</strong> {item.peso}kg</div>}
+                              {item.treinoTipo && <div className="infoAlunoItem"><strong>Nível:</strong> {item.treinoTipo}</div>}
                             </>
                           ) : (
                             <>
-                              {item.idade && (
-                                <div className="infoPersonalItem">
-                                  <strong>Idade:</strong> {item.idade} anos
-                                </div>
-                              )}
+                              {item.idade && <div className="infoPersonalItem"><strong>Idade:</strong> {item.idade} anos</div>}
                               {item.cref_tipo && (
                                 <div className="infoPersonalItem">
                                   <strong>Categoria:</strong> {item.cref_tipo === 'G' ? 'Graduado' : 'Provisionado'}
@@ -444,7 +623,6 @@ function ConectarPersonalPage() {
                     </div>
 
                     <div className="personalDetails">
-                      {/* Modalidades */}
                       <div className="detalhesColuna">
                         <div className="detalhesItem">
                           <strong>Modalidades</strong>
@@ -460,7 +638,6 @@ function ConectarPersonalPage() {
                         </div>
                       </div>
 
-                      {/* Informações profissionais */}
                       <div className="detalhesColuna">
                         {!isPersonal && item.treinos_count !== undefined && (
                           <div className="detalhesItem">
@@ -482,9 +659,7 @@ function ConectarPersonalPage() {
 
                     <div className="personalActions">
                       {item.convitePendente ? (
-                        <button className="btnConviteEnviado" disabled>
-                          Convite Enviado
-                        </button>
+                        <button className="btnConviteEnviado" disabled>Convite Enviado</button>
                       ) : (
                         <button
                           className="btnConectar"
@@ -504,7 +679,7 @@ function ConectarPersonalPage() {
           </div>
         </div>
 
-        {/* Painel direito - Informações */}
+        {/* Painel direito */}
         <div className="SC2">
           <div className="infoCard">
             <h3>💡 Como funciona?</h3>
@@ -519,31 +694,39 @@ function ConectarPersonalPage() {
           <div className="statsCard">
             <h3>📊 Estatísticas</h3>
             <div className="statItem">
-              <strong>{dados.length}</strong>
+              <strong>{dadosParaExibir.length}</strong>
               <span>{isPersonal ? 'Alunos' : 'Personais'} disponíveis</span>
             </div>
             {!isPersonal && (
               <div className="statItem">
-                <strong>
-                  {dados.filter(p => p.cref_tipo === 'G').length}
-                </strong>
+                <strong>{dadosParaExibir.filter(p => p.cref_tipo === 'G').length}</strong>
                 <span>Graduados (CREF-G)</span>
               </div>
             )}
             <div className="statItem">
-              <strong>
-                {dados.filter(p => p.treinosAdaptados).length}
-              </strong>
+              <strong>{dadosParaExibir.filter(p => p.treinosAdaptados).length}</strong>
               <span>Com treinos adaptados</span>
             </div>
+            {localizacaoUsuario && (
+              <div className="statItem">
+                <strong>
+                  {dadosParaExibir.filter(p => p.distancia_km !== null && p.distancia_km <= parseInt(filtros.raio_km)).length}
+                </strong>
+                <span>Dentro do raio de {filtros.raio_km}km</span>
+              </div>
+            )}
           </div>
 
           {localizacaoUsuario && (
             <div className="localizacaoCard">
               <h3>📍 Sua Localização</h3>
-              <p>Busca baseada na sua localização atual</p>
+              <p>{localizacaoUsuario.descricao}</p>
+              <small>
+                Precisão: {tipoLocalizacao === 'geolocalizacao' ? 'Alta (GPS)' : 
+                         tipoLocalizacao === 'endereco_cadastrado' ? 'Média' : 'Variável'}
+              </small>
               <button 
-                onClick={detectarLocalizacao}
+                onClick={() => detectarLocalizacao(tipoLocalizacao)}
                 className="btnAtualizarLocalizacao"
               >
                 Atualizar Localização
@@ -553,14 +736,12 @@ function ConectarPersonalPage() {
         </div>
       </div>
 
-      {/* Modal de Envio de Convite */}
+      {/* Modal */}
       {showModal && usuarioSelecionado && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Enviar Convite</h2>
-            <p>
-              Envie uma mensagem para <strong>{usuarioSelecionado.nome}</strong>
-            </p>
+            <p>Envie uma mensagem para <strong>{usuarioSelecionado.nome}</strong></p>
             
             <div className="mensagemInput">
               <textarea
@@ -570,9 +751,7 @@ function ConectarPersonalPage() {
                 rows={6}
                 maxLength={500}
               />
-              <div className="contadorCaracteres">
-                {mensagem.length}/500 caracteres
-              </div>
+              <div className="contadorCaracteres">{mensagem.length}/500 caracteres</div>
             </div>
 
             <div className="modal-actions">
