@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./style.css";
 import connectService from "../../services/Personal/conectar";
-import { Search, MapPin, Filter, User, Users, Navigation } from "lucide-react";
+import { MapPin, Filter, User, Navigation } from "lucide-react";
 
 function ConectarPersonalPage() {
   const [dados, setDados] = useState([]);
@@ -33,8 +33,17 @@ function ConectarPersonalPage() {
   
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const isPersonal = usuario?.tipo === 'personal';
+  
+  // ⭐⭐ CACHE OTIMIZADO - Agora usando todas as variáveis
   const cacheGeocodificacao = useRef({});
-  const cacheCalculoDistancia = useRef({});
+  const cacheCalculoDistancia = useRef(new Map());
+  const cacheDados = useRef({
+    personais: null,
+    alunos: null,
+    academias: null,
+    modalidades: null,
+    timestamp: null
+  });
 
   // ⭐⭐ DEBOUNCE otimizado
   const atualizarFiltrosComDebounce = useCallback((novosFiltros) => {
@@ -44,15 +53,42 @@ function ConectarPersonalPage() {
   }, [searchTimeout]);
 
   const handleFiltroChange = useCallback((campo, valor) => {
-    const novosFiltros = { ...filtros, [campo]: valor };
-    ['localizacao', 'meta'].includes(campo) 
-      ? atualizarFiltrosComDebounce(novosFiltros)
-      : setFiltros(novosFiltros);
+    console.log(`🎛️ Alterando filtro ${campo}:`, valor);
+    
+    const novosFiltros = { 
+      ...filtros, 
+      [campo]: valor 
+    };
+    
+    // ⭐⭐ CORREÇÃO: Limpar cache quando filtros importantes mudarem
+    if (['academia_id', 'genero', 'localizacao', 'raio_km'].includes(campo)) {
+      console.log('🧹 Limpando cache devido a mudança de filtro importante');
+      // Limpar apenas entradas específicas relacionadas a este tipo de filtro
+      const cacheKeys = Object.keys(cacheDados.current);
+      cacheKeys.forEach(key => {
+        if (key.includes('personais') || key.includes('alunos')) {
+          delete cacheDados.current[key];
+        }
+      });
+    }
+    
+    // Para filtros de texto, usar debounce
+    if (['localizacao', 'meta'].includes(campo)) {
+      atualizarFiltrosComDebounce(novosFiltros);
+    } else {
+      // Para selects e outros, atualizar imediatamente
+      setFiltros(novosFiltros);
+    }
   }, [filtros, atualizarFiltrosComDebounce]);
 
-  // ⭐⭐ CÁLCULO DE DISTÂNCIA - Função para calcular distância entre coordenadas
-  const calcularDistancia = (lat1, lon1, lat2, lon2) => {
+  // ⭐⭐ CÁLCULO DE DISTÂNCIA COM CACHE
+  const calcularDistancia = useCallback((lat1, lon1, lat2, lon2) => {
     if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    
+    const cacheKey = `${lat1}_${lon1}_${lat2}_${lon2}`;
+    if (cacheCalculoDistancia.current.has(cacheKey)) {
+      return cacheCalculoDistancia.current.get(cacheKey);
+    }
     
     const R = 6371; // Raio da Terra em km
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -63,12 +99,14 @@ function ConectarPersonalPage() {
       Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     const distancia = R * c;
+    const resultado = Math.round(distancia * 10) / 10;
     
-    return Math.round(distancia * 10) / 10; // Arredonda para 1 casa decimal
-  };
+    cacheCalculoDistancia.current.set(cacheKey, resultado);
+    return resultado;
+  }, []);
 
-  // ⭐⭐ GEOCODIFICAÇÃO com cache
-  const geocodificarComCache = async (endereco) => {
+  // ⭐⭐ GEOCODIFICAÇÃO com cache otimizado
+  const geocodificarComCache = useCallback(async (endereco) => {
     if (!endereco) return null;
     
     const cacheKey = endereco.toLowerCase().trim();
@@ -86,10 +124,132 @@ function ConectarPersonalPage() {
       console.error('❌ Erro na geocodificação:', error);
     }
     return null;
-  };
+  }, []);
+
+  // ⭐⭐ CARREGAR DADOS COM CACHE INTELIGENTE
+  const carregarDadosComCache = useCallback(async (filtrosAtuais, isPersonal) => {
+    const cacheKey = isPersonal ? 'alunos' : 'personais';
+    const agora = Date.now();
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+    
+    // ⭐⭐ CORREÇÃO: Criar uma chave única baseada nos filtros
+    const filtrosKey = JSON.stringify(filtrosAtuais);
+    const cacheCompletoKey = `${cacheKey}_${filtrosKey}`;
+    
+    // Verificar se temos cache válido para ESTES filtros específicos
+    if (cacheDados.current[cacheCompletoKey] && 
+        cacheDados.current.timestamp && 
+        (agora - cacheDados.current.timestamp) < CACHE_DURATION) {
+      console.log('📦 Usando dados do cache para filtros:', filtrosAtuais);
+      return cacheDados.current[cacheCompletoKey];
+    }
+
+    console.log('🔄 Buscando dados da API com filtros:', filtrosAtuais);
+    try {
+      const dados = await (isPersonal 
+        ? connectService.getAlunos(filtrosAtuais)
+        : connectService.getPersonais(filtrosAtuais));
+      
+      // ⭐⭐ CORREÇÃO: Atualizar cache com chave específica dos filtros
+      cacheDados.current[cacheCompletoKey] = dados;
+      cacheDados.current.timestamp = agora;
+      
+      return dados;
+    } catch (error) {
+      console.error('❌ Erro ao carregar dados:', error);
+      throw error;
+    }
+  }, []);
+
+  useEffect(() => {
+    // Limpar cache se os filtros mudarem significativamente
+    const cacheKeys = Object.keys(cacheDados.current);
+    if (cacheKeys.length > 10) { // Limitar cache a 10 entradas
+      const keysToRemove = cacheKeys.slice(0, 5); // Remove as 5 mais antigas
+      keysToRemove.forEach(key => {
+        delete cacheDados.current[key];
+      });
+      console.log('🧹 Cache limpo - removidas entradas antigas');
+    }
+  }, [filtros]);
+
+  const limparFiltros = useCallback(() => {
+    console.log('🧹 Limpando todos os filtros e cache');
+    
+    // Limpar todos os filtros
+    setFiltros({
+      academia_id: "",
+      genero: "",
+      localizacao: "",
+      modalidades: [],
+      treinosAdaptados: "",
+      idade_min: "",
+      idade_max: "",
+      meta: "",
+      cref_tipo: "",
+      raio_km: 50,
+      latitude: null,
+      longitude: null
+    });
+    
+    // Limpar cache completamente
+    cacheDados.current = {
+      personais: null,
+      alunos: null,
+      academias: null,
+      modalidades: null,
+      timestamp: null
+    };
+    
+    setLocalizacaoUsuario(null);
+    setTipoLocalizacao(null);
+  }, []);
+
+  useEffect(() => {
+    console.log('🎯 Filtros ativos:', {
+      ...filtros,
+      modalidades_count: filtros.modalidades.length,
+      has_location: !!(filtros.latitude && filtros.longitude)
+    });
+  }, [filtros]);
+
+  // ⭐⭐ CARREGAR DADOS INICIAIS (academias e modalidades) com cache
+  const carregarDadosIniciais = useCallback(async () => {
+    const agora = Date.now();
+    const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos para dados estáticos
+    
+    try {
+      const [academiasData, modalidadesData] = await Promise.all([
+        // Verificar cache para academias
+        cacheDados.current.academias && 
+        cacheDados.current.timestamp && 
+        (agora - cacheDados.current.timestamp) < CACHE_DURATION
+          ? Promise.resolve(cacheDados.current.academias)
+          : connectService.getAcademias().then(data => {
+              cacheDados.current.academias = data;
+              return data;
+            }),
+        
+        // Verificar cache para modalidades
+        cacheDados.current.modalidades && 
+        cacheDados.current.timestamp && 
+        (agora - cacheDados.current.timestamp) < CACHE_DURATION
+          ? Promise.resolve(cacheDados.current.modalidades)
+          : connectService.getModalidades().then(data => {
+              cacheDados.current.modalidades = data;
+              return data;
+            })
+      ]);
+
+      return { academiasData, modalidadesData };
+    } catch (error) {
+      console.error('❌ Erro ao carregar dados iniciais:', error);
+      throw error;
+    }
+  }, []);
 
   // ⭐⭐ DETECTAR LOCALIZAÇÃO otimizada
-  const detectarLocalizacao = async (tipo = 'geolocalizacao') => {
+  const detectarLocalizacao = useCallback(async (tipo = 'geolocalizacao') => {
     try {
       console.log(`📍 Detectando localização via: ${tipo}`);
       
@@ -112,7 +272,7 @@ function ConectarPersonalPage() {
         }
       }
 
-      if (localizacaoData && localizacaoData.latitude && localizacaoData.longitude) {
+      if (localizacaoData?.latitude && localizacaoData?.longitude) {
         console.log('✅ Localização obtida:', localizacaoData);
         setLocalizacaoUsuario(localizacaoData);
         setFiltros(prev => ({
@@ -136,9 +296,9 @@ function ConectarPersonalPage() {
       console.error('❌ Erro ao detectar localização:', error);
       alert('Erro ao detectar localização. Tente novamente.');
     }
-  };
+  }, [filtros.localizacao, dados, geocodificarComCache, usuario]);
 
-  // ⭐⭐ CALCULAR DISTÂNCIAS para todos os dados
+  // ⭐⭐ CALCULAR DISTÂNCIAS para todos os dados com cache
   const calcularDistanciasParaDados = useCallback((dadosArray, localizacao) => {
     if (!localizacao?.latitude || !localizacao?.longitude) {
       console.log('📍 Sem localização para calcular distâncias');
@@ -154,7 +314,7 @@ function ConectarPersonalPage() {
         return { ...item, distancia_km: null, precisao_distancia: null };
       }
 
-      // Calcular distância
+      // Calcular distância (usando cache)
       const distancia = calcularDistancia(
         localizacao.latitude,
         localizacao.longitude,
@@ -178,9 +338,9 @@ function ConectarPersonalPage() {
     });
 
     setDadosComDistancia(dadosComDistanciaCalculada);
-  }, [tipoLocalizacao]);
+  }, [tipoLocalizacao, calcularDistancia]);
 
-  // ⭐⭐ CARREGAR DADOS otimizado
+  // ⭐⭐ CARREGAR DADOS PRINCIPAL - MUITO MAIS RÁPIDO
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
@@ -192,23 +352,21 @@ function ConectarPersonalPage() {
       try {
         console.log('🔄 Buscando dados com filtros:', filtros);
         
-        const [dadosData, academiasData, modalidadesData] = await Promise.all([
-          isPersonal 
-            ? connectService.getAlunos({ ...filtros, signal: controller.signal })
-            : connectService.getPersonais({ ...filtros, signal: controller.signal }),
-          connectService.getAcademias(),
-          connectService.getModalidades()
+        // ⭐⭐ CARREGAMENTO PARALELO OTIMIZADO
+        const [dadosData, dadosIniciais] = await Promise.all([
+          carregarDadosComCache(filtros, isPersonal),
+          carregarDadosIniciais()
         ]);
         
         if (!isMounted) return;
 
         console.log('✅ Dados carregados:', {
           dados: dadosData?.length || 0,
-          academias: academiasData?.length || 0, 
-          modalidades: modalidadesData?.length || 0
+          academias: dadosIniciais.academiasData?.length || 0, 
+          modalidades: dadosIniciais.modalidadesData?.length || 0
         });
 
-        // Remover duplicatas
+        // Remover duplicatas de forma mais eficiente
         const dadosUnicos = Array.isArray(dadosData) 
           ? dadosData.filter((item, index, array) => 
                 array.findIndex(i => 
@@ -218,8 +376,8 @@ function ConectarPersonalPage() {
           : [];
 
         setDados(dadosUnicos);
-        setAcademias(academiasData || []);
-        setModalidades(modalidadesData || []);
+        setAcademias(dadosIniciais.academiasData || []);
+        setModalidades(dadosIniciais.modalidadesData || []);
 
         // Calcular distâncias se tivermos localização
         if (localizacaoUsuario && dadosUnicos.length > 0) {
@@ -237,21 +395,21 @@ function ConectarPersonalPage() {
         if (isMounted) {
           setDados([]);
           setDadosComDistancia([]);
-          setAcademias([]);
-          setModalidades([]);
         }
       } finally {
         if (isMounted) setLoading(false);
       }
     }
     
-    fetchData();
+    // ⭐⭐ DEBOUNCE para busca - evita múltiplas requisições rápidas
+    const timeoutId = setTimeout(fetchData, 300);
     
     return () => {
       isMounted = false;
       controller.abort();
+      clearTimeout(timeoutId);
     };
-  }, [filtros, isPersonal, localizacaoUsuario, calcularDistanciasParaDados]);
+  }, [filtros, isPersonal, localizacaoUsuario, calcularDistanciasParaDados, carregarDadosComCache, carregarDadosIniciais]);
 
   // ⭐⭐ ATUALIZAR DISTÂNCIAS quando localização mudar
   useEffect(() => {
@@ -262,7 +420,7 @@ function ConectarPersonalPage() {
   }, [localizacaoUsuario, dados, calcularDistanciasParaDados]);
 
   // Buscar endereço por CEP
-  const buscarEnderecoPorCEP = async (cep) => {
+  const buscarEnderecoPorCEP = useCallback(async (cep) => {
     const cepLimpo = cep.replace(/\D/g, '');
     if (cepLimpo.length !== 8) return;
 
@@ -281,7 +439,7 @@ function ConectarPersonalPage() {
       console.error("Erro ao buscar CEP:", error);
       alert("Erro ao buscar endereço.");
     }
-  };
+  }, [handleFiltroChange, detectarLocalizacao]);
 
   // Componente de input com debounce
   const FiltroInput = useCallback(({ label, campo, tipo = 'text', placeholder, onBlur }) => (
@@ -359,7 +517,7 @@ function ConectarPersonalPage() {
               <Filter size={20} />
               <h3>Filtros</h3>
             </div>
-            
+
             <div className="filtrosGrid">
               {/* Filtros básicos */}
               <div className="filtroGroup">
@@ -433,7 +591,8 @@ function ConectarPersonalPage() {
                   />
                 </>
               )}
-
+              
+              
               {/* Seção de Localização */}
               <div className="localizacaoSection">
                 <div className="localizacaoHeader">
@@ -477,7 +636,8 @@ function ConectarPersonalPage() {
                     <small>Pressione Enter ou mude do campo</small>
                   </div>
                 </div>
-
+              </div>
+              <div>
                 {localizacaoUsuario && (
                   <div className="infoLocalizacao">
                     <MapPin size={16} />
@@ -539,6 +699,27 @@ function ConectarPersonalPage() {
                   </label>
                 ))}
               </div>
+            </div>
+              
+            <div className="filtrosAtivosInfo">
+              <span className="filtrosContador">
+                {Object.keys(filtros).filter(key => {
+                  const value = filtros[key];
+                  if (key === 'modalidades') return value.length > 0;
+                  if (key === 'raio_km') return value !== 50;
+                  if (key === 'latitude' || key === 'longitude') return false; // Ignorar coordenadas
+                  return value !== '' && value !== null && value !== undefined;
+                }).length} Filtros ativos
+              </span>
+
+              {/* Botão para limpar filtros */}
+              <button 
+                className="btnLimparFiltros"
+                onClick={limparFiltros}
+                title="Limpar todos os filtros"
+              >
+                Limpar
+              </button>
             </div>
           </div>
 
