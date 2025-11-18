@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, IdCard, Phone } from "lucide-react";
+import { User, IdCard, Phone, Building } from "lucide-react";
 
 const EtapaDadosPessoais = ({ dados, onChange, tipoUsuario }) => {
   const [erros, setErros] = useState({});

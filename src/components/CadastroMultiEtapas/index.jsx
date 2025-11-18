@@ -68,6 +68,29 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     foto_url: "",
     foto_blob: null,
     
+    // Dados da Academia (Etapa Perfil para Academia)
+    tamanho_estrutura: "",
+    capacidade_maxima: "",
+    ano_fundacao: "",
+    estacionamento: false,
+    vestiario: false,
+    ar_condicionado: false,
+    wifi: false,
+    totem_de_carregamento_usb: false,
+    area_descanso: false,
+    avaliacao_fisica: false,
+
+     // Horários (será um array de objetos)
+    horarios: [
+      { dia_semana: 'Segunda-feira', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Terça-feira', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Quarta-feira', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Quinta-feira', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Sexta-feira', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Sábado', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false },
+      { dia_semana: 'Domingo', aberto_24h: false, horario_abertura: '', horario_fechamento: '', fechado: false }
+    ],
+
     // Endereço (Etapa 3)
     cep: "",
     logradouro: "",
@@ -113,7 +136,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
       etapasBase.push({ numero: 4, titulo: "Academia", icone: "🏢" });
     }
 
-    // ⭐⭐ CORREÇÃO: CREF vem ANTES do Login para personal
+    // CREF vem ANTES do Login para personal
     if (selectedUserType === "personal") {
       etapasBase.push({ numero: 5, titulo: "CREF", icone: "📋" });
     }
@@ -137,7 +160,6 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     // Animação de transição
     await new Promise(resolve => setTimeout(resolve, 200));
     
-    // ⭐⭐ NOVA LÓGICA INTELIGENTE DE REAPROVEITAMENTO ⭐⭐
     setDadosFormulario(prev => {
       const novosDados = { ...prev };
       
@@ -203,27 +225,38 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
   };
 
   const atualizarDados = (novosDados) => {
-    setDadosFormulario(prev => ({ ...prev, ...novosDados }));
+    console.log('🔄 Atualizando dados:', novosDados);
+    setDadosFormulario(prev => {
+      const dadosAtualizados = { ...prev, ...novosDados };
+      console.log('📊 Dados após atualização:', dadosAtualizados);
+      return dadosAtualizados;
+    });
   };
 
   const validarEtapa = (etapa) => {
     switch (etapa) {
-      case 1: // Dados pessoais
+       case 1: // Dados pessoais
         if (selectedUserType === 'academia') {
-          return dadosFormulario.nome && 
+          return dadosFormulario.nome_fantasia && 
                 dadosFormulario.cnpj && 
-                dadosFormulario.razao_social;
+                dadosFormulario.razao_social &&
+                dadosFormulario.numTel;
         } else {
           return dadosFormulario.nome && 
                 dadosFormulario.cpf && 
                 dadosFormulario.rg && 
                 dadosFormulario.numTel;
         }
-      
+        
       case 2: // Perfil
-        return dadosFormulario.data_nascimento && 
-              dadosFormulario.genero &&
-              dadosFormulario.modalidades.length > 0;
+        if (selectedUserType === 'academia') {
+          return dadosFormulario.foto_url && 
+                dadosFormulario.modalidades.length > 0;
+        } else {
+          return dadosFormulario.data_nascimento && 
+                dadosFormulario.genero &&
+                dadosFormulario.modalidades.length > 0;
+        }
       
       case 3: // Endereço
         return dadosFormulario.cep && 
@@ -268,17 +301,39 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setIsAnimating(true);
     
     try {
+      if (selectedUserType === "academia") {
+        if (!dadosFormulario.nome_fantasia || !dadosFormulario.razao_social || !dadosFormulario.cnpj) {
+          alert("Por favor, preencha todos os campos obrigatórios: Nome Fantasia, Razão Social e CNPJ");
+          setLoading(false);
+          setIsAnimating(false);
+          return;
+        }
+      }
+
       let dadosCadastro;
 
       if (selectedUserType === "academia") {
         // Dados específicos para academia
         dadosCadastro = {
-          nome: dadosFormulario.nome,
+          nome: dadosFormulario.nome_fantasia,
+          nome_fantasia: dadosFormulario.nome_fantasia,
           razao_social: dadosFormulario.razao_social,
           cnpj: dadosFormulario.cnpj.replace(/\D/g, ""),
           email: dadosFormulario.email,
           senha: dadosFormulario.senha,
           telefone: dadosFormulario.numTel.replace(/\D/g, ""),
+          // Novos campos
+          tamanho_estrutura: dadosFormulario.tamanho_estrutura,
+          capacidade_maxima: dadosFormulario.capacidade_maxima,
+          ano_fundacao: dadosFormulario.ano_fundacao,
+          estacionamento: dadosFormulario.estacionamento ? 1 : 0,
+          vestiario: dadosFormulario.vestiario ? 1 : 0,
+          ar_condicionado: dadosFormulario.ar_condicionado ? 1 : 0,
+          wifi: dadosFormulario.wifi ? 1 : 0,
+          totem_de_carregamento_usb: dadosFormulario.totem_de_carregamento_usb ? 1 : 0,
+          area_descanso: dadosFormulario.area_descanso ? 1 : 0,
+          avaliacao_fisica: dadosFormulario.avaliacao_fisica ? 1 : 0,
+          horarios: dadosFormulario.horarios || [],
           // Endereço
           cep: dadosFormulario.cep.replace(/\D/g, ""),
           logradouro: dadosFormulario.logradouro,
@@ -289,6 +344,11 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
           estado: dadosFormulario.estado,
           pais: dadosFormulario.pais
         };
+
+        console.log('📤 Dados sendo enviados para cadastro de academia:', dadosCadastro);
+        console.log('🔍 nome_fantasia:', dadosFormulario.nome_fantasia);
+        console.log('🔍 razao_social:', dadosFormulario.razao_social);
+        console.log('🔍 cnpj:', dadosFormulario.cnpj);
       } else {
         // Dados para aluno e personal
         dadosCadastro = {
@@ -360,11 +420,17 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         alert(resultado.error || "Erro ao realizar cadastro inicial");
       }
     } catch (error) {
-      console.error("Erro no cadastro inicial:", error);
+      console.error("❌ Erro detalhado no cadastro inicial:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+        dadosEnviados: dadosCadastro
+      });
+      
       if (error.response?.data?.error) {
         alert(`Erro: ${error.response.data.error}`);
       } else {
-        alert("Erro ao realizar cadastro. Tente novamente.");
+        alert("Erro ao realizar cadastro. Verifique o console para mais detalhes.");
       }
     } finally {
       setLoading(false);
@@ -374,60 +440,72 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
 
   const handleCompletarCadastro = async () => {
     if (!usuarioCadastrado) {
-      alert("Erro: usuário não cadastrado.");
-      return;
+        alert("Erro: usuário não cadastrado.");
+        return;
     }
 
     setLoading(true);
     
     try {
-      const dadosPerfil = {
-        [selectedUserType === "aluno" ? "idAluno" : "idPersonal"]: usuarioCadastrado.id,
-        data_nascimento: dadosFormulario.data_nascimento,
-        genero: dadosFormulario.genero,
-        foto_url: dadosFormulario.foto_url,
-        treinos_adaptados: dadosFormulario.treinos_adaptados ? 1 : 0,
-        modalidades: dadosFormulario.modalidades
-      };
+        // Preparar FormData para enviar arquivo e dados
+        const formData = new FormData();
+        
+        // Adicionar campos básicos
+        formData.append(selectedUserType === "aluno" ? "idAluno" : "idPersonal", usuarioCadastrado.id);
+        formData.append("data_nascimento", dadosFormulario.data_nascimento);
+        formData.append("genero", dadosFormulario.genero);
+        formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? 1 : 0);
+        
+        // Adicionar modalidades
+        if (dadosFormulario.modalidades) {
+            dadosFormulario.modalidades.forEach(modalidade => {
+                formData.append("modalidades[]", modalidade);
+            });
+        }
 
-      // Adicionar campos específicos
-      if (selectedUserType === "aluno") {
-        dadosPerfil.altura = dadosFormulario.altura ? parseFloat(dadosFormulario.altura) : null;
-        dadosPerfil.meta = dadosFormulario.meta;
-      } else {
-        dadosPerfil.sobre = dadosFormulario.sobre;
-      }
+        // Adicionar campos específicos
+        if (selectedUserType === "aluno") {
+            formData.append("altura", dadosFormulario.altura || '');
+            formData.append("meta", dadosFormulario.meta || '');
+        } else {
+            formData.append("sobre", dadosFormulario.sobre || '');
+        }
 
-      const endpoint = selectedUserType === "aluno" 
-        ? "cadastro/completar-aluno" 
-        : "cadastro/completar-personal";
+        // Adicionar arquivo de foto se existir
+        if (dadosFormulario.foto_blob) {
+            formData.append("foto", dadosFormulario.foto_blob, dadosFormulario.foto_nome || 'foto_perfil.jpg');
+        } else if (dadosFormulario.foto_url) {
+            // Se já tem URL (upload anterior), enviar apenas a URL
+            formData.append("foto_url", dadosFormulario.foto_url);
+        }
 
-      // Use fetch diretamente SEM headers de autorização
-      const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dadosPerfil),
-      });
+        const endpoint = selectedUserType === "aluno" 
+            ? "cadastro/completar-aluno" 
+            : "cadastro/completar-personal";
 
-      const resultado = await response.json();
-
-      if (resultado.success) {
-        navigate("/login", {
-          state: {
-            message: "Cadastro realizado com sucesso! Faça login para continuar.",
-            email: dadosFormulario.email
-          }
+        // Usar FormData em vez de JSON
+        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+            method: "POST",
+            body: formData, // Não definir Content-Type - o browser define automaticamente
         });
-      } else {
-        alert(resultado.error || "Erro ao completar cadastro");
-      }
+
+        const resultado = await response.json();
+
+        if (resultado.success) {
+            navigate("/login", {
+                state: {
+                    message: "Cadastro realizado com sucesso! Faça login para continuar.",
+                    email: dadosFormulario.email
+                }
+            });
+        } else {
+            alert(resultado.error || "Erro ao completar cadastro");
+        }
     } catch (error) {
-      console.error("Erro ao completar cadastro:", error);
-      alert("Erro ao completar cadastro. Tente novamente.");
+        console.error("Erro ao completar cadastro:", error);
+        alert("Erro ao completar cadastro. Tente novamente.");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -464,7 +542,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         }
       
       case 5:
-        // ⭐⭐ CORREÇÃO: Etapa 5 é CREF para personal, Login para aluno
+        // Etapa 5 é CREF para personal, Login para aluno
         if (selectedUserType === "personal") {
           return <EtapaCREF dados={dadosFormulario} onChange={atualizarDados} />;
         } else if (selectedUserType === "aluno") {
@@ -473,7 +551,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         return null;
       
       case 6:
-        // ⭐⭐ CORREÇÃO: Etapa 6 é APENAS Login para personal
+        // Etapa 6 é APENAS Login para personal
         if (selectedUserType === "personal") {
           return <EtapaLogin dados={dadosFormulario} onChange={atualizarDados} />;
         }
