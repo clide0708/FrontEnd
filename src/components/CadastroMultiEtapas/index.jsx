@@ -301,6 +301,9 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setIsAnimating(true);
     
     try {
+      // MOVER a declaração de dadosCadastro para dentro do try
+      let dadosCadastro;
+
       if (selectedUserType === "academia") {
         if (!dadosFormulario.nome_fantasia || !dadosFormulario.razao_social || !dadosFormulario.cnpj) {
           alert("Por favor, preencha todos os campos obrigatórios: Nome Fantasia, Razão Social e CNPJ");
@@ -308,11 +311,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
           setIsAnimating(false);
           return;
         }
-      }
 
-      let dadosCadastro;
-
-      if (selectedUserType === "academia") {
         // Dados específicos para academia
         dadosCadastro = {
           nome: dadosFormulario.nome_fantasia,
@@ -334,15 +333,17 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
           area_descanso: dadosFormulario.area_descanso ? 1 : 0,
           avaliacao_fisica: dadosFormulario.avaliacao_fisica ? 1 : 0,
           horarios: dadosFormulario.horarios || [],
-          // Endereço
-          cep: dadosFormulario.cep.replace(/\D/g, ""),
-          logradouro: dadosFormulario.logradouro,
-          numero: dadosFormulario.numero,
-          complemento: dadosFormulario.complemento,
-          bairro: dadosFormulario.bairro,
-          cidade: dadosFormulario.cidade,
-          estado: dadosFormulario.estado,
-          pais: dadosFormulario.pais
+          // Endereço - ADICIONAR ESTES CAMPOS
+          cep: dadosFormulario.cep?.replace(/\D/g, "") || "",
+          logradouro: dadosFormulario.logradouro || "",
+          numero: dadosFormulario.numero || "",
+          complemento: dadosFormulario.complemento || "",
+          bairro: dadosFormulario.bairro || "",
+          cidade: dadosFormulario.cidade || "",
+          estado: dadosFormulario.estado || "",
+          pais: dadosFormulario.pais || "Brasil",
+          // Modalidades - ADICIONAR
+          modalidades: dadosFormulario.modalidades || []
         };
 
         console.log('📤 Dados sendo enviados para cadastro de academia:', dadosCadastro);
@@ -447,51 +448,80 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setLoading(true);
     
     try {
-        // Preparar FormData para enviar arquivo e dados
+        // 🔥 AGORA: Usar FormData para enviar arquivos - FUNCIONA PARA TODOS OS TIPOS
         const formData = new FormData();
         
-        // Adicionar campos básicos
-        formData.append(selectedUserType === "aluno" ? "idAluno" : "idPersonal", usuarioCadastrado.id);
-        formData.append("data_nascimento", dadosFormulario.data_nascimento);
-        formData.append("genero", dadosFormulario.genero);
-        formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? 1 : 0);
+        // Adicionar ID baseado no tipo de usuário
+        const idField = selectedUserType === "aluno" ? "idAluno" : 
+                       selectedUserType === "personal" ? "idPersonal" : "idAcademia";
+        formData.append(idField, usuarioCadastrado.id);
         
-        // Adicionar modalidades
+        // Campos comuns a todos os tipos
+        if (selectedUserType !== "academia") {
+            formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
+            formData.append("genero", dadosFormulario.genero || '');
+        }
+        
+        formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
+        
+        // Adicionar campos específicos
+        if (selectedUserType === "aluno") {
+            formData.append("altura", dadosFormulario.altura || '');
+            formData.append("meta", dadosFormulario.meta || '');
+        } else if (selectedUserType === "personal") {
+            formData.append("sobre", dadosFormulario.sobre || '');
+        } else if (selectedUserType === "academia") {
+            // Campos específicos da academia
+            formData.append("sobre", dadosFormulario.sobre || '');
+            formData.append("tamanho_estrutura", dadosFormulario.tamanho_estrutura || '');
+            formData.append("capacidade_maxima", dadosFormulario.capacidade_maxima || '');
+            formData.append("ano_fundacao", dadosFormulario.ano_fundacao || '');
+            formData.append("estacionamento", dadosFormulario.estacionamento ? '1' : '0');
+            formData.append("vestiario", dadosFormulario.vestiario ? '1' : '0');
+            formData.append("ar_condicionado", dadosFormulario.ar_condicionado ? '1' : '0');
+            formData.append("wifi", dadosFormulario.wifi ? '1' : '0');
+            formData.append("totem_de_carregamento_usb", dadosFormulario.totem_de_carregamento_usb ? '1' : '0');
+            formData.append("area_descanso", dadosFormulario.area_descanso ? '1' : '0');
+            formData.append("avaliacao_fisica", dadosFormulario.avaliacao_fisica ? '1' : '0');
+            
+            // Horários da academia
+            if (dadosFormulario.horarios) {
+                dadosFormulario.horarios.forEach((horario, index) => {
+                    formData.append(`horarios[${index}][dia_semana]`, horario.dia_semana);
+                    formData.append(`horarios[${index}][aberto_24h]`, horario.aberto_24h ? '1' : '0');
+                    formData.append(`horarios[${index}][horario_abertura]`, horario.horario_abertura || '');
+                    formData.append(`horarios[${index}][horario_fechamento]`, horario.horario_fechamento || '');
+                    formData.append(`horarios[${index}][fechado]`, horario.fechado ? '1' : '0');
+                });
+            }
+        }
+
+        // Adicionar modalidades para todos os tipos
         if (dadosFormulario.modalidades) {
             dadosFormulario.modalidades.forEach(modalidade => {
                 formData.append("modalidades[]", modalidade);
             });
         }
 
-        // Adicionar campos específicos
-        if (selectedUserType === "aluno") {
-            formData.append("altura", dadosFormulario.altura || '');
-            formData.append("meta", dadosFormulario.meta || '');
-        } else {
-            formData.append("sobre", dadosFormulario.sobre || '');
-        }
-
-        // Adicionar arquivo de foto se existir
-        if (dadosFormulario.foto_blob) {
-            formData.append("foto", dadosFormulario.foto_blob, dadosFormulario.foto_nome || 'foto_perfil.jpg');
-        } else if (dadosFormulario.foto_url) {
-            // Se já tem URL (upload anterior), enviar apenas a URL
+        // 🔥 IMPORTANTE: Se já temos uma foto com URL (do upload anterior), enviar apenas a URL
+        if (dadosFormulario.foto_url) {
             formData.append("foto_url", dadosFormulario.foto_url);
         }
 
-        const endpoint = selectedUserType === "aluno" 
-            ? "cadastro/completar-aluno" 
-            : "cadastro/completar-personal";
+        // 🔥 USAR ENDPOINT ÚNICO PARA TODOS OS TIPOS
+        const endpoint = "cadastro/processar-completo";
 
-        // Usar FormData em vez de JSON
+        console.log('📤 Enviando dados completos do cadastro para:', selectedUserType);
+
         const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
             method: "POST",
-            body: formData, // Não definir Content-Type - o browser define automaticamente
+            body: formData,
         });
 
         const resultado = await response.json();
 
         if (resultado.success) {
+            console.log('✅ Cadastro completo realizado para:', selectedUserType);
             navigate("/login", {
                 state: {
                     message: "Cadastro realizado com sucesso! Faça login para continuar.",
@@ -508,7 +538,6 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         setLoading(false);
     }
   };
-
   const handleFinalizar = () => {
     // Determinar qual etapa finaliza o cadastro inicial
     const etapaCadastroInicial = selectedUserType === "personal" ? 6 : 

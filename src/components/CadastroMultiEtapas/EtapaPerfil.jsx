@@ -115,29 +115,33 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     setSalvandoImagem(true);
     
     try {
+        // 1. Cortar imagem
         const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
-        const uploadResult = await uploadImagemParaServidor(blob);
         
-        if (uploadResult.success) {
-            const dataURL = await blobParaDataURL(blob);
+        // 2. Fazer upload IMEDIATO usando UploadController
+        const formData = new FormData();
+        formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
+
+        console.log('📤 Fazendo upload da imagem...');
+        
+        const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+        console.log('✅ Resposta do upload:', result);
+
+        if (result.success) {
+            // 3. A imagem já está salva no servidor e temos a URL!
             onChange({ 
-                foto_url: uploadResult.url,
-                foto_data: dataURL,
-                foto_nome: uploadResult.nome_arquivo
+                foto_url: result.url,
+                foto_nome: result.nome_arquivo
             });
-            console.log('✅ Foto salva com sucesso');
+            
+            console.log('✅ Foto salva no servidor:', result.url);
         } else {
-            const dataURL = await blobParaDataURL(blob);
-            const nomeFinal = `perfil_local_${Date.now()}.jpg`;
-            
-            onChange({ 
-                foto_url: dataURL,
-                foto_data: dataURL,
-                foto_nome: nomeFinal,
-                foto_fallback: true
-            });
-            
-            console.warn('⚠️ Upload falhou, usando imagem local');
+            throw new Error(result.error || 'Erro no upload');
         }
         
     } catch (error) {

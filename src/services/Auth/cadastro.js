@@ -29,10 +29,17 @@ export const cadastrarPersonal = async (dados) => {
 
 export const cadastrarAcademia = async (dados) => {
   try {
+    console.log('🔄 Enviando dados para cadastro de academia:', dados);
     const response = await api.post("/cadastro/academia", dados);
+    console.log('✅ Resposta do cadastro academia:', response.data);
     return response.data;
   } catch (error) {
-    console.error("Erro ao cadastrar academia:", error);
+    console.error("❌ Erro detalhado ao cadastrar academia:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    
     throw error;
   }
 };
