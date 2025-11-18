@@ -1,174 +1,469 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import perfilService from "../../services/Perfil/perfil";
+import treinosService from "../../services/Treinos/treinos";
+import { useNavigate } from "react-router-dom";
+import { FiLogOut, FiEdit2, FiSave, FiX, FiUpload, FiTrash2 } from "react-icons/fi";
+import { 
+  User, 
+  Dumbbell, 
+  Building, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  IdCard,
+  Target,
+  Ruler,
+  Calendar,
+  Users,
+  Clock
+} from "lucide-react";
+import CropModal from "./modalCrop";
+import PlanModal from "./modalPlano";
 import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
 import "./style.css";
-import PlanModal from "./modalPlano.jsx";
-import CropModal from "./modalCrop.jsx";
-import { FiLogOut } from "react-icons/fi";
-import treinosService from "../../services/Treinos/treinos";
-import { useNavigate } from "react-router-dom";
-import { color } from "framer-motion";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [editingPlan, setEditingPlan] = useState(false);
   const [form, setForm] = useState({});
+  const [endereco, setEndereco] = useState({});
+  const [modalidades, setModalidades] = useState([]);
+  const [academias, setAcademias] = useState([]);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [historicoTreinos, setHistoricoTreinos] = useState([]);
   const [loadingHistorico, setLoadingHistorico] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [email, setEmail] = useState(() => {
-    const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
-    return usuario.email || "";
+
+  // 🔥 CORREÇÃO: Obter usuário do localStorage corretamente
+  const [usuarioLogado, setUsuarioLogado] = useState(() => {
+    try {
+      const usuarioStorage = localStorage.getItem("usuario");
+      return usuarioStorage ? JSON.parse(usuarioStorage) : null;
+    } catch (error) {
+      console.error("Erro ao ler usuário do localStorage:", error);
+      return null;
+    }
   });
 
+  const tipoUsuario = usuarioLogado?.tipo;
+  const email = usuarioLogado?.email;
+  const idUsuario = usuarioLogado?.id;
+
+  // 🔥 CORREÇÃO DEFINITIVA: Função para obter URL da foto
+  const getFotoUrl = (fotoUrl) => {
+    console.log("🖼️ Processando foto URL:", fotoUrl);
+    
+    // Se não tem foto ou é inválida, retorna padrão
+    if (!fotoUrl || fotoUrl === 'null' || fotoUrl === 'undefined' || fotoUrl === '') {
+      console.log("🖼️ Sem foto, usando padrão");
+      return "/assets/images/profilefoto.png";
+    }
+    
+    // Se já é uma URL completa (http ou https)
+    if (fotoUrl.startsWith('http')) {
+      console.log("🖼️ URL completa detectada:", fotoUrl);
+      return fotoUrl;
+    }
+    
+    // 🔥 CORREÇÃO PRINCIPAL: Se é um caminho relativo, converter para URL absoluta
+    // O backend retorna '/assets/images/uploads/nome.jpg'
+    // Precisamos converter para 'http://localhost/BackEnd/assets/images/uploads/nome.jpg'
+    
+    let caminhoCorrigido = fotoUrl;
+    
+    // Se começa com /, remover a barra inicial para evitar duplicação
+    if (caminhoCorrigido.startsWith('/')) {
+      caminhoCorrigido = caminhoCorrigido.substring(1);
+    }
+    
+    // Construir URL absoluta usando a base da API
+    const urlBase = import.meta.env.VITE_API_URL.replace('/api', '');
+    const urlAbsoluta = `${urlBase}${caminhoCorrigido}`;
+    
+    console.log("🖼️ URL absoluta construída:", urlAbsoluta);
+    return urlAbsoluta;
+  };
+
+  // No useEffect, após carregar o usuário, adicione:
   useEffect(() => {
-    const fetchPerfil = async () => {
-      if (!email) return;
-      const data = await perfilService.getPerfil(email);
-      if (data && data.success) {
-        const treinoMap = { Sedentário: 1, Leve: 2, Moderado: 3, Intenso: 4 };
-        const metaMap = {
-          "Perder peso": 1,
-          "Manter peso": 2,
-          "Ganhar peso": 3,
-        };
-        setUser(data.data);
-        setForm({
-          ...data.data,
-          treinoValue: treinoMap[data.data.treinoTipo] || 1,
-          metaValue: metaMap[data.data.meta] || 1,
-        });
+    if (user) {
+      console.log("🔍 DEBUG COMPLETO DO USUÁRIO:", {
+        usuario: user,
+        foto_url: user.foto_url,
+        getFotoUrl: getFotoUrl(user.foto_url),
+        tipoUsuario: tipoUsuario,
+        idUsuario: idUsuario
+      });
+      
+      // Testar se a imagem é acessível
+      if (user.foto_url) {
+        const img = new Image();
+        img.onload = () => console.log("✅ Imagem é acessível e carrega");
+        img.onerror = () => console.log("❌ Imagem NÃO é acessível");
+        img.src = getFotoUrl(user.foto_url);
       }
-    };
-    fetchPerfil();
-  }, [email]);
+    }
+  }, [user]);
 
   useEffect(() => {
-    const fetchHistorico = async () => {
+    const carregarHistoricoTreinos = async () => {
+      if (tipoUsuario !== 'aluno') return;
+      
+      setLoadingHistorico(true);
       try {
+        console.log("📊 Carregando histórico de treinos...");
+        
+        // 🔥 CORREÇÃO: Usar o serviço correto para buscar histórico
         const response = await treinosService.getHistoricoTreinos();
         
-        // CORREÇÃO: Acessar a estrutura correta
-        if (response.success) {
+        if (response && response.success) {
+          console.log("✅ Histórico carregado:", response.treinos);
           setHistoricoTreinos(response.treinos || []);
         } else {
+          console.log("ℹ️ Nenhum histórico encontrado ou erro:", response?.error);
           setHistoricoTreinos([]);
         }
-      } catch (err) {
-        console.error("Erro ao buscar histórico:", err);
+      } catch (error) {
+        console.error("❌ Erro ao carregar histórico:", error);
         setHistoricoTreinos([]);
       } finally {
         setLoadingHistorico(false);
       }
     };
-    fetchHistorico();
-  }, []);
 
+    carregarHistoricoTreinos();
+  }, [tipoUsuario]);
+
+  // Carregar dados do perfil
   useEffect(() => {
-    const fetchPersonal = async () => {
-      if (user?.idPersonal) {
-        const res = await perfilService.getPersonalPorId(user.idPersonal);
-        if (res?.success) {
-          setUser((prev) => ({ ...prev, personal_nome: res.data.nome }));
-          setForm((prev) => ({ ...prev, personal_nome: res.data.nome }));
+    const fetchPerfilCompleto = async () => {
+      if (!email || !idUsuario || !tipoUsuario) {
+        console.error("❌ Dados do usuário não encontrados:", { email, idUsuario, tipoUsuario });
+        return;
+      }
+      
+      setLoading(true);
+      try {
+        console.log("🎯 Buscando perfil para:", { email, idUsuario, tipoUsuario });
+
+        // Buscar dados básicos do usuário
+        const data = await perfilService.getPerfil(email);
+        console.log("📊 Dados básicos recebidos:", data);
+        
+        if (data && data.success) {
+          const usuario = data.data;
+          console.log("👤 Usuário encontrado:", usuario);
+          setUser(usuario);
+          
+          // Buscar perfil completo apenas se tiver ID válido
+          if (idUsuario && idUsuario !== 'undefined') {
+            console.log("🔍 Buscando perfil completo para ID:", idUsuario);
+            const perfilCompleto = await perfilService.getPerfilCompleto(idUsuario, tipoUsuario);
+            console.log("📊 Perfil completo recebido:", perfilCompleto);
+            
+            if (perfilCompleto?.success) {
+              const usuarioCompleto = { ...usuario, ...perfilCompleto.data };
+              setUser(usuarioCompleto);
+              setForm(usuarioCompleto);
+              
+              // Extrair modalidades se existirem
+              if (perfilCompleto.data.modalidades) {
+                setModalidades(perfilCompleto.data.modalidades);
+              }
+            } else {
+              console.log("⚠️ Perfil completo não encontrado, usando dados básicos");
+              setForm(usuario);
+            }
+          } else {
+            console.log("⚠️ ID inválido, usando dados básicos");
+            setForm(usuario);
+          }
+
+          // Buscar endereço
+          try {
+            const enderecoData = await perfilService.getEndereco(email);
+            if (enderecoData?.success) {
+              setEndereco(enderecoData.data);
+            }
+          } catch (enderecoError) {
+            console.error("❌ Erro ao buscar endereço:", enderecoError);
+          }
+
+          // Buscar modalidades disponíveis
+          try {
+            const modalidadesData = await perfilService.getModalidades();
+            if (modalidadesData?.success) {
+              setModalidades(modalidadesData.data);
+            }
+          } catch (modalidadesError) {
+            console.error("❌ Erro ao buscar modalidades:", modalidadesError);
+          }
+
+          // Buscar academias (para alunos e personais)
+          if (tipoUsuario !== 'academia') {
+            try {
+              const academiasData = await perfilService.getAcademiasAtivas();
+              if (academiasData?.success) {
+                setAcademias(academiasData.data);
+              }
+            } catch (academiasError) {
+              console.error("❌ Erro ao buscar academias:", academiasError);
+            }
+          }
+        } else {
+          console.error("❌ Erro ao buscar dados básicos do usuário:", data?.error);
+          alert("Erro ao carregar perfil: " + (data?.error || "Usuário não encontrado"));
         }
+      } catch (error) {
+        console.error("❌ Erro ao carregar perfil:", error);
+        alert("Erro ao carregar perfil: " + error.message);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchPersonal();
-  }, [user?.idPersonal]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    fetchPerfilCompleto();
+  }, [email, idUsuario, tipoUsuario]);
 
-  const handleSaveCrop = (croppedImage) => {
-    setForm({ ...form, foto_perfil: croppedImage });
-    setCropModalOpen(false);
-  };
+  // 🔥 CORREÇÃO: Função para upload de foto usando cropImage.js
+  const handleSaveCrop = async (croppedImage) => {
+    try {
+      console.log("🎯 Iniciando upload da foto cortada...");
+      
+      // Importar dinamicamente o utilitário de crop
+      const getCroppedImg = (await import('../../utils/cropImage')).default;
+      
+      // Obter o blob da imagem cortada
+      const blob = await getCroppedImg(croppedImage, {
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 800
+      });
 
-  const saveProfile = async () => {
-    const result = await perfilService.atualizarPerfil(form);
-    if (result.success) {
-      setUser({ ...form });
-      setEditing(false);
-    } else {
-      alert("Erro ao atualizar perfil: " + result.error);
-    }
-  };
+      console.log("📤 Fazendo upload do blob...", blob);
 
-  const handleCardClick = async (treino) => {
-    console.log("Treino clicado:", treino);
-    
-    if (treino.porcentagem_concluida >= 90) {
-        navigate(`/treinos/visualizar/${treino.idTreino}`);
-    } else {
-        try {
-            console.log("Buscando sessão para retomar:", treino.idSessao);
-            const response = await treinosService.getSessaoParaRetomar(treino.idSessao);
-            console.log("Resposta completa da sessão:", response);
-            
-            if (!response.success) {
-                throw new Error(response.error || "Erro ao buscar sessão");
-            }
+      const formData = new FormData();
+      formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
 
-            const { sessao, treino: treinoData, progresso } = response;
-            
-            if (!treinoData || !treinoData.exercicios) {
-                console.error("Dados do treino incompletos:", treinoData);
-                throw new Error("Dados do treino incompletos");
-            }
+      // Fazer upload para o servidor
+      const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
+        method: 'POST',
+        body: formData,
+      });
 
-            console.log("Exercícios encontrados:", treinoData.exercicios.length);
+      const result = await response.json();
+      console.log('✅ Resposta do upload:', result);
 
-            const treinoParaRetomar = {
-                ...treinoData,
-                idSessao: sessao.idSessao,
-                exercicios: treinoData.exercicios.map(ex => ({
-                    ...ex,
-                    id: ex.id || ex.idTreino_Exercicio,
-                    series: ex.series || 3,
-                    repeticoes: ex.repeticoes || 10,
-                    descanso: ex.descanso || 60,
-                    carga: ex.carga || 0,
-                    url: ex.video_url || ex.url || "",
-                    grupo: ex.grupoMuscular || ex.grupo || "",
-                    informacoes: ex.descricao || ex.informacoes || "",
-                    nome: ex.nome || "Exercício sem nome"
-                }))
-            };
-            
-            console.log("Treino preparado para retomar:", treinoParaRetomar);
-            
-            navigate("/treinando", {
-                state: { 
-                    treino: treinoParaRetomar,
-                    progresso: progresso 
-                }
-            });
-        } catch (err) {
-            console.error("Erro detalhado ao retomar treino:", err);
-            alert(`Erro ao retomar treino: ${err.message}`);
+      if (result.success) {
+        // Salvar a URL da foto no banco de dados do usuário
+        const saveResponse = await fetch(`${import.meta.env.VITE_API_URL}upload/salvar-foto-usuario`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            idUsuario: user.id,
+            tipoUsuario: tipoUsuario,
+            foto_url: result.url
+          })
+        });
+
+        const saveResult = await saveResponse.json();
+        
+        if (saveResult.success) {
+          // Atualizar estado local
+          const novaFotoUrl = result.url;
+          setForm(prev => ({ ...prev, foto_url: novaFotoUrl }));
+          setUser(prev => ({ ...prev, foto_url: novaFotoUrl }));
+          setCropModalOpen(false);
+          alert('Foto atualizada com sucesso!');
+        } else {
+          throw new Error(saveResult.error || 'Erro ao salvar foto no banco');
         }
+      } else {
+        throw new Error(result.error || 'Erro no upload');
+      }
+    } catch (error) {
+      console.error('❌ Erro ao processar foto:', error);
+      alert('Erro ao processar foto: ' + error.message);
     }
   };
 
-  const getYoutubeThumbnail = (url) => {
-    if (!url) return "/assets/images/no-video-placeholder.jpg"; // Fallback local
+  // 🔥 CORREÇÃO: Função para remover foto
+  const removerFoto = async () => {
+    if (!user?.foto_url) {
+      console.log("❌ Nenhuma foto para remover");
+      return;
+    }
     
     try {
-      const u = new URL(url);
-      let id = "";
-      if (u.hostname.includes("youtube.com")) id = u.searchParams.get("v") || "";
-      else if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+      console.log("🗑️ Iniciando remoção da foto:", user.foto_url);
       
-      if (!id) return "/assets/images/no-video-placeholder.jpg";
+      // Extrair nome do arquivo da URL
+      const nomeArquivo = user.foto_url.split('/').pop();
+      console.log("📝 Nome do arquivo extraído:", nomeArquivo);
       
-      return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+      if (!nomeArquivo) {
+        throw new Error("Não foi possível extrair o nome do arquivo da URL");
+      }
+      
+      // Deletar arquivo físico
+      console.log("🔄 Deletando arquivo físico...");
+      const deleteResult = await perfilService.deletarFotoPerfil(nomeArquivo);
+      console.log("✅ Resultado da deleção:", deleteResult);
+      
+      if (deleteResult.success) {
+        // Atualizar banco de dados para remover a referência da foto
+        console.log("🔄 Atualizando banco de dados...");
+        const saveResponse = await fetch(`${import.meta.env.VITE_API_URL}upload/salvar-foto-usuario`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            idUsuario: user.id,
+            tipoUsuario: tipoUsuario,
+            foto_url: null
+          })
+        });
+
+        const saveResult = await saveResponse.json();
+        console.log("✅ Resultado do salvamento:", saveResult);
+        
+        if (saveResult.success) {
+          // Atualizar estado local
+          setForm(prev => ({ ...prev, foto_url: '' }));
+          setUser(prev => ({ ...prev, foto_url: '' }));
+          alert('Foto removida com sucesso!');
+        } else {
+          throw new Error('Erro ao remover referência da foto no banco: ' + saveResult.error);
+        }
+      } else {
+        throw new Error(deleteResult.error || 'Erro ao deletar arquivo');
+      }
     } catch (error) {
-      return "/assets/images/no-video-placeholder.jpg";
+      console.error('❌ Erro ao remover foto:', error);
+      alert('Erro ao remover foto: ' + error.message);
+    }
+  };
+
+  // Handlers para formulário
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleEnderecoChange = (e) => {
+    const { name, value } = e.target;
+    setEndereco(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleModalidadeChange = (idModalidade) => {
+    setForm(prev => {
+      const modalidadesAtuais = prev.modalidades || [];
+      const modalidadesString = modalidadesAtuais.map(m => m.toString());
+      const idString = idModalidade.toString();
+      
+      if (modalidadesString.includes(idString)) {
+        return {
+          ...prev,
+          modalidades: modalidadesAtuais.filter(m => m.toString() !== idString)
+        };
+      } else {
+        return {
+          ...prev,
+          modalidades: [...modalidadesAtuais, idModalidade]
+        };
+      }
+    });
+  };
+
+  // Salvar perfil
+  const saveProfile = async () => {
+    setLoading(true);
+    try {
+      // Preparar dados para envio
+      const dadosAtualizacao = {
+        ...form,
+        email: user.email,
+        // Incluir endereço se estiver editando
+        ...(editing && endereco)
+      };
+
+      const result = await perfilService.atualizarPerfil(dadosAtualizacao);
+      if (result.success) {
+        setUser({ ...form });
+        setEditing(false);
+        
+        // Atualizar endereço separadamente se necessário
+        if (Object.keys(endereco).length > 0) {
+          await perfilService.atualizarEndereco({
+            ...endereco,
+            email: user.email
+          });
+        }
+        
+        alert('Perfil atualizado com sucesso!');
+      } else {
+        alert("Erro ao atualizar perfil: " + result.error);
+      }
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      alert("Erro ao atualizar perfil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Navegação para treinos
+  const handleCardClick = async (treino) => {
+    if (treino.porcentagem_concluida >= 90) {
+      navigate(`/treinos/visualizar/${treino.idTreino}`);
+    } else {
+      try {
+        const response = await treinosService.getSessaoParaRetomar(treino.idSessao);
+        if (!response.success) {
+          throw new Error(response.error || "Erro ao buscar sessão");
+        }
+
+        const { sessao, treino: treinoData, progresso } = response;
+        const treinoParaRetomar = {
+          ...treinoData,
+          idSessao: sessao.idSessao,
+          exercicios: treinoData.exercicios.map(ex => ({
+            ...ex,
+            id: ex.id || ex.idTreino_Exercicio,
+            series: ex.series || 3,
+            repeticoes: ex.repeticoes || 10,
+            descanso: ex.descanso || 60,
+            carga: ex.carga || 0,
+            url: ex.video_url || ex.url || "",
+            grupo: ex.grupoMuscular || ex.grupo || "",
+            informacoes: ex.descricao || ex.informacoes || "",
+            nome: ex.nome || "Exercício sem nome"
+          }))
+        };
+
+        navigate("/treinando", {
+          state: { 
+            treino: treinoParaRetomar,
+            progresso: progresso 
+          }
+        });
+      } catch (err) {
+        console.error("Erro ao retomar treino:", err);
+        alert(`Erro ao retomar treino: ${err.message}`);
+      }
     }
   };
 
@@ -178,11 +473,241 @@ export default function Profile() {
     window.location.reload();
   };
 
-  if (!user) return <p>Carregando...</p>;
+  // Renderização condicional baseada no tipo de usuário
+  const renderCamposAluno = () => (
+    <>
+      <div className="form-grid">
+        <div className="input-group">
+          <label><IdCard size={16} /> CPF</label>
+          <input
+            type="text"
+            name="cpf"
+            value={form.cpf || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="000.000.000-00"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>RG</label>
+          <input
+            type="text"
+            name="rg"
+            value={form.rg || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Digite seu RG"
+          />
+        </div>
+
+        <div className="input-group">
+          <label><Ruler size={16} /> Altura (cm)</label>
+          <input
+            type="number"
+            name="altura"
+            value={form.altura || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="175"
+            min="100"
+            max="250"
+          />
+        </div>
+
+        <div className="input-group">
+          <label><Target size={16} /> Meta Principal</label>
+          <select
+            name="meta"
+            value={form.meta || ''}
+            onChange={handleChange}
+            disabled={!editing}
+          >
+            <option value="">Selecione sua meta</option>
+            <option value="Perder peso">Perder peso</option>
+            <option value="Manter peso">Manter peso</option>
+            <option value="Ganhar peso">Ganhar peso</option>
+            <option value="Ganhar massa muscular">Ganhar massa muscular</option>
+            <option value="Melhorar condicionamento">Melhorar condicionamento</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="input-group full-width">
+        <label>Academia Vinculada</label>
+        <select
+          name="idAcademia"
+          value={form.idAcademia || ''}
+          onChange={handleChange}
+          disabled={!editing}
+        >
+          <option value="">Nenhuma academia vinculada</option>
+          {academias.map(academia => (
+            <option key={academia.idAcademia} value={academia.idAcademia}>
+              {academia.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+
+  const renderCamposPersonal = () => (
+    <>
+      <div className="form-grid">
+        <div className="input-group">
+          <label><IdCard size={16} /> CPF</label>
+          <input
+            type="text"
+            name="cpf"
+            value={form.cpf || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="000.000.000-00"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>RG</label>
+          <input
+            type="text"
+            name="rg"
+            value={form.rg || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Digite seu RG"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>CREF Número</label>
+          <input
+            type="text"
+            name="cref_numero"
+            value={form.cref_numero || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Número do CREF"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>CREF Categoria</label>
+          <input
+            type="text"
+            name="cref_categoria"
+            value={form.cref_categoria || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Categoria CREF"
+          />
+        </div>
+      </div>
+
+      <div className="input-group full-width">
+        <label>Academia Vinculada</label>
+        <select
+          name="idAcademia"
+          value={form.idAcademia || ''}
+          onChange={handleChange}
+          disabled={!editing}
+        >
+          <option value="">Nenhuma academia vinculada</option>
+          {academias.map(academia => (
+            <option key={academia.idAcademia} value={academia.idAcademia}>
+              {academia.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="input-group full-width">
+        <label>Sobre Você</label>
+        <textarea
+          name="sobre"
+          value={form.sobre || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="Conte sobre sua experiência, metodologia de trabalho, especializações..."
+          rows={4}
+        />
+      </div>
+    </>
+  );
+
+  const renderCamposAcademia = () => (
+    <>
+      <div className="form-grid">
+        <div className="input-group">
+          <label>CNPJ</label>
+          <input
+            type="text"
+            name="cnpj"
+            value={form.cnpj || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="00.000.000/0000-00"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Nome Fantasia</label>
+          <input
+            type="text"
+            name="nome_fantasia"
+            value={form.nome_fantasia || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Nome fantasia da academia"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Razão Social</label>
+          <input
+            type="text"
+            name="razao_social"
+            value={form.razao_social || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Razão social completa"
+          />
+        </div>
+
+        <div className="input-group">
+          <label><Phone size={16} /> Telefone</label>
+          <input
+            type="text"
+            name="telefone"
+            value={form.telefone || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="(00) 00000-0000"
+          />
+        </div>
+      </div>
+
+      <div className="input-group full-width">
+        <label>Sobre a Academia</label>
+        <textarea
+          name="sobre"
+          value={form.sobre || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="Conte sobre sua academia: equipamentos, metodologia, diferenciais..."
+          rows={4}
+        />
+      </div>
+    </>
+  );
+
+  if (loading) return <div className="loading">Carregando perfil...</div>;
+  if (!user) return <div className="error">Erro ao carregar perfil</div>;
 
   return (
     <div className="perfil container" style={{ position: "relative" }}>
-      {/* ENGRENAGEM LOGOUT */}
+      {/* Header com Logout */}
       <div className="logout-gear" onClick={handleLogout} title="Sair">
         <FiLogOut size={30} />
       </div>
@@ -192,302 +717,465 @@ export default function Profile() {
           <div className="page-content">
             <div className="main-profile">
               <div className="row">
-                {/* FOTO */}
+                {/* Foto de Perfil */}
                 <div className="col-lg-4">
-                  {editing ? (
-                    <div
-                      style={{
-                        cursor: "pointer",
-                        width: "100%",
-                        textAlign: "center",
-                        border: "1px dashed #ccc",
-                        borderRadius: "23px",
-                        padding: "20px",
-                      }}
-                      onClick={() => setCropModalOpen(true)}
-                    >
-                      <p>Editar Foto</p>
-                      <img
-                        src={form.foto_perfil || user.foto_perfil}
-                        alt="perfil"
-                        style={{
-                          borderRadius: "23px",
-                          width: "100%",
-                          maxHeight: "300px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <img
-                      src={user.foto_perfil}
-                      alt="perfil"
-                      style={{ borderRadius: "23px", width: "100%" }}
-                    />
-                  )}
-                </div>
-
-                {/* INFORMAÇÕES */}
-                <div className="col-lg-4 align-self-center">
-                  <div className="main-info header-text">
+                  <div className="foto-section">
+                    
                     {editing ? (
-                      <>
-                        <input
-                          type="text"
-                          name="nome"
-                          value={form.nome || ""}
-                          onChange={handleChange}
-                          placeholder="Nome"
-                        />
-                        <input
-                          type="number"
-                          name="idade"
-                          value={form.idade || ""}
-                          onChange={handleChange}
-                          placeholder="Idade"
-                        />
-                        <input
-                          type="number"
-                          name="peso"
-                          value={form.peso || ""}
-                          onChange={handleChange}
-                          placeholder="Peso"
-                        />
-                        <input
-                          type="number"
-                          name="altura"
-                          value={form.altura || ""}
-                          onChange={handleChange}
-                          placeholder="Altura"
-                        />
-                        <select
-                          name="genero"
-                          value={form.genero || ""}
-                          onChange={handleChange}
-                        >
-                          <option value="masculino">Masculino</option>
-                          <option value="feminino">Feminino</option>
-                        </select>
-
-                        <div className="slider-container">
-                          <label>Treino: {form.treinoTipo}</label>
-                          <input
-                            type="range"
-                            min="1"
-                            max="4"
-                            step="1"
-                            value={form.treinoValue || 1}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value);
-                              const treinoMap = {
-                                1: "Sedentário",
-                                2: "Leve",
-                                3: "Moderado",
-                                4: "Intenso",
-                              };
-                              setForm({
-                                ...form,
-                                treinoTipo: treinoMap[val],
-                                treinoValue: val,
-                              });
-                            }}
-                          />
-                        </div>
-                        <div className="slider-container">
-                          <label>Meta: {form.meta}</label>
-                          <input
-                            type="range"
-                            min="1"
-                            max="3"
-                            step="1"
-                            value={form.metaValue || 1}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value);
-                              const metaMap = {
-                                1: "Perder peso",
-                                2: "Manter peso",
-                                3: "Ganhar peso",
-                              };
-                              setForm({
-                                ...form,
-                                meta: metaMap[val],
-                                metaValue: val,
-                              });
-                            }}
-                          />
-                        </div>
-
-                        <div style={{ marginTop: "10px" }}>
-                          <button onClick={saveProfile} className="savebtnpf">
-                            Salvar
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditing(false);
-                              setForm({ ...user });
-                            }}
-                            className="savebtnpf"
-                            style={{ marginLeft: "10px" }}
-                          >
-                            Cancelar
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <h4>{user.nome}</h4>
-                        <p>
-                          {user.idade ?? "—"} anos - {user.peso ?? "—"}kg -{" "}
-                          {user.altura ?? "—"}cm
-                        </p>
-                        <p>Gênero: {user.genero ?? "—"}</p>
-                        <p>Treino: {user.treinoTipo ?? "—"}</p>
-                        <p>Meta: {user.meta ?? "—"}</p>
-                        <div className="main-border-button">
-                          <button onClick={() => setEditing(true)}>
-                            Editar perfil
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* PLANO */}
-                <div className="col-lg-4 align-self-center">
-                  <ul className="infopfl">
-                    <li>
-                      Plano <span>{user.tipoPlano || "Premium"}</span>
-                    </li>
-                    <li>
-                      Personal <span>{user.personal_nome || "Nenhum"}</span>
-                    </li>
-                    <button
-                      className="savebtnpf"
-                      onClick={() => setEditingPlan(true)}
-                    >
-                      Editar Plano
-                    </button>
-                  </ul>
-                </div>
-              </div>
-
-              {/* MODAIS */}
-              {editingPlan && (
-                <PlanModal
-                  onClose={() => setEditingPlan(false)}
-                  onRemovePersonal={() => {
-                    setUser({ ...user, personal_nome: null });
-                    setForm({ ...form, personal_nome: null });
-                  }}
-                  onChoosePlan={(planName) => {
-                    setUser({ ...user, plano: planName });
-                    setEditingPlan(false);
-                  }}
-                />
-              )}
-              {cropModalOpen && (
-                <CropModal
-                  onClose={() => setCropModalOpen(false)}
-                  onSave={handleSaveCrop}
-                />
-              )}
-            </div>
-
-            {/* NOVA SEÇÃO: HISTÓRICO DE TREINOS COM CARDS */}
-                <div className="clips">
-                    <div className="col-lg-12">
-                      <div className="heading-section">
-                        <h4>Histórico de Treinos (Último Mês)</h4>
-                      </div>
-                    </div>
-                    {loadingHistorico ? (
-                      <div className="col-lg-12">
-                        <p>Carregando...</p>
-                      </div>
-                    ) : historicoTreinos.length > 0 ? (
-                      <div className="row">
-                        {historicoTreinos.map((treino, idx) => {
-                          const statusText = treino.porcentagem_concluida >= 90 
-                            ? "Concluído" 
-                            : `Em Progresso`;
-                          const thumbnail = getYoutubeThumbnail(treino.primeiro_video_url || "");
-                          return (
-                            <div className="col-lg-3 col-sm-6" key={idx}>
-                              <div 
-                                className="item" 
-                                onClick={() => handleCardClick(treino)}
-                                style={{ cursor: "pointer", transition: "transform 0.2s" }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                              >
-                                <strong style={{fontSize: "2.5rem"}}>{treino.nome_treino}</strong>
-                                <br />
-                                <br />
-                                <img
-                                  src={thumbnail}
-                                  alt={treino.nome_treino}
-                                  style={{ width: "100%", height: "18rem", objectFit: "cover" }}
-                                />
-                                <br />
-                                <div className="row">
-                                  <div className="col-lg-12">
-                                    <h4 style={{fontSize: "2rem", color: "#2d74c4", padding: "5px" }}>{statusText}</h4>
-                                    <br />
-                                    <h4 style={{fontSize: "1.8rem", color: "#ffffffff" }}>{treino.data_formatada}</h4>
-                                  </div>
-                                  <div className="col-lg-12">
-                                    <ul>
-                                      <li style={{marginBottom: "10px", marginTop: "20px", paddingBottom: "10px", paddingTop: "20px"}}>
-                                        <strong style={{fontSize: "1.5rem", padding: "10px"}}>
-                                        Descrição:
-                                        </strong>
-                                        <br />
-                                        <small style={{fontSize: "1rem"}}>{treino.descricao || "Sem descrição"}</small>
-                                      </li>
-                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
-                                        <strong style={{fontSize: "1.5rem"}}> 
-                                          Tipo do treino:
-                                        </strong>
-                                        <br />
-                                        <small style={{fontSize: "1.2rem"}}>
-                                          {treino.tipo_display}
-                                        </small>
-                                      </li>
-                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
-                                        <strong style={{fontSize: "1.5rem"}}> 
-                                          Cadastrado por: 
-                                        </strong>
-                                        <br />
-                                        <small style={{fontSize: "1.2rem"}}>
-                                          {treino.nome_criador || "Desconhecido"}
-                                        </small>
-                                      </li>
-                                      <li style={{marginBottom: "10px", paddingBottom: "10px"}}>
-                                        {treino.porcentagem_concluida < 100 && (
-                                          <strong style={{fontSize: "1.5rem", color: "#2d74c4", padding: "10px"}}>
-                                            {treino.porcentagem_concluida}% concluído
-                                          </strong>
-                                        )}
-                                      </li>
-                                      <br />
-                                    </ul>
-                                  </div>
-                                </div>
+                      <div className="foto-editable">
+                        <div className="foto-container">
+                          {form.foto_url ? (
+                            <div className="foto-preview">
+                              <img 
+                                src={getFotoUrl(form.foto_url)} 
+                                alt="Perfil" 
+                                onError={(e) => {
+                                  console.error("❌ Erro ao carregar imagem:", e);
+                                  e.target.src = "/assets/images/profilefoto.png";
+                                }}
+                                onLoad={(e) => {
+                                  console.log("✅ Imagem carregada com sucesso:", e.target.src);
+                                }}
+                              />
+                              <div className="foto-actions">
+                                <button onClick={() => setCropModalOpen(true)}>
+                                  <FiEdit2 /> Alterar
+                                </button>
+                                <button onClick={removerFoto} className="btn-remove">
+                                  <FiTrash2 /> Remover
+                                </button>
                               </div>
                             </div>
-                          );
-                        })}
+                          ) : (
+                            <div 
+                              className="foto-upload-placeholder"
+                              onClick={() => setCropModalOpen(true)}
+                            >
+                              <FiUpload size={40} />
+                              <span>Adicionar Foto</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ) : (
-                      <div className="col-lg-12">
-                        <p>Nenhum treino recente.</p>
+                      <div className="profile-image-container">
+                        <img
+                          src={getFotoUrl(user?.foto_url)}
+                          alt="Perfil"
+                          className="profile-image"
+                          onError={(e) => {
+                            console.error("❌ Erro ao carregar imagem no modo visualização:", e);
+                            e.target.src = "/assets/images/profilefoto.png";
+                          }}
+                          onLoad={(e) => {
+                            console.log("✅ Imagem carregada com sucesso no modo visualização:", e.target.src);
+                          }}
+                        />
+                        <div className="profile-image-overlay">
+                          <button 
+                            className="btn-upload"
+                            onClick={() => setCropModalOpen(true)}
+                          >
+                            <FiUpload size={20} />
+                          </button>
+                          {user?.foto_url && (
+                            <button 
+                              className="btn-remove"
+                              onClick={removerFoto}
+                            >
+                              <FiTrash2 size={16} />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* Informações Principais */}
+                <div className="col-lg-8">
+                  <div className="profile-header">
+                    <div className="header-actions">
+                      {!editing ? (
+                        <button onClick={() => setEditing(true)} className="btn-edit">
+                          <FiEdit2 /> Editar Perfil
+                        </button>
+                      ) : (
+                        <div className="edit-actions">
+                          <button onClick={saveProfile} disabled={loading} className="btn-save">
+                            <FiSave /> {loading ? 'Salvando...' : 'Salvar'}
+                          </button>
+                          <button onClick={() => { setEditing(false); setForm(user); }} className="btn-cancel">
+                            <FiX /> Cancelar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <h1>{user.nome}</h1>
+                    <p className="user-type">{tipoUsuario === 'academia' ? 'Academia' : tipoUsuario === 'personal' ? 'Personal Trainer' : 'Aluno'}</p>
+                    
+                    <div className="contact-info">
+                      <p><Mail size={16} /> {user.email}</p>
+                      <p><Phone size={16} /> {user.numTel || user.telefone}</p>
+                    </div>
+                  </div>
+
+                  {/* Formulário de Edição */}
+                  {editing && (
+                    <div className="edit-form">
+                      <div className="form-section">
+                        <h3>Informações Pessoais</h3>
+                        
+                        <div className="form-grid">
+                          <div className="input-group">
+                            <label><User size={16} /> Nome Completo</label>
+                            <input
+                              type="text"
+                              name="nome"
+                              value={form.nome || ''}
+                              onChange={handleChange}
+                              placeholder="Nome completo"
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label><Calendar size={16} /> Data Nascimento</label>
+                            <input
+                              type="date"
+                              name="data_nascimento"
+                              value={form.data_nascimento || ''}
+                              onChange={handleChange}
+                              max={new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label><Users size={16} /> Gênero</label>
+                            <select
+                              name="genero"
+                              value={form.genero || ''}
+                              onChange={handleChange}
+                            >
+                              <option value="">Selecione</option>
+                              <option value="Masculino">Masculino</option>
+                              <option value="Feminino">Feminino</option>
+                              <option value="Outro">Outro</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Campos específicos por tipo de usuário */}
+                        {tipoUsuario === 'aluno' && renderCamposAluno()}
+                        {tipoUsuario === 'personal' && renderCamposPersonal()}
+                        {tipoUsuario === 'academia' && renderCamposAcademia()}
+                      </div>
+
+                      {/* Seção de Endereço */}
+                      <div className="form-section">
+                        <h3><MapPin size={16} /> Endereço</h3>
+                        <div className="form-grid">
+                          <div className="input-group">
+                            <label>CEP</label>
+                            <input
+                              type="text"
+                              name="cep"
+                              value={endereco.cep || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="00000-000"
+                            />
+                          </div>
+
+                          <div className="input-group full-width">
+                            <label>Logradouro</label>
+                            <input
+                              type="text"
+                              name="logradouro"
+                              value={endereco.logradouro || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="Rua, Avenida, etc."
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label>Número</label>
+                            <input
+                              type="text"
+                              name="numero"
+                              value={endereco.numero || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="Nº"
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label>Complemento</label>
+                            <input
+                              type="text"
+                              name="complemento"
+                              value={endereco.complemento || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="Apto, Casa, etc."
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label>Bairro</label>
+                            <input
+                              type="text"
+                              name="bairro"
+                              value={endereco.bairro || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="Bairro"
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label>Cidade</label>
+                            <input
+                              type="text"
+                              name="cidade"
+                              value={endereco.cidade || ''}
+                              onChange={handleEnderecoChange}
+                              placeholder="Cidade"
+                            />
+                          </div>
+
+                          <div className="input-group">
+                            <label>Estado</label>
+                            <select
+                              name="estado"
+                              value={endereco.estado || ''}
+                              onChange={handleEnderecoChange}
+                            >
+                              <option value="">Selecione</option>
+                              <option value="SP">SP - São Paulo</option>
+                              <option value="RJ">RJ - Rio de Janeiro</option>
+                              <option value="MG">MG - Minas Gerais</option>
+                              <option value="ES">ES - Espírito Santo</option>
+                              <option value="RS">RS - Rio Grande do Sul</option>
+                              <option value="PR">PR - Paraná</option>
+                              <option value="SC">SC - Santa Catarina</option>
+                              <option value="BA">BA - Bahia</option>
+                              <option value="PE">PE - Pernambuco</option>
+                              <option value="CE">CE - Ceará</option>
+                              <option value="GO">GO - Goiás</option>
+                              <option value="DF">DF - Distrito Federal</option>
+                              <option value="PA">PA - Pará</option>
+                              <option value="AM">AM - Amazonas</option>
+                              <option value="MT">MT - Mato Grosso</option>
+                              <option value="MS">MS - Mato Grosso do Sul</option>
+                              <option value="AL">AL - Alagoas</option>
+                              <option value="SE">SE - Sergipe</option>
+                              <option value="PB">PB - Paraíba</option>
+                              <option value="RN">RN - Rio Grande do Norte</option>
+                              <option value="MA">MA - Maranhão</option>
+                              <option value="PI">PI - Piauí</option>
+                              <option value="RO">RO - Rondônia</option>
+                              <option value="AC">AC - Acre</option>
+                              <option value="AP">AP - Amapá</option>
+                              <option value="RR">RR - Roraima</option>
+                              <option value="TO">TO - Tocantins</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Seção de Modalidades */}
+                      <div className="form-section">
+                        <h3>Modalidades</h3>
+                        <div className="modalidades-grid">
+                          {modalidades.map(modalidade => (
+                            <label key={modalidade.idModalidade} className="modalidade-checkbox">
+                              <input
+                                type="checkbox"
+                                checked={form.modalidades?.includes(modalidade.idModalidade.toString()) || false}
+                                onChange={() => handleModalidadeChange(modalidade.idModalidade)}
+                              />
+                              <span className="checkmark"></span>
+                              {modalidade.nome}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Visualização do Perfil (não editando) */}
+                  {!editing && (
+                    <div className="profile-view">
+                      <div className="info-section">
+                        <h3>Informações Pessoais</h3>
+                        <div className="info-grid">
+                          <div className="info-item">
+                            <strong>Nome:</strong> {user.nome}
+                          </div>
+                          <div className="info-item">
+                            <strong>Email:</strong> {user.email}
+                          </div>
+                          <div className="info-item">
+                            <strong>Telefone:</strong> {user.numTel || user.telefone}
+                          </div>
+                          {user.data_nascimento && (
+                            <div className="info-item">
+                              <strong>Data Nascimento:</strong> {new Date(user.data_nascimento).toLocaleDateString()}
+                            </div>
+                          )}
+                          {user.genero && (
+                            <div className="info-item">
+                              <strong>Gênero:</strong> {user.genero}
+                            </div>
+                          )}
+                          
+                          {/* Informações específicas por tipo */}
+                          {tipoUsuario === 'aluno' && user.altura && (
+                            <div className="info-item">
+                              <strong>Altura:</strong> {user.altura}cm
+                            </div>
+                          )}
+                          {tipoUsuario === 'aluno' && user.meta && (
+                            <div className="info-item">
+                              <strong>Meta:</strong> {user.meta}
+                            </div>
+                          )}
+                          {tipoUsuario === 'personal' && user.cref_numero && (
+                            <div className="info-item">
+                              <strong>CREF:</strong> {user.cref_numero}-{user.cref_categoria}/{user.cref_regional}
+                            </div>
+                          )}
+                          {tipoUsuario === 'academia' && user.cnpj && (
+                            <div className="info-item">
+                              <strong>CNPJ:</strong> {user.cnpj}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Endereço */}
+                      {endereco.cep && (
+                        <div className="info-section">
+                          <h3>Endereço</h3>
+                          <div className="info-item">
+                            <strong>Endereço:</strong> {endereco.logradouro}, {endereco.numero} {endereco.complemento && `- ${endereco.complemento}`}
+                          </div>
+                          <div className="info-item">
+                            <strong>Bairro:</strong> {endereco.bairro}
+                          </div>
+                          <div className="info-item">
+                            <strong>Cidade/Estado:</strong> {endereco.cidade} - {endereco.estado}
+                          </div>
+                          <div className="info-item">
+                            <strong>CEP:</strong> {endereco.cep}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Modalidades */}
+                      {form.modalidades && form.modalidades.length > 0 && (
+                        <div className="info-section">
+                          <h3>Modalidades</h3>
+                          <div className="modalidades-tags">
+                            {modalidades
+                              .filter(m => form.modalidades.includes(m.idModalidade.toString()))
+                              .map(modalidade => (
+                                <span key={modalidade.idModalidade} className="modalidade-tag">
+                                  {modalidade.nome}
+                                </span>
+                              ))
+                            }
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Plano */}
+                      <div className="info-section">
+                        <h3>Plano</h3>
+                        <div className="plan-info">
+                          <div className="info-item">
+                            <strong>Plano Atual:</strong> {user.tipoPlano || 'Básico'}
+                          </div>
+                          <button 
+                            onClick={() => setEditingPlan(true)}
+                            className="btn-change-plan"
+                          >
+                            Alterar Plano
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+
+            {/* Histórico de Treinos (apenas para alunos) */}
+            {tipoUsuario === 'aluno' && (
+              <div className="clips">
+                <div className="col-lg-12">
+                  <div className="heading-section">
+                    <h4><Dumbbell size={20} /> Histórico de Treinos (Último Mês)</h4>
+                  </div>
+                </div>
+                
+                {loadingHistorico ? (
+                  <div className="loading">Carregando histórico...</div>
+                ) : historicoTreinos.length > 0 ? (
+                  <div className="row">
+                    {historicoTreinos.map((treino, idx) => (
+                      <div className="col-lg-3 col-sm-6" key={idx}>
+                        <div 
+                          className="item treino-card"
+                          onClick={() => handleCardClick(treino)}
+                        >
+                          <div className="treino-header">
+                            <h5>{treino.nome_treino}</h5>
+                            <span className={`status ${treino.porcentagem_concluida >= 90 ? 'completed' : 'in-progress'}`}>
+                              {treino.porcentagem_concluida >= 90 ? 'Concluído' : 'Em Progresso'}
+                            </span>
+                          </div>
+                          <div className="treino-info">
+                            <p><strong>Data:</strong> {treino.data_formatada}</p>
+                            <p><strong>Tipo:</strong> {treino.tipo_display}</p>
+                            {treino.porcentagem_concluida < 100 && (
+                              <p><strong>Progresso:</strong> {treino.porcentagem_concluida}%</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state">
+                    <p>Nenhum treino recente.</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+        </div>
+      </div>
+
+      {/* Modais */}
+      {cropModalOpen && (
+        <CropModal
+          onClose={() => setCropModalOpen(false)}
+          onSave={handleSaveCrop}
+        />
+      )}
+
+      {editingPlan && (
+        <PlanModal
+          onClose={() => setEditingPlan(false)}
+          onRemovePersonal={() => {
+            setUser(prev => ({ ...prev, idPersonal: null, personal_nome: null }));
+            setForm(prev => ({ ...prev, idPersonal: null, personal_nome: null }));
+          }}
+          onChoosePlan={(planName) => {
+            setUser(prev => ({ ...prev, tipoPlano: planName }));
+            setEditingPlan(false);
+          }}
+        />
+      )}
+    </div>
   );
 }

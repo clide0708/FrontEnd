@@ -605,3 +605,71 @@
         background: #da190b;
     }
 }
+
+
+
+
+
+
+
+
+/* Estilos para o novo perfil */
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.btn-edit, .btn-save, .btn-cancel, .btn-change-plan {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: #368DD9;
+  color: white;
+}
+
+.btn-save {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-cancel {
+  background: #f44336;
+  color: white;
+  margin-left: 0.5rem;
+}
+
+.btn-change-plan {
+  background: #FF6B35;
+  color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

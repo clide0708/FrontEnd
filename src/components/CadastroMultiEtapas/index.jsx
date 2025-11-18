@@ -250,12 +250,13 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         
       case 2: // Perfil
         if (selectedUserType === 'academia') {
-          return dadosFormulario.foto_url && 
-                dadosFormulario.modalidades.length > 0;
+          return dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
         } else {
-          return dadosFormulario.data_nascimento && 
-                dadosFormulario.genero &&
-                dadosFormulario.modalidades.length > 0;
+          // 🔥 CORREÇÃO: Apenas verificar se há modalidades selecionadas
+          // Não bloquear por data_nascimento/genero nesta etapa
+          const temModalidades = dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
+          console.log('🔍 Validação etapa 2 - Modalidades:', temModalidades);
+          return temModalidades;
         }
       
       case 3: // Endereço
@@ -448,7 +449,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setLoading(true);
     
     try {
-        // 🔥 AGORA: Usar FormData para enviar arquivos - FUNCIONA PARA TODOS OS TIPOS
+        // 🔥 CORREÇÃO: Usar FormData para enviar arquivos
         const formData = new FormData();
         
         // Adicionar ID baseado no tipo de usuário
@@ -496,11 +497,18 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
             }
         }
 
+        // 🔥 CORREÇÃO CRÍTICA: Corrigir o nome da propriedade e adicionar verificação de segurança
         // Adicionar modalidades para todos os tipos
-        if (dadosFormulario.modalidades) {
-            dadosFormulario.modalidades.forEach(modalidade => {
+        if (dadosFormulario.modalidades && Array.isArray(dadosFormulario.modalidades)) {
+            dadosFormulario.modalidades.forEach((modalidade, index) => {
                 formData.append("modalidades[]", modalidade);
+                console.log('📝 Adicionando modalidade:', modalidade, 'índice:', index);
             });
+            console.log('✅ Total de modalidades enviadas:', dadosFormulario.modalidades.length);
+        } else {
+            console.log('⚠️ Nenhuma modalidade para enviar ou modalidades não é um array');
+            console.log('🔍 Tipo de modalidades:', typeof dadosFormulario.modalidades);
+            console.log('🔍 Valor de modalidades:', dadosFormulario.modalidades);
         }
 
         // 🔥 IMPORTANTE: Se já temos uma foto com URL (do upload anterior), enviar apenas a URL
@@ -512,6 +520,11 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         const endpoint = "cadastro/processar-completo";
 
         console.log('📤 Enviando dados completos do cadastro para:', selectedUserType);
+        console.log('🔍 Dados do formulário:', {
+            modalidades: dadosFormulario.modalidades,
+            temFoto: !!dadosFormulario.foto_url,
+            tipoUsuario: selectedUserType
+        });
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
             method: "POST",
@@ -538,6 +551,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         setLoading(false);
     }
   };
+  
   const handleFinalizar = () => {
     // Determinar qual etapa finaliza o cadastro inicial
     const etapaCadastroInicial = selectedUserType === "personal" ? 6 : 

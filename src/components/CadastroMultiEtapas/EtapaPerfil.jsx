@@ -11,7 +11,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   const [imagemParaCortar, setImagemParaCortar] = useState(null);
   const [salvandoImagem, setSalvandoImagem] = useState(false);
   const [carregandoModalidades, setCarregandoModalidades] = useState(false);
-
+  
   useEffect(() => {
     carregarModalidades();
   }, []);
@@ -19,14 +19,17 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   const carregarModalidades = async () => {
     setCarregandoModalidades(true);
     try {
+      // CORRIGIDO: Remove /api/ da URL
       const response = await fetch(`${import.meta.env.VITE_API_URL}cadastro/modalidades`);
       
+      // Verificar se a resposta é válida
       if (!response.ok) {
         throw new Error(`Erro HTTP: ${response.status}`);
       }
       
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
+        // Se não for JSON, usar fallback
         console.warn('Resposta não é JSON, usando modalidades padrão');
         setModalidades(getModalidadesPadrao());
         return;
@@ -42,6 +45,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       }
     } catch (error) {
       console.error('Erro ao carregar modalidades:', error);
+      // Fallback com modalidades básicas
       setModalidades(getModalidadesPadrao());
     } finally {
       setCarregandoModalidades(false);
@@ -49,6 +53,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   };
 
   const getModalidadesPadrao = () => {
+    console.log('🔄 Carregando modalidades padrão...');
     return [
       { idModalidade: 1, nome: 'Musculação' },
       { idModalidade: 2, nome: 'CrossFit' },
@@ -115,42 +120,47 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     setSalvandoImagem(true);
     
     try {
-        // 1. Cortar imagem
-        const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
-        
-        // 2. Fazer upload IMEDIATO usando UploadController
-        const formData = new FormData();
-        formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
+      // 1. Cortar imagem
+      const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
+      
+      // 2. Fazer upload IMEDIATO usando UploadController
+      const formData = new FormData();
+      formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
 
-        console.log('📤 Fazendo upload da imagem...');
+      console.log('📤 Fazendo upload da imagem...');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log('✅ Resposta do upload:', result);
+
+      if (result.success) {
+        // 3. Criar preview local para exibição imediata
+        const previewUrl = URL.createObjectURL(blob);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
-            method: 'POST',
-            body: formData,
+        // 4. Atualizar dados com URL do servidor E preview local
+        onChange({ 
+          foto_url: result.url,
+          foto_nome: result.nome_arquivo,
+          foto_data: previewUrl, // 🔥 CORREÇÃO: Adicionar preview local
+          foto_fallback: false
         });
-
-        const result = await response.json();
-        console.log('✅ Resposta do upload:', result);
-
-        if (result.success) {
-            // 3. A imagem já está salva no servidor e temos a URL!
-            onChange({ 
-                foto_url: result.url,
-                foto_nome: result.nome_arquivo
-            });
-            
-            console.log('✅ Foto salva no servidor:', result.url);
-        } else {
-            throw new Error(result.error || 'Erro no upload');
-        }
         
+        console.log('✅ Foto salva no servidor:', result.url);
+      } else {
+        throw new Error(result.error || 'Erro no upload');
+      }
+      
     } catch (error) {
-        console.error('❌ Erro ao processar imagem:', error);
-        alert('Erro ao salvar imagem: ' + error.message);
+      console.error('❌ Erro ao processar imagem:', error);
+      alert('Erro ao salvar imagem: ' + error.message);
     } finally {
-        setSalvandoImagem(false);
-        setCropModalAberto(false);
-        setImagemParaCortar(null);
+      setSalvandoImagem(false);
+      setCropModalAberto(false);
+      setImagemParaCortar(null);
     }
   };
 
@@ -175,6 +185,9 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     const novasModalidades = dados.modalidades?.includes(idModalidade.toString())
       ? dados.modalidades.filter(id => id !== idModalidade.toString())
       : [...(dados.modalidades || []), idModalidade.toString()];
+    
+    console.log('🎯 Modalidades atualizadas:', novasModalidades);
+    console.log('🔍 Tipo das modalidades:', typeof novasModalidades);
     
     onChange({ modalidades: novasModalidades });
   };
@@ -217,9 +230,9 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
         </label>
         
         <div className="foto-container">
-          {dados.foto_data ? (
+          {dados.foto_data || dados.foto_url ? ( // 🔥 CORREÇÃO: Verificar ambos
             <div className="foto-preview">
-              <img src={dados.foto_data} alt="Preview" />
+              <img src={dados.foto_data || dados.foto_url} alt="Preview" /> {/* 🔥 CORREÇÃO */}
               <button type="button" className="btn-remover-foto" onClick={removerFoto}>
                 <X size={16} />
               </button>
@@ -521,12 +534,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       {/* Modalidades */}
       <div className="modalidades-section">
         <label>
-          {tipoUsuario === 'academia' 
-            ? 'Modalidades Oferecidas *' 
-            : tipoUsuario === 'personal' 
-            ? 'Modalidades que Trabalha *' 
-            : 'Modalidades de Interesse *'
-          }
+          {tipoUsuario === 'personal' ? 'Modalidades que Trabalha' : 'Modalidades de Interesse'} *
         </label>
         
         {carregandoModalidades ? (
