@@ -86,7 +86,6 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     return idade;
   };
 
-  // 🔥 CORREÇÃO: Handler simplificado que abre o modal de corte
   const handleSelecionarFoto = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -199,12 +198,381 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     { value: 'Muito grande', label: 'Muito Grande (+600m²)' }
   ];
 
+  const renderCamposPorTipo = () => {
+    switch (tipoUsuario) {
+      case 'academia':
+        return renderCamposAcademia();
+      case 'aluno':
+        return renderCamposAluno();
+      case 'personal':
+        return renderCamposPersonal();
+      default:
+        return null;
+    }
+  };
+
+  const renderCamposAcademia = () => (
+    <>
+      <div className="form-grid">
+        {/* Tamanho da Estrutura */}
+        <div className="input-group">
+          <label>Tamanho da Estrutura</label>
+          <select
+            className="cad-input-global"
+            value={dados.tamanho_estrutura || ''}
+            onChange={(e) => onChange({ tamanho_estrutura: e.target.value })}
+          >
+            <option value="">Selecione o tamanho</option>
+            {estruturas.map(estrutura => (
+              <option key={estrutura.value} value={estrutura.value}>
+                {estrutura.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Capacidade Máxima */}
+        <div className="input-group">
+          <label>Capacidade Máxima (alunos)</label>
+          <input
+            type="number"
+            min="1"
+            max="1000"
+            placeholder="Ex: 150"
+            className="cad-input-global"
+            value={dados.capacidade_maxima || ''}
+            onChange={(e) => onChange({ capacidade_maxima: e.target.value })}
+          />
+        </div>
+
+        {/* Ano de Fundação */}
+        <div className="input-group">
+          <label>Ano de Fundação</label>
+          <input
+            type="number"
+            min="1900"
+            max={new Date().getFullYear()}
+            placeholder="Ex: 2010"
+            className="cad-input-global"
+            value={dados.ano_fundacao || ''}
+            onChange={(e) => onChange({ ano_fundacao: e.target.value })}
+          />
+        </div>
+      </div>
+
+      {/* Horários de Funcionamento */}
+      <HorariosAcademia 
+        horarios={dados.horarios || []}
+        onChange={handleHorariosChange}
+      />
+
+      {/* Diferenciais da Academia */}
+      <div className="checkbox-group full-width">
+        <label className="section-label">Diferenciais da Academia</label>
+        <div className="diferenciais-grid">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.estacionamento || false}
+              onChange={(e) => onChange({ estacionamento: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Estacionamento
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.vestiario || false}
+              onChange={(e) => onChange({ vestiario: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Vestiário
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.ar_condicionado || false}
+              onChange={(e) => onChange({ ar_condicionado: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Ar Condicionado
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.wifi || false}
+              onChange={(e) => onChange({ wifi: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Wi-Fi
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.totem_de_carregamento_usb || false}
+              onChange={(e) => onChange({ totem_de_carregamento_usb: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Totem de Carregamento USB
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.area_descanso || false}
+              onChange={(e) => onChange({ area_descanso: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Área de Descanso
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={dados.avaliacao_fisica || false}
+              onChange={(e) => onChange({ avaliacao_fisica: e.target.checked })}
+            />
+            <span className="checkmark"></span>
+            Avaliação Física
+          </label>
+        </div>
+      </div>
+
+      {/* Sobre - OPCIONAL para academia */}
+      <div className="input-group full-width">
+        <label>Sobre a Academia (Opcional)</label>
+        <textarea
+          placeholder="Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."
+          className="cad-input-global"
+          value={dados.sobre || ''}
+          onChange={(e) => onChange({ sobre: e.target.value })}
+          rows={6}
+          maxLength={1000}
+        />
+        <div className="caracteres-restantes">
+          {dados.sobre?.length || 0}/1000 caracteres
+        </div>
+      </div>
+    </>
+  );
+
+  const renderCamposAluno = () => (
+    <>
+      <div className="form-grid">
+        {/* Data de Nascimento */}
+        <div className="input-group">
+          <label>
+            <Calendar size={16} />
+            Data de Nascimento *
+          </label>
+          <input
+            type="date"
+            className="cad-input-global"
+            value={dados.data_nascimento || ''}
+            onChange={(e) => onChange({ data_nascimento: e.target.value })}
+            max={new Date().toISOString().split('T')[0]}
+            required
+          />
+          {dados.data_nascimento && (
+            <span className="idade-calculada">
+              {calcularIdade(dados.data_nascimento)} anos
+            </span>
+          )}
+        </div>
+
+        {/* Gênero */}
+        <div className="input-group">
+          <label>Gênero *</label>
+          <select
+            className="cad-input-global"
+            value={dados.genero || ''}
+            onChange={(e) => onChange({ genero: e.target.value })}
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+
+        {/* Altura (apenas alunos) */}
+        <div className="input-group">
+          <label>
+            <Ruler size={16} />
+            Altura (cm) *
+          </label>
+          <input
+            type="number"
+            min="100"
+            max="250"
+            placeholder="Ex: 175"
+            className="cad-input-global"
+            value={dados.altura || ''}
+            onChange={(e) => onChange({ altura: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Peso (apenas alunos) */}
+        <div className="input-group">
+          <label>
+            <Activity size={16} />
+            Peso (kg) *
+          </label>
+          <input
+            type="number"
+            min="30"
+            max="300"
+            step="0.1"
+            placeholder="Ex: 70.5"
+            className="cad-input-global"
+            value={dados.peso || ''}
+            onChange={(e) => onChange({ peso: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Nível de Atividade (apenas alunos) */}
+        <div className="input-group">
+          <label>
+            <Target size={16} />
+            Nível de Atividade Física *
+          </label>
+          <select
+            className="cad-input-global"
+            value={dados.treinoTipo || ''}
+            onChange={(e) => onChange({ treinoTipo: e.target.value })}
+            required
+          >
+            <option value="">Selecione seu nível</option>
+            <option value="Sedentário">Sedentário (pouco ou nenhum exercício)</option>
+            <option value="Leve">Leve (1-3 dias/semana)</option>
+            <option value="Moderado">Moderado (3-5 dias/semana)</option>
+            <option value="Intenso">Intenso (6-7 dias/semana)</option>
+          </select>
+        </div>
+
+        {/* Meta (apenas alunos) */}
+        <div className="input-group">
+          <label>
+            <Target size={16} />
+            Sua Meta Principal *
+          </label>
+          <select
+            className="cad-input-global"
+            value={dados.meta || ''}
+            onChange={(e) => onChange({ meta: e.target.value })}
+            required
+          >
+            <option value="">Selecione sua meta</option>
+            <option value="Perder peso">Perder peso</option>
+            <option value="Manter peso">Manter peso</option>
+            <option value="Ganhar peso">Ganhar peso</option>
+            <option value="Ganhar massa muscular">Ganhar massa muscular</option>
+            <option value="Melhorar condicionamento">Melhorar condicionamento</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Treinos Adaptados (apenas alunos) */}
+      <div className="checkbox-group">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={dados.treinos_adaptados || false}
+            onChange={(e) => onChange({ treinos_adaptados: e.target.checked })}
+          />
+          <span className="checkmark"></span>
+          Preciso de treinos adaptados
+        </label>
+      </div>
+    </>
+  );
+
+ const renderCamposPersonal = () => (
+    <>
+      <div className="form-grid">
+        {/* Data de Nascimento */}
+        <div className="input-group">
+          <label>
+            <Calendar size={16} />
+            Data de Nascimento *
+          </label>
+          <input
+            type="date"
+            className="cad-input-global"
+            value={dados.data_nascimento || ''}
+            onChange={(e) => onChange({ data_nascimento: e.target.value })}
+            max={new Date().toISOString().split('T')[0]}
+            required
+          />
+          {dados.data_nascimento && (
+            <span className="idade-calculada">
+              {calcularIdade(dados.data_nascimento)} anos
+            </span>
+          )}
+        </div>
+
+        {/* Gênero */}
+        <div className="input-group">
+          <label>Gênero *</label>
+          <select
+            className="cad-input-global"
+            value={dados.genero || ''}
+            onChange={(e) => onChange({ genero: e.target.value })}
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Sobre (apenas personal) */}
+      <div className="input-group full-width">
+        <label>Sobre Você (Opcional)</label>
+        <textarea
+          placeholder="Conte um pouco sobre sua experiência, metodologia de trabalho, especializações..."
+          className="cad-input-global"
+          value={dados.sobre || ''}
+          onChange={(e) => onChange({ sobre: e.target.value })}
+          rows={4}
+          maxLength={500}
+        />
+        <div className="caracteres-restantes">
+          {dados.sobre?.length || 0}/500 caracteres
+        </div>
+      </div>
+
+      {/* Treinos Adaptados (apenas personal) */}
+      <div className="checkbox-group">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={dados.treinos_adaptados || false}
+            onChange={(e) => onChange({ treinos_adaptados: e.target.checked })}
+          />
+          <span className="checkmark"></span>
+          Trabalho com treinos adaptados
+        </label>
+      </div>
+    </>
+  );
+
   return (
     <div className="etapa-perfil">
       <h2>{tipoUsuario === 'academia' ? 'Perfil da Academia' : 'Seu Perfil'}</h2>
       <p>{tipoUsuario === 'academia' ? 'Complete as informações da sua academia' : 'Complete suas informações pessoais'}</p>
 
-      {/* Modal de Corte - AGORA FUNCIONA CORRETAMENTE */}
+      {/* Modal de Corte */}
       {cropModalAberto && (
         <CropModal
           imagem={imagemParaCortar}
@@ -217,7 +585,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
         />
       )}
 
-      {/* 🔥 CORREÇÃO: Upload de Foto Simplificado */}
+      {/* Upload de Foto */}
       <div className="foto-perfil-section">
         <label className="foto-label">
           {tipoUsuario === 'academia' ? <Building size={20} /> : <Users size={20} />}
@@ -242,7 +610,6 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
                     : 'Clique para adicionar foto'
                   }
                 </span>
-                {/* 🔥 INPUT DIRETO QUE ABRE O MODAL DE CORTE */}
                 <input
                   type="file"
                   accept="image/*"
@@ -259,342 +626,10 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
         </p>
       </div>
 
-      {/* Formulário específico para academia */}
-      {tipoUsuario === 'academia' && (
-        <>
-          <div className="form-grid">
-            {/* Tamanho da Estrutura */}
-            <div className="input-group">
-              <label>Tamanho da Estrutura</label>
-              <select
-                className="cad-input-global"
-                value={dados.tamanho_estrutura || ''}
-                onChange={(e) => onChange({ tamanho_estrutura: e.target.value })}
-              >
-                <option value="">Selecione o tamanho</option>
-                {estruturas.map(estrutura => (
-                  <option key={estrutura.value} value={estrutura.value}>
-                    {estrutura.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+      {/* Campos específicos por tipo de usuário */}
+      {renderCamposPorTipo()}
 
-            {/* Capacidade Máxima */}
-            <div className="input-group">
-              <label>Capacidade Máxima (alunos)</label>
-              <input
-                type="number"
-                min="1"
-                max="1000"
-                placeholder="Ex: 150"
-                className="cad-input-global"
-                value={dados.capacidade_maxima || ''}
-                onChange={(e) => onChange({ capacidade_maxima: e.target.value })}
-              />
-            </div>
-
-            {/* Ano de Fundação */}
-            <div className="input-group">
-              <label>Ano de Fundação</label>
-              <input
-                type="number"
-                min="1900"
-                max={new Date().getFullYear()}
-                placeholder="Ex: 2010"
-                className="cad-input-global"
-                value={dados.ano_fundacao || ''}
-                onChange={(e) => onChange({ ano_fundacao: e.target.value })}
-              />
-            </div>
-          </div>
-
-          {/* Horários de Funcionamento */}
-          <HorariosAcademia 
-            horarios={dados.horarios || []}
-            onChange={handleHorariosChange}
-          />
-
-          {/* Diferenciais da Academia */}
-          <div className="checkbox-group full-width">
-            <label className="section-label">Diferenciais da Academia</label>
-            <div className="diferenciais-grid">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.estacionamento || false}
-                  onChange={(e) => onChange({ estacionamento: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Estacionamento
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.vestiario || false}
-                  onChange={(e) => onChange({ vestiario: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Vestiário
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.ar_condicionado || false}
-                  onChange={(e) => onChange({ ar_condicionado: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Ar Condicionado
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.wifi || false}
-                  onChange={(e) => onChange({ wifi: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Wi-Fi
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.totem_de_carregamento_usb || false}
-                  onChange={(e) => onChange({ totem_de_carregamento_usb: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Totem de Carregamento USB
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.area_descanso || false}
-                  onChange={(e) => onChange({ area_descanso: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Área de Descanso
-              </label>
-
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={dados.avaliacao_fisica || false}
-                  onChange={(e) => onChange({ avaliacao_fisica: e.target.checked })}
-                />
-                <span className="checkmark"></span>
-                Avaliação Física
-              </label>
-            </div>
-          </div>
-
-          {/* Sobre - OPCIONAL para academia */}
-          <div className="input-group full-width">
-            <label>Sobre a Academia (Opcional)</label>
-            <textarea
-              placeholder="Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."
-              className="cad-input-global"
-              value={dados.sobre || ''}
-              onChange={(e) => onChange({ sobre: e.target.value })}
-              rows={6}
-              maxLength={1000}
-            />
-            <div className="caracteres-restantes">
-              {dados.sobre?.length || 0}/1000 caracteres
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Apenas para alunos e personais - manter campos existentes */}
-      {tipoUsuario !== 'academia' && (
-        <>
-          <div className="form-grid">
-            {/* Data de Nascimento */}
-            <div className="input-group">
-              <label>
-                <Calendar size={16} />
-                Data de Nascimento *
-              </label>
-              <input
-                type="date"
-                className="cad-input-global"
-                value={dados.data_nascimento || ''}
-                onChange={(e) => onChange({ data_nascimento: e.target.value })}
-                max={new Date().toISOString().split('T')[0]}
-                required
-              />
-              {dados.data_nascimento && (
-                <span className="idade-calculada">
-                  {calcularIdade(dados.data_nascimento)} anos
-                </span>
-              )}
-            </div>
-
-            {/* Gênero */}
-            <div className="input-group">
-              <label>Gênero *</label>
-              <select
-                className="cad-input-global"
-                value={dados.genero || ''}
-                onChange={(e) => onChange({ genero: e.target.value })}
-                required
-              >
-                <option value="">Selecione</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Feminino">Feminino</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-
-            {/* Altura (apenas alunos) */}
-            {tipoUsuario === 'aluno' && (
-              <div className="input-group">
-                <label>
-                  <Ruler size={16} />
-                  Altura (cm)
-                </label>
-                <input
-                  type="number"
-                  min="100"
-                  max="250"
-                  placeholder="Ex: 175"
-                  className="cad-input-global"
-                  value={dados.altura || ''}
-                  onChange={(e) => onChange({ altura: e.target.value })}
-                />
-              </div>
-            )}
-
-            <div className="input-group">
-              <label>
-                <Activity size={16} />
-                Peso (kg) *
-              </label>
-              <input
-                type="number"
-                min="30"
-                max="300"
-                step="0.1"
-                placeholder="Ex: 70.5"
-                className="cad-input-global"
-                value={dados.peso || ''}
-                onChange={(e) => onChange({ peso: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="input-group">
-              <label>
-                <Target size={16} />
-                Nível de Atividade Física *
-              </label>
-              <select
-                className="cad-input-global"
-                value={dados.treinoTipo || ''}
-                onChange={(e) => onChange({ treinoTipo: e.target.value })}
-                required
-              >
-                <option value="">Selecione seu nível</option>
-                <option value="Sedentário">Sedentário (pouco ou nenhum exercício)</option>
-                <option value="Leve">Leve (1-3 dias/semana)</option>
-                <option value="Moderado">Moderado (3-5 dias/semana)</option>
-                <option value="Intenso">Intenso (6-7 dias/semana)</option>
-              </select>
-            </div>
-
-            {/* Meta (apenas alunos) */}
-            {tipoUsuario === 'aluno' && (
-              <div className="input-group">
-                <label>
-                  <Target size={16} />
-                  Sua Meta Principal *
-                </label>
-                <select
-                  className="cad-input-global"
-                  value={dados.meta || ''}
-                  onChange={(e) => onChange({ meta: e.target.value })}
-                  required
-                >
-                  <option value="">Selecione sua meta</option>
-                  <option value="Perder peso">Perder peso</option>
-                  <option value="Manter peso">Manter peso</option>
-                  <option value="Ganhar peso">Ganhar peso</option>
-                  <option value="Ganhar massa muscular">Ganhar massa muscular</option>
-                  <option value="Melhorar condicionamento">Melhorar condicionamento</option>
-                  <option value="Outro">Outro</option>
-                </select>
-              </div>
-            )}
-          </div>
-
-            {/* {(dados.peso && dados.altura && dados.genero && dados.data_nascimento) && (
-              <div className="calculos-section">
-                <label> <strong> 📊 Seus Dados Calculados </strong></label>
-                <div className="calculos-grid">
-                  <div className="calculo-item">
-                    <strong>IMC:</strong> 
-                    <span>{calcularIMC(dados.peso, dados.altura, dados.genero)}</span>
-                  </div>
-                  <div className="calculo-item">
-                    <strong>Meta Calórica:</strong> 
-                    <span>{calcularMetaCalorica(
-                      dados.peso, 
-                      dados.altura, 
-                      calcularIdade(dados.data_nascimento), 
-                      dados.genero, 
-                      dados.treinoTipo, 
-                      dados.meta
-                    )} kcal</span>
-                  </div>
-                  <div className="calculo-item">
-                    <strong>Água Recomendada:</strong> 
-                    <span>{consumoAgua(dados.peso, dados.treinoTipo)}</span>
-                  </div>
-                </div>
-              </div>
-            )} */}
-
-          {/* Sobre (apenas personal) */}
-          {tipoUsuario === 'personal' && (
-            <div className="input-group full-width">
-              <label>Sobre Você</label>
-              <textarea
-                placeholder="Conte um pouco sobre sua experiência, metodologia de trabalho, especializações..."
-                className="cad-input-global"
-                value={dados.sobre || ''}
-                onChange={(e) => onChange({ sobre: e.target.value })}
-                rows={4}
-                maxLength={500}
-              />
-              <div className="caracteres-restantes">
-                {dados.sobre?.length || 0}/500 caracteres
-              </div>
-            </div>
-          )}
-
-          {/* Treinos Adaptados (apenas alunos e personais) */}
-          <div className="checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={dados.treinos_adaptados || false}
-                onChange={(e) => onChange({ treinos_adaptados: e.target.checked })}
-              />
-              <span className="checkmark"></span>
-              {tipoUsuario === 'personal' 
-                ? 'Trabalho com treinos adaptados' 
-                : 'Preciso de treinos adaptados'
-              }
-            </label>
-          </div>
-        </>
-      )}
-
-      {/* Modalidades */}
+      {/* Modalidades (todos os tipos) */}
       <div className="modalidades-section">
         <label>
           {tipoUsuario === 'personal' ? 'Modalidades que Trabalha' : 'Modalidades de Interesse'} *

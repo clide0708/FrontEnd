@@ -237,62 +237,53 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
 
   const validarEtapa = (etapa) => {
     switch (etapa) {
-       case 1: // Dados pessoais
+      case 1: // Dados pessoais
         if (selectedUserType === 'academia') {
           return dadosFormulario.nome_fantasia && 
                 dadosFormulario.cnpj && 
                 dadosFormulario.razao_social &&
                 dadosFormulario.numTel;
         } else {
+          // Aluno e Personal: nome, CPF, RG, telefone
           return dadosFormulario.nome && 
                 dadosFormulario.cpf && 
                 dadosFormulario.rg && 
                 dadosFormulario.numTel;
         }
         
-      case 2: // Perfil
+      case 2: // Perfil - VALIDAÇÕES ESPECÍFICAS POR TIPO
         if (selectedUserType === 'academia') {
+          // Academia: apenas modalidades obrigatórias
           return dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
         } else if (selectedUserType === 'aluno') {
-          // 🔥 VALIDAÇÃO EXPANDIDA PARA ALUNO
+          // Aluno: data_nascimento, genero, altura, peso, treinoTipo, meta, modalidades
           const camposObrigatorios = dadosFormulario.data_nascimento && 
                                     dadosFormulario.genero && 
                                     dadosFormulario.altura && 
-                                    dadosFormulario.peso && // 🔥 NOVO
-                                    dadosFormulario.treinoTipo && // 🔥 NOVO
+                                    dadosFormulario.peso && 
+                                    dadosFormulario.treinoTipo && 
                                     dadosFormulario.meta;
           const temModalidades = dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
           
-          console.log('🔍 Validação etapa 2 - Aluno:', {
-            camposObrigatorios,
-            temModalidades,
-            data_nascimento: dadosFormulario.data_nascimento,
-            genero: dadosFormulario.genero,
-            altura: dadosFormulario.altura,
-            peso: dadosFormulario.peso,
-            treinoTipo: dadosFormulario.treinoTipo,
-            meta: dadosFormulario.meta,
-            modalidades: dadosFormulario.modalidades
-          });
-          
           return camposObrigatorios && temModalidades;
         } else {
-          // Personal trainer
+          // Personal: data_nascimento, genero, modalidades
           const camposObrigatorios = dadosFormulario.data_nascimento && 
                                     dadosFormulario.genero;
           const temModalidades = dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
           return camposObrigatorios && temModalidades;
         }
       
-      case 3: // Endereço
+      case 3: // Endereço (todos os tipos)
         return dadosFormulario.cep && 
               dadosFormulario.cidade && 
               dadosFormulario.estado;
       
-      case 4: // Academia (opcional para aluno/personal)
+      case 4: // Academia (opcional para aluno/personal), Login para academia
         if (selectedUserType === "aluno" || selectedUserType === "personal") {
           return true; // Academia é opcional, sempre válida
         } else {
+          // Para academia: valida login
           return dadosFormulario.email && 
                 dadosFormulario.senha && 
                 dadosFormulario.senha === dadosFormulario.confirmarSenha &&
@@ -485,6 +476,28 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         alert(`Por favor, preencha os seguintes campos obrigatórios:\n${camposFaltantes.join('\n')}`);
         return false;
       }
+    } else if (selectedUserType === "personal") {
+      // 🔥 CORREÇÃO: Para personal, apenas estes campos são obrigatórios
+      const camposObrigatorios = [
+        { campo: dadosFormulario.data_nascimento, nome: "Data de Nascimento" },
+        { campo: dadosFormulario.genero, nome: "Gênero" },
+        { campo: dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0, nome: "Modalidades" }
+      ];
+
+      const camposFaltantes = camposObrigatorios
+        .filter(item => !item.campo)
+        .map(item => item.nome);
+
+      if (camposFaltantes.length > 0) {
+        alert(`Por favor, preencha os seguintes campos obrigatórios:\n${camposFaltantes.join('\n')}`);
+        return false;
+      }
+    } else if (selectedUserType === "academia") {
+      // Para academia, apenas modalidades são obrigatórias
+      if (!dadosFormulario.modalidades || dadosFormulario.modalidades.length === 0) {
+        alert("Por favor, selecione pelo menos uma modalidade.");
+        return false;
+      }
     }
     
     return true;
@@ -496,7 +509,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         return;
     }
 
-    // 🔥 VALIDAÇÃO ANTES DE ENVIAR
+    // 🔥 VALIDAÇÃO ESPECÍFICA POR TIPO DE USUÁRIO
     if (!validarDadosCompletos()) {
       setLoading(false);
       return;
@@ -505,128 +518,104 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setLoading(true);
     
     try {
-        // 🔥 CORREÇÃO: Verificar se os campos obrigatórios estão preenchidos
-        if (!dadosFormulario.peso) {
-            alert("Por favor, preencha o campo Peso.");
-            setLoading(false);
-            return;
-        }
-        
-        if (!dadosFormulario.treinoTipo) {
-            alert("Por favor, selecione o Nível de Atividade.");
-            setLoading(false);
-            return;
-        }
+      // 🔥 CORREÇÃO: Remover validações genéricas de peso/treinoTipo
+      // Esses campos só são obrigatórios para alunos
+      
+      // 🔥 CORREÇÃO: Usar FormData para enviar arquivos
+      const formData = new FormData();
+      
+      // Adicionar ID baseado no tipo de usuário
+      const idField = selectedUserType === "aluno" ? "idAluno" : 
+                    selectedUserType === "personal" ? "idPersonal" : "idAcademia";
+      formData.append(idField, usuarioCadastrado.id);
+      
+      // 🔥 CORREÇÃO: Adicionar campos específicos por tipo de usuário
+      if (selectedUserType === "aluno") {
+          // Campos obrigatórios apenas para ALUNO
+          formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
+          formData.append("genero", dadosFormulario.genero || '');
+          formData.append("altura", dadosFormulario.altura || '');
+          formData.append("peso", dadosFormulario.peso || '');
+          formData.append("meta", dadosFormulario.meta || '');
+          formData.append("treinoTipo", dadosFormulario.treinoTipo || '');
+          formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
+      } else if (selectedUserType === "personal") {
+          // Campos para PERSONAL - SEM peso, altura, meta, treinoTipo
+          formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
+          formData.append("genero", dadosFormulario.genero || '');
+          formData.append("sobre", dadosFormulario.sobre || '');
+          formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
+      } else if (selectedUserType === "academia") {
+          // Campos para academia
+          formData.append("sobre", dadosFormulario.sobre || '');
+          formData.append("tamanho_estrutura", dadosFormulario.tamanho_estrutura || '');
+          formData.append("capacidade_maxima", dadosFormulario.capacidade_maxima || '');
+          formData.append("ano_fundacao", dadosFormulario.ano_fundacao || '');
+          formData.append("estacionamento", dadosFormulario.estacionamento ? '1' : '0');
+          formData.append("vestiario", dadosFormulario.vestiario ? '1' : '0');
+          formData.append("ar_condicionado", dadosFormulario.ar_condicionado ? '1' : '0');
+          formData.append("wifi", dadosFormulario.wifi ? '1' : '0');
+          formData.append("totem_de_carregamento_usb", dadosFormulario.totem_de_carregamento_usb ? '1' : '0');
+          formData.append("area_descanso", dadosFormulario.area_descanso ? '1' : '0');
+          formData.append("avaliacao_fisica", dadosFormulario.avaliacao_fisica ? '1' : '0');
+          
+          // Horários da academia
+          if (dadosFormulario.horarios) {
+              dadosFormulario.horarios.forEach((horario, index) => {
+                  formData.append(`horarios[${index}][dia_semana]`, horario.dia_semana);
+                  formData.append(`horarios[${index}][aberto_24h]`, horario.aberto_24h ? '1' : '0');
+                  formData.append(`horarios[${index}][horario_abertura]`, horario.horario_abertura || '');
+                  formData.append(`horarios[${index}][horario_fechamento]`, horario.horario_fechamento || '');
+                  formData.append(`horarios[${index}][fechado]`, horario.fechado ? '1' : '0');
+              });
+          }
+      }
 
-        // 🔥 CORREÇÃO: Usar FormData para enviar arquivos
-        const formData = new FormData();
-        
-        // Adicionar ID baseado no tipo de usuário
-        const idField = selectedUserType === "aluno" ? "idAluno" : 
-                      selectedUserType === "personal" ? "idPersonal" : "idAcademia";
-        formData.append(idField, usuarioCadastrado.id);
-        
-        // 🔥 CORREÇÃO CRÍTICA: Adicionar TODOS os campos obrigatórios para aluno
-        if (selectedUserType === "aluno") {
-            // Campos obrigatórios
-            formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
-            formData.append("genero", dadosFormulario.genero || '');
-            formData.append("altura", dadosFormulario.altura || '');
-            formData.append("peso", dadosFormulario.peso || ''); // 🔥 AGORA ENVIANDO
-            formData.append("meta", dadosFormulario.meta || '');
-            formData.append("treinoTipo", dadosFormulario.treinoTipo || ''); // 🔥 AGORA ENVIANDO
-            formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
-        } else if (selectedUserType === "personal") {
-            // Campos para personal
-            formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
-            formData.append("genero", dadosFormulario.genero || '');
-            formData.append("sobre", dadosFormulario.sobre || '');
-            formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
-        } else if (selectedUserType === "academia") {
-            // Campos para academia
-            formData.append("sobre", dadosFormulario.sobre || '');
-            formData.append("tamanho_estrutura", dadosFormulario.tamanho_estrutura || '');
-            formData.append("capacidade_maxima", dadosFormulario.capacidade_maxima || '');
-            formData.append("ano_fundacao", dadosFormulario.ano_fundacao || '');
-            formData.append("estacionamento", dadosFormulario.estacionamento ? '1' : '0');
-            formData.append("vestiario", dadosFormulario.vestiario ? '1' : '0');
-            formData.append("ar_condicionado", dadosFormulario.ar_condicionado ? '1' : '0');
-            formData.append("wifi", dadosFormulario.wifi ? '1' : '0');
-            formData.append("totem_de_carregamento_usb", dadosFormulario.totem_de_carregamento_usb ? '1' : '0');
-            formData.append("area_descanso", dadosFormulario.area_descanso ? '1' : '0');
-            formData.append("avaliacao_fisica", dadosFormulario.avaliacao_fisica ? '1' : '0');
-            
-            // Horários da academia
-            if (dadosFormulario.horarios) {
-                dadosFormulario.horarios.forEach((horario, index) => {
-                    formData.append(`horarios[${index}][dia_semana]`, horario.dia_semana);
-                    formData.append(`horarios[${index}][aberto_24h]`, horario.aberto_24h ? '1' : '0');
-                    formData.append(`horarios[${index}][horario_abertura]`, horario.horario_abertura || '');
-                    formData.append(`horarios[${index}][horario_fechamento]`, horario.horario_fechamento || '');
-                    formData.append(`horarios[${index}][fechado]`, horario.fechado ? '1' : '0');
-                });
-            }
-        }
+      // Adicionar modalidades para todos os tipos
+      if (dadosFormulario.modalidades && Array.isArray(dadosFormulario.modalidades)) {
+          dadosFormulario.modalidades.forEach((modalidade, index) => {
+              formData.append("modalidades[]", modalidade);
+          });
+      }
 
-        // 🔥 CORREÇÃO CRÍTICA: Corrigir o nome da propriedade e adicionar verificação de segurança
-        // Adicionar modalidades para todos os tipos
-        if (dadosFormulario.modalidades && Array.isArray(dadosFormulario.modalidades)) {
-            dadosFormulario.modalidades.forEach((modalidade, index) => {
-                formData.append("modalidades[]", modalidade);
-                console.log('📝 Adicionando modalidade:', modalidade, 'índice:', index);
-            });
-            console.log('✅ Total de modalidades enviadas:', dadosFormulario.modalidades.length);
-        } else {
-            console.log('⚠️ Nenhuma modalidade para enviar ou modalidades não é um array');
-            console.log('🔍 Tipo de modalidades:', typeof dadosFormulario.modalidades);
-            console.log('🔍 Valor de modalidades:', dadosFormulario.modalidades);
-        }
+      // Se já temos uma foto com URL (do upload anterior), enviar apenas a URL
+      if (dadosFormulario.foto_url) {
+          formData.append("foto_url", dadosFormulario.foto_url);
+      }
 
-        // 🔥 IMPORTANTE: Se já temos uma foto com URL (do upload anterior), enviar apenas a URL
-        if (dadosFormulario.foto_url) {
-            formData.append("foto_url", dadosFormulario.foto_url);
-        }
+      // 🔥 DEBUG: Log de todos os dados sendo enviados
+      console.log('🎯 DADOS COMPLETOS SENDO ENVIADOS PARA:', selectedUserType);
+      console.log('📊 Campos específicos:', {
+          data_nascimento: dadosFormulario.data_nascimento,
+          genero: dadosFormulario.genero,
+          altura: selectedUserType === 'aluno' ? dadosFormulario.altura : 'N/A para personal',
+          peso: selectedUserType === 'aluno' ? dadosFormulario.peso : 'N/A para personal',
+          treinoTipo: selectedUserType === 'aluno' ? dadosFormulario.treinoTipo : 'N/A para personal',
+          meta: selectedUserType === 'aluno' ? dadosFormulario.meta : 'N/A para personal',
+          sobre: selectedUserType === 'personal' ? dadosFormulario.sobre : 'N/A para aluno'
+      });
 
-        // 🔥 DEBUG: Log de todos os dados sendo enviados
-        console.log('🎯 DADOS COMPLETOS SENDO ENVIADOS:');
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
+      // 🔥 USAR ENDPOINT ÚNICO PARA TODOS OS TIPOS
+      const endpoint = "cadastro/processar-completo";
 
-        // 🔥 USAR ENDPOINT ÚNICO PARA TODOS OS TIPOS
-        const endpoint = "cadastro/processar-completo";
+      const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+          method: "POST",
+          body: formData,
+      });
 
-        console.log('📤 Enviando dados completos do cadastro para:', selectedUserType);
-        console.log('🔍 Dados do formulário:', {
-            data_nascimento: dadosFormulario.data_nascimento,
-            genero: dadosFormulario.genero,
-            altura: dadosFormulario.altura,
-            peso: dadosFormulario.peso, // 🔥 AGORA AQUI
-            treinoTipo: dadosFormulario.treinoTipo, // 🔥 AGORA AQUI
-            meta: dadosFormulario.meta,
-            modalidades: dadosFormulario.modalidades,
-            temFoto: !!dadosFormulario.foto_url,
-            tipoUsuario: selectedUserType
-        });
+      const resultado = await response.json();
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-            method: "POST",
-            body: formData,
-        });
-
-        const resultado = await response.json();
-
-        if (resultado.success) {
-            console.log('✅ Cadastro completo realizado para:', selectedUserType);
-            navigate("/login", {
-                state: {
-                    message: "Cadastro realizado com sucesso! Faça login para continuar.",
-                    email: dadosFormulario.email
-                }
-            });
-        } else {
-            alert(resultado.error || "Erro ao completar cadastro");
-        }
+      if (resultado.success) {
+          console.log('✅ Cadastro completo realizado para:', selectedUserType);
+          navigate("/login", {
+              state: {
+                  message: "Cadastro realizado com sucesso! Faça login para continuar.",
+                  email: dadosFormulario.email
+              }
+          });
+      } else {
+          alert(resultado.error || "Erro ao completar cadastro");
+      }
     } catch (error) {
         console.error("Erro ao completar cadastro:", error);
         alert("Erro ao completar cadastro. Tente novamente.");

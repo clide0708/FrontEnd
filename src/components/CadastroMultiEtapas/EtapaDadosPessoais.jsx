@@ -193,7 +193,7 @@ const EtapaDadosPessoais = ({ dados, onChange, tipoUsuario }) => {
       </div>
     );
   } else {
-    // Para ALUNO e PERSONAL
+    // Para ALUNO e PERSONAL - APENAS documentos e telefone
     return (
       <div className="etapa-dados-pessoais">
         <h2>Dados Pessoais</h2>
@@ -232,7 +232,7 @@ const EtapaDadosPessoais = ({ dados, onChange, tipoUsuario }) => {
             {erros.cpf && <span className="erro">{erros.cpf}</span>}
           </div>
 
-          {/* RG COM MÁSCARA */}
+          {/* RG */}
           <div className="input-group">
             <label>RG *</label>
             <input
@@ -246,7 +246,7 @@ const EtapaDadosPessoais = ({ dados, onChange, tipoUsuario }) => {
             {erros.rg && <span className="erro">{erros.rg}</span>}
           </div>
 
-          {/* Telefone CORRIGIDO */}
+          {/* Telefone */}
           <div className="input-group">
             <label>
               <Phone size={16} />
@@ -263,6 +263,8 @@ const EtapaDadosPessoais = ({ dados, onChange, tipoUsuario }) => {
             {erros.numTel && <span className="erro">{erros.numTel}</span>}
           </div>
         </div>
+        
+        {/* NOTA: Data de nascimento, gênero, etc. foram movidos para EtapaPerfil */}
       </div>
     );
   }

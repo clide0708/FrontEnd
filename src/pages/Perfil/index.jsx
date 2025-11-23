@@ -847,6 +847,140 @@ export default function Profile() {
             placeholder="(00) 00000-0000"
           />
         </div>
+
+        <div className="input-group">
+          <label>Tamanho da Estrutura</label>
+          <select
+            name="tamanho_estrutura"
+            value={form.tamanho_estrutura || ''}
+            onChange={handleChange}
+            disabled={!editing}
+          >
+            <option value="">Selecione o tamanho</option>
+            <option value="Pequena">Pequena (até 100m²)</option>
+            <option value="Média">Média (100-300m²)</option>
+            <option value="Grande">Grande (300-600m²)</option>
+            <option value="Muito grande">Muito Grande (+600m²)</option>
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label>Capacidade Máxima (alunos)</label>
+          <input
+            type="number"
+            name="capacidade_maxima"
+            value={form.capacidade_maxima || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Ex: 150"
+            min="1"
+            max="1000"
+          />
+        </div>
+
+        <div className="input-group">
+          <label>Ano de Fundação</label>
+          <input
+            type="number"
+            name="ano_fundacao"
+            value={form.ano_fundacao || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Ex: 2010"
+            min="1900"
+            max={new Date().getFullYear()}
+          />
+        </div>
+      </div>
+
+      {/* Diferenciais da Academia */}
+      <div className="checkbox-group full-width">
+        <label className="section-label">Diferenciais da Academia</label>
+        <div className="diferenciais-grid">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="estacionamento"
+              checked={form.estacionamento || false}
+              onChange={(e) => setForm(prev => ({ ...prev, estacionamento: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Estacionamento
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="vestiario"
+              checked={form.vestiario || false}
+              onChange={(e) => setForm(prev => ({ ...prev, vestiario: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Vestiário
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="ar_condicionado"
+              checked={form.ar_condicionado || false}
+              onChange={(e) => setForm(prev => ({ ...prev, ar_condicionado: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Ar Condicionado
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="wifi"
+              checked={form.wifi || false}
+              onChange={(e) => setForm(prev => ({ ...prev, wifi: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Wi-Fi
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="totem_de_carregamento_usb"
+              checked={form.totem_de_carregamento_usb || false}
+              onChange={(e) => setForm(prev => ({ ...prev, totem_de_carregamento_usb: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Totem de Carregamento USB
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="area_descanso"
+              checked={form.area_descanso || false}
+              onChange={(e) => setForm(prev => ({ ...prev, area_descanso: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Área de Descanso
+          </label>
+
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="avaliacao_fisica"
+              checked={form.avaliacao_fisica || false}
+              onChange={(e) => setForm(prev => ({ ...prev, avaliacao_fisica: e.target.checked }))}
+              disabled={!editing}
+            />
+            <span className="checkmark"></span>
+            Avaliação Física
+          </label>
+        </div>
       </div>
 
       <div className="input-group full-width">
@@ -856,9 +990,13 @@ export default function Profile() {
           value={form.sobre || ''}
           onChange={handleChange}
           disabled={!editing}
-          placeholder="Conte sobre sua academia: equipamentos, metodologia, diferenciais..."
-          rows={4}
+          placeholder="Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."
+          rows={6}
+          maxLength={1000}
         />
+        <div className="caracteres-restantes">
+          {form.sobre?.length || 0}/1000 caracteres
+        </div>
       </div>
     </>
   );
