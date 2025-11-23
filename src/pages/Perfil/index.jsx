@@ -422,13 +422,13 @@ export default function Profile() {
         
         // Dados principais
         nome: form.nome,
-        data_nascimento: form.data_nascimento,
-        genero: form.genero,
-        numTel: form.numTel,
+        numTel: tipoUsuario === 'academia' ? form.telefone : form.numTel,
         foto_url: form.foto_url,
         
-        // 🔥 CORREÇÃO: Campos específicos para aluno
+        // 🔥 CORREÇÃO: Campos específicos para cada tipo
         ...(tipoUsuario === 'aluno' && {
+          data_nascimento: form.data_nascimento,
+          genero: form.genero,
           altura: form.altura,
           peso: form.peso,
           meta: form.meta,
@@ -438,6 +438,8 @@ export default function Profile() {
         
         // Campos para personal
         ...(tipoUsuario === 'personal' && {
+          data_nascimento: form.data_nascimento,
+          genero: form.genero,
           sobre: form.sobre,
           treinos_adaptados: form.treinos_adaptados || false,
           cref_numero: form.cref_numero,
@@ -445,8 +447,11 @@ export default function Profile() {
           cref_regional: form.cref_regional
         }),
         
-        // Campos para academia
+        // 🔥 CORREÇÃO: Campos para academia
         ...(tipoUsuario === 'academia' && {
+          nome_fantasia: form.nome_fantasia,
+          razao_social: form.razao_social,
+          telefone: form.telefone,
           sobre: form.sobre,
           tamanho_estrutura: form.tamanho_estrutura,
           capacidade_maxima: form.capacidade_maxima,
@@ -462,7 +467,10 @@ export default function Profile() {
         
         // 🔥 CORREÇÃO: Modalidades como array de IDs
         modalidades: Array.isArray(form.modalidades) 
-          ? form.modalidades.map(m => typeof m === 'object' ? m.idModalidade : m)
+          ? form.modalidades.map(m => {
+              // Se é objeto, pegar idModalidade, se é número, usar direto
+              return typeof m === 'object' ? m.idModalidade : m;
+            })
           : [],
         
         // Endereço
@@ -475,15 +483,11 @@ export default function Profile() {
           cidade: endereco.cidade || '',
           estado: endereco.estado || '',
           pais: endereco.pais || 'Brasil'
-        },
-        
-        // 🔥 CORREÇÃO: Academia para alunos e personais
-        ...(tipoUsuario !== 'academia' && {
-          idAcademia: form.idAcademia || null
-        })
+        }
       };
 
       console.log('📤 Dados sendo enviados para atualização:', dadosAtualizacao);
+      console.log('🎯 Modalidades sendo enviadas:', dadosAtualizacao.modalidades);
 
       const result = await perfilService.atualizarPerfilCompleto(dadosAtualizacao);
       
@@ -491,10 +495,11 @@ export default function Profile() {
         console.log('✅ Perfil atualizado com sucesso');
         
         // Recarregar dados do usuário
-        const userData = await perfilService.getPerfilCompleto(user.id, tipoUsuario);
+        const userData = await perfilService.getPerfilCompleto(idUsuario, tipoUsuario);
         if (userData?.success) {
           setUser(userData.data);
           setForm(userData.data);
+          console.log('✅ Dados recarregados:', userData.data);
         }
         
         setEditing(false);
@@ -807,9 +812,11 @@ export default function Profile() {
             name="cnpj"
             value={form.cnpj || ''}
             onChange={handleChange}
-            disabled={!editing}
-            placeholder="00.000.000/0000-00"
+            disabled={true} // CNPJ não pode ser editado
+            placeholder={form.cnpj || "00.000.000/0000-00"}
+            className="disabled-field"
           />
+          <small className="field-note">CNPJ não pode ser alterado</small>
         </div>
 
         <div className="input-group">
@@ -820,7 +827,7 @@ export default function Profile() {
             value={form.nome_fantasia || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder="Nome fantasia da academia"
+            placeholder={form.nome_fantasia || "Nome fantasia da academia"}
           />
         </div>
 
@@ -832,7 +839,7 @@ export default function Profile() {
             value={form.razao_social || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder="Razão social completa"
+            placeholder={form.razao_social || "Razão social completa"}
           />
         </div>
 
@@ -844,7 +851,7 @@ export default function Profile() {
             value={form.telefone || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder="(00) 00000-0000"
+            placeholder={form.telefone || "(00) 00000-0000"}
           />
         </div>
 
@@ -856,7 +863,7 @@ export default function Profile() {
             onChange={handleChange}
             disabled={!editing}
           >
-            <option value="">Selecione o tamanho</option>
+            <option value="">{form.tamanho_estrutura || "Selecione o tamanho"}</option>
             <option value="Pequena">Pequena (até 100m²)</option>
             <option value="Média">Média (100-300m²)</option>
             <option value="Grande">Grande (300-600m²)</option>
@@ -872,7 +879,7 @@ export default function Profile() {
             value={form.capacidade_maxima || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder="Ex: 150"
+            placeholder={form.capacidade_maxima?.toString() || "Ex: 150"}
             min="1"
             max="1000"
           />
@@ -886,7 +893,7 @@ export default function Profile() {
             value={form.ano_fundacao || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder="Ex: 2010"
+            placeholder={form.ano_fundacao?.toString() || "Ex: 2010"}
             min="1900"
             max={new Date().getFullYear()}
           />
@@ -990,7 +997,7 @@ export default function Profile() {
           value={form.sobre || ''}
           onChange={handleChange}
           disabled={!editing}
-          placeholder="Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."
+          placeholder={form.sobre ? form.sobre : "Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."}
           rows={6}
           maxLength={1000}
         />
@@ -1000,6 +1007,36 @@ export default function Profile() {
       </div>
     </>
   );
+
+  useEffect(() => {
+    if (user) {
+      console.log("🔍 DEBUG - Dados completos do usuário:", {
+        usuario: user,
+        modalidades: user.modalidades,
+        tipoUsuario: tipoUsuario,
+        possuiModalidades: user.modalidades && user.modalidades.length > 0,
+        dadosAcademia: tipoUsuario === 'academia' ? {
+          cnpj: user.cnpj,
+          nome_fantasia: user.nome_fantasia,
+          razao_social: user.razao_social,
+          telefone: user.telefone,
+          tamanho_estrutura: user.tamanho_estrutura,
+          capacidade_maxima: user.capacidade_maxima,
+          ano_fundacao: user.ano_fundacao
+        } : null
+      });
+    }
+  }, [user, tipoUsuario]);
+
+  // 🔥 DEBUG: Verificar dados do formulário
+  useEffect(() => {
+    if (form && Object.keys(form).length > 0) {
+      console.log("📝 DEBUG - Dados do formulário:", {
+        form: form,
+        modalidadesForm: form.modalidades
+      });
+    }
+  }, [form]);
 
   if (loading) return <div className="loading">Carregando perfil...</div>;
   if (!user) return <div className="error">Erro ao carregar perfil</div>;
@@ -1134,29 +1171,47 @@ export default function Profile() {
                             />
                           </div>
 
-                          <div className="input-group">
-                            <label><Calendar size={16} /> Data Nascimento</label>
-                            <input
-                              type="date"
-                              name="data_nascimento"
-                              value={form.data_nascimento || ''}
-                              onChange={handleChange}
-                              max={new Date().toISOString().split('T')[0]}
-                            />
-                          </div>
+                          {/* 🔥 CORREÇÃO: Mostrar data nascimento APENAS para aluno e personal */}
+                          {tipoUsuario !== 'academia' && (
+                            <div className="input-group">
+                              <label><Calendar size={16} /> Data Nascimento</label>
+                              <input
+                                type="date"
+                                name="data_nascimento"
+                                value={form.data_nascimento || ''}
+                                onChange={handleChange}
+                                max={new Date().toISOString().split('T')[0]}
+                              />
+                            </div>
+                          )}
 
+                          {/* 🔥 CORREÇÃO: Mostrar gênero APENAS para aluno e personal */}
+                          {tipoUsuario !== 'academia' && (
+                            <div className="input-group">
+                              <label><Users size={16} /> Gênero</label>
+                              <select
+                                name="genero"
+                                value={form.genero || ''}
+                                onChange={handleChange}
+                              >
+                                <option value="">Selecione</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Feminino">Feminino</option>
+                                <option value="Outro">Outro</option>
+                              </select>
+                            </div>
+                          )}
+
+                          {/* 🔥 CORREÇÃO: Telefone para todos os tipos */}
                           <div className="input-group">
-                            <label><Users size={16} /> Gênero</label>
-                            <select
-                              name="genero"
-                              value={form.genero || ''}
+                            <label><Phone size={16} /> Telefone</label>
+                            <input
+                              type="text"
+                              name={tipoUsuario === 'academia' ? 'telefone' : 'numTel'}
+                              value={tipoUsuario === 'academia' ? form.telefone || '' : form.numTel || ''}
                               onChange={handleChange}
-                            >
-                              <option value="">Selecione</option>
-                              <option value="Masculino">Masculino</option>
-                              <option value="Feminino">Feminino</option>
-                              <option value="Outro">Outro</option>
-                            </select>
+                              placeholder={tipoUsuario === 'academia' ? '(00) 00000-0000' : 'Telefone com DDD'}
+                            />
                           </div>
                         </div>
 
@@ -1313,260 +1368,262 @@ export default function Profile() {
 
                   {/* Visualização do Perfil (não editando) */}
                   {!editing && (
-                    <div className="profile-view">
-                      <div className="info-section">
-                        <h3>Informações Pessoais</h3>
-                        <div className="info-grid">
-                          <div className="info-item">
-                            <strong>Nome:</strong> {user.nome}
-                          </div>
-                          <div className="info-item">
-                            <strong>Email:</strong> {user.email}
-                          </div>
-                          <div className="info-item">
-                            <strong>Telefone:</strong> {user.numTel || user.telefone}
-                          </div>
-                          
-                          {/* 🔥 CORREÇÃO: Data de nascimento formatada corretamente */}
-                          {user.data_nascimento && (
-                            <div className="info-item">
-                              <strong>Data Nascimento:</strong> {new Date(user.data_nascimento + 'T00:00:00').toLocaleDateString('pt-BR')}
-                            </div>
-                          )}
-                          
-                          {user.genero && (
-                            <div className="info-item">
-                              <strong>Gênero:</strong> {user.genero}
-                            </div>
-                          )}
-                          
-                          {/* 🔥 CORREÇÃO: Informações específicas para ALUNO */}
-                          {tipoUsuario === 'aluno' && (
-                            <>
-                              {user.altura && (
-                                <div className="info-item">
-                                  <strong>Altura:</strong> {user.altura}cm
-                                </div>
-                              )}
-                              {user.peso && (
-                                <div className="info-item">
-                                  <strong>Peso:</strong> {user.peso}kg
-                                </div>
-                              )}
-                              {user.meta && (
-                                <div className="info-item">
-                                  <strong>Meta:</strong> {user.meta}
-                                </div>
-                              )}
-                              {user.treinoTipo && (
-                                <div className="info-item">
-                                  <strong>Nível de Atividade:</strong> {user.treinoTipo}
-                                </div>
-                              )}
-                              {user.treinos_adaptados !== undefined && (
-                                <div className="info-item">
-                                  <strong>Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
-                                </div>
-                              )}
-                            </>
-                          )}
-                          
-                          {/* 🔥 CORREÇÃO: Informações específicas para PERSONAL */}
-                          {tipoUsuario === 'personal' && (
-                            <>
-                              {user.cref_numero && (
-                                <div className="info-item">
-                                  <strong>CREF:</strong> {user.cref_numero}-{user.cref_categoria}/{user.cref_regional}
-                                </div>
-                              )}
-                              {user.treinos_adaptados !== undefined && (
-                                <div className="info-item">
-                                  <strong>Trabalha com Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
-                                </div>
-                              )}
-                              {user.sobre && (
-                                <div className="info-item full-width">
-                                  <strong>Sobre:</strong> {user.sobre}
-                                </div>
-                              )}
-                            </>
-                          )}
-                          
-                          {/* 🔥 CORREÇÃO: Informações específicas para ACADEMIA */}
-                          {tipoUsuario === 'academia' && (
-                            <>
-                              {user.cnpj && (
-                                <div className="info-item">
-                                  <strong>CNPJ:</strong> {user.cnpj}
-                                </div>
-                              )}
-                              {user.nome_fantasia && (
-                                <div className="info-item">
-                                  <strong>Nome Fantasia:</strong> {user.nome_fantasia}
-                                </div>
-                              )}
-                              {user.razao_social && (
-                                <div className="info-item">
-                                  <strong>Razão Social:</strong> {user.razao_social}
-                                </div>
-                              )}
-                              {user.tamanho_estrutura && (
-                                <div className="info-item">
-                                  <strong>Tamanho da Estrutura:</strong> {user.tamanho_estrutura}
-                                </div>
-                              )}
-                              {user.capacidade_maxima && (
-                                <div className="info-item">
-                                  <strong>Capacidade Máxima:</strong> {user.capacidade_maxima} alunos
-                                </div>
-                              )}
-                              {user.ano_fundacao && (
-                                <div className="info-item">
-                                  <strong>Ano de Fundação:</strong> {user.ano_fundacao}
-                                </div>
-                              )}
-                              {user.sobre && (
-                                <div className="info-item full-width">
-                                  <strong>Sobre:</strong> {user.sobre}
-                                </div>
-                              )}
-                              
-                              {/* Diferenciais da Academia */}
-                              {(user.estacionamento || user.vestiario || user.ar_condicionado || user.wifi || 
-                                user.totem_de_carregamento_usb || user.area_descanso || user.avaliacao_fisica) && (
-                                <div className="info-item full-width">
-                                  <strong>Diferenciais:</strong>
-                                  <div className="diferenciais-list">
-                                    {user.estacionamento && <span className="diferencial-tag">Estacionamento</span>}
-                                    {user.vestiario && <span className="diferencial-tag">Vestiário</span>}
-                                    {user.ar_condicionado && <span className="diferencial-tag">Ar Condicionado</span>}
-                                    {user.wifi && <span className="diferencial-tag">Wi-Fi</span>}
-                                    {user.totem_de_carregamento_usb && <span className="diferencial-tag">Totem USB</span>}
-                                    {user.area_descanso && <span className="diferencial-tag">Área de Descanso</span>}
-                                    {user.avaliacao_fisica && <span className="diferencial-tag">Avaliação Física</span>}
-                                  </div>
-                                </div>
-                              )}
-                            </>
-                          )}
+                  <div className="profile-view">
+                    <div className="info-section">
+                      <h3>Informações Pessoais</h3>
+                      <div className="info-grid">
+                        <div className="info-item">
+                          <strong>Nome:</strong> {user.nome}
                         </div>
+                        <div className="info-item">
+                          <strong>Email:</strong> {user.email}
+                        </div>
+                        <div className="info-item">
+                          <strong>Telefone:</strong> {user.numTel || user.telefone}
+                        </div>
+                        
+                        {/* 🔥 CORREÇÃO: Mostrar data nascimento e gênero APENAS para aluno e personal */}
+                        {tipoUsuario !== 'academia' && user.data_nascimento && (
+                          <div className="info-item">
+                            <strong>Data Nascimento:</strong> {new Date(user.data_nascimento + 'T00:00:00').toLocaleDateString('pt-BR')}
+                          </div>
+                        )}
+                        
+                        {tipoUsuario !== 'academia' && user.genero && (
+                          <div className="info-item">
+                            <strong>Gênero:</strong> {user.genero}
+                          </div>
+                        )}
+                        
+                        {/* 🔥 CORREÇÃO: Informações específicas para ALUNO */}
+                        {tipoUsuario === 'aluno' && (
+                          <>
+                            {user.altura && (
+                              <div className="info-item">
+                                <strong>Altura:</strong> {user.altura}cm
+                              </div>
+                            )}
+                            {user.peso && (
+                              <div className="info-item">
+                                <strong>Peso:</strong> {user.peso}kg
+                              </div>
+                            )}
+                            {user.meta && (
+                              <div className="info-item">
+                                <strong>Meta:</strong> {user.meta}
+                              </div>
+                            )}
+                            {user.treinoTipo && (
+                              <div className="info-item">
+                                <strong>Nível de Atividade:</strong> {user.treinoTipo}
+                              </div>
+                            )}
+                            {user.treinos_adaptados !== undefined && (
+                              <div className="info-item">
+                                <strong>Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
+                              </div>
+                            )}
+                          </>
+                        )}
+                        
+                        {/* 🔥 CORREÇÃO: Informações específicas para PERSONAL */}
+                        {tipoUsuario === 'personal' && (
+                          <>
+                            {user.cref_numero && (
+                              <div className="info-item">
+                                <strong>CREF:</strong> {user.cref_numero}-{user.cref_categoria}/{user.cref_regional}
+                              </div>
+                            )}
+                            {user.treinos_adaptados !== undefined && (
+                              <div className="info-item">
+                                <strong>Trabalha com Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
+                              </div>
+                            )}
+                            {user.sobre && (
+                              <div className="info-item full-width">
+                                <strong>Sobre:</strong> {user.sobre}
+                              </div>
+                            )}
+                          </>
+                        )}
+                        
+                        {/* 🔥 CORREÇÃO: Informações específicas para ACADEMIA */}
+                        {tipoUsuario === 'academia' && (
+                          <>
+                            {user.cnpj && (
+                              <div className="info-item">
+                                <strong>CNPJ:</strong> {user.cnpj}
+                              </div>
+                            )}
+                            {user.nome_fantasia && (
+                              <div className="info-item">
+                                <strong>Nome Fantasia:</strong> {user.nome_fantasia}
+                              </div>
+                            )}
+                            {user.razao_social && (
+                              <div className="info-item">
+                                <strong>Razão Social:</strong> {user.razao_social}
+                              </div>
+                            )}
+                            {user.tamanho_estrutura && (
+                              <div className="info-item">
+                                <strong>Tamanho da Estrutura:</strong> {user.tamanho_estrutura}
+                              </div>
+                            )}
+                            {user.capacidade_maxima && (
+                              <div className="info-item">
+                                <strong>Capacidade Máxima:</strong> {user.capacidade_maxima} alunos
+                              </div>
+                            )}
+                            {user.ano_fundacao && (
+                              <div className="info-item">
+                                <strong>Ano de Fundação:</strong> {user.ano_fundacao}
+                              </div>
+                            )}
+                            {user.sobre && (
+                              <div className="info-item full-width">
+                                <strong>Sobre:</strong> {user.sobre}
+                              </div>
+                            )}
+                            
+                            {/* Diferenciais da Academia */}
+                            {(user.estacionamento || user.vestiario || user.ar_condicionado || user.wifi || 
+                              user.totem_de_carregamento_usb || user.area_descanso || user.avaliacao_fisica) && (
+                              <div className="info-item full-width">
+                                <strong>Diferenciais:</strong>
+                                <div className="diferenciais-list">
+                                  {user.estacionamento && <span className="diferencial-tag">Estacionamento</span>}
+                                  {user.vestiario && <span className="diferencial-tag">Vestiário</span>}
+                                  {user.ar_condicionado && <span className="diferencial-tag">Ar Condicionado</span>}
+                                  {user.wifi && <span className="diferencial-tag">Wi-Fi</span>}
+                                  {user.totem_de_carregamento_usb && <span className="diferencial-tag">Totem USB</span>}
+                                  {user.area_descanso && <span className="diferencial-tag">Área de Descanso</span>}
+                                  {user.avaliacao_fisica && <span className="diferencial-tag">Avaliação Física</span>}
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
-
-                      {/* 🔥 CORREÇÃO: Endereço - usando dados do usuário completo */}
-                      {(user.cep || endereco.cep) && (
-                        <div className="info-section">
-                          <h3>Endereço</h3>
-                          <div className="info-grid">
-                            {(user.logradouro || endereco.logradouro) && (
-                              <div className="info-item2">
-                                <strong>Endereço:</strong> <br /> {(user.logradouro || endereco.logradouro)}, {(user.numero || endereco.numero)} {(user.complemento || endereco.complemento) && `- ${user.complemento || endereco.complemento}`}
-                              </div>
-                            )}
-                            {(user.bairro || endereco.bairro) && (
-                              <div className="info-item2">
-                                <strong>Bairro:</strong> <br /> {user.bairro || endereco.bairro}
-                              </div>
-                            )}
-                            {(user.cidade || endereco.cidade) && (
-                              <div className="info-item2">
-                                <strong>Cidade/Estado:</strong> <br /> {user.cidade || endereco.cidade} - {user.estado || endereco.estado}
-                              </div>
-                            )}
-                            {(user.cep || endereco.cep) && (
-                              <div className="info-item2">
-                                <strong>CEP:</strong> <br /> {user.cep || endereco.cep}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 🔥 CORREÇÃO: Modalidades - usando dados corretos */}
-                      {user.modalidades && user.modalidades.length > 0 && (
-                      <div className="row2">
-                        <div className="col-lg-6 info-section">
-                          <h3>Modalidades</h3>
-                          <div className="modalidades-tags">
-                            {user.modalidades.map((modalidade, index) => {
-                              // Se modalidade é um objeto, usar nome, se é ID, buscar na lista
-                              if (typeof modalidade === 'object' && modalidade.nome) {
-                                return (
-                                  <span key={index} className="modalidade-tag">
-                                    {modalidade.nome}
-                                  </span>
-                                );
-                              } else {
-                                // Buscar nome da modalidade na lista carregada
-                                const modalidadeInfo = modalidades.find(m => 
-                                  m.idModalidade.toString() === modalidade.toString()
-                                );
-                                return (
-                                  <span key={index} className="modalidade-tag">
-                                    {modalidadeInfo ? modalidadeInfo.nome : `Modalidade ${modalidade}`}
-                                  </span>
-                                );
-                              }
-                            })}
-                          </div>
-                        </div>
-                        {/* 🔥 CORREÇÃO: Plano */}
-                        <div className="col-lg-6 info-section">
-                          <h3>Plano</h3>
-                          <div className="plan-info">
-                            <div className="info-item2">
-                              <strong>Plano Atual:</strong> {user.tipoPlano || 'Básico(Gratuito)'}
-                            </div>
-                            <button 
-                              onClick={() => setEditingPlan(true)}
-                              className="btn-change-plan"
-                            >
-                              Alterar Plano
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      )}
-                      
-                      {/* 🔥 CORREÇÃO: Solicitação de Vinculação à Academia */}
-                      {tipoUsuario !== 'academia' && user.idAcademia && (
-                        <div className="info-section solicitation-info">
-                          <h3>🏢 Academia Vinculada</h3>
-                          <div className="solicitation-status">
-                            <div className="status-item approved">
-                              <strong>Status:</strong> Vinculado
-                            </div>
-                            <div className="status-item">
-                              <strong>Academia:</strong> {
-                                academias.find(a => a.idAcademia == user.idAcademia)?.nome || 'Academia vinculada'
-                              }
-                            </div>
-                            <div className="status-help">
-                              <small>
-                                Você está vinculado a esta academia. Para alterar, entre em contato com a administração.
-                              </small>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 🔥 NOVO: Botão para solicitar vinculação se não tiver academia */}
-                      {tipoUsuario !== 'academia' && !user.idAcademia && academias.length > 0 && (
-                        <div className="info-section solicitation-info">
-                          <h3>🏢 Vincular-se a uma Academia</h3>
-                          <div className="solicitation-status">
-                            <div className="status-item pending">
-                              <strong>Status:</strong> Não vinculado
-                            </div>
-                            <div className="status-help">
-                              <small>
-                                Você não está vinculado a nenhuma academia. Clique em "Editar Perfil" para solicitar vinculação.
-                              </small>
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
-                  )}
+
+                    {/* 🔥 CORREÇÃO: Endereço */}
+                    {(user.cep || endereco.cep) && (
+                      <div className="info-section">
+                        <h3>Endereço</h3>
+                        <div className="info-grid">
+                          {(user.logradouro || endereco.logradouro) && (
+                            <div className="info-item2">
+                              <strong>Endereço:</strong> <br /> {(user.logradouro || endereco.logradouro)}, {(user.numero || endereco.numero)} {(user.complemento || endereco.complemento) && `- ${user.complemento || endereco.complemento}`}
+                            </div>
+                          )}
+                          {(user.bairro || endereco.bairro) && (
+                            <div className="info-item2">
+                              <strong>Bairro:</strong> <br /> {user.bairro || endereco.bairro}
+                            </div>
+                          )}
+                          {(user.cidade || endereco.cidade) && (
+                            <div className="info-item2">
+                              <strong>Cidade/Estado:</strong> <br /> {user.cidade || endereco.cidade} - {user.estado || endereco.estado}
+                            </div>
+                          )}
+                          {(user.cep || endereco.cep) && (
+                            <div className="info-item2">
+                              <strong>CEP:</strong> <br /> {user.cep || endereco.cep}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🔥 CORREÇÃO: Modalidades - AGORA MOSTRANDO NA VISUALIZAÇÃO */}
+                    {user.modalidades && user.modalidades.length > 0 && (
+                      <div className="info-section">
+                        <h3>
+                          {tipoUsuario === 'personal' ? 'Modalidades que Trabalha' : 
+                          tipoUsuario === 'academia' ? 'Modalidades Oferecidas' : 'Modalidades de Interesse'}
+                        </h3>
+                        <div className="modalidades-tags">
+                          {user.modalidades.map((modalidade, index) => {
+                            // Se modalidade é um objeto, usar nome, se é ID, buscar na lista
+                            if (typeof modalidade === 'object' && modalidade.nome) {
+                              return (
+                                <span key={index} className="modalidade-tag">
+                                  {modalidade.nome}
+                                </span>
+                              );
+                            } else {
+                              // Buscar nome da modalidade na lista carregada
+                              const modalidadeInfo = modalidades.find(m => 
+                                m.idModalidade.toString() === modalidade.toString()
+                              );
+                              return (
+                                <span key={index} className="modalidade-tag">
+                                  {modalidadeInfo ? modalidadeInfo.nome : `Modalidade ${modalidade}`}
+                                </span>
+                              );
+                            }
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🔥 CORREÇÃO: Plano - em linha separada */}
+                    <div className="info-section">
+                      <h3>Plano</h3>
+                      <div className="plan-info">
+                        <div className="info-item2">
+                          <strong>Plano Atual:</strong> {user.tipoPlano || 'Básico(Gratuito)'}
+                        </div>
+                        <button 
+                          onClick={() => setEditingPlan(true)}
+                          className="btn-change-plan"
+                        >
+                          Alterar Plano
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* 🔥 CORREÇÃO: Solicitação de Vinculação à Academia */}
+                    {tipoUsuario !== 'academia' && user.idAcademia && (
+                      <div className="info-section solicitation-info">
+                        <h3>🏢 Academia Vinculada</h3>
+                        <div className="solicitation-status">
+                          <div className="status-item approved">
+                            <strong>Status:</strong> Vinculado
+                          </div>
+                          <div className="status-item">
+                            <strong>Academia:</strong> {
+                              academias.find(a => a.idAcademia == user.idAcademia)?.nome || 'Academia vinculada'
+                            }
+                          </div>
+                          <div className="status-help">
+                            <small>
+                              Você está vinculado a esta academia. Para alterar, entre em contato com a administração.
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🔥 NOVO: Botão para solicitar vinculação se não tiver academia */}
+                    {tipoUsuario !== 'academia' && !user.idAcademia && academias.length > 0 && (
+                      <div className="info-section solicitation-info">
+                        <h3>🏢 Vincular-se a uma Academia</h3>
+                        <div className="solicitation-status">
+                          <div className="status-item pending">
+                            <strong>Status:</strong> Não vinculado
+                          </div>
+                          <div className="status-help">
+                            <small>
+                              Você não está vinculado a nenhuma academia. Clique em "Editar Perfil" para solicitar vinculação.
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 </div>
               </div>
             </div>

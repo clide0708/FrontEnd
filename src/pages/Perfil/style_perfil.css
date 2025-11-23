@@ -437,7 +437,6 @@
 .input-group input:disabled,
 .input-group select:disabled,
 .input-group textarea:disabled {
-  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -1229,8 +1228,6 @@
 
 .input-group input:disabled,
 .input-group select:disabled {
-  background: #3a3c3d;
-  color: #aaa;
   cursor: not-allowed;
 }
 
@@ -1467,8 +1464,6 @@
 .input-group input:disabled,
 .input-group select:disabled,
 .input-group textarea:disabled {
-  background-color: #f8f9fa;
-  color: #6c757d;
   cursor: not-allowed;
 }
 
