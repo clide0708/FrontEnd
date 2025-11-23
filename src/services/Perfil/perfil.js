@@ -23,14 +23,18 @@ const perfilService = {
       
       if (!idUsuario || idUsuario === 'undefined') {
         console.error("❌ ID do usuário é undefined");
-        return null;
+        return { success: false, error: 'ID do usuário inválido' };
       }
 
       const response = await api.get(`/perfil/completo/${tipoUsuario}/${idUsuario}`);
+      console.log("✅ Resposta do perfil completo:", response.data);
       return response.data;
     } catch (err) {
       console.error("Erro ao buscar perfil completo:", err);
-      return null;
+      return { 
+        success: false, 
+        error: err.response?.data?.error || 'Erro ao buscar perfil completo' 
+      };
     }
   },
 
@@ -53,12 +57,25 @@ const perfilService = {
   // Upload de foto de perfil
   uploadFotoPerfil: async (formData) => {
     try {
-      const response = await api.put(`/perfil/foto`, formData, {
+      const response = await api.post(`/upload/foto-perfil`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
     } catch (err) {
       console.error("Erro ao fazer upload da foto:", err);
+      return {
+        success: false,
+        error: err.response?.data?.error || err.message,
+      };
+    }
+  },
+
+  salvarFotoUsuario: async (data) => {
+    try {
+      const response = await api.post(`/upload/salvar-foto-usuario`, data);
+      return response.data;
+    } catch (err) {
+      console.error("Erro ao salvar foto:", err);
       return {
         success: false,
         error: err.response?.data?.error || err.message,
@@ -139,7 +156,61 @@ const perfilService = {
       return null;
     }
   },
+  
+  atualizarPerfilCompleto: async (data) => {
+    try {
+      console.log("📤 Atualizando perfil completo:", data);
+      const response = await api.put(`/perfil/atualizar-completo`, data, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("✅ Resposta da atualização:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Erro ao atualizar perfil completo:", err);
+      return {
+        success: false,
+        error: err.response?.data?.error || err.message,
+      };
+    }
+  },
 
+  // 🔥 NOVO: Buscar academias para seleção
+  getAcademiasParaSelecao: async () => {
+    try {
+      const response = await api.get("/academias-ativas");
+      return response.data;
+    } catch (err) {
+      console.error("Erro ao buscar academias:", err);
+      return { success: false, data: [] };
+    }
+  },
+
+  // 🔥 NOVO: Enviar solicitação para nova academia
+  enviarSolicitacaoAcademia: async (data) => {
+    try {
+      console.log("📤 Enviando solicitação de academia:", data);
+      const response = await api.post("/academia/solicitacao/enviar", data);
+      console.log("✅ Resposta da solicitação:", response.data);
+      return response.data;
+    } catch (err) {
+      console.error("Erro ao enviar solicitação:", err);
+      return {
+        success: false,
+        error: err.response?.data?.error || err.message,
+      };
+    }
+  },
+
+  // 🔥 NOVO: Verificar status da solicitação
+  getStatusSolicitacao: async (idUsuario, tipoUsuario) => {
+    try {
+      const response = await api.get(`/academia/solicitacao/status/${tipoUsuario}/${idUsuario}`);
+      return response.data;
+    } catch (err) {
+      console.error("Erro ao buscar status:", err);
+      return { success: false, data: null };
+    }
+  },
   
 };
 

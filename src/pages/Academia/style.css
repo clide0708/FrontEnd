@@ -955,3 +955,31 @@ textarea:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+
+
+
+
+
+
+
+
+
+/* pages/Academia/style.css */
+.painel-academia.error {
+  text-align: center;
+  padding: 2rem;
+}
+
+.btn-try-again {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-try-again:hover {
+  background: #0056b3;
+}

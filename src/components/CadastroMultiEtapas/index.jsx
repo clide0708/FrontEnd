@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EtapaDadosPessoais from "./EtapaDadosPessoais";
 import EtapaPerfil from "./EtapaPerfil";
@@ -61,8 +61,10 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     data_nascimento: "",
     genero: "",
     altura: "",
+    peso: "",
     meta: "",
     sobre: "",
+    treinoTipo: "",
     treinos_adaptados: false,
     modalidades: [],
     foto_url: "",
@@ -251,12 +253,35 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
       case 2: // Perfil
         if (selectedUserType === 'academia') {
           return dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
-        } else {
-          // 🔥 CORREÇÃO: Apenas verificar se há modalidades selecionadas
-          // Não bloquear por data_nascimento/genero nesta etapa
+        } else if (selectedUserType === 'aluno') {
+          // 🔥 VALIDAÇÃO EXPANDIDA PARA ALUNO
+          const camposObrigatorios = dadosFormulario.data_nascimento && 
+                                    dadosFormulario.genero && 
+                                    dadosFormulario.altura && 
+                                    dadosFormulario.peso && // 🔥 NOVO
+                                    dadosFormulario.treinoTipo && // 🔥 NOVO
+                                    dadosFormulario.meta;
           const temModalidades = dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
-          console.log('🔍 Validação etapa 2 - Modalidades:', temModalidades);
-          return temModalidades;
+          
+          console.log('🔍 Validação etapa 2 - Aluno:', {
+            camposObrigatorios,
+            temModalidades,
+            data_nascimento: dadosFormulario.data_nascimento,
+            genero: dadosFormulario.genero,
+            altura: dadosFormulario.altura,
+            peso: dadosFormulario.peso,
+            treinoTipo: dadosFormulario.treinoTipo,
+            meta: dadosFormulario.meta,
+            modalidades: dadosFormulario.modalidades
+          });
+          
+          return camposObrigatorios && temModalidades;
+        } else {
+          // Personal trainer
+          const camposObrigatorios = dadosFormulario.data_nascimento && 
+                                    dadosFormulario.genero;
+          const temModalidades = dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0;
+          return camposObrigatorios && temModalidades;
         }
       
       case 3: // Endereço
@@ -301,9 +326,9 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     setLoading(true);
     setIsAnimating(true);
     
+    let dadosCadastro;
+
     try {
-      // MOVER a declaração de dadosCadastro para dentro do try
-      let dadosCadastro;
 
       if (selectedUserType === "academia") {
         if (!dadosFormulario.nome_fantasia || !dadosFormulario.razao_social || !dadosFormulario.cnpj) {
@@ -440,39 +465,85 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     }
   };
 
+  const validarDadosCompletos = () => {
+    if (selectedUserType === "aluno") {
+      const camposObrigatorios = [
+        { campo: dadosFormulario.data_nascimento, nome: "Data de Nascimento" },
+        { campo: dadosFormulario.genero, nome: "Gênero" },
+        { campo: dadosFormulario.altura, nome: "Altura" },
+        { campo: dadosFormulario.peso, nome: "Peso" },
+        { campo: dadosFormulario.treinoTipo, nome: "Nível de Atividade" },
+        { campo: dadosFormulario.meta, nome: "Meta" },
+        { campo: dadosFormulario.modalidades && dadosFormulario.modalidades.length > 0, nome: "Modalidades" }
+      ];
+
+      const camposFaltantes = camposObrigatorios
+        .filter(item => !item.campo)
+        .map(item => item.nome);
+
+      if (camposFaltantes.length > 0) {
+        alert(`Por favor, preencha os seguintes campos obrigatórios:\n${camposFaltantes.join('\n')}`);
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
   const handleCompletarCadastro = async () => {
     if (!usuarioCadastrado) {
         alert("Erro: usuário não cadastrado.");
         return;
     }
 
+    // 🔥 VALIDAÇÃO ANTES DE ENVIAR
+    if (!validarDadosCompletos()) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     
     try {
+        // 🔥 CORREÇÃO: Verificar se os campos obrigatórios estão preenchidos
+        if (!dadosFormulario.peso) {
+            alert("Por favor, preencha o campo Peso.");
+            setLoading(false);
+            return;
+        }
+        
+        if (!dadosFormulario.treinoTipo) {
+            alert("Por favor, selecione o Nível de Atividade.");
+            setLoading(false);
+            return;
+        }
+
         // 🔥 CORREÇÃO: Usar FormData para enviar arquivos
         const formData = new FormData();
         
         // Adicionar ID baseado no tipo de usuário
         const idField = selectedUserType === "aluno" ? "idAluno" : 
-                       selectedUserType === "personal" ? "idPersonal" : "idAcademia";
+                      selectedUserType === "personal" ? "idPersonal" : "idAcademia";
         formData.append(idField, usuarioCadastrado.id);
         
-        // Campos comuns a todos os tipos
-        if (selectedUserType !== "academia") {
+        // 🔥 CORREÇÃO CRÍTICA: Adicionar TODOS os campos obrigatórios para aluno
+        if (selectedUserType === "aluno") {
+            // Campos obrigatórios
             formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
             formData.append("genero", dadosFormulario.genero || '');
-        }
-        
-        formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
-        
-        // Adicionar campos específicos
-        if (selectedUserType === "aluno") {
             formData.append("altura", dadosFormulario.altura || '');
+            formData.append("peso", dadosFormulario.peso || ''); // 🔥 AGORA ENVIANDO
             formData.append("meta", dadosFormulario.meta || '');
+            formData.append("treinoTipo", dadosFormulario.treinoTipo || ''); // 🔥 AGORA ENVIANDO
+            formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
         } else if (selectedUserType === "personal") {
+            // Campos para personal
+            formData.append("data_nascimento", dadosFormulario.data_nascimento || '');
+            formData.append("genero", dadosFormulario.genero || '');
             formData.append("sobre", dadosFormulario.sobre || '');
+            formData.append("treinos_adaptados", dadosFormulario.treinos_adaptados ? '1' : '0');
         } else if (selectedUserType === "academia") {
-            // Campos específicos da academia
+            // Campos para academia
             formData.append("sobre", dadosFormulario.sobre || '');
             formData.append("tamanho_estrutura", dadosFormulario.tamanho_estrutura || '');
             formData.append("capacidade_maxima", dadosFormulario.capacidade_maxima || '');
@@ -516,11 +587,23 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
             formData.append("foto_url", dadosFormulario.foto_url);
         }
 
+        // 🔥 DEBUG: Log de todos os dados sendo enviados
+        console.log('🎯 DADOS COMPLETOS SENDO ENVIADOS:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+
         // 🔥 USAR ENDPOINT ÚNICO PARA TODOS OS TIPOS
         const endpoint = "cadastro/processar-completo";
 
         console.log('📤 Enviando dados completos do cadastro para:', selectedUserType);
         console.log('🔍 Dados do formulário:', {
+            data_nascimento: dadosFormulario.data_nascimento,
+            genero: dadosFormulario.genero,
+            altura: dadosFormulario.altura,
+            peso: dadosFormulario.peso, // 🔥 AGORA AQUI
+            treinoTipo: dadosFormulario.treinoTipo, // 🔥 AGORA AQUI
+            meta: dadosFormulario.meta,
             modalidades: dadosFormulario.modalidades,
             temFoto: !!dadosFormulario.foto_url,
             tipoUsuario: selectedUserType
@@ -552,19 +635,19 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     }
   };
   
-  const handleFinalizar = () => {
-    // Determinar qual etapa finaliza o cadastro inicial
-    const etapaCadastroInicial = selectedUserType === "personal" ? 6 : 
-                                selectedUserType === "aluno" ? 5 : 4;
+  // const handleFinalizar = () => {
+  //   // Determinar qual etapa finaliza o cadastro inicial
+  //   const etapaCadastroInicial = selectedUserType === "personal" ? 6 : 
+  //                               selectedUserType === "aluno" ? 5 : 4;
 
-    if (etapaAtual === etapaCadastroInicial && !usuarioCadastrado) {
-      // Primeira parte do cadastro (dados básicos + login)
-      handleCadastroInicial();
-    } else if (etapaAtual === totalEtapas && usuarioCadastrado) {
-      // Segunda parte (completar perfil)
-      handleCompletarCadastro();
-    }
-  };
+  //   if (etapaAtual === etapaCadastroInicial && !usuarioCadastrado) {
+  //     // Primeira parte do cadastro (dados básicos + login)
+  //     handleCadastroInicial();
+  //   } else if (etapaAtual === totalEtapas && usuarioCadastrado) {
+  //     // Segunda parte (completar perfil)
+  //     handleCompletarCadastro();
+  //   }
+  // };
 
   const renderizarEtapa = () => {
     switch (etapaAtual) {
@@ -661,7 +744,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
             />
           </div>
           <div className="user-type-buttons">
-            {userTypes.map((type, index) => {
+            {userTypes.map((type) => {
               const IconComponent = type.icon;
               return (
                 <button

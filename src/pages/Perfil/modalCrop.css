@@ -1,0 +1,663 @@
+/* modalCrop.css */
+
+.crop-modal-container {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.crop-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(31, 33, 34, 0.9);
+}
+
+.crop-modal-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.crop-modal-content {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.file-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+.upload-area {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #368DD9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: rgba(54, 141, 217, 0.05);
+}
+
+.upload-area:hover {
+  background: rgba(54, 141, 217, 0.1);
+  border-color: #4da3f0;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 2rem;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  opacity: 0.7;
+}
+
+.upload-label p {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.upload-label span {
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.crop-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.controls label {
+  color: #fff;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.zoom-slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #2a2c2d;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #368DD9;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.controls span {
+  color: #fff;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 300px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #368DD9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #fff;
+  margin: 0;
+}
+
+.crop-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(31, 33, 34, 0.9);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-change-image,
+.btn-cancel,
+.btn-save {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-change-image {
+  background: transparent;
+  color: #368DD9;
+  border: 2px solid #368DD9;
+}
+
+.btn-change-image:hover {
+  background: rgba(54, 141, 217, 0.1);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #f44336;
+  border: 2px solid #f44336;
+}
+
+.btn-cancel:hover {
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.btn-save {
+  background: #368DD9;
+  color: white;
+  box-shadow: 0 4px 15px rgba(54, 141, 217, 0.3);
+}
+
+.btn-save:hover {
+  background: #4da3f0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(54, 141, 217, 0.4);
+}
+
+.btn-save:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .crop-modal-overlay {
+    padding: 1rem;
+  }
+  
+  .crop-modal-container {
+    max-height: 80vh;
+  }
+  
+  .crop-modal-header,
+  .crop-modal-content,
+  .crop-modal-actions {
+    padding: 1rem;
+  }
+  
+  .crop-container {
+    height: 300px;
+  }
+  
+  .crop-modal-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .action-buttons {
+    width: 100%;
+  }
+  
+  .btn-change-image,
+  .btn-cancel,
+  .btn-save {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+.foto-input-hidden {
+  display: none;
+}
+
+.foto-upload-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.foto-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 1rem;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 2px dashed #ccc;
+}
+
+.foto-placeholder:hover {
+  border-color: #368DD9;
+  background: rgba(54, 141, 217, 0.05);
+}
+
+.foto-placeholder span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.foto-container {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #e0e0e0;
+}
+
+.foto-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.foto-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remover-foto {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 12px;
+}
+
+.foto-perfil-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.foto-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.foto-instructions {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+/* modalCrop.css - CORREÇÕES CRÍTICAS */
+.crop-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.crop-modal-container {
+  background: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.crop-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.95);
+}
+
+.crop-modal-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.crop-modal-content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 400px;
+}
+
+.crop-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 🔥 CORREÇÃO CRÍTICA: Estilos do React Easy Crop */
+.reactEasyCrop_Container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+.reactEasyCrop_Image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.reactEasyCrop_CropArea {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.controls label {
+  color: #fff;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.zoom-slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #333;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #368DD9;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.controls span {
+  color: #fff;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 200px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #368DD9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #fff;
+  margin: 0;
+}
+
+.crop-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.95);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #f44336;
+  border: 2px solid #f44336;
+}
+
+.btn-cancel:hover {
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.btn-save {
+  background: #368DD9;
+  color: white;
+  box-shadow: 0 2px 8px rgba(54, 141, 217, 0.3);
+}
+
+.btn-save:hover {
+  background: #4da3f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(54, 141, 217, 0.4);
+}
+
+.btn-save:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .crop-modal-overlay {
+    padding: 10px;
+  }
+  
+  .crop-modal-container {
+    max-height: 80vh;
+  }
+  
+  .crop-modal-header,
+  .crop-modal-content,
+  .crop-modal-actions {
+    padding: 1rem;
+  }
+  
+  .crop-container {
+    height: 250px;
+  }
+  
+  .action-buttons {
+    width: 100%;
+  }
+  
+  .btn-cancel,
+  .btn-save {
+    flex: 1;
+  }
+}

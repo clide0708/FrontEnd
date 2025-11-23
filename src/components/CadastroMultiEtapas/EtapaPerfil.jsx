@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Calendar, Ruler, Target, Users, Upload, X, Building } from "lucide-react";
+import { Calendar, Ruler, Target, Users, Upload, X, Building, Activity } from "lucide-react";
 import CropModal from "../../pages/Perfil/modalCrop";
 import getCroppedImg from "../../utils/cropImage";
-import { uploadImagemParaServidor, blobParaDataURL, deletarFotoServidor } from "../../utils/uploadImage";
+import { deletarFotoServidor } from "../../utils/uploadImage";
 import HorariosAcademia from "./HorariosAcademia";
+import { calcularIMC, calcularMetaCalorica, consumoAgua } from "../../utils/calculos";
 
 const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   const [modalidades, setModalidades] = useState([]);
@@ -11,25 +12,18 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   const [imagemParaCortar, setImagemParaCortar] = useState(null);
   const [salvandoImagem, setSalvandoImagem] = useState(false);
   const [carregandoModalidades, setCarregandoModalidades] = useState(false);
-  
-  useEffect(() => {
-    carregarModalidades();
-  }, []);
 
   const carregarModalidades = async () => {
     setCarregandoModalidades(true);
     try {
-      // CORRIGIDO: Remove /api/ da URL
       const response = await fetch(`${import.meta.env.VITE_API_URL}cadastro/modalidades`);
       
-      // Verificar se a resposta é válida
       if (!response.ok) {
         throw new Error(`Erro HTTP: ${response.status}`);
       }
       
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        // Se não for JSON, usar fallback
         console.warn('Resposta não é JSON, usando modalidades padrão');
         setModalidades(getModalidadesPadrao());
         return;
@@ -45,15 +39,17 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       }
     } catch (error) {
       console.error('Erro ao carregar modalidades:', error);
-      // Fallback com modalidades básicas
       setModalidades(getModalidadesPadrao());
     } finally {
       setCarregandoModalidades(false);
     }
   };
 
+  useEffect(() => {
+    carregarModalidades();
+  }, []);
+
   const getModalidadesPadrao = () => {
-    console.log('🔄 Carregando modalidades padrão...');
     return [
       { idModalidade: 1, nome: 'Musculação' },
       { idModalidade: 2, nome: 'CrossFit' },
@@ -90,6 +86,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     return idade;
   };
 
+  // 🔥 CORREÇÃO: Handler simplificado que abre o modal de corte
   const handleSelecionarFoto = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -114,6 +111,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     event.target.value = '';
   };
 
+  // 🔥 CORREÇÃO: Handler para salvar o corte
   const handleSalvarCorte = async (pixelCrop) => {
     if (!imagemParaCortar || !pixelCrop) return;
     
@@ -123,7 +121,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       // 1. Cortar imagem
       const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
       
-      // 2. Fazer upload IMEDIATO usando UploadController
+      // 2. Fazer upload IMEDIATO
       const formData = new FormData();
       formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
 
@@ -138,14 +136,14 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       console.log('✅ Resposta do upload:', result);
 
       if (result.success) {
-        // 3. Criar preview local para exibição imediata
+        // 3. Criar preview local
         const previewUrl = URL.createObjectURL(blob);
         
-        // 4. Atualizar dados com URL do servidor E preview local
+        // 4. Atualizar dados
         onChange({ 
           foto_url: result.url,
           foto_nome: result.nome_arquivo,
-          foto_data: previewUrl, // 🔥 CORREÇÃO: Adicionar preview local
+          foto_data: previewUrl,
           foto_fallback: false
         });
         
@@ -186,9 +184,6 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       ? dados.modalidades.filter(id => id !== idModalidade.toString())
       : [...(dados.modalidades || []), idModalidade.toString()];
     
-    console.log('🎯 Modalidades atualizadas:', novasModalidades);
-    console.log('🔍 Tipo das modalidades:', typeof novasModalidades);
-    
     onChange({ modalidades: novasModalidades });
   };
 
@@ -209,7 +204,7 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       <h2>{tipoUsuario === 'academia' ? 'Perfil da Academia' : 'Seu Perfil'}</h2>
       <p>{tipoUsuario === 'academia' ? 'Complete as informações da sua academia' : 'Complete suas informações pessoais'}</p>
 
-      {/* Modal de Corte */}
+      {/* Modal de Corte - AGORA FUNCIONA CORRETAMENTE */}
       {cropModalAberto && (
         <CropModal
           imagem={imagemParaCortar}
@@ -222,37 +217,40 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
         />
       )}
 
-      {/* Upload de Foto */}
+      {/* 🔥 CORREÇÃO: Upload de Foto Simplificado */}
       <div className="foto-perfil-section">
         <label className="foto-label">
           {tipoUsuario === 'academia' ? <Building size={20} /> : <Users size={20} />}
-          {tipoUsuario === 'academia' ? 'Foto da Academia *' : 'Foto de Perfil (Opcional)'}
+          {tipoUsuario === 'academia' ? 'Foto da Academia' : 'Foto de Perfil'} {tipoUsuario === 'academia' ? '*' : '(Opcional)'}
         </label>
         
         <div className="foto-container">
-          {dados.foto_data || dados.foto_url ? ( // 🔥 CORREÇÃO: Verificar ambos
+          {dados.foto_data || dados.foto_url ? (
             <div className="foto-preview">
-              <img src={dados.foto_data || dados.foto_url} alt="Preview" /> {/* 🔥 CORREÇÃO */}
+              <img src={dados.foto_data || dados.foto_url} alt="Preview" />
               <button type="button" className="btn-remover-foto" onClick={removerFoto}>
                 <X size={16} />
               </button>
             </div>
           ) : (
-            <label className="foto-placeholder">
-              {tipoUsuario === 'academia' ? <Building size={40} /> : <Users size={40} />}
-              <span>
-                {tipoUsuario === 'academia' 
-                  ? 'Clique para adicionar foto da academia' 
-                  : 'Clique para adicionar foto'
-                }
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleSelecionarFoto}
-                className="foto-input"
-              />
-            </label>
+            <div className="foto-upload-area">
+              <label className="foto-placeholder">
+                {tipoUsuario === 'academia' ? <Building size={40} /> : <Users size={40} />}
+                <span>
+                  {tipoUsuario === 'academia' 
+                    ? 'Clique para adicionar foto da academia' 
+                    : 'Clique para adicionar foto'
+                  }
+                </span>
+                {/* 🔥 INPUT DIRETO QUE ABRE O MODAL DE CORTE */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSelecionarFoto}
+                  className="foto-input-hidden"
+                />
+              </label>
+            </div>
           )}
         </div>
         
@@ -471,17 +469,55 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
               </div>
             )}
 
+            <div className="input-group">
+              <label>
+                <Activity size={16} />
+                Peso (kg) *
+              </label>
+              <input
+                type="number"
+                min="30"
+                max="300"
+                step="0.1"
+                placeholder="Ex: 70.5"
+                className="cad-input-global"
+                value={dados.peso || ''}
+                onChange={(e) => onChange({ peso: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label>
+                <Target size={16} />
+                Nível de Atividade Física *
+              </label>
+              <select
+                className="cad-input-global"
+                value={dados.treinoTipo || ''}
+                onChange={(e) => onChange({ treinoTipo: e.target.value })}
+                required
+              >
+                <option value="">Selecione seu nível</option>
+                <option value="Sedentário">Sedentário (pouco ou nenhum exercício)</option>
+                <option value="Leve">Leve (1-3 dias/semana)</option>
+                <option value="Moderado">Moderado (3-5 dias/semana)</option>
+                <option value="Intenso">Intenso (6-7 dias/semana)</option>
+              </select>
+            </div>
+
             {/* Meta (apenas alunos) */}
             {tipoUsuario === 'aluno' && (
               <div className="input-group">
                 <label>
                   <Target size={16} />
-                  Sua Meta Principal
+                  Sua Meta Principal *
                 </label>
                 <select
                   className="cad-input-global"
                   value={dados.meta || ''}
                   onChange={(e) => onChange({ meta: e.target.value })}
+                  required
                 >
                   <option value="">Selecione sua meta</option>
                   <option value="Perder peso">Perder peso</option>
@@ -494,6 +530,33 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
               </div>
             )}
           </div>
+
+            {/* {(dados.peso && dados.altura && dados.genero && dados.data_nascimento) && (
+              <div className="calculos-section">
+                <label> <strong> 📊 Seus Dados Calculados </strong></label>
+                <div className="calculos-grid">
+                  <div className="calculo-item">
+                    <strong>IMC:</strong> 
+                    <span>{calcularIMC(dados.peso, dados.altura, dados.genero)}</span>
+                  </div>
+                  <div className="calculo-item">
+                    <strong>Meta Calórica:</strong> 
+                    <span>{calcularMetaCalorica(
+                      dados.peso, 
+                      dados.altura, 
+                      calcularIdade(dados.data_nascimento), 
+                      dados.genero, 
+                      dados.treinoTipo, 
+                      dados.meta
+                    )} kcal</span>
+                  </div>
+                  <div className="calculo-item">
+                    <strong>Água Recomendada:</strong> 
+                    <span>{consumoAgua(dados.peso, dados.treinoTipo)}</span>
+                  </div>
+                </div>
+              </div>
+            )} */}
 
           {/* Sobre (apenas personal) */}
           {tipoUsuario === 'personal' && (

@@ -21,7 +21,7 @@ import CropModal from "./modalCrop";
 import PlanModal from "./modalPlano";
 import "../../assets/css/style.css";
 import "../../assets/css/templatemo-cyborg-gaming.css";
-import "./style.css";
+import "./style_perfil.css";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -105,6 +105,21 @@ export default function Profile() {
         img.onerror = () => console.log("❌ Imagem NÃO é acessível");
         img.src = getFotoUrl(user.foto_url);
       }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      console.log('🔄 Carregando dados do usuário no form:', user);
+      setForm({
+        ...user,
+        // Garantir que modalidades seja um array
+        modalidades: user.modalidades || []
+      });
+      
+      // Debug das modalidades
+      console.log('🎯 Modalidades do usuário:', user.modalidades);
+      console.log('🎯 Tipo das modalidades:', typeof user.modalidades);
     }
   }, [user]);
 
@@ -229,22 +244,17 @@ export default function Profile() {
   }, [email, idUsuario, tipoUsuario]);
 
   // 🔥 CORREÇÃO: Função para upload de foto usando cropImage.js
-  const handleSaveCrop = async (croppedImage) => {
+  const handleSaveCrop = async (croppedAreaPixels, imagemOriginal) => {
     try {
-      console.log("🎯 Iniciando upload da foto cortada...");
+      console.log("🎯 Iniciando processamento da foto...");
       
       // Importar dinamicamente o utilitário de crop
       const getCroppedImg = (await import('../../utils/cropImage')).default;
       
       // Obter o blob da imagem cortada
-      const blob = await getCroppedImg(croppedImage, {
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 800
-      });
-
-      console.log("📤 Fazendo upload do blob...", blob);
+      const blob = await getCroppedImg(imagemOriginal, croppedAreaPixels);
+      
+      console.log("📤 Fazendo upload do blob...");
 
       const formData = new FormData();
       formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
@@ -259,37 +269,21 @@ export default function Profile() {
       console.log('✅ Resposta do upload:', result);
 
       if (result.success) {
-        // Salvar a URL da foto no banco de dados do usuário
-        const saveResponse = await fetch(`${import.meta.env.VITE_API_URL}upload/salvar-foto-usuario`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            idUsuario: user.id,
-            tipoUsuario: tipoUsuario,
-            foto_url: result.url
-          })
-        });
-
-        const saveResult = await saveResponse.json();
+        // Atualizar estado local imediatamente
+        setForm(prev => ({ ...prev, foto_url: result.url }));
+        setUser(prev => ({ ...prev, foto_url: result.url }));
         
-        if (saveResult.success) {
-          // Atualizar estado local
-          const novaFotoUrl = result.url;
-          setForm(prev => ({ ...prev, foto_url: novaFotoUrl }));
-          setUser(prev => ({ ...prev, foto_url: novaFotoUrl }));
-          setCropModalOpen(false);
-          alert('Foto atualizada com sucesso!');
-        } else {
-          throw new Error(saveResult.error || 'Erro ao salvar foto no banco');
-        }
+        // Fechar modal
+        setCropModalOpen(false);
+        
+        alert('✅ Foto atualizada com sucesso!');
       } else {
         throw new Error(result.error || 'Erro no upload');
       }
+      
     } catch (error) {
       console.error('❌ Erro ao processar foto:', error);
-      alert('Erro ao processar foto: ' + error.message);
+      alert('❌ Erro ao processar foto: ' + error.message);
     }
   };
 
@@ -371,20 +365,49 @@ export default function Profile() {
   const handleModalidadeChange = (idModalidade) => {
     setForm(prev => {
       const modalidadesAtuais = prev.modalidades || [];
-      const modalidadesString = modalidadesAtuais.map(m => m.toString());
+      
+      // Converter tudo para string para comparação
+      const modalidadesString = modalidadesAtuais.map(m => 
+        typeof m === 'object' ? m.idModalidade.toString() : m.toString()
+      );
+      
       const idString = idModalidade.toString();
       
+      console.log('🎯 Modalidades atuais:', modalidadesString);
+      console.log('🎯 ID clicado:', idString);
+      
       if (modalidadesString.includes(idString)) {
+        // Remover modalidade
+        const novasModalidades = modalidadesAtuais.filter(m => {
+          const mId = typeof m === 'object' ? m.idModalidade.toString() : m.toString();
+          return mId !== idString;
+        });
+        
+        console.log('🗑️ Removendo modalidade. Novas:', novasModalidades);
         return {
           ...prev,
-          modalidades: modalidadesAtuais.filter(m => m.toString() !== idString)
+          modalidades: novasModalidades
         };
       } else {
+        // Adicionar modalidade
+        const novasModalidades = [...modalidadesAtuais, idModalidade];
+        console.log('➕ Adicionando modalidade. Novas:', novasModalidades);
         return {
           ...prev,
-          modalidades: [...modalidadesAtuais, idModalidade]
+          modalidades: novasModalidades
         };
       }
+    });
+  };
+
+  // 🔥 CORREÇÃO: Função para verificar se modalidade está selecionada
+  const isModalidadeSelecionada = (idModalidade) => {
+    if (!form.modalidades || form.modalidades.length === 0) return false;
+    
+    const idString = idModalidade.toString();
+    return form.modalidades.some(m => {
+      const mId = typeof m === 'object' ? m.idModalidade.toString() : m.toString();
+      return mId === idString;
     });
   };
 
@@ -394,32 +417,94 @@ export default function Profile() {
     try {
       // Preparar dados para envio
       const dadosAtualizacao = {
-        ...form,
         email: user.email,
-        // Incluir endereço se estiver editando
-        ...(editing && endereco)
+        tipoUsuario: tipoUsuario,
+        
+        // Dados principais
+        nome: form.nome,
+        data_nascimento: form.data_nascimento,
+        genero: form.genero,
+        numTel: form.numTel,
+        foto_url: form.foto_url,
+        
+        // 🔥 CORREÇÃO: Campos específicos para aluno
+        ...(tipoUsuario === 'aluno' && {
+          altura: form.altura,
+          peso: form.peso,
+          meta: form.meta,
+          treinoTipo: form.treinoTipo,
+          treinos_adaptados: form.treinos_adaptados || false
+        }),
+        
+        // Campos para personal
+        ...(tipoUsuario === 'personal' && {
+          sobre: form.sobre,
+          treinos_adaptados: form.treinos_adaptados || false,
+          cref_numero: form.cref_numero,
+          cref_categoria: form.cref_categoria,
+          cref_regional: form.cref_regional
+        }),
+        
+        // Campos para academia
+        ...(tipoUsuario === 'academia' && {
+          sobre: form.sobre,
+          tamanho_estrutura: form.tamanho_estrutura,
+          capacidade_maxima: form.capacidade_maxima,
+          ano_fundacao: form.ano_fundacao,
+          estacionamento: form.estacionamento || false,
+          vestiario: form.vestiario || false,
+          ar_condicionado: form.ar_condicionado || false,
+          wifi: form.wifi || false,
+          totem_de_carregamento_usb: form.totem_de_carregamento_usb || false,
+          area_descanso: form.area_descanso || false,
+          avaliacao_fisica: form.avaliacao_fisica || false
+        }),
+        
+        // 🔥 CORREÇÃO: Modalidades como array de IDs
+        modalidades: Array.isArray(form.modalidades) 
+          ? form.modalidades.map(m => typeof m === 'object' ? m.idModalidade : m)
+          : [],
+        
+        // Endereço
+        endereco: {
+          cep: endereco.cep || '',
+          logradouro: endereco.logradouro || '',
+          numero: endereco.numero || '',
+          complemento: endereco.complemento || '',
+          bairro: endereco.bairro || '',
+          cidade: endereco.cidade || '',
+          estado: endereco.estado || '',
+          pais: endereco.pais || 'Brasil'
+        },
+        
+        // 🔥 CORREÇÃO: Academia para alunos e personais
+        ...(tipoUsuario !== 'academia' && {
+          idAcademia: form.idAcademia || null
+        })
       };
 
-      const result = await perfilService.atualizarPerfil(dadosAtualizacao);
+      console.log('📤 Dados sendo enviados para atualização:', dadosAtualizacao);
+
+      const result = await perfilService.atualizarPerfilCompleto(dadosAtualizacao);
+      
       if (result.success) {
-        setUser({ ...form });
-        setEditing(false);
+        console.log('✅ Perfil atualizado com sucesso');
         
-        // Atualizar endereço separadamente se necessário
-        if (Object.keys(endereco).length > 0) {
-          await perfilService.atualizarEndereco({
-            ...endereco,
-            email: user.email
-          });
+        // Recarregar dados do usuário
+        const userData = await perfilService.getPerfilCompleto(user.id, tipoUsuario);
+        if (userData?.success) {
+          setUser(userData.data);
+          setForm(userData.data);
         }
         
-        alert('Perfil atualizado com sucesso!');
+        setEditing(false);
+        alert('✅ Perfil atualizado com sucesso!');
       } else {
-        alert("Erro ao atualizar perfil: " + result.error);
+        alert("❌ Erro ao atualizar perfil: " + result.error);
       }
     } catch (error) {
       console.error("Erro ao salvar perfil:", error);
-      alert("Erro ao atualizar perfil");
+      alert("❌ Erro ao atualizar perfil: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -475,84 +560,133 @@ export default function Profile() {
 
   // Renderização condicional baseada no tipo de usuário
   const renderCamposAluno = () => (
-    <>
-      <div className="form-grid">
-        <div className="input-group">
-          <label><IdCard size={16} /> CPF</label>
-          <input
-            type="text"
-            name="cpf"
-            value={form.cpf || ''}
-            onChange={handleChange}
-            disabled={!editing}
-            placeholder="000.000.000-00"
-          />
-        </div>
-
-        <div className="input-group">
-          <label>RG</label>
-          <input
-            type="text"
-            name="rg"
-            value={form.rg || ''}
-            onChange={handleChange}
-            disabled={!editing}
-            placeholder="Digite seu RG"
-          />
-        </div>
-
-        <div className="input-group">
-          <label><Ruler size={16} /> Altura (cm)</label>
-          <input
-            type="number"
-            name="altura"
-            value={form.altura || ''}
-            onChange={handleChange}
-            disabled={!editing}
-            placeholder="175"
-            min="100"
-            max="250"
-          />
-        </div>
-
-        <div className="input-group">
-          <label><Target size={16} /> Meta Principal</label>
-          <select
-            name="meta"
-            value={form.meta || ''}
-            onChange={handleChange}
-            disabled={!editing}
-          >
-            <option value="">Selecione sua meta</option>
-            <option value="Perder peso">Perder peso</option>
-            <option value="Manter peso">Manter peso</option>
-            <option value="Ganhar peso">Ganhar peso</option>
-            <option value="Ganhar massa muscular">Ganhar massa muscular</option>
-            <option value="Melhorar condicionamento">Melhorar condicionamento</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
+  <>
+    <div className="form-grid">
+      <div className="input-group">
+        <label><IdCard size={16} /> CPF</label>
+        <input
+          type="text"
+          name="cpf"
+          value={form.cpf || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="000.000.000-00"
+        />
       </div>
 
-      <div className="input-group full-width">
-        <label>Academia Vinculada</label>
+      <div className="input-group">
+        <label>RG</label>
+        <input
+          type="text"
+          name="rg"
+          value={form.rg || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="Digite seu RG"
+        />
+      </div>
+
+      <div className="input-group">
+        <label><Ruler size={16} /> Altura (cm)</label>
+        <input
+          type="number"
+          name="altura"
+          value={form.altura || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="175"
+          min="100"
+          max="250"
+        />
+      </div>
+
+      {/* 🔥 CORREÇÃO: Campo Peso */}
+      <div className="input-group">
+        <label>Peso (kg)</label>
+        <input
+          type="number"
+          name="peso"
+          value={form.peso || ''}
+          onChange={handleChange}
+          disabled={!editing}
+          placeholder="70.5"
+          min="30"
+          max="300"
+          step="0.1"
+        />
+      </div>
+
+      {/* 🔥 CORREÇÃO: Campo Tipo de Treino */}
+      <div className="input-group">
+        <label>Nível de Atividade</label>
         <select
-          name="idAcademia"
-          value={form.idAcademia || ''}
+          name="treinoTipo"
+          value={form.treinoTipo || ''}
           onChange={handleChange}
           disabled={!editing}
         >
-          <option value="">Nenhuma academia vinculada</option>
-          {academias.map(academia => (
-            <option key={academia.idAcademia} value={academia.idAcademia}>
-              {academia.nome}
-            </option>
-          ))}
+          <option value="">Selecione seu nível</option>
+          <option value="Sedentário">Sedentário (pouco ou nenhum exercício)</option>
+          <option value="Leve">Leve (1-3 dias/semana)</option>
+          <option value="Moderado">Moderado (3-5 dias/semana)</option>
+          <option value="Intenso">Intenso (6-7 dias/semana)</option>
         </select>
       </div>
-    </>
-  );
 
+      <div className="input-group">
+        <label><Target size={16} /> Meta Principal</label>
+        <select
+          name="meta"
+          value={form.meta || ''}
+          onChange={handleChange}
+          disabled={!editing}
+        >
+          <option value="">Selecione sua meta</option>
+          <option value="Perder peso">Perder peso</option>
+          <option value="Manter peso">Manter peso</option>
+          <option value="Ganhar peso">Ganhar peso</option>
+          <option value="Ganhar massa muscular">Ganhar massa muscular</option>
+          <option value="Melhorar condicionamento">Melhorar condicionamento</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+    </div>
+
+    {/* 🔥 CORREÇÃO: Treinos Adaptados para Aluno */}
+    <div className="checkbox-group">
+      <label className="checkbox-label">
+        <input
+          type="checkbox"
+          name="treinos_adaptados"
+          checked={form.treinos_adaptados || false}
+          onChange={(e) => setForm(prev => ({ ...prev, treinos_adaptados: e.target.checked }))}
+          disabled={!editing}
+        />
+        <span className="checkmark"></span>
+        Preciso de treinos adaptados
+      </label>
+    </div>
+
+    <div className="input-group full-width">
+      <label>Academia Vinculada</label>
+      <select
+        name="idAcademia"
+        value={form.idAcademia || ''}
+        onChange={handleChange}
+        disabled={!editing}
+      >
+        <option value="">Nenhuma academia vinculada</option>
+        {academias.map(academia => (
+          <option key={academia.idAcademia} value={academia.idAcademia}>
+            {academia.nome}
+          </option>
+        ))}
+      </select>
+    </div>
+  </>
+);
+
+  // 🔥 CORREÇÃO: Render campos do PERSONAL com todos os campos
   const renderCamposPersonal = () => (
     <>
       <div className="form-grid">
@@ -603,6 +737,33 @@ export default function Profile() {
             placeholder="Categoria CREF"
           />
         </div>
+
+        <div className="input-group">
+          <label>CREF Regional</label>
+          <input
+            type="text"
+            name="cref_regional"
+            value={form.cref_regional || ''}
+            onChange={handleChange}
+            disabled={!editing}
+            placeholder="Regional CREF"
+          />
+        </div>
+      </div>
+
+      {/* 🔥 CORREÇÃO: Treinos Adaptados para Personal */}
+      <div className="checkbox-group">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            name="treinos_adaptados"
+            checked={form.treinos_adaptados || false}
+            onChange={(e) => setForm(prev => ({ ...prev, treinos_adaptados: e.target.checked }))}
+            disabled={!editing}
+          />
+          <span className="checkmark"></span>
+          Trabalho com treinos adaptados
+        </label>
       </div>
 
       <div className="input-group full-width">
@@ -707,58 +868,18 @@ export default function Profile() {
 
   return (
     <div className="perfil container" style={{ position: "relative" }}>
-      {/* Header com Logout */}
-      <div className="logout-gear" onClick={handleLogout} title="Sair">
-        <FiLogOut size={30} />
-      </div>
-
       <div className="row">
         <div className="col-lg-12">
           <div className="page-content">
             <div className="main-profile">
               <div className="row">
                 {/* Foto de Perfil */}
-                <div className="col-lg-4">
+                <div className="col-lg-12">
                   <div className="foto-section">
                     
                     {editing ? (
                       <div className="foto-editable">
-                        <div className="foto-container">
-                          {form.foto_url ? (
-                            <div className="foto-preview">
-                              <img 
-                                src={getFotoUrl(form.foto_url)} 
-                                alt="Perfil" 
-                                onError={(e) => {
-                                  console.error("❌ Erro ao carregar imagem:", e);
-                                  e.target.src = "/assets/images/profilefoto.png";
-                                }}
-                                onLoad={(e) => {
-                                  console.log("✅ Imagem carregada com sucesso:", e.target.src);
-                                }}
-                              />
-                              <div className="foto-actions">
-                                <button onClick={() => setCropModalOpen(true)}>
-                                  <FiEdit2 /> Alterar
-                                </button>
-                                <button onClick={removerFoto} className="btn-remove">
-                                  <FiTrash2 /> Remover
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div 
-                              className="foto-upload-placeholder"
-                              onClick={() => setCropModalOpen(true)}
-                            >
-                              <FiUpload size={40} />
-                              <span>Adicionar Foto</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="profile-image-container">
+                        <div className="profile-image-container">
                         <img
                           src={getFotoUrl(user?.foto_url)}
                           alt="Perfil"
@@ -788,14 +909,50 @@ export default function Profile() {
                           )}
                         </div>
                       </div>
+                    </div>
+                    ) : (
+                      <div className="profile-image-container">
+                        <img
+                          src={getFotoUrl(user?.foto_url)}
+                          alt="Perfil"
+                          className="profile-image"
+                          onError={(e) => {
+                            console.error("❌ Erro ao carregar imagem no modo visualização:", e);
+                            e.target.src = "/assets/images/profilefoto.png";
+                          }}
+                          onLoad={(e) => {
+                            console.log("✅ Imagem carregada com sucesso no modo visualização:", e.target.src);
+                          }}
+                        />
+                        {/* <div className="profile-image-overlay">
+                          <button 
+                            className="btn-upload"
+                            onClick={() => setCropModalOpen(true)}
+                          >
+                            <FiUpload size={20} />
+                          </button>
+                          {user?.foto_url && (
+                            <button 
+                              className="btn-remove"
+                              onClick={removerFoto}
+                            >
+                              <FiTrash2 size={16} />
+                            </button>
+                          )}
+                        </div> */}
+                      </div>
                     )}
                   </div>
                 </div>
-
+              </div>
+              <div className="row">
                 {/* Informações Principais */}
-                <div className="col-lg-8">
+                <div className="col-lg-12">
                   <div className="profile-header">
                     <div className="header-actions">
+                      <button className="logout-gear" onClick={handleLogout} title="Sair">
+                        <FiLogOut size={30} />
+                      </button>
                       {!editing ? (
                         <button onClick={() => setEditing(true)} className="btn-edit">
                           <FiEdit2 /> Editar Perfil
@@ -983,20 +1140,35 @@ export default function Profile() {
 
                       {/* Seção de Modalidades */}
                       <div className="form-section">
-                        <h3>Modalidades</h3>
-                        <div className="modalidades-grid">
-                          {modalidades.map(modalidade => (
-                            <label key={modalidade.idModalidade} className="modalidade-checkbox">
-                              <input
-                                type="checkbox"
-                                checked={form.modalidades?.includes(modalidade.idModalidade.toString()) || false}
-                                onChange={() => handleModalidadeChange(modalidade.idModalidade)}
-                              />
-                              <span className="checkmark"></span>
-                              {modalidade.nome}
-                            </label>
-                          ))}
-                        </div>
+                        <h3>
+                          {tipoUsuario === 'personal' ? 'Modalidades que Trabalha' : 
+                          tipoUsuario === 'academia' ? 'Modalidades Oferecidas' : 'Modalidades de Interesse'} *
+                        </h3>
+                        
+                        {modalidades.length > 0 ? (
+                          <div className="modalidades-grid">
+                            {modalidades.map(modalidade => (
+                              <label key={modalidade.idModalidade} className="modalidade-checkbox">
+                                <input
+                                  type="checkbox"
+                                  checked={isModalidadeSelecionada(modalidade.idModalidade)}
+                                  onChange={() => handleModalidadeChange(modalidade.idModalidade)}
+                                  disabled={!editing}
+                                />
+                                <span className="checkmark"></span>
+                                {modalidade.nome}
+                              </label>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="loading-modalidades">
+                            <p>Carregando modalidades...</p>
+                          </div>
+                        )}
+                        
+                        {editing && (!form.modalidades || form.modalidades.length === 0) && (
+                          <span className="cad-error">Selecione pelo menos uma modalidade</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -1016,92 +1188,245 @@ export default function Profile() {
                           <div className="info-item">
                             <strong>Telefone:</strong> {user.numTel || user.telefone}
                           </div>
+                          
+                          {/* 🔥 CORREÇÃO: Data de nascimento formatada corretamente */}
                           {user.data_nascimento && (
                             <div className="info-item">
-                              <strong>Data Nascimento:</strong> {new Date(user.data_nascimento).toLocaleDateString()}
+                              <strong>Data Nascimento:</strong> {new Date(user.data_nascimento + 'T00:00:00').toLocaleDateString('pt-BR')}
                             </div>
                           )}
+                          
                           {user.genero && (
                             <div className="info-item">
                               <strong>Gênero:</strong> {user.genero}
                             </div>
                           )}
                           
-                          {/* Informações específicas por tipo */}
-                          {tipoUsuario === 'aluno' && user.altura && (
-                            <div className="info-item">
-                              <strong>Altura:</strong> {user.altura}cm
-                            </div>
+                          {/* 🔥 CORREÇÃO: Informações específicas para ALUNO */}
+                          {tipoUsuario === 'aluno' && (
+                            <>
+                              {user.altura && (
+                                <div className="info-item">
+                                  <strong>Altura:</strong> {user.altura}cm
+                                </div>
+                              )}
+                              {user.peso && (
+                                <div className="info-item">
+                                  <strong>Peso:</strong> {user.peso}kg
+                                </div>
+                              )}
+                              {user.meta && (
+                                <div className="info-item">
+                                  <strong>Meta:</strong> {user.meta}
+                                </div>
+                              )}
+                              {user.treinoTipo && (
+                                <div className="info-item">
+                                  <strong>Nível de Atividade:</strong> {user.treinoTipo}
+                                </div>
+                              )}
+                              {user.treinos_adaptados !== undefined && (
+                                <div className="info-item">
+                                  <strong>Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
+                                </div>
+                              )}
+                            </>
                           )}
-                          {tipoUsuario === 'aluno' && user.meta && (
-                            <div className="info-item">
-                              <strong>Meta:</strong> {user.meta}
-                            </div>
+                          
+                          {/* 🔥 CORREÇÃO: Informações específicas para PERSONAL */}
+                          {tipoUsuario === 'personal' && (
+                            <>
+                              {user.cref_numero && (
+                                <div className="info-item">
+                                  <strong>CREF:</strong> {user.cref_numero}-{user.cref_categoria}/{user.cref_regional}
+                                </div>
+                              )}
+                              {user.treinos_adaptados !== undefined && (
+                                <div className="info-item">
+                                  <strong>Trabalha com Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
+                                </div>
+                              )}
+                              {user.sobre && (
+                                <div className="info-item full-width">
+                                  <strong>Sobre:</strong> {user.sobre}
+                                </div>
+                              )}
+                            </>
                           )}
-                          {tipoUsuario === 'personal' && user.cref_numero && (
-                            <div className="info-item">
-                              <strong>CREF:</strong> {user.cref_numero}-{user.cref_categoria}/{user.cref_regional}
-                            </div>
-                          )}
-                          {tipoUsuario === 'academia' && user.cnpj && (
-                            <div className="info-item">
-                              <strong>CNPJ:</strong> {user.cnpj}
-                            </div>
+                          
+                          {/* 🔥 CORREÇÃO: Informações específicas para ACADEMIA */}
+                          {tipoUsuario === 'academia' && (
+                            <>
+                              {user.cnpj && (
+                                <div className="info-item">
+                                  <strong>CNPJ:</strong> {user.cnpj}
+                                </div>
+                              )}
+                              {user.nome_fantasia && (
+                                <div className="info-item">
+                                  <strong>Nome Fantasia:</strong> {user.nome_fantasia}
+                                </div>
+                              )}
+                              {user.razao_social && (
+                                <div className="info-item">
+                                  <strong>Razão Social:</strong> {user.razao_social}
+                                </div>
+                              )}
+                              {user.tamanho_estrutura && (
+                                <div className="info-item">
+                                  <strong>Tamanho da Estrutura:</strong> {user.tamanho_estrutura}
+                                </div>
+                              )}
+                              {user.capacidade_maxima && (
+                                <div className="info-item">
+                                  <strong>Capacidade Máxima:</strong> {user.capacidade_maxima} alunos
+                                </div>
+                              )}
+                              {user.ano_fundacao && (
+                                <div className="info-item">
+                                  <strong>Ano de Fundação:</strong> {user.ano_fundacao}
+                                </div>
+                              )}
+                              {user.sobre && (
+                                <div className="info-item full-width">
+                                  <strong>Sobre:</strong> {user.sobre}
+                                </div>
+                              )}
+                              
+                              {/* Diferenciais da Academia */}
+                              {(user.estacionamento || user.vestiario || user.ar_condicionado || user.wifi || 
+                                user.totem_de_carregamento_usb || user.area_descanso || user.avaliacao_fisica) && (
+                                <div className="info-item full-width">
+                                  <strong>Diferenciais:</strong>
+                                  <div className="diferenciais-list">
+                                    {user.estacionamento && <span className="diferencial-tag">Estacionamento</span>}
+                                    {user.vestiario && <span className="diferencial-tag">Vestiário</span>}
+                                    {user.ar_condicionado && <span className="diferencial-tag">Ar Condicionado</span>}
+                                    {user.wifi && <span className="diferencial-tag">Wi-Fi</span>}
+                                    {user.totem_de_carregamento_usb && <span className="diferencial-tag">Totem USB</span>}
+                                    {user.area_descanso && <span className="diferencial-tag">Área de Descanso</span>}
+                                    {user.avaliacao_fisica && <span className="diferencial-tag">Avaliação Física</span>}
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
 
-                      {/* Endereço */}
-                      {endereco.cep && (
+                      {/* 🔥 CORREÇÃO: Endereço - usando dados do usuário completo */}
+                      {(user.cep || endereco.cep) && (
                         <div className="info-section">
                           <h3>Endereço</h3>
-                          <div className="info-item">
-                            <strong>Endereço:</strong> {endereco.logradouro}, {endereco.numero} {endereco.complemento && `- ${endereco.complemento}`}
-                          </div>
-                          <div className="info-item">
-                            <strong>Bairro:</strong> {endereco.bairro}
-                          </div>
-                          <div className="info-item">
-                            <strong>Cidade/Estado:</strong> {endereco.cidade} - {endereco.estado}
-                          </div>
-                          <div className="info-item">
-                            <strong>CEP:</strong> {endereco.cep}
+                          <div className="info-grid">
+                            {(user.logradouro || endereco.logradouro) && (
+                              <div className="info-item2">
+                                <strong>Endereço:</strong> <br /> {(user.logradouro || endereco.logradouro)}, {(user.numero || endereco.numero)} {(user.complemento || endereco.complemento) && `- ${user.complemento || endereco.complemento}`}
+                              </div>
+                            )}
+                            {(user.bairro || endereco.bairro) && (
+                              <div className="info-item2">
+                                <strong>Bairro:</strong> <br /> {user.bairro || endereco.bairro}
+                              </div>
+                            )}
+                            {(user.cidade || endereco.cidade) && (
+                              <div className="info-item2">
+                                <strong>Cidade/Estado:</strong> <br /> {user.cidade || endereco.cidade} - {user.estado || endereco.estado}
+                              </div>
+                            )}
+                            {(user.cep || endereco.cep) && (
+                              <div className="info-item2">
+                                <strong>CEP:</strong> <br /> {user.cep || endereco.cep}
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
 
-                      {/* Modalidades */}
-                      {form.modalidades && form.modalidades.length > 0 && (
-                        <div className="info-section">
+                      {/* 🔥 CORREÇÃO: Modalidades - usando dados corretos */}
+                      {user.modalidades && user.modalidades.length > 0 && (
+                      <div className="row2">
+                        <div className="col-lg-6 info-section">
                           <h3>Modalidades</h3>
                           <div className="modalidades-tags">
-                            {modalidades
-                              .filter(m => form.modalidades.includes(m.idModalidade.toString()))
-                              .map(modalidade => (
-                                <span key={modalidade.idModalidade} className="modalidade-tag">
-                                  {modalidade.nome}
-                                </span>
-                              ))
-                            }
+                            {user.modalidades.map((modalidade, index) => {
+                              // Se modalidade é um objeto, usar nome, se é ID, buscar na lista
+                              if (typeof modalidade === 'object' && modalidade.nome) {
+                                return (
+                                  <span key={index} className="modalidade-tag">
+                                    {modalidade.nome}
+                                  </span>
+                                );
+                              } else {
+                                // Buscar nome da modalidade na lista carregada
+                                const modalidadeInfo = modalidades.find(m => 
+                                  m.idModalidade.toString() === modalidade.toString()
+                                );
+                                return (
+                                  <span key={index} className="modalidade-tag">
+                                    {modalidadeInfo ? modalidadeInfo.nome : `Modalidade ${modalidade}`}
+                                  </span>
+                                );
+                              }
+                            })}
+                          </div>
+                        </div>
+                        {/* 🔥 CORREÇÃO: Plano */}
+                        <div className="col-lg-6 info-section">
+                          <h3>Plano</h3>
+                          <div className="plan-info">
+                            <div className="info-item2">
+                              <strong>Plano Atual:</strong> {user.tipoPlano || 'Básico(Gratuito)'}
+                            </div>
+                            <button 
+                              onClick={() => setEditingPlan(true)}
+                              className="btn-change-plan"
+                            >
+                              Alterar Plano
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      )}
+                      
+                      {/* 🔥 CORREÇÃO: Solicitação de Vinculação à Academia */}
+                      {tipoUsuario !== 'academia' && user.idAcademia && (
+                        <div className="info-section solicitation-info">
+                          <h3>🏢 Academia Vinculada</h3>
+                          <div className="solicitation-status">
+                            <div className="status-item approved">
+                              <strong>Status:</strong> Vinculado
+                            </div>
+                            <div className="status-item">
+                              <strong>Academia:</strong> {
+                                academias.find(a => a.idAcademia == user.idAcademia)?.nome || 'Academia vinculada'
+                              }
+                            </div>
+                            <div className="status-help">
+                              <small>
+                                Você está vinculado a esta academia. Para alterar, entre em contato com a administração.
+                              </small>
+                            </div>
                           </div>
                         </div>
                       )}
 
-                      {/* Plano */}
-                      <div className="info-section">
-                        <h3>Plano</h3>
-                        <div className="plan-info">
-                          <div className="info-item">
-                            <strong>Plano Atual:</strong> {user.tipoPlano || 'Básico'}
+                      {/* 🔥 NOVO: Botão para solicitar vinculação se não tiver academia */}
+                      {tipoUsuario !== 'academia' && !user.idAcademia && academias.length > 0 && (
+                        <div className="info-section solicitation-info">
+                          <h3>🏢 Vincular-se a uma Academia</h3>
+                          <div className="solicitation-status">
+                            <div className="status-item pending">
+                              <strong>Status:</strong> Não vinculado
+                            </div>
+                            <div className="status-help">
+                              <small>
+                                Você não está vinculado a nenhuma academia. Clique em "Editar Perfil" para solicitar vinculação.
+                              </small>
+                            </div>
                           </div>
-                          <button 
-                            onClick={() => setEditingPlan(true)}
-                            className="btn-change-plan"
-                          >
-                            Alterar Plano
-                          </button>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -34,19 +34,74 @@ const PainelControleAcademiaPage = () => {
     carregarPainel();
   }, []);
 
+  const [erro, setErro] = useState(null);
+
   const carregarPainel = async () => {
     try {
-        const response = await academiaService.getPainelControle();
+        setCarregando(true);
+        setErro(null);
         
-        // CORREÇÃO: Acesse response.data diretamente
-        if (response.data.success) {
-        setDados(response.data.data);
+        console.log('🔍 Iniciando carregamento do painel...');
+        
+        // Verificar se é academia
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (!usuario || usuario.tipo !== "academia") {
+            console.log('❌ Usuário não é academia, redirecionando...');
+            navigate("/home");
+            return;
+        }
+
+        const response = await academiaService.getPainelControle();
+        console.log('📦 Resposta completa da API:', response);
+        
+        // 🔥 CORREÇÃO MELHORADA: Verificar diferentes formatos de resposta
+        let responseData;
+        
+        if (response && typeof response === 'object') {
+            // Se response já é o objeto de dados
+            if (response.success !== undefined) {
+                responseData = response;
+            } else if (response.data && response.data.success !== undefined) {
+                // Se response tem propriedade data
+                responseData = response.data;
+            } else {
+                // Tentar usar response diretamente
+                responseData = { success: true, data: response };
+            }
         } else {
-        throw new Error(response.data.error || 'Erro ao carregar dados');
+            throw new Error('Formato de resposta inválido');
+        }
+        
+        if (responseData && responseData.success) {
+            console.log('✅ Dados recebidos:', responseData.data);
+            setDados(responseData.data);
+        } else {
+            const errorMsg = responseData?.error || 'Erro ao carregar dados';
+            console.log('❌ Erro na resposta:', errorMsg);
+            throw new Error(errorMsg);
         }
     } catch (error) {
-        console.error('Erro ao carregar painel:', error);
-        alert(error.response?.data?.error || error.message || 'Erro ao carregar dados do painel');
+        console.error('💥 Erro ao carregar painel:', error);
+        
+        let mensagemErro = 'Erro ao carregar dados do painel';
+        
+        if (error.response) {
+            // Erro da API
+            const errorData = error.response.data;
+            if (typeof errorData === 'string' && errorData.includes('Fatal error')) {
+                mensagemErro = 'Erro interno do servidor. Tente novamente.';
+            } else {
+                mensagemErro = errorData?.error || error.response.statusText || 'Erro na requisição';
+            }
+        } else if (error.request) {
+            // Erro de rede
+            mensagemErro = 'Erro de conexão. Verifique sua internet.';
+        } else if (error.message) {
+            // Outros erros
+            mensagemErro = error.message;
+        }
+        
+        setErro(mensagemErro);
     } finally {
         setCarregando(false);
     }
@@ -92,6 +147,16 @@ const PainelControleAcademiaPage = () => {
       }
     }
   };
+
+  // Adicione esta renderização condicional no JSX
+  if (erro) {
+    return (
+      <div className="painel-academia error">
+        <p>Erro: {erro}</p>
+        <button onClick={carregarPainel}>Tentar Novamente</button>
+      </div>
+    );
+  }
 
   if (carregando) {
     return (

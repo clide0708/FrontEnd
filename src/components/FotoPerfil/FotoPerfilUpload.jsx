@@ -17,9 +17,9 @@ const FotoPerfilUpload = ({
   const [fotoPreview, setFotoPreview] = useState(fotoUrl);
 
   const tamanhos = {
-    pequeno: { container: "80px", icon: 24 },
-    medio: { container: "120px", icon: 40 },
-    grande: { container: "160px", icon: 60 }
+    pequeno: { container: "20%", icon: 24 },
+    medio: { container: "30%", icon: 40 },
+    grande: { container: "40%", icon: 60 }
   };
 
   const handleSelecionarFoto = (event) => {

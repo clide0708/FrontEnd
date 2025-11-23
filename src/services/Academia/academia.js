@@ -2,18 +2,21 @@
 import api from "../api";
 
 const academiaService = {
-  // Buscar painel de controle da academia
+  // Buscar painel de controle da academia - CORREÇÃO AQUI
   async getPainelControle() {
     try {
+      console.log('🔄 Buscando painel da academia...');
       const response = await api.get('/academia/painel');
-      return response;
+      console.log('✅ Resposta do painel:', response);
+      return response.data;
     } catch (error) {
-      console.error('Erro ao buscar painel:', error);
+      console.error('❌ Erro ao buscar painel:', error);
+      console.error('Detalhes do erro:', error.response?.data);
       throw error;
     }
   },
 
-  // ENVIAR solicitação de vinculação - MÉTODO ADICIONADO
+  // ENVIAR solicitação de vinculação
   async enviarSolicitacaoVinculacao(dados) {
     try {
       const response = await api.post('/academia/solicitacao/enviar', dados);
@@ -59,7 +62,7 @@ const academiaService = {
     }
   },
 
-  // Listar academias ativas (para select) - MÉTODO ADICIONADO
+  // Listar academias ativas
   async listarAcademiasAtivas() {
     try {
       const response = await api.get('/academias-ativas');
@@ -69,6 +72,7 @@ const academiaService = {
       throw error;
     }
   }
+
 };
 
 export default academiaService;

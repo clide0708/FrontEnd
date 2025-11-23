@@ -2007,3 +2007,227 @@
     margin: 0;
   }
 }
+
+
+.calculos-tempo-real {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border-left: 4px solid #368DD9;
+}
+
+.calculos-tempo-real h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.calculos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.calculo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.calculo-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.calculo-valor {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+
+
+
+
+
+
+
+/* Estilos para as fotos das academias */
+.academia-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+}
+
+.academia-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.foto-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    border-radius: 6px;
+}
+
+.academia-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.academia-card:hover {
+    border-color: #368DD9;
+    background: rgba(54, 141, 217, 0.05);
+}
+
+.academia-card.selected {
+    border-color: #368DD9;
+    background: rgba(54, 141, 217, 0.1);
+}
+
+
+/* Estilos CRÍTICOS para as fotos das academias */
+.academia-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+}
+
+.academia-foto-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* 🔥 IMPORTANTE: Garante que a imagem seja visível */
+}
+
+.foto-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    border-radius: 6px;
+}
+
+/* Placeholder de fallback (quando a imagem falha) */
+.foto-placeholder.fallback {
+    display: none; /* Começa escondido */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Quando a imagem falha, mostra o placeholder */
+.academia-foto-img:not([src]) + .foto-placeholder.fallback,
+.academia-foto-img[style*="display: none"] + .foto-placeholder.fallback {
+    display: flex;
+}
+
+.academia-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1px solid white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.academia-card:hover {
+    border-color: #368DD9;
+    background: rgba(54, 141, 217, 0.05);
+}
+
+.academia-card.selected {
+    border-color: #368DD9;
+    background: rgba(54, 141, 217, 0.1);
+    box-shadow: 0 2px 8px rgba(54, 141, 217, 0.2);
+}
+
+
+
+
+
+
+
+
+
+
+/* Estilos CRÍTICOS para as fotos das academias */
+.academia-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+}
+
+.academia-foto-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* 🔥 Garante que seja visível */
+}
+
+.foto-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    border-radius: 6px;
+}
+
+/* Placeholder de fallback */
+.foto-placeholder.fallback {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Quando a imagem falha, mostra o placeholder */
+.academia-foto-img[style*="display: none"] + .foto-placeholder.fallback {
+    display: flex;
+}

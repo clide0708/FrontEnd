@@ -26,6 +26,20 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
     }
   };
 
+  // 🔥 CORREÇÃO SIMPLIFICADA: Função para construir URL correta
+  const construirUrlFoto = (fotoUrl) => {
+    if (!fotoUrl) return null;
+    
+    // Extrai apenas o nome do arquivo
+    const nomeArquivo = fotoUrl.split('/').pop();
+    
+    // URL absoluta direta
+    const urlAbsoluta = `http://localhost/BackEnd/assets/images/uploads/${nomeArquivo}`;
+    
+    console.log('🎯 URL Absoluta:', urlAbsoluta);
+    return urlAbsoluta;
+  };
+
   const academiasFiltradas = academias.filter(academia =>
     academia.nome.toLowerCase().includes(filtro.toLowerCase()) ||
     academia.endereco_completo?.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -57,8 +71,30 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
   // Função para separar modalidades em array
   const separarModalidades = (modalidadesString) => {
     if (!modalidadesString) return [];
-    return modalidadesString.split(', ').slice(0, 20); // Mostra no máximo 4 modalidades
+    return modalidadesString.split(', ').slice(0, 4);
   };
+
+  useEffect(() => {
+    if (academias.length > 0) {
+      academias.forEach(academia => {
+        if (academia.foto_url) {
+          const url = construirUrlFoto(academia.foto_url);
+          console.log('🔍 TESTE DIRETO DA URL:', url);
+          
+          // Cria uma imagem temporária para testar
+          const testImage = new Image();
+          testImage.onload = function() {
+            console.log('🎉 IMAGEM CARREGADA COM SUCESSO VIA JavaScript!');
+            console.log('Largura:', this.width, 'Altura:', this.height);
+          };
+          testImage.onerror = function() {
+            console.error('💥 FALHA NO CARREGAMENTO VIA JavaScript');
+          };
+          testImage.src = url;
+        }
+      });
+    }
+  }, [academias]);
 
   return (
     <div className="etapa-academia">
@@ -88,121 +124,137 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
               <p>{filtro ? 'Nenhuma academia encontrada para sua busca' : 'Nenhuma academia encontrada'}</p>
             </div>
           ) : (
-            academiasFiltradas.map(academia => (
-              <div
-                key={academia.idAcademia}
-                className={`academia-card ${dados.idAcademia === academia.idAcademia ? 'selected' : ''}`}
-                onClick={() => onChange({ idAcademia: academia.idAcademia })}
-              >
-                {/* Foto da academia */}
-                <div className="academia-foto">
-                  {academia.foto_url ? (
-                    <img 
-                      src={`${import.meta.env.VITE_API_URL}${academia.foto_url}`} 
-                      alt={academia.nome}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div className={`foto-placeholder ${academia.foto_url ? 'hidden' : ''}`}>
-                    <Building size={32} />
-                  </div>
-                </div>
+            academiasFiltradas.map(academia => {
+              const temFoto = !!academia.foto_url;
+              const urlFoto = construirUrlFoto(academia.foto_url);
 
-                {/* Container principal das informações */}
-                <div className="academia-info-container">
-                  {/* Header com nome e badges */}
-                  <div className="academia-header">
-                    <div className="academia-title-section">
-                      <h4>{academia.nome}</h4>
+              console.log(`🎯 Renderizando: ${academia.nome}`, {
+                temFoto,
+                urlFoto
+              });
+
+              return (
+                <div
+                  key={academia.idAcademia}
+                  className={`academia-card ${dados.idAcademia === academia.idAcademia ? 'selected' : ''}`}
+                  onClick={() => onChange({ idAcademia: academia.idAcademia })}
+                >
+                  {/* 🔥 CORREÇÃO: Foto da academia com URL corrigida */}
+                  <div className="academia-foto">
+                    {temFoto ? (
+                      <>
+                        <img 
+                          src={urlFoto} 
+                          alt={academia.nome}
+                          className="academia-foto-img"
+                          onError={(e) => {
+                            console.error(`❌ Erro ao carregar: ${urlFoto}`);
+                            e.target.style.display = 'none';
+                          }}
+                          onLoad={(e) => {
+                            console.log(`✅ Carregou: ${urlFoto}`);
+                            e.target.style.display = 'block';
+                          }}
+                        />
+                        {/* Placeholder de fallback */}
+                        <div className="foto-placeholder fallback">
+                          <Building size={32} />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="foto-placeholder">
+                        <Building size={32} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Container principal das informações */}
+                   <div className="academia-info-container">
+                    <div className="academia-header">
+                      <div className="academia-title-section">
+                        <h4>{academia.nome}</h4>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Sobre */}
-                  {academia.sobre && (
-                    <p className="academia-sobre">
-                      {truncarTexto(academia.sobre, 120)}
-                    </p>
-                  )}
-
-                  {/* Detalhes */}
-                  <div className="academia-details">
-                    {/* Endereço */}
-                    {academia.endereco_completo && (
-                      <div className="academia-detail">
-                        <MapPin size={14} />
-                        <span>{academia.endereco_completo}</span>
-                      </div>
+                    {academia.sobre && (
+                      <p className="academia-sobre">
+                        {academia.sobre.length > 120 ? `${academia.sobre.substring(0, 120)}...` : academia.sobre}
+                      </p>
                     )}
-                    
-                    {/* Telefone */}
-                    {academia.telefone && (
-                      <div className="academia-detail">
-                        <Phone size={14} />
-                        <span>{formatarTelefone(academia.telefone)}</span>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Modalidades como tags */}
-                  {academia.modalidades && (
-                    <div className="academia-modalidades-tags">
-                      {separarModalidades(academia.modalidades).map((modalidade, index) => (
-                        <span key={index} className="modalidade-tag">
-                          {modalidade}
-                        </span>
-                      ))}
-                      {separarModalidades(academia.modalidades).length < academia.modalidades.split(', ').length && (
-                        <span className="modalidade-tag">
-                          +{academia.modalidades.split(', ').length - separarModalidades(academia.modalidades).length}
-                        </span>
+                    <div className="academia-details">
+                      {academia.endereco_completo && (
+                        <div className="academia-detail">
+                          <MapPin size={14} />
+                          <span>{academia.endereco_completo}</span>
+                        </div>
+                      )}
+                      
+                      {academia.telefone && (
+                        <div className="academia-detail">
+                          <Phone size={14} />
+                          <span>{academia.telefone}</span>
+                        </div>
                       )}
                     </div>
-                  )}
 
-                  {/* Diferenciais */}
-                  <div className="academia-diferenciais">
-                    {academia.estacionamento && (
-                      <div className="diferencial-item">
-                        <Car size={12} />
-                        <span>Estacionamento</span>
+                    {/* Modalidades como tags */}
+                    {academia.modalidades && (
+                      <div className="academia-modalidades-tags">
+                        {separarModalidades(academia.modalidades).map((modalidade, index) => (
+                          <span key={index} className="modalidade-tag">
+                            {modalidade}
+                          </span>
+                        ))}
+                        {separarModalidades(academia.modalidades).length < academia.modalidades.split(', ').length && (
+                          <span className="modalidade-tag">
+                            +{academia.modalidades.split(', ').length - separarModalidades(academia.modalidades).length}
+                          </span>
+                        )}
                       </div>
                     )}
-                    {academia.avaliacao_fisica && (
-                      <div className="diferencial-item">
-                        <span>🏋️</span>
-                        <span>Avaliação Física</span>
-                      </div>
-                    )}
-                    {academia.ar_condicionado && (
-                      <div className="diferencial-item">
-                        <span>❄️</span>
-                        <span>Ar Condicionado</span>
-                      </div>
-                    )}
-                    {academia.wifi && (
-                      <div className="diferencial-item">
-                        <Wifi size={12} />
-                        <span>Wi-Fi</span>
-                      </div>
-                    )}
-                    {academia.vestiario && (
-                      <div className="diferencial-item">
-                        <span>🚿</span>
-                        <span>Vestiário</span>
-                      </div>
-                    )}
+
+                    {/* Diferenciais */}
+                    <div className="academia-diferenciais">
+                      {academia.estacionamento && (
+                        <div className="diferencial-item">
+                          <Car size={12} />
+                          <span>Estacionamento</span>
+                        </div>
+                      )}
+                      {academia.avaliacao_fisica && (
+                        <div className="diferencial-item">
+                          <span>🏋️</span>
+                          <span>Avaliação Física</span>
+                        </div>
+                      )}
+                      {academia.ar_condicionado && (
+                        <div className="diferencial-item">
+                          <span>❄️</span>
+                          <span>Ar Condicionado</span>
+                        </div>
+                      )}
+                      {academia.wifi && (
+                        <div className="diferencial-item">
+                          <Wifi size={12} />
+                          <span>Wi-Fi</span>
+                        </div>
+                      )}
+                      {academia.vestiario && (
+                        <div className="diferencial-item">
+                          <span>🚿</span>
+                          <span>Vestiário</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="selection-indicator">
+                    {dados.idAcademia === academia.idAcademia && '✓'}
                   </div>
                 </div>
-
-                {/* Indicador de seleção */}
-                <div className="selection-indicator">
-                  {dados.idAcademia === academia.idAcademia && '✓'}
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
