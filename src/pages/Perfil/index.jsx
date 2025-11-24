@@ -405,9 +405,14 @@ export default function Profile() {
     if (!form.modalidades || form.modalidades.length === 0) return false;
     
     const idString = idModalidade.toString();
+    
     return form.modalidades.some(m => {
-      const mId = typeof m === 'object' ? m.idModalidade.toString() : m.toString();
-      return mId === idString;
+      // Se é objeto, comparar idModalidade, se é número/string, comparar direto
+      if (typeof m === 'object' && m.idModalidade) {
+        return m.idModalidade.toString() === idString;
+      } else {
+        return m.toString() === idString;
+      }
     });
   };
 
@@ -422,13 +427,19 @@ export default function Profile() {
         
         // Dados principais
         nome: form.nome,
-        numTel: tipoUsuario === 'academia' ? form.telefone : form.numTel,
         foto_url: form.foto_url,
         
-        // 🔥 CORREÇÃO: Campos específicos para cada tipo
-        ...(tipoUsuario === 'aluno' && {
+        // 🔥 CORREÇÃO: Telefone com campo correto
+        ...(tipoUsuario === 'academia' ? { telefone: form.telefone } : { numTel: form.numTel }),
+        
+        // 🔥 CORREÇÃO: Apenas para aluno e personal
+        ...(tipoUsuario !== 'academia' && {
           data_nascimento: form.data_nascimento,
-          genero: form.genero,
+          genero: form.genero
+        }),
+        
+        // 🔥 CORREÇÃO: Campos específicos para aluno
+        ...(tipoUsuario === 'aluno' && {
           altura: form.altura,
           peso: form.peso,
           meta: form.meta,
@@ -436,10 +447,8 @@ export default function Profile() {
           treinos_adaptados: form.treinos_adaptados || false
         }),
         
-        // Campos para personal
+        // 🔥 CORREÇÃO: Campos para personal
         ...(tipoUsuario === 'personal' && {
-          data_nascimento: form.data_nascimento,
-          genero: form.genero,
           sobre: form.sobre,
           treinos_adaptados: form.treinos_adaptados || false,
           cref_numero: form.cref_numero,
@@ -447,12 +456,12 @@ export default function Profile() {
           cref_regional: form.cref_regional
         }),
         
-        // 🔥 CORREÇÃO: Campos para academia
+        // 🔥 CORREÇÃO: Campos para academia (COMPLETO)
         ...(tipoUsuario === 'academia' && {
+          sobre: form.sobre,
           nome_fantasia: form.nome_fantasia,
           razao_social: form.razao_social,
-          telefone: form.telefone,
-          sobre: form.sobre,
+          cnpj: form.cnpj,
           tamanho_estrutura: form.tamanho_estrutura,
           capacidade_maxima: form.capacidade_maxima,
           ano_fundacao: form.ano_fundacao,
@@ -462,15 +471,13 @@ export default function Profile() {
           wifi: form.wifi || false,
           totem_de_carregamento_usb: form.totem_de_carregamento_usb || false,
           area_descanso: form.area_descanso || false,
-          avaliacao_fisica: form.avaliacao_fisica || false
+          avaliacao_fisica: form.avaliacao_fisica || false,
+          treinos_adaptados: form.treinos_adaptados || false // 🔥 Academia também tem treinos_adaptados
         }),
         
         // 🔥 CORREÇÃO: Modalidades como array de IDs
         modalidades: Array.isArray(form.modalidades) 
-          ? form.modalidades.map(m => {
-              // Se é objeto, pegar idModalidade, se é número, usar direto
-              return typeof m === 'object' ? m.idModalidade : m;
-            })
+          ? form.modalidades.map(m => typeof m === 'object' ? m.idModalidade : m)
           : [],
         
         // Endereço
@@ -487,7 +494,6 @@ export default function Profile() {
       };
 
       console.log('📤 Dados sendo enviados para atualização:', dadosAtualizacao);
-      console.log('🎯 Modalidades sendo enviadas:', dadosAtualizacao.modalidades);
 
       const result = await perfilService.atualizarPerfilCompleto(dadosAtualizacao);
       
@@ -495,11 +501,16 @@ export default function Profile() {
         console.log('✅ Perfil atualizado com sucesso');
         
         // Recarregar dados do usuário
-        const userData = await perfilService.getPerfilCompleto(idUsuario, tipoUsuario);
+        const userData = await perfilService.getPerfilCompleto(user.id, tipoUsuario);
         if (userData?.success) {
           setUser(userData.data);
           setForm(userData.data);
-          console.log('✅ Dados recarregados:', userData.data);
+          
+          // 🔥 CORREÇÃO: Recarregar também modalidades
+          const modalidadesData = await perfilService.getModalidades();
+          if (modalidadesData?.success) {
+            setModalidades(modalidadesData.data);
+          }
         }
         
         setEditing(false);
@@ -812,11 +823,9 @@ export default function Profile() {
             name="cnpj"
             value={form.cnpj || ''}
             onChange={handleChange}
-            disabled={true} // CNPJ não pode ser editado
+            disabled={!editing}
             placeholder={form.cnpj || "00.000.000/0000-00"}
-            className="disabled-field"
           />
-          <small className="field-note">CNPJ não pode ser alterado</small>
         </div>
 
         <div className="input-group">
@@ -844,18 +853,6 @@ export default function Profile() {
         </div>
 
         <div className="input-group">
-          <label><Phone size={16} /> Telefone</label>
-          <input
-            type="text"
-            name="telefone"
-            value={form.telefone || ''}
-            onChange={handleChange}
-            disabled={!editing}
-            placeholder={form.telefone || "(00) 00000-0000"}
-          />
-        </div>
-
-        <div className="input-group">
           <label>Tamanho da Estrutura</label>
           <select
             name="tamanho_estrutura"
@@ -879,7 +876,7 @@ export default function Profile() {
             value={form.capacidade_maxima || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder={form.capacidade_maxima?.toString() || "Ex: 150"}
+            placeholder={form.capacidade_maxima ? form.capacidade_maxima.toString() : "Ex: 150"}
             min="1"
             max="1000"
           />
@@ -893,11 +890,26 @@ export default function Profile() {
             value={form.ano_fundacao || ''}
             onChange={handleChange}
             disabled={!editing}
-            placeholder={form.ano_fundacao?.toString() || "Ex: 2010"}
+            placeholder={form.ano_fundacao ? form.ano_fundacao.toString() : "Ex: 2010"}
             min="1900"
             max={new Date().getFullYear()}
           />
         </div>
+      </div>
+
+      {/* 🔥 CORREÇÃO: Treinos Adaptados para Academia */}
+      <div className="checkbox-group">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            name="treinos_adaptados"
+            checked={form.treinos_adaptados || false}
+            onChange={(e) => setForm(prev => ({ ...prev, treinos_adaptados: e.target.checked }))}
+            disabled={!editing}
+          />
+          <span className="checkmark"></span>
+          Oferece treinos adaptados
+        </label>
       </div>
 
       {/* Diferenciais da Academia */}
@@ -997,7 +1009,7 @@ export default function Profile() {
           value={form.sobre || ''}
           onChange={handleChange}
           disabled={!editing}
-          placeholder={form.sobre ? form.sobre : "Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."}
+          placeholder={form.sobre || "Conte sobre sua academia: equipamentos disponíveis, metodologia de trabalho, diferenciais, estrutura física, profissionais qualificados, ambiente..."}
           rows={6}
           maxLength={1000}
         />
@@ -1008,22 +1020,24 @@ export default function Profile() {
     </>
   );
 
+  // 🔥 DEBUG: Verificar dados recebidos
   useEffect(() => {
     if (user) {
-      console.log("🔍 DEBUG - Dados completos do usuário:", {
+      console.log("🔍 DEBUG - Dados COMPLETOS do usuário:", {
         usuario: user,
         modalidades: user.modalidades,
         tipoUsuario: tipoUsuario,
         possuiModalidades: user.modalidades && user.modalidades.length > 0,
-        dadosAcademia: tipoUsuario === 'academia' ? {
+        camposAcademia: {
           cnpj: user.cnpj,
           nome_fantasia: user.nome_fantasia,
           razao_social: user.razao_social,
           telefone: user.telefone,
           tamanho_estrutura: user.tamanho_estrutura,
           capacidade_maxima: user.capacidade_maxima,
-          ano_fundacao: user.ano_fundacao
-        } : null
+          ano_fundacao: user.ano_fundacao,
+          treinos_adaptados: user.treinos_adaptados
+        }
       });
     }
   }, [user, tipoUsuario]);
@@ -1470,14 +1484,20 @@ export default function Profile() {
                                 <strong>Tamanho da Estrutura:</strong> {user.tamanho_estrutura}
                               </div>
                             )}
-                            {user.capacidade_maxima && (
+                            {user.capacidade_maxima && user.capacidade_maxima > 0 && (
                               <div className="info-item">
                                 <strong>Capacidade Máxima:</strong> {user.capacidade_maxima} alunos
                               </div>
                             )}
-                            {user.ano_fundacao && (
+                            {user.ano_fundacao && user.ano_fundacao > 0 && (
                               <div className="info-item">
                                 <strong>Ano de Fundação:</strong> {user.ano_fundacao}
+                              </div>
+                            )}
+                            {/* 🔥 CORREÇÃO: Treinos Adaptados para Academia */}
+                            {user.treinos_adaptados !== undefined && (
+                              <div className="info-item">
+                                <strong>Oferece Treinos Adaptados:</strong> {user.treinos_adaptados ? 'Sim' : 'Não'}
                               </div>
                             )}
                             {user.sobre && (
@@ -1536,9 +1556,10 @@ export default function Profile() {
                       </div>
                     )}
 
-                    {/* 🔥 CORREÇÃO: Modalidades - AGORA MOSTRANDO NA VISUALIZAÇÃO */}
+                    <div className="row2">
+                      {/* 🔥 CORREÇÃO: Modalidades - AGORA MOSTRANDO NA VISUALIZAÇÃO */}
                     {user.modalidades && user.modalidades.length > 0 && (
-                      <div className="info-section">
+                      <div className="info-section col-lg-6">
                         <h3>
                           {tipoUsuario === 'personal' ? 'Modalidades que Trabalha' : 
                           tipoUsuario === 'academia' ? 'Modalidades Oferecidas' : 'Modalidades de Interesse'}
@@ -1569,7 +1590,7 @@ export default function Profile() {
                     )}
 
                     {/* 🔥 CORREÇÃO: Plano - em linha separada */}
-                    <div className="info-section">
+                    <div className="info-section col-lg-6">
                       <h3>Plano</h3>
                       <div className="plan-info">
                         <div className="info-item2">
@@ -1582,6 +1603,7 @@ export default function Profile() {
                           Alterar Plano
                         </button>
                       </div>
+                    </div>
                     </div>
                     
                     {/* 🔥 CORREÇÃO: Solicitação de Vinculação à Academia */}

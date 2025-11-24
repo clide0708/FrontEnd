@@ -2231,3 +2231,76 @@
 .academia-foto-img[style*="display: none"] + .foto-placeholder.fallback {
     display: flex;
 }
+
+
+
+
+
+
+
+.solicitacao-enviando {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background-color: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.academia-selecionada-info {
+  padding: 15px;
+  background-color: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.academia-selecionada-info .success-message {
+  color: #2e7d32;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.academia-selecionada-info p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.academia-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.academia-card.selected {
+  border-color: #4caf50;
+  background-color: #f8fff8;
+}
+
+.academia-card.selected::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #4caf50;
+  border-radius: 4px 4px 0 0;
+}
