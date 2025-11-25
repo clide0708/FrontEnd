@@ -38,6 +38,60 @@ function Alimentacao() {
   const [currentMealList, setCurrentMealList] = useState("");
   const [currentItem, setCurrentItem] = useState(null);
   const [cardAberto, setCardAberto] = useState("");
+  const userLocalRaw = localStorage.getItem("usuario");
+  // 🔥 Mesma função do Header
+  const getFotoUrl = (fotoUrl) => {
+    console.log("🖼️ Alimentação - Processando foto URL:", fotoUrl);
+
+    if (
+      !fotoUrl ||
+      fotoUrl === "null" ||
+      fotoUrl === "undefined" ||
+      fotoUrl === ""
+    ) {
+      console.log("🖼️ Alimentação - Sem foto, usando padrão");
+      return profileImg;
+    }
+
+    // URL completa
+    if (fotoUrl.startsWith("http")) {
+      console.log("🖼️ Alimentação - URL completa detectada:", fotoUrl);
+      return fotoUrl;
+    }
+
+    // Ajustar caminho removendo "/" inicial
+    let caminhoCorrigido = fotoUrl;
+    if (caminhoCorrigido.startsWith("/")) {
+      caminhoCorrigido = caminhoCorrigido.substring(1);
+    }
+
+    const urlBase = import.meta.env.VITE_API_URL.replace("/api", "");
+    const urlFinal = `${urlBase}${caminhoCorrigido}`;
+
+    console.log("🖼️ Alimentação - URL final construída:", urlFinal);
+
+    return urlFinal;
+  };
+
+  let idUsuario = null;
+  let tipoUsuario = null;
+
+  try {
+    const userLocal = JSON.parse(userLocalRaw);
+
+    idUsuario = userLocal?.id || null;
+    tipoUsuario = userLocal?.tipo || "aluno"; // fallback garantido
+  } catch (err) {
+    console.error("Erro ao ler usuário do localStorage", err);
+  }
+
+  // logs pra debug
+  console.log("idUsuario:", idUsuario);
+  console.log("tipoUsuario:", tipoUsuario);
+
+  if (!idUsuario || !tipoUsuario) {
+    console.error("❌ idUsuario ou tipoUsuario não encontrado");
+  }
 
   // ✅ CORREÇÃO: Data de hoje formatada corretamente
   useEffect(() => {
@@ -77,40 +131,63 @@ function Alimentacao() {
       setCarregando(false);
     }
   }, []);
-
-  // ✅ CORREÇÃO: Carregar usuário do perfil
   const carregarUsuario = useCallback(async () => {
     try {
-      // Primeiro tenta obter o email do usuário logado
-      const usuarioLogado = await obterUsuario();
-      const email = usuarioLogado?.email;
+      // pegar o objeto REAL do localStorage
+      const userLocalRaw = localStorage.getItem("usuario");
+      let idUsuario = null;
+      let tipoUsuario = "aluno";
 
-      if (!email) {
-        console.error("❌ Email do usuário não encontrado");
+      if (userLocalRaw) {
+        const userLocal = JSON.parse(userLocalRaw);
+        idUsuario = userLocal?.id || null;
+        tipoUsuario = userLocal?.tipo || "aluno";
+      }
+
+      if (!idUsuario) {
+        console.error("ID do usuário não encontrado no localStorage");
+      }
+
+      if (!idUsuario || !tipoUsuario) {
+        console.error("❌ idUsuario ou tipoUsuario não encontrado");
         return;
       }
 
-      console.log("📧 Buscando perfil do email:", email);
+      console.log(
+        "📌 Carregando perfil via ID + tipo:",
+        idUsuario,
+        tipoUsuario
+      );
 
-      // Busca o perfil completo usando o serviço do perfil
-      const data = await perfilService.getPerfil(email);
+      const res = await perfilService.getPerfilCompleto(idUsuario, tipoUsuario);
 
-      if (data && data.success) {
-        console.log("✅ Perfil carregado:", data.data);
+      if (res?.success && res.data) {
+        const dados = res.data;
 
-        // Mapeia os dados do perfil para o formato esperado
+        const idadeCalc = (() => {
+          if (!dados.data_nascimento) return 0;
+          const nasc = new Date(dados.data_nascimento);
+          const hoje = new Date();
+          let idade = hoje.getFullYear() - nasc.getFullYear();
+          const m = hoje.getMonth() - nasc.getMonth();
+          if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+          return idade;
+        })();
+
         setUser({
-          nome: data.data.nome || "",
-          idade: Number(data.data.idade) || 0,
-          peso: Number(data.data.peso) || 0,
-          altura: Number(data.data.altura) || 0,
-          genero: data.data.genero || "",
-          treinoTipo: data.data.treinoTipo || "",
-          meta: data.data.meta || "",
-          img: data.data.foto_perfil || "",
+          nome: dados.nome || "",
+          idade: Number(dados.idade) || idadeCalc || 0,
+          peso: Number(dados.peso) || 0,
+          altura: Number(dados.altura) || 0,
+          genero: dados.genero || "",
+          treinoTipo: dados.treinoTipo || "",
+          meta: dados.meta || "",
+          img: getFotoUrl(dados.foto_url),
         });
+
+        console.log("✅ Perfil carregado corretamente:", dados);
       } else {
-        console.error("❌ Erro ao carregar perfil:", data?.error);
+        console.error("❌Erro ao carregar o perfil:", res?.error);
       }
     } catch (err) {
       console.error("❌ Erro ao carregar usuário:", err);
@@ -171,10 +248,9 @@ function Alimentacao() {
 
   // Efeitos iniciais
   useEffect(() => {
-    console.log("🎯 Inicializando componente Alimentacao");
-    carregarRefeicoes();
     carregarUsuario();
-  }, [carregarRefeicoes, carregarUsuario]);
+    carregarRefeicoes();
+  }, [carregarUsuario, carregarRefeicoes]);
 
   useEffect(() => {
     console.log("📊 Estado refeicoes atualizado:", refeicoes);
@@ -518,7 +594,7 @@ function Alimentacao() {
               </div>
 
               <div className="pflft">
-                <img src={user.img || "/default-profile.png"} alt="Perfil" />
+                <img src={user.img} alt="Perfil" />
               </div>
             </div>
 
