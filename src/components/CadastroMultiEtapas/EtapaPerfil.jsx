@@ -4,6 +4,7 @@ import CropModal from "../../pages/Perfil/modalCrop";
 import getCroppedImg from "../../utils/cropImage";
 import { deletarFotoServidor } from "../../utils/uploadImage";
 import HorariosAcademia from "./HorariosAcademia";
+import ImageUrlHelper from "../../utils/imageUrls";
 import { calcularIMC, calcularMetaCalorica, consumoAgua } from "../../utils/calculos";
 
 const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
@@ -117,16 +118,14 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     setSalvandoImagem(true);
     
     try {
-      // 1. Cortar imagem
       const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
       
-      // 2. Fazer upload IMEDIATO
       const formData = new FormData();
       formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
 
       console.log('📤 Fazendo upload da imagem...');
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}upload/foto-perfil`, {
+      const response = await fetch(ImageUrlHelper.getUploadEndpoint(), {
         method: 'POST',
         body: formData,
       });
@@ -135,18 +134,19 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
       console.log('✅ Resposta do upload:', result);
 
       if (result.success) {
-        // 3. Criar preview local
+        // Construir URL completa
+        const urlCompleta = ImageUrlHelper.buildImageUrl(result.url);
         const previewUrl = URL.createObjectURL(blob);
         
-        // 4. Atualizar dados
+        // Atualizar dados
         onChange({ 
-          foto_url: result.url,
+          foto_url: urlCompleta,
           foto_nome: result.nome_arquivo,
           foto_data: previewUrl,
           foto_fallback: false
         });
         
-        console.log('✅ Foto salva no servidor:', result.url);
+        console.log('✅ Foto salva no servidor:', urlCompleta);
       } else {
         throw new Error(result.error || 'Erro no upload');
       }

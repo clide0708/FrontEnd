@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Users, Upload, X } from "lucide-react";
 import CropModal from "../pages/Perfil/modalCrop";
 import getCroppedImg from "../utils/cropImage";
+import ImageUrlHelper from "../../utils/imageUrls";
 import { uploadImagemParaServidor, blobParaDataURL, deletarFotoServidor } from "../utils/uploadImage";
 
 const FotoPerfilUpload = ({ 
@@ -59,25 +60,39 @@ const FotoPerfilUpload = ({
       // Cortar imagem
       const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
       
-      // Fazer upload para o servidor
-      const uploadResult = await uploadImagemParaServidor(blob);
+      // Fazer upload para o servidor usando URL dinâmica
+      const formData = new FormData();
+      formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
+
+      console.log('📤 Fazendo upload para:', ImageUrlHelper.getUploadEndpoint());
       
-      if (uploadResult.success) {
+      const response = await fetch(ImageUrlHelper.getUploadEndpoint(), {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log('✅ Resposta do upload:', result);
+
+      if (result.success) {
+        // Construir URL completa da imagem
+        const urlCompleta = ImageUrlHelper.buildImageUrl(result.url);
+        
         // Gerar preview local
         const dataURL = await blobParaDataURL(blob);
         setFotoPreview(dataURL);
         
         // Chamar callback com os dados da foto
         onFotoChange({
-          foto_url: uploadResult.url,
+          foto_url: urlCompleta, // URL completa
           foto_data: dataURL,
-          foto_nome: uploadResult.nome_arquivo
+          foto_nome: result.nome_arquivo
         });
 
-        console.log('✅ Foto processada e salva no servidor:', uploadResult.nome_arquivo);
+        console.log('✅ Foto processada e salva:', urlCompleta);
         
       } else {
-        throw new Error(uploadResult.error || 'Erro no upload');
+        throw new Error(result.error || 'Erro no upload');
       }
       
     } catch (error) {

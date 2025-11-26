@@ -1,6 +1,7 @@
 // components/CadastroMultiEtapas/EtapaDocumentoCREF.jsx
 import { useState, useRef } from "react";
 import { Upload, FileText, CheckCircle, XCircle } from "lucide-react";
+import DocumentUrlHelper from "../../utils/documentUrls";
 
 const EtapaDocumentoCREF = ({ dados, onChange }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -32,19 +33,20 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
         const reader = new FileReader();
         reader.onload = (e) => setPreviewUrl(e.target.result);
         reader.readAsDataURL(file);
+      } else {
+        setPreviewUrl(null);
       }
 
-      // Fazer upload para o servidor
+      // Fazer upload para o servidor usando URL dinâmica
       const formData = new FormData();
       formData.append('cref_documento', file);
       formData.append('cref_numero', dados.cref_numero || 'temp');
 
-      console.log('📤 Iniciando upload do documento CREF...');
+      console.log('📤 Iniciando upload do documento CREF para:', DocumentUrlHelper.getCrefUploadEndpoint());
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}upload/cref-documento`, {
+      const response = await fetch(DocumentUrlHelper.getCrefUploadEndpoint(), {
         method: 'POST',
         body: formData,
-        // 🔥 CORREÇÃO: Não enviar headers de autenticação durante cadastro
       });
 
       if (!response.ok) {
@@ -57,10 +59,16 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
       console.log('✅ Resposta do upload:', result);
 
       if (result.success) {
+        // Construir URL completa do documento
+        const urlCompleta = DocumentUrlHelper.buildCrefDocumentUrl(result.url);
+        
         onChange({ 
-          cref_foto_url: result.url,
-          cref_documento_nome: result.nome_arquivo 
+          cref_foto_url: urlCompleta, // URL completa
+          cref_documento_nome: result.nome_arquivo,
+          cref_documento_url: urlCompleta // Backup para compatibilidade
         });
+        
+        console.log('✅ Documento salvo:', urlCompleta);
       } else {
         throw new Error(result.error || 'Erro no upload');
       }
@@ -76,10 +84,26 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
     setPreviewUrl(null);
     onChange({ 
       cref_foto_url: null,
-      cref_documento_nome: null 
+      cref_documento_nome: null,
+      cref_documento_url: null
     });
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const renderDocumentIcon = () => {
+    if (!dados.cref_documento_nome) return <Upload size={48} />;
+    
+    const docType = DocumentUrlHelper.getDocumentType(dados.cref_documento_nome);
+    
+    switch (docType) {
+      case 'pdf':
+        return <FileText size={48} color="#f44336" />;
+      case 'image':
+        return <Image size={48} color="#4CAF50" />;
+      default:
+        return <File size={48} color="#2196F3" />;
     }
   };
 
@@ -108,11 +132,22 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
               </div>
             ) : dados.cref_foto_url ? (
               <div className="document-preview">
-                {previewUrl ? (
-                  <img src={previewUrl} alt="Documento CREF" className="preview-image" />
+                {previewUrl || DocumentUrlHelper.isImageDocument(dados.cref_documento_nome) ? (
+                  <div className="preview-wrapper">
+                    <img 
+                      src={previewUrl || dados.cref_foto_url} 
+                      alt="Documento CREF" 
+                      className="preview-image" 
+                    />
+                    <div className="document-info">
+                      {renderDocumentIcon()}
+                      <span>Documento enviado</span>
+                      <small>{dados.cref_documento_nome}</small>
+                    </div>
+                  </div>
                 ) : (
                   <div className="document-preview-placeholder">
-                    <CheckCircle size={48} color="#4CAF50" />
+                    {renderDocumentIcon()}
                     <span>Documento enviado com sucesso</span>
                     <small>{dados.cref_documento_nome}</small>
                   </div>
@@ -128,7 +163,7 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
               </div>
             ) : (
               <div className="upload-placeholder">
-                <Upload size={48} />
+                {renderDocumentIcon()}
                 <span>Clique para enviar o documento do CREF</span>
                 <small>Formatos: JPG, PNG, PDF (até 5MB)</small>
               </div>
@@ -154,6 +189,13 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
           </div>
         )}
       </div>
+
+      {/* Debug info (remover em produção) */}
+      {dados.cref_foto_url && (
+        <div className="debug-info" style={{fontSize: '12px', color: '#666', marginTop: '10px'}}>
+          <strong>Debug:</strong> {dados.cref_foto_url}
+        </div>
+      )}
 
       <div className="info-important">
         <label>⚠️ Importante:</label>

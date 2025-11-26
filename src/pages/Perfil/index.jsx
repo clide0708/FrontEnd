@@ -3,6 +3,7 @@ import perfilService from "../../services/Perfil/perfil";
 import treinosService from "../../services/Treinos/treinos";
 import { useNavigate } from "react-router-dom";
 import { FiLogOut, FiEdit2, FiSave, FiX, FiUpload, FiTrash2 } from "react-icons/fi";
+import ImageUrlHelper from '../../utils/imageUrls';
 import { 
   User, 
   Dumbbell, 
@@ -59,32 +60,14 @@ export default function Profile() {
     // Se não tem foto ou é inválida, retorna padrão
     if (!fotoUrl || fotoUrl === 'null' || fotoUrl === 'undefined' || fotoUrl === '') {
       console.log("🖼️ Sem foto, usando padrão");
-      return "/assets/images/profilefoto.png";
+      return ImageUrlHelper.getDefaultProfileImage();
     }
     
-    // Se já é uma URL completa (http ou https)
-    if (fotoUrl.startsWith('http')) {
-      console.log("🖼️ URL completa detectada:", fotoUrl);
-      return fotoUrl;
-    }
+    // Usar o utilitário corrigido
+    const urlCorrigida = ImageUrlHelper.buildImageUrl(fotoUrl);
+    console.log("🖼️ URL corrigida:", urlCorrigida);
     
-    // 🔥 CORREÇÃO PRINCIPAL: Se é um caminho relativo, converter para URL absoluta
-    // O backend retorna '/assets/images/uploads/nome.jpg'
-    // Precisamos converter para 'http://localhost/BackEnd/assets/images/uploads/nome.jpg'
-    
-    let caminhoCorrigido = fotoUrl;
-    
-    // Se começa com /, remover a barra inicial para evitar duplicação
-    if (caminhoCorrigido.startsWith('/')) {
-      caminhoCorrigido = caminhoCorrigido.substring(1);
-    }
-    
-    // Construir URL absoluta usando a base da API
-    const urlBase = import.meta.env.VITE_API_URL.replace('/api', '');
-    const urlAbsoluta = `${urlBase}${caminhoCorrigido}`;
-    
-    console.log("🖼️ URL absoluta construída:", urlAbsoluta);
-    return urlAbsoluta;
+    return urlCorrigida;
   };
 
   // No useEffect, após carregar o usuário, adicione:
