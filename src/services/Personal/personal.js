@@ -1,4 +1,5 @@
 import api from "../api";
+import ImageUrlHelper from "../../utils/imageUrls";
 
 // Obter usuário do localStorage
 const getUsuario = () => {
@@ -92,6 +93,14 @@ const personalService = {
         console.error("❌ Erro do servidor:", response.data.error);
         return [];
       }
+
+      const alunos = response.data.data || [];
+      alunos.forEach(aluno => {
+        if (aluno.foto_perfil) {
+          // Garantir que a URL seja absoluta
+          aluno.foto_perfil = ImageUrlHelper.buildImageUrl(aluno.foto_perfil);
+        }
+      });
       
       return response.data.data || [];
     } catch (error) {
