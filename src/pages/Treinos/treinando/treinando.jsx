@@ -497,7 +497,20 @@ export default function Treino() {
                 </div>
               </div>
 
-              <div id="video-container" ref={videoContainerRef}>
+              <div
+                id="video-container"
+                ref={videoContainerRef}
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  aspectRatio: "16/9",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  position: "relative",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 {showVideo ? (
                   <iframe
                     id="playerex"
@@ -508,9 +521,12 @@ export default function Treino() {
                     allow="autoplay; encrypted-media"
                     allowFullScreen
                     style={{
-                      width: "100%",
-                      height: "400px",
+                      width: "90%",
+                      height: "auto", // ocupa 100% do container
                       borderRadius: "8px",
+                      top: 0,
+                      left: 0,
+                      margin: "auto",
                     }}
                   ></iframe>
                 ) : (
@@ -520,8 +536,14 @@ export default function Treino() {
                     alt="Capa do exercício"
                     onClick={handleVideoClick}
                     style={{
+                      width: "90%",
+                      height: "auto", // ocupa 100% do container
+                      borderRadius: "8px",
+                      objectFit: "cover", // mantém proporção sem esticar
                       cursor: ex.url ? "pointer" : "default",
                       opacity: ex.url ? 1 : 0.7,
+                      top: 0,
+                      left: 0,
                     }}
                   />
                 )}
@@ -533,6 +555,10 @@ export default function Treino() {
                       padding: "20px",
                       color: "#666",
                       fontStyle: "italic",
+                      position: "absolute",
+                      width: "100%",
+                      top: "50%",
+                      transform: "translateY(-50%)",
                     }}
                   >
                     🏋️ Nenhum vídeo disponível para este exercício
