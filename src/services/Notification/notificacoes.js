@@ -15,13 +15,21 @@ const notificacoesService = {
   // Marcar notificação como lida
   marcarComoLida: async (idNotificacao) => {
     try {
-      const res = await api.post(`/notificacoes/${idNotificacao}/marcar-lida`);
-      return res.data;
+        const res = await api.put(`/notificacoes/${idNotificacao}/lida`);
+        return res.data;
     } catch (err) {
-      console.error("Erro ao marcar notificação como lida:", err);
-      return { success: false, error: err.message };
+        console.error("Erro ao marcar notificação como lida:", err);
+        
+        // Tentar método alternativo (POST)
+        try {
+        const res = await api.post(`/notificacoes/${idNotificacao}/lida`);
+        return res.data;
+        } catch (postErr) {
+        console.error("Erro no método POST também:", postErr);
+        return { success: false, error: 'Não foi possível marcar como lida' };
+        }
     }
-  },
+ },
 
   // Marcar todas as notificações como lidas
   marcarTodasComoLidas: async () => {
@@ -43,7 +51,28 @@ const notificacoesService = {
       console.error("Erro ao buscar contador de notificações:", err);
       return 0;
     }
+  },
+
+  aceitarConvite: async (idConvite) => {
+    try {
+      const res = await api.post(`/convites/${idConvite}/aceitar`);
+      return res.data;
+    } catch (err) {
+      console.error("Erro ao aceitar convite:", err);
+      return { success: false, error: err.message };
+    }
+  },
+
+  recusarConvite: async (idConvite) => {
+    try {
+      const res = await api.post(`/convites/${idConvite}/recusar`);
+      return res.data;
+    } catch (err) {
+      console.error("Erro ao recusar convite:", err);
+      return { success: false, error: err.message };
+    }
   }
+  
 };
 
 export default notificacoesService;

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import notificacoesService from "../../services/Notification/notificacoes";
-import { Bell, Check, X, CheckCircle, XCircle } from "lucide-react";
+import { Bell, Check, X, CheckCircle, XCircle, User } from "lucide-react";
 import "./style.css";
 
 export default function NotificacoesModal({ isOpen, onClose }) {
   const [notificacoes, setNotificacoes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [processando, setProcessando] = useState(null); // Para controlar qual convite está sendo processado
 
   const carregarNotificacoes = async () => {
     setLoading(true);
@@ -18,6 +19,12 @@ export default function NotificacoesModal({ isOpen, onClose }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      carregarNotificacoes();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -57,8 +64,84 @@ export default function NotificacoesModal({ isOpen, onClose }) {
         return <CheckCircle size={16} className="text-success" />;
       case 'convite_recusado':
         return <XCircle size={16} className="text-error" />;
+      case 'novo_convite':
+        return <User size={16} className="text-primary" />;
       default:
         return <Bell size={16} />;
+    }
+  };
+
+  const handleAceitarConvite = async (notificacao) => {
+    setProcessando(notificacao.idConvite);
+    try {
+      const resultado = await notificacoesService.aceitarConvite(notificacao.idConvite);
+      
+      if (resultado.success) {
+        // Remover a notificação de convite da lista
+        setNotificacoes(prev => 
+          prev.filter(notif => notif.idConvite !== notificacao.idConvite)
+        );
+        
+        // Adicionar uma notificação de sucesso
+        setNotificacoes(prev => [
+          {
+            idNotificacao: Date.now(), // ID temporário
+            titulo: 'Convite Aceito',
+            mensagem: `Você aceitou o convite de ${notificacao.nome_remetente}`,
+            tipo: 'convite_aceito',
+            lida: 0,
+            data_criacao: new Date().toISOString(),
+            origem: 'notificacao'
+          },
+          ...prev
+        ]);
+        
+        alert('Convite aceito com sucesso!');
+      } else {
+        alert('Erro ao aceitar convite: ' + resultado.error);
+      }
+    } catch (error) {
+      console.error("Erro ao aceitar convite:", error);
+      alert('Erro ao aceitar convite. Tente novamente.');
+    } finally {
+      setProcessando(null);
+    }
+  };
+
+  const handleRecusarConvite = async (notificacao) => {
+    setProcessando(notificacao.idConvite);
+    try {
+      const resultado = await notificacoesService.recusarConvite(notificacao.idConvite);
+      
+      if (resultado.success) {
+        // Remover a notificação de convite da lista
+        setNotificacoes(prev => 
+          prev.filter(notif => notif.idConvite !== notificacao.idConvite)
+        );
+        
+        // Adicionar uma notificação de confirmação
+        setNotificacoes(prev => [
+          {
+            idNotificacao: Date.now(), // ID temporário
+            titulo: 'Convite Recusado',
+            mensagem: `Você recusou o convite de ${notificacao.nome_remetente}`,
+            tipo: 'convite_recusado',
+            lida: 0,
+            data_criacao: new Date().toISOString(),
+            origem: 'notificacao'
+          },
+          ...prev
+        ]);
+        
+        alert('Convite recusado.');
+      } else {
+        alert('Erro ao recusar convite: ' + resultado.error);
+      }
+    } catch (error) {
+      console.error("Erro ao recusar convite:", error);
+      alert('Erro ao recusar convite. Tente novamente.');
+    } finally {
+      setProcessando(null);
     }
   };
 
@@ -73,7 +156,7 @@ export default function NotificacoesModal({ isOpen, onClose }) {
             <button 
               onClick={handleMarcarTodasComoLidas}
               className="btn-marcar-todas"
-              disabled={notificacoes.every(n => n.lida)}
+              disabled={notificacoes.every(n => n.lida) || notificacoes.length === 0}
             >
               Marcar todas como lidas
             </button>
@@ -95,7 +178,9 @@ export default function NotificacoesModal({ isOpen, onClose }) {
             notificacoes.map((notificacao) => (
               <div 
                 key={notificacao.idNotificacao} 
-                className={`notification-item ${notificacao.lida ? 'lida' : 'nao-lida'}`}
+                className={`notification-item ${notificacao.lida ? 'lida' : 'nao-lida'} ${
+                  notificacao.origem === 'convite' ? 'convite-item' : ''
+                }`}
               >
                 <div className="notification-icon">
                   {getIconePorTipo(notificacao.tipo)}
@@ -103,12 +188,52 @@ export default function NotificacoesModal({ isOpen, onClose }) {
                 <div className="notification-content">
                   <h4>{notificacao.titulo}</h4>
                   <p>{notificacao.mensagem}</p>
+                  
+                  {/* 🔥 NOVO: Foto do remetente para convites */}
+                  {notificacao.origem === 'convite' && notificacao.foto_remetente && (
+                    <div className="remetente-info">
+                      <img 
+                        src={notificacao.foto_remetente || "/assets/images/profilefoto.png"} 
+                        alt={notificacao.nome_remetente}
+                        className="foto-remetente"
+                      />
+                      <span className="nome-remetente">{notificacao.nome_remetente}</span>
+                    </div>
+                  )}
+                  
                   <span className="notification-time">
-                    {new Date(notificacao.data_criacao).toLocaleDateString('pt-BR')}
+                    {new Date(notificacao.data_criacao).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </span>
                 </div>
                 <div className="notification-actions">
-                  {!notificacao.lida && (
+                  {/* 🔥 NOVO: Botões para convites */}
+                  {notificacao.origem === 'convite' && !notificacao.lida && (
+                    <div className="convite-actions">
+                      <button 
+                        onClick={() => handleAceitarConvite(notificacao)}
+                        className="btn-aceitar"
+                        disabled={processando === notificacao.idConvite}
+                      >
+                        {processando === notificacao.idConvite ? '...' : 'Aceitar'}
+                      </button>
+                      <button 
+                        onClick={() => handleRecusarConvite(notificacao)}
+                        className="btn-recusar"
+                        disabled={processando === notificacao.idConvite}
+                      >
+                        {processando === notificacao.idConvite ? '...' : 'Recusar'}
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Botão de marcar como lida para notificações normais */}
+                  {!notificacao.lida && notificacao.origem !== 'convite' && (
                     <button 
                       onClick={() => handleMarcarComoLida(notificacao.idNotificacao)}
                       className="btn-marcar-lida"
