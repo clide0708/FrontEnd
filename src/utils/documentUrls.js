@@ -1,5 +1,5 @@
 /**
- * Utilitário específico para documentos CREF
+ * Utilitário para documentos CREF
  */
 
 import ImageUrlHelper from './imageUrls';

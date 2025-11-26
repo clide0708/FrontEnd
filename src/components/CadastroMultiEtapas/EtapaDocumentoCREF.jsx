@@ -1,6 +1,6 @@
 // components/CadastroMultiEtapas/EtapaDocumentoCREF.jsx
 import { useState, useRef } from "react";
-import { Upload, FileText, CheckCircle, XCircle } from "lucide-react";
+import { Upload, FileText, CheckCircle, XCircle, File, Image } from "lucide-react"; // 🔥 CORREÇÃO: Adicionar imports faltantes
 import DocumentUrlHelper from "../../utils/documentUrls";
 
 const EtapaDocumentoCREF = ({ dados, onChange }) => {
@@ -92,6 +92,7 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
     }
   };
 
+  // 🔥 CORREÇÃO: Função para renderizar ícone do documento
   const renderDocumentIcon = () => {
     if (!dados.cref_documento_nome) return <Upload size={48} />;
     
@@ -138,6 +139,10 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
                       src={previewUrl || dados.cref_foto_url} 
                       alt="Documento CREF" 
                       className="preview-image" 
+                      onError={(e) => {
+                        // Fallback se a imagem não carregar
+                        e.target.style.display = 'none';
+                      }}
                     />
                     <div className="document-info">
                       {renderDocumentIcon()}
@@ -189,13 +194,6 @@ const EtapaDocumentoCREF = ({ dados, onChange }) => {
           </div>
         )}
       </div>
-
-      {/* Debug info (remover em produção) */}
-      {dados.cref_foto_url && (
-        <div className="debug-info" style={{fontSize: '12px', color: '#666', marginTop: '10px'}}>
-          <strong>Debug:</strong> {dados.cref_foto_url}
-        </div>
-      )}
 
       <div className="info-important">
         <label>⚠️ Importante:</label>

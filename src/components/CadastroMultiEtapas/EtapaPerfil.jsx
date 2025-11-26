@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Calendar, Ruler, Target, Users, Upload, X, Building, Activity } from "lucide-react";
 import CropModal from "../../pages/Perfil/modalCrop";
-import getCroppedImg from "../../utils/cropImage";
 import { deletarFotoServidor } from "../../utils/uploadImage";
 import HorariosAcademia from "./HorariosAcademia";
 import ImageUrlHelper from "../../utils/imageUrls";
@@ -13,6 +12,57 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
   const [imagemParaCortar, setImagemParaCortar] = useState(null);
   const [salvandoImagem, setSalvandoImagem] = useState(false);
   const [carregandoModalidades, setCarregandoModalidades] = useState(false);
+
+  // 🔥 CORREÇÃO: Função de crop segura
+  const getCroppedImg = async (imageSrc, pixelCrop) => {
+    return new Promise((resolve, reject) => {
+      // Criar imagem de forma segura
+      const image = new Image();
+      image.crossOrigin = "anonymous";
+      image.src = imageSrc;
+      
+      image.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          
+          // Definir tamanho do canvas
+          canvas.width = pixelCrop.width;
+          canvas.height = pixelCrop.height;
+          
+          // Desenhar imagem cortada
+          ctx.drawImage(
+            image,
+            pixelCrop.x,
+            pixelCrop.y,
+            pixelCrop.width,
+            pixelCrop.height,
+            0,
+            0,
+            pixelCrop.width,
+            pixelCrop.height
+          );
+          
+          // Converter para blob
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error("Falha ao criar imagem"));
+              }
+            },
+            "image/jpeg",
+            0.85
+          );
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      image.onerror = () => reject(new Error("Falha ao carregar imagem"));
+    });
+  };
 
   const carregarModalidades = async () => {
     setCarregandoModalidades(true);
@@ -111,15 +161,22 @@ const EtapaPerfil = ({ dados, onChange, tipoUsuario }) => {
     event.target.value = '';
   };
 
-  // 🔥 CORREÇÃO: Handler para salvar o corte
+  // 🔥 CORREÇÃO: Handler para salvar o corte - versão segura
   const handleSalvarCorte = async (pixelCrop) => {
     if (!imagemParaCortar || !pixelCrop) return;
     
     setSalvandoImagem(true);
     
     try {
+      console.log("🎯 Iniciando processamento do crop...");
+      
+      // Usar a função local segura
       const blob = await getCroppedImg(imagemParaCortar, pixelCrop);
       
+      if (!blob) {
+        throw new Error("Falha ao processar imagem");
+      }
+
       const formData = new FormData();
       formData.append('foto', blob, `perfil_${Date.now()}.jpg`);
 
