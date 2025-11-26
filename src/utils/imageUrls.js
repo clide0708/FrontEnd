@@ -4,14 +4,16 @@
 
 class ImageUrlHelper {
   static getBaseUrl() {
-    // Remove /api do final da URL se existir
+    // 🔥 CORREÇÃO: Sempre usar a URL da API em produção
     const apiUrl = import.meta.env.VITE_API_URL || '';
-    return apiUrl.replace('/api', '');
+    
+    // Remove barras extras no final
+    return apiUrl.replace(/\/+$/, '');
   }
 
   /**
    * Constrói URL completa para imagens de upload
-   * CORREÇÃO: Remove duplicação de caminhos
+   * CORREÇÃO: Garantir URL absoluta correta
    */
   static buildImageUrl(imagePath) {
     if (!imagePath) {
@@ -25,21 +27,25 @@ class ImageUrlHelper {
 
     const baseUrl = this.getBaseUrl();
     
-    // CORREÇÃO: Se o caminho já começa com /assets, usa diretamente
+    // 🔥 CORREÇÃO: Se o caminho já começa com assets, concatena corretamente
+    if (imagePath.startsWith('assets/')) {
+      return `${baseUrl}/${imagePath}`;
+    }
+    
+    // 🔥 CORREÇÃO: Se começa com /assets, remove a barra inicial
     if (imagePath.startsWith('/assets/')) {
-      // Remove barra inicial para evitar dupla barra
-      const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
-      return `${baseUrl}${cleanPath}`;
+      const cleanPath = imagePath.substring(1);
+      return `${baseUrl}/${cleanPath}`;
     }
     
-    // CORREÇÃO: Se é apenas o nome do arquivo, constrói o caminho completo
+    // 🔥 CORREÇÃO: Se é apenas o nome do arquivo
     if (!imagePath.includes('/')) {
-      return `${baseUrl}assets/images/uploads/${imagePath}`;
+      return `${baseUrl}/assets/images/uploads/${imagePath}`;
     }
     
-    // Para outros casos, usa o caminho como está (já deve ser relativo completo)
+    // Para outros casos, assume que é um caminho relativo
     const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
-    return `${baseUrl}${cleanPath}`;
+    return `${baseUrl}/${cleanPath}`;
   }
 
   /**
