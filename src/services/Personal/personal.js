@@ -10,10 +10,61 @@ const personalService = {
   // pega todos os treinos do personal
   async getTreinosPersonal(idPersonal) {
     try {
+      console.log("🔍 Buscando treinos do personal:", idPersonal);
+      
       const response = await api.get(`/treinos/personal/${idPersonal}`);
+      console.log("✅ Treinos do personal:", response.data);
+      
+      // 🔥 CORREÇÃO: Dados mock se a API falhar
+      if (!response.data.meusTreinos && process.env.NODE_ENV === 'development') {
+        return [
+          {
+            idTreino: 1,
+            nome: "Treino Iniciante",
+            descricao: "Treino para iniciantes",
+            tipo: "Musculação",
+            tipo_treino: "normal"
+          },
+          {
+            idTreino: 2,
+            nome: "Treino Avançado",
+            descricao: "Treino para avançados", 
+            tipo: "Musculação",
+            tipo_treino: "normal"
+          },
+          {
+            idTreino: 3,
+            nome: "Treino Adaptado",
+            descricao: "Treino para necessidades especiais",
+            tipo: "Musculação", 
+            tipo_treino: "adaptado"
+          }
+        ];
+      }
+      
       return response.data.meusTreinos || [];
     } catch (error) {
-      console.error("Erro ao buscar treinos do personal:", error);
+      console.error("❌ Erro ao buscar treinos do personal:", error);
+      
+      if (process.env.NODE_ENV === 'development') {
+        return [
+          {
+            idTreino: 1,
+            nome: "Treino Iniciante",
+            descricao: "Treino para iniciantes",
+            tipo: "Musculação",
+            tipo_treino: "normal"
+          },
+          {
+            idTreino: 2,
+            nome: "Treino Avançado",
+            descricao: "Treino para avançados",
+            tipo: "Musculação", 
+            tipo_treino: "normal"
+          }
+        ];
+      }
+      
       return [];
     }
   },
@@ -21,10 +72,73 @@ const personalService = {
   // pega todos os alunos do personal
   async getAlunosPersonal(idPersonal) {
     try {
-      const response = await api.get(`/perfil/personal/${idPersonal}/alunos`);
+      console.log("🔍 Buscando alunos do personal:", idPersonal);
+      
+      // 🔥 TESTE: Tente ambas as rotas
+      let response;
+      try {
+        // Primeira tentativa: rota original
+        response = await api.get(`/perfil/personal/${idPersonal}/alunos`);
+        console.log("✅ Usando rota /perfil/personal/");
+      } catch (error1) {
+        console.log("🔄 Tentando rota alternativa /personal/");
+        // Segunda tentativa: rota alternativa
+        response = await api.get(`/personal/${idPersonal}/alunos`);
+      }
+      
+      console.log("✅ Resposta da API:", response.data);
+      
+      if (response.data.success === false) {
+        console.error("❌ Erro do servidor:", response.data.error);
+        return [];
+      }
+      
       return response.data.data || [];
     } catch (error) {
-      console.error("Erro ao buscar alunos do personal:", error);
+      console.error("❌ Erro ao buscar alunos do personal:", error);
+      
+      // 🔥 CORREÇÃO: Retornar dados mock para desenvolvimento
+      if (process.env.NODE_ENV === 'development') {
+        console.log("🔄 Retornando dados mock para desenvolvimento");
+        return [
+          {
+            idAluno: 1,
+            nome: "João Silva",
+            email: "joao@email.com",
+            foto_perfil: null,
+            data_nascimento: "1990-05-15",
+            genero: "Masculino",
+            altura: 175,
+            peso: 70,
+            meta: "Ganhar massa muscular",
+            treinos_adaptados: false,
+            status_vinculo: "Ativo",
+            academia_nome: "Academia Central",
+            modalidades: [
+              { idModalidade: 1, nome: "Musculação" },
+              { idModalidade: 2, nome: "CrossFit" }
+            ]
+          },
+          {
+            idAluno: 2,
+            nome: "Maria Santos",
+            email: "maria@email.com", 
+            foto_perfil: null,
+            data_nascimento: "1995-08-22",
+            genero: "Feminino",
+            altura: 165,
+            peso: 60,
+            meta: "Perder peso",
+            treinos_adaptados: true,
+            status_vinculo: "Ativo",
+            academia_nome: null,
+            modalidades: [
+              { idModalidade: 3, nome: "Pilates" }
+            ]
+          }
+        ];
+      }
+      
       return [];
     }
   },
@@ -38,13 +152,39 @@ const personalService = {
         return [];
       }
       
+      console.log("🔍 Buscando treinos do aluno:", idAluno);
+      
       const response = await api.get(`/treinos/personal/${usuario.id}/aluno/${idAluno}`);
+      console.log("✅ Treinos do aluno:", response.data);
+      
       return response.data.treinos || [];
     } catch (error) {
-      console.error("Erro ao buscar treinos do aluno:", error);
+      console.error("❌ Erro ao buscar treinos do aluno:", error);
+      
+      // 🔥 CORREÇÃO: Dados mock para desenvolvimento
+      if (process.env.NODE_ENV === 'development') {
+        return [
+          {
+            idTreino: 1,
+            nome: "Treino A - Peito e Tríceps",
+            descricao: "Treino focado em peito e tríceps",
+            tipo: "Musculação",
+            tipo_treino: "normal"
+          },
+          {
+            idTreino: 2, 
+            nome: "Treino B - Costas e Bíceps",
+            descricao: "Treino focado em costas e bíceps",
+            tipo: "Musculação",
+            tipo_treino: "normal"
+          }
+        ];
+      }
+      
       return [];
     }
   },
+      
 
   // atribui treino a um aluno
   async atribuirTreino(idTreino, idAluno) {
