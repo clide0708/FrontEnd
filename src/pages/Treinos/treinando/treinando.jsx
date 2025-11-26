@@ -29,9 +29,8 @@ export default function Treino() {
       let id = "";
       if (u.hostname.includes("youtube.com"))
         id = u.searchParams.get("v") || "";
-      else if (u.hostname.includes("youtu.be")) 
-        id = u.pathname.slice(1);
-      
+      else if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+
       if (!id) return "/assets/images/no-video-placeholder.jpg";
       return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
     } catch (error) {
@@ -55,15 +54,19 @@ export default function Treino() {
   // CORREÇÃO PRINCIPAL: Função de avanço simplificada
   const avancarDepoisDescanso = useCallback(() => {
     if (!exercicios[exIndex]) return;
-    
+
     const ex = exercicios[exIndex];
     let novosExercicios = [...exercicios];
-    
-    console.log(`🔄 Avançando: Exercício ${exIndex + 1}, Série ${serieAtual}/${ex.num_series}`);
-    
+
+    console.log(
+      `🔄 Avançando: Exercício ${exIndex + 1}, Série ${serieAtual}/${
+        ex.num_series
+      }`
+    );
+
     if (serieAtual < ex.num_series) {
       // Próxima série do mesmo exercício
-      setSerieAtual(prev => prev + 1);
+      setSerieAtual((prev) => prev + 1);
       setEstado("execucao");
     } else {
       // Última série concluída - marcar exercício como concluído
@@ -72,39 +75,55 @@ export default function Treino() {
 
       if (exIndex < exercicios.length - 1) {
         // Próximo exercício
-        setExIndex(prev => prev + 1);
+        setExIndex((prev) => prev + 1);
         setSerieAtual(1);
         setEstado("execucao");
       } else {
         // Treino finalizado
         console.log("🎉 TREINO CONCLUÍDO!");
         setEstado("finalizado");
-        
-        const todosConcluidos = novosExercicios.map(ex => ({ ...ex, concluido: true }));
+
+        const todosConcluidos = novosExercicios.map((ex) => ({
+          ...ex,
+          concluido: true,
+        }));
         setExercicios(todosConcluidos);
-        
+
         const progressoFinal = {
           exIndex: exercicios.length,
           serieAtual: 1,
-          exercicios_concluidos: todosConcluidos.map(ex => ex.id)
+          exercicios_concluidos: todosConcluidos.map((ex) => ex.id),
         };
-        
-        treinosService.finalizarSessao(treino.idSessao, progressoFinal, duracaoTotal, "Treino concluído")
+
+        treinosService
+          .finalizarSessao(
+            treino.idSessao,
+            progressoFinal,
+            duracaoTotal,
+            "Treino concluído"
+          )
           .then(() => {
             setTimeout(() => navigate("/treinos", { replace: true }), 3000);
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Erro ao salvar treino concluído:", err);
             setTimeout(() => navigate("/treinos", { replace: true }), 3000);
           });
       }
     }
-    
+
     // Resetar estados do timer e vídeo
     setTimerRemaining(0);
     setTotalTime(0);
     setShowVideo(false);
-  }, [exercicios, exIndex, serieAtual, navigate, treino?.idSessao, duracaoTotal]);
+  }, [
+    exercicios,
+    exIndex,
+    serieAtual,
+    navigate,
+    treino?.idSessao,
+    duracaoTotal,
+  ]);
 
   // Debug do estado
   useEffect(() => {
@@ -120,7 +139,7 @@ export default function Treino() {
   useEffect(() => {
     if (treino && treino.exercicios) {
       console.log("🏋️ Inicializando treino com progresso:", progressoInicial);
-      
+
       const exerciciosIniciais = treino.exercicios.map((e, index) => ({
         ...e,
         id: parseInt(e.id) || parseInt(e.idTreino_Exercicio) || index,
@@ -137,25 +156,28 @@ export default function Treino() {
       }));
 
       setExercicios(exerciciosIniciais);
-      
+
       // Aplicar progresso inicial se existir
       if (progressoInicial) {
         console.log("📥 Aplicando progresso salvo:", progressoInicial);
-        
+
         if (progressoInicial.exIndex !== undefined) {
           setExIndex(progressoInicial.exIndex);
         }
-        
+
         if (progressoInicial.serieAtual !== undefined) {
           setSerieAtual(progressoInicial.serieAtual);
         }
-        
+
         if (progressoInicial.exercicios_concluidos) {
-          setExercicios(prev => prev.map((ex, index) => ({
-            ...ex,
-            concluido: progressoInicial.exercicios_concluidos.includes(ex.id) || 
-                      index < (progressoInicial.exIndex || 0)
-          })));
+          setExercicios((prev) =>
+            prev.map((ex, index) => ({
+              ...ex,
+              concluido:
+                progressoInicial.exercicios_concluidos.includes(ex.id) ||
+                index < (progressoInicial.exIndex || 0),
+            }))
+          );
         }
       }
     }
@@ -176,7 +198,7 @@ export default function Treino() {
     if (i === exIndex) return acc + serieAtual - 1;
     return acc;
   }, 0);
-  
+
   const progressoPercentual =
     estado === "finalizado"
       ? 100
@@ -194,7 +216,12 @@ export default function Treino() {
 
   // CORREÇÃO PRINCIPAL: Timer de descanso simplificado
   useEffect(() => {
-    console.log("⏰ Efeito do timer - Estado:", estado, "Tempo descanso:", ex.tempo_descanso);
+    console.log(
+      "⏰ Efeito do timer - Estado:",
+      estado,
+      "Tempo descanso:",
+      ex.tempo_descanso
+    );
 
     // Se não está em descanso, limpar timer
     if (estado !== "descanso") {
@@ -213,7 +240,11 @@ export default function Treino() {
       return;
     }
 
-    console.log("✅ Iniciando timer de descanso:", ex.tempo_descanso, "segundos");
+    console.log(
+      "✅ Iniciando timer de descanso:",
+      ex.tempo_descanso,
+      "segundos"
+    );
 
     // Configurar timer
     setTimerRemaining(ex.tempo_descanso);
@@ -231,12 +262,12 @@ export default function Treino() {
           console.log("🎯 Timer finalizado!");
           clearInterval(timerRef.current);
           timerRef.current = null;
-          
+
           // Usar timeout para evitar problemas de estado
           setTimeout(() => {
             avancarDepoisDescanso();
           }, 100);
-          
+
           return 0;
         }
         return prev - 1;
@@ -256,7 +287,7 @@ export default function Treino() {
   // Atualizar círculo de progresso
   useEffect(() => {
     if (!circleRef.current || !totalTime) return;
-    
+
     const radius = circleRef.current.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
     circleRef.current.style.strokeDasharray = circumference;
@@ -282,20 +313,26 @@ export default function Treino() {
     try {
       const exerciciosConcluidos = exercicios
         .slice(0, exIndex)
-        .map(ex => ex.id);
-      
-      const exerciciosConcluidosFinal = (serieAtual >= exercicios[exIndex]?.num_series) 
-        ? [...exerciciosConcluidos, exercicios[exIndex]?.id].filter(Boolean)
-        : exerciciosConcluidos;
+        .map((ex) => ex.id);
+
+      const exerciciosConcluidosFinal =
+        serieAtual >= exercicios[exIndex]?.num_series
+          ? [...exerciciosConcluidos, exercicios[exIndex]?.id].filter(Boolean)
+          : exerciciosConcluidos;
 
       const progressoParaSalvar = {
         exIndex: exIndex,
         serieAtual: serieAtual,
-        exercicios_concluidos: exerciciosConcluidosFinal
+        exercicios_concluidos: exerciciosConcluidosFinal,
       };
-      
-      await treinosService.finalizarSessao(treino.idSessao, progressoParaSalvar, duracaoTotal, "Treino pausado");
-      navigate('/treinos');
+
+      await treinosService.finalizarSessao(
+        treino.idSessao,
+        progressoParaSalvar,
+        duracaoTotal,
+        "Treino pausado"
+      );
+      navigate("/treinos");
     } catch (err) {
       console.error("Erro ao parar treino:", err);
       alert("Não foi possível parar o treino. Tente novamente.");
@@ -326,9 +363,9 @@ export default function Treino() {
     }
     if (estado === "execucao") {
       if (serieAtual > 1) {
-        setSerieAtual(prev => prev - 1);
+        setSerieAtual((prev) => prev - 1);
       } else if (exIndex > 0) {
-        setExIndex(prev => prev - 1);
+        setExIndex((prev) => prev - 1);
         setSerieAtual(exercicios[exIndex - 1]?.num_series || 1);
       }
       setShowVideo(false);
@@ -346,7 +383,7 @@ export default function Treino() {
 
   const renderDescanso = () => {
     if (!ex.tempo_descanso || ex.tempo_descanso <= 0) return null;
-    
+
     return (
       <div id="treinando view-descanso">
         <div className="descansano">
@@ -373,8 +410,8 @@ export default function Treino() {
               <button
                 id="btnAdd10"
                 onClick={() => {
-                  setTimerRemaining(prev => prev + 10);
-                  setTotalTime(prev => prev + 10);
+                  setTimerRemaining((prev) => prev + 10);
+                  setTotalTime((prev) => prev + 10);
                 }}
               >
                 +10s
@@ -383,7 +420,8 @@ export default function Treino() {
           </div>
           <div className="btns">
             <div className="small-muted" id="descanso-info">
-              Série {serieAtual} / {ex.num_series} • {ex.tempo_descanso}s de descanso
+              Série {serieAtual} / {ex.num_series} • {ex.tempo_descanso}s de
+              descanso
             </div>
             <button className="btnplr" onClick={handleAvancar}>
               Pular Descanso
@@ -441,10 +479,7 @@ export default function Treino() {
               </div>
             ))}
           </div>
-          <button
-            className="ext"
-            onClick={() => navigate("/treinos", { replace: true })}
-          >
+          <button className="ext" onClick={handlePararTreino}>
             Sair
           </button>
         </div>
@@ -466,14 +501,16 @@ export default function Treino() {
                 {showVideo ? (
                   <iframe
                     id="playerex"
-                    src={`https://www.youtube.com/embed/${getYoutubeId(ex.url)}?autoplay=1`}
+                    src={`https://www.youtube.com/embed/${getYoutubeId(
+                      ex.url
+                    )}?autoplay=1`}
                     frameBorder="0"
                     allow="autoplay; encrypted-media"
                     allowFullScreen
                     style={{
                       width: "100%",
                       height: "400px",
-                      borderRadius: "8px"
+                      borderRadius: "8px",
                     }}
                   ></iframe>
                 ) : (
@@ -484,17 +521,20 @@ export default function Treino() {
                     onClick={handleVideoClick}
                     style={{
                       cursor: ex.url ? "pointer" : "default",
-                      opacity: ex.url ? 1 : 0.7
+                      opacity: ex.url ? 1 : 0.7,
                     }}
                   />
                 )}
                 {!ex.url && (
-                  <div className="no-video-message" style={{
-                    textAlign: 'center', 
-                    padding: '20px', 
-                    color: '#666',
-                    fontStyle: 'italic'
-                  }}>
+                  <div
+                    className="no-video-message"
+                    style={{
+                      textAlign: "center",
+                      padding: "20px",
+                      color: "#666",
+                      fontStyle: "italic",
+                    }}
+                  >
                     🏋️ Nenhum vídeo disponível para este exercício
                     <br />
                     <small>Execute o movimento conforme as instruções</small>
@@ -528,9 +568,6 @@ export default function Treino() {
                     onClick={handleAvancar}
                   >
                     ⮞
-                  </button>
-                  <button onClick={handlePararTreino} className="btn btn-parar">
-                    Parar Treino
                   </button>
                 </div>
               </div>

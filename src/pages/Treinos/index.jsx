@@ -344,13 +344,6 @@ function Treinos() {
             {showEditar && treinoSelecionado && (
                 <div
                     className="modal-overlay"
-                    style={{
-                        height: "100vh",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "flex-start",
-                        paddingTop: "120px",
-                    }}
                 >
                     <div className="editcontttttent">
                         <EditarTreino
