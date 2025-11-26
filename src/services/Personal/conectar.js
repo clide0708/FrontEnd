@@ -11,110 +11,135 @@ let cache = {
 
 const CACHE_DURATION = 30000; // 30 segundos
 
+const corrigirJSONCorrompido = (texto) => {
+  if (typeof texto !== 'string') return texto;
+  
+  // Tentar encontrar o JSON válido mais recente
+  const jsonMatches = texto.match(/\{.*\}/gs);
+  if (jsonMatches && jsonMatches.length > 0) {
+    // Pegar o último JSON válido (o mais recente)
+    const ultimoJSON = jsonMatches[jsonMatches.length - 1];
+    try {
+      return JSON.parse(ultimoJSON);
+    } catch (e) {
+      console.warn('⚠️ Não foi possível parsear JSON corrompido:', e);
+    }
+  }
+  
+  return null;
+};
+
 const conectarService = {
   
-  async getPersonais(filtros = {}) {
+  getPersonais: async (filtros = {}) => {
     try {
-      const params = new URLSearchParams();
+      console.log('🔄 Buscando personais com filtros:', filtros);
       
-      // ⭐⭐ CORREÇÃO: Adicionar todos os filtros de forma consistente
-      Object.keys(filtros).forEach(key => {
-        const value = filtros[key];
-        
-        // Ignorar valores vazios, null ou undefined
-        if (value === null || value === undefined || value === '') {
-          return;
+      const response = await api.get('/personais', { params: filtros });
+      console.log('✅ Resposta completa personais:', response);
+      
+      // 🔥 CORREÇÃO: Verificar estrutura da resposta
+      if (response.data && typeof response.data === 'object') {
+        // Caso 1: Resposta com estrutura {success: true, data: [...]}
+        if (response.data.success === true && Array.isArray(response.data.data)) {
+          console.log('✅ Dados encontrados em response.data.data:', response.data.data.length);
+          return response.data.data;
         }
-        
-        // Tratar arrays (modalidades)
-        if (Array.isArray(value)) {
-          if (value.length > 0) {
-            // Para arrays, enviar como string separada por vírgulas
-            params.append(key, value.join(','));
-          }
-        } else {
-          // Para valores simples
-          params.append(key, value);
+        // Caso 2: Dados diretamente no response.data
+        else if (Array.isArray(response.data.data)) {
+          console.log('✅ Dados encontrados em response.data:', response.data.data.length);
+          return response.data.data;
         }
-      });
-
-      console.log('🔍 Buscando personais com params:', params.toString());
+        // Caso 3: Dados diretamente no response.data (array puro)
+        else if (Array.isArray(response.data)) {
+          console.log('✅ Dados encontrados como array puro:', response.data.length);
+          return response.data;
+        }
+      }
       
-      const response = await api.get(`/personais?${params.toString()}`);
-      
-      console.log('✅ Resposta personais:', {
-        success: response.data.success,
-        total: response.data.total,
-        data: response.data.data?.length || 0
-      });
-      
-      return response.data.data || [];
+      console.warn('⚠️ Estrutura de dados inesperada, retornando array vazio');
+      return [];
       
     } catch (error) {
       console.error('❌ Erro ao buscar personais:', {
-        status: error.response?.status,
-        message: error.message,
-        data: error.response?.data
+        error: error.message,
+        response: error.response?.data,
+        status: error.response?.status
       });
       
-      if (error.response?.status === 401) {
-        throw new Error('Não autorizado. Faça login novamente.');
+      // 🔥 CORREÇÃO: Tentar extrair dados mesmo com erro
+      if (error.response && error.response.data) {
+        const responseData = error.response.data;
+        if (responseData.success === true && Array.isArray(responseData.data)) {
+          console.log('✅ Dados recuperados de resposta com erro:', responseData.data.length);
+          return responseData.data;
+        }
       }
       
-      throw error;
+      return [];
     }
   },
 
   // Buscar alunos com filtros
-  async getAlunos(filtros = {}) {
+  getAlunos: async (filtros = {}) => {
     try {
-      const params = new URLSearchParams();
+      console.log('🔄 Buscando alunos com filtros:', filtros);
       
-      // ⭐⭐ CORREÇÃO: Adicionar todos os filtros de forma consistente
-      Object.keys(filtros).forEach(key => {
-        const value = filtros[key];
-        
-        // Ignorar valores vazios, null ou undefined
-        if (value === null || value === undefined || value === '') {
-          return;
-        }
-        
-        // Tratar arrays (modalidades)
-        if (Array.isArray(value)) {
-          if (value.length > 0) {
-            // Para arrays, enviar como string separada por vírgulas
-            params.append(key, value.join(','));
-          }
-        } else {
-          // Para valores simples
-          params.append(key, value);
-        }
-      });
-
-      console.log('🔍 Buscando alunos com params:', params.toString());
+      const response = await api.get('/alunos', { params: filtros });
+      console.log('✅ Resposta RAW alunos:', response.data);
       
-      const response = await api.get(`/alunos?${params.toString()}`);
+      // 🔥 CORREÇÃO: Lidar com JSON corrompido
+      let dadosProcessados = response.data;
       
-      console.log('✅ Resposta alunos:', {
-        success: response.data.success,
-        total: response.data.total,
-        data: response.data.data?.length || 0
-      });
-      
-      return response.data.data || [];
-      
-    } catch (error) {
-      console.error('❌ Erro ao buscar alunos:', {
-        status: error.response?.status,
-        message: error.message,
-        data: error.response?.data
-      });
-      
-      if (error.response?.status === 401) {
-        throw new Error('Não autorizado. Faça login novamente.');
+      // Se for string, tentar corrigir JSON corrompido
+      if (typeof response.data === 'string') {
+        console.warn('⚠️ Resposta é string, tentando corrigir JSON corrompido...');
+        dadosProcessados = corrigirJSONCorrompido(response.data);
       }
       
-      throw error;
+      // Se ainda for string após correção, tentar parsear como JSON
+      if (typeof dadosProcessados === 'string') {
+        try {
+          dadosProcessados = JSON.parse(dadosProcessados);
+        } catch (e) {
+          console.error('❌ Não foi possível parsear resposta como JSON:', e);
+          return [];
+        }
+      }
+      
+      console.log('✅ Dados processados alunos:', dadosProcessados);
+      
+      // Extrair dados do formato correto
+      if (dadosProcessados && dadosProcessados.success === true) {
+        return Array.isArray(dadosProcessados.data) ? dadosProcessados.data : [];
+      }
+      
+      // Fallback: se não tem estrutura padrão, retornar o próprio array
+      if (Array.isArray(dadosProcessados)) {
+        return dadosProcessados;
+      }
+      
+      // Fallback: se tem estrutura de dados direta
+      if (dadosProcessados && Array.isArray(dadosProcessados.data)) {
+        return dadosProcessados.data;
+      }
+      
+      console.warn('⚠️ Estrutura de dados inesperada:', dadosProcessados);
+      return [];
+      
+    } catch (error) {
+      console.error('❌ Erro ao buscar alunos:', error);
+      
+      // 🔥 CORREÇÃO: Tentar extrair dados mesmo com erro de parsing
+      if (error.response && typeof error.response.data === 'string') {
+        const dadosCorrigidos = corrigirJSONCorrompido(error.response.data);
+        if (dadosCorrigidos && dadosCorrigidos.success === true && Array.isArray(dadosCorrigidos.data)) {
+          console.log('✅ Dados recuperados de resposta com erro:', dadosCorrigidos.data);
+          return dadosCorrigidos.data;
+        }
+      }
+      
+      return [];
     }
   },
 
@@ -155,17 +180,12 @@ const conectarService = {
   },
 
   // Enviar convite
-  async enviarConvite(dadosConvite) {
+  enviarConvite: async (dadosConvite) => {
     try {
       const response = await api.post('/convite', dadosConvite);
       return response.data;
     } catch (error) {
       console.error('Erro ao enviar convite:', error);
-      
-      if (error.response && error.response.data) {
-        throw new Error(error.response.data.error || 'Erro ao enviar convite');
-      }
-      
       throw error;
     }
   },
@@ -360,6 +380,7 @@ const conectarService = {
       return null;
     }
   },
+  
 };
 
 export default conectarService;
