@@ -1,6 +1,11 @@
+/**
+ * Utilitário para cortar imagens - VERSÃO CORRIGIDA
+ */
+
 const getCroppedImg = async (imageSrc, pixelCrop) => {
+  // 🔥 CORREÇÃO: Usar new Image() corretamente
   const image = await new Promise((resolve, reject) => {
-    const img = new Image()
+    const img = new Image(); // 🔥 CORREÇÃO: Usar new Image()
     img.crossOrigin = "anonymous"
     img.src = imageSrc
     img.onload = () => resolve(img)
