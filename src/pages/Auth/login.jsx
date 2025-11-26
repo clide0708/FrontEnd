@@ -183,7 +183,6 @@ export default function LoginPage() {
         >
           {loading ? (
             <>
-              <Loader2 className="spinner" size={20} />
               Entrando...
             </>
           ) : (
