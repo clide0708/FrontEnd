@@ -161,3 +161,214 @@
     text-align: left;
   }
 }
+
+
+
+
+.notification-bell-container {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.notification-bell-container:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.notification-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1000;
+  padding-top: 80px;
+}
+
+.notification-modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.notification-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-marcar-todas {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
+}
+
+.btn-marcar-todas:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.btn-marcar-todas:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-fechar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.btn-fechar:hover {
+  background-color: #e0e0e0;
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.loading-notificacoes,
+.empty-notificacoes {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.empty-notificacoes svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.nao-lida {
+  background-color: #f8f9fa;
+  border-left: 3px solid #007bff;
+}
+
+.notification-item:hover {
+  background-color: #f0f0f0;
+}
+
+.notification-icon {
+  margin-right: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-content h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.notification-content p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 11px;
+  color: #999;
+}
+
+.btn-marcar-lida {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.btn-marcar-lida:hover {
+  opacity: 1;
+  background-color: #e0e0e0;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-error {
+  color: #dc3545;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .notification-modal-overlay {
+    padding: 20px;
+    align-items: flex-end;
+  }
+
+  .notification-modal-content {
+    width: 100%;
+    max-height: 70vh;
+    border-radius: 8px 8px 0 0;
+  }
+}

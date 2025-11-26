@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./style.css";
 import connectService from "../../services/Personal/conectar";
-import { MapPin, Filter, User, Navigation } from "lucide-react";
+import convitesService from "../../services/Notification/convites"; // 🔥 ADICIONAR IMPORT
+import { MapPin, Filter, User, Navigation, Clock } from "lucide-react";
 
 function ConectarPersonalPage() {
   const [dados, setDados] = useState([]);
@@ -128,36 +129,27 @@ function ConectarPersonalPage() {
 
   // ⭐⭐ CARREGAR DADOS COM CACHE INTELIGENTE
   const carregarDadosComCache = useCallback(async (filtrosAtuais, isPersonal) => {
-    const cacheKey = isPersonal ? 'alunos' : 'personais';
-    const agora = Date.now();
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
-    
-    // ⭐⭐ CORREÇÃO: Criar uma chave única baseada nos filtros
-    const filtrosKey = JSON.stringify(filtrosAtuais);
-    const cacheCompletoKey = `${cacheKey}_${filtrosKey}`;
-    
-    // Verificar se temos cache válido para ESTES filtros específicos
-    if (cacheDados.current[cacheCompletoKey] && 
-        cacheDados.current.timestamp && 
-        (agora - cacheDados.current.timestamp) < CACHE_DURATION) {
-      console.log('📦 Usando dados do cache para filtros:', filtrosAtuais);
-      return cacheDados.current[cacheCompletoKey];
-    }
-
-    console.log('🔄 Buscando dados da API com filtros:', filtrosAtuais);
     try {
+      console.log('🔄 Buscando dados da API com filtros:', filtrosAtuais);
+      
       const dados = await (isPersonal 
         ? connectService.getAlunos(filtrosAtuais)
         : connectService.getPersonais(filtrosAtuais));
       
-      // ⭐⭐ CORREÇÃO: Atualizar cache com chave específica dos filtros
-      cacheDados.current[cacheCompletoKey] = dados;
-      cacheDados.current.timestamp = agora;
+      console.log('🎯 Dados retornados do serviço:', {
+        tipo: isPersonal ? 'alunos' : 'personais',
+        dados: dados,
+        quantidade: dados.length,
+        tipoDados: typeof dados,
+        isArray: Array.isArray(dados)
+      });
       
-      return dados;
+      // 🔥 CORREÇÃO: Garantir que sempre retorne array
+      return Array.isArray(dados) ? dados : [];
+      
     } catch (error) {
       console.error('❌ Erro ao carregar dados:', error);
-      throw error;
+      return [];
     }
   }, []);
 
@@ -248,6 +240,45 @@ function ConectarPersonalPage() {
     }
   }, []);
 
+  // ⭐⭐ CALCULAR DISTÂNCIAS para todos os dados com cache
+  const calcularDistanciasParaDados = useCallback((dadosArray, localizacao) => {
+    if (!localizacao?.latitude || !localizacao?.longitude) {
+      console.log('📍 Sem localização para calcular distâncias');
+      setDadosComDistancia(dadosArray);
+      return;
+    }
+
+    console.log('📏 Calculando distâncias para', dadosArray.length, 'itens');
+    
+    const dadosComDistanciaCalculada = dadosArray.map(item => {
+      if (!item.latitude || !item.longitude) {
+        return { ...item, distancia_km: null, precisao_distancia: null };
+      }
+
+      const distancia = calcularDistancia(
+        localizacao.latitude,
+        localizacao.longitude,
+        item.latitude,
+        item.longitude
+      );
+
+      let precisao = 'baixa';
+      if (localizacao.precisao === 'alta' || tipoLocalizacao === 'geolocalizacao') {
+        precisao = item.precisao_coordenadas === 'exata' ? 'alta' : 'media';
+      } else if (localizacao.precisao === 'media' || tipoLocalizacao === 'endereco_cadastrado') {
+        precisao = 'media';
+      }
+
+      return {
+        ...item,
+        distancia_km: distancia,
+        precisao_distancia: precisao
+      };
+    });
+
+    setDadosComDistancia(dadosComDistanciaCalculada);
+  }, [tipoLocalizacao, calcularDistancia]);
+
   // ⭐⭐ DETECTAR LOCALIZAÇÃO otimizada
   const detectarLocalizacao = useCallback(async (tipo = 'geolocalizacao') => {
     try {
@@ -296,54 +327,11 @@ function ConectarPersonalPage() {
       console.error('❌ Erro ao detectar localização:', error);
       alert('Erro ao detectar localização. Tente novamente.');
     }
-  }, [filtros.localizacao, dados, geocodificarComCache, usuario]);
-
-  // ⭐⭐ CALCULAR DISTÂNCIAS para todos os dados com cache
-  const calcularDistanciasParaDados = useCallback((dadosArray, localizacao) => {
-    if (!localizacao?.latitude || !localizacao?.longitude) {
-      console.log('📍 Sem localização para calcular distâncias');
-      setDadosComDistancia(dadosArray);
-      return;
-    }
-
-    console.log('📏 Calculando distâncias para', dadosArray.length, 'itens');
-    
-    const dadosComDistanciaCalculada = dadosArray.map(item => {
-      // Verificar se o item tem coordenadas
-      if (!item.latitude || !item.longitude) {
-        return { ...item, distancia_km: null, precisao_distancia: null };
-      }
-
-      // Calcular distância (usando cache)
-      const distancia = calcularDistancia(
-        localizacao.latitude,
-        localizacao.longitude,
-        item.latitude,
-        item.longitude
-      );
-
-      // Determinar precisão baseada na fonte da localização
-      let precisao = 'baixa';
-      if (localizacao.precisao === 'alta' || tipoLocalizacao === 'geolocalizacao') {
-        precisao = item.precisao_coordenadas === 'exata' ? 'alta' : 'media';
-      } else if (localizacao.precisao === 'media' || tipoLocalizacao === 'endereco_cadastrado') {
-        precisao = 'media';
-      }
-
-      return {
-        ...item,
-        distancia_km: distancia,
-        precisao_distancia: precisao
-      };
-    });
-
-    setDadosComDistancia(dadosComDistanciaCalculada);
-  }, [tipoLocalizacao, calcularDistancia]);
+  }, [filtros.localizacao, dados, geocodificarComCache, usuario, calcularDistanciasParaDados]);
 
   // ⭐⭐ CARREGAR DADOS PRINCIPAL - MUITO MAIS RÁPIDO
   useEffect(() => {
     let isMounted = true;
-    const controller = new AbortController();
 
     async function fetchData() {
       if (!isMounted) return;
@@ -366,31 +354,17 @@ function ConectarPersonalPage() {
           modalidades: dadosIniciais.modalidadesData?.length || 0
         });
 
-        // Remover duplicatas de forma mais eficiente
-        const dadosUnicos = Array.isArray(dadosData) 
-          ? dadosData.filter((item, index, array) => 
-                array.findIndex(i => 
-                    (isPersonal ? i.idAluno === item.idAluno : i.idPersonal === item.idPersonal)
-                ) === index
-            )
-          : [];
+        // 🔥 CORREÇÃO: Garantir que seja array
+        const dadosArray = Array.isArray(dadosData) ? dadosData : [];
 
-        setDados(dadosUnicos);
+        setDados(dadosArray);
         setAcademias(dadosIniciais.academiasData || []);
         setModalidades(dadosIniciais.modalidadesData || []);
-
-        // Calcular distâncias se tivermos localização
-        if (localizacaoUsuario && dadosUnicos.length > 0) {
-          calcularDistanciasParaDados(dadosUnicos, localizacaoUsuario);
-        } else {
-          setDadosComDistancia(dadosUnicos);
-        }
         
+        // 🔥 CORREÇÃO: Atualizar dados com distância
+        setDadosComDistancia(dadosArray);
+
       } catch (err) {
-        if (err.name === 'AbortError') {
-          console.log('✅ Requisição cancelada');
-          return;
-        }
         console.error("❌ Erro ao carregar dados:", err);
         if (isMounted) {
           setDados([]);
@@ -401,15 +375,13 @@ function ConectarPersonalPage() {
       }
     }
     
-    // ⭐⭐ DEBOUNCE para busca - evita múltiplas requisições rápidas
     const timeoutId = setTimeout(fetchData, 300);
     
     return () => {
       isMounted = false;
-      controller.abort();
       clearTimeout(timeoutId);
     };
-  }, [filtros, isPersonal, localizacaoUsuario, calcularDistanciasParaDados, carregarDadosComCache, carregarDadosIniciais]);
+  }, [filtros, isPersonal, carregarDadosComCache, carregarDadosIniciais]);
 
   // ⭐⭐ ATUALIZAR DISTÂNCIAS quando localização mudar
   useEffect(() => {
@@ -477,6 +449,7 @@ function ConectarPersonalPage() {
       setMensagem("");
       setUsuarioSelecionado(null);
 
+      // Atualizar estado local para mostrar "Convite Enviado"
       setDadosComDistancia(prev => 
         prev.map(item => 
           (isPersonal ? item.idAluno === usuarioSelecionado.idAluno : item.idPersonal === usuarioSelecionado.idPersonal)
@@ -490,6 +463,84 @@ function ConectarPersonalPage() {
     }
   };
 
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    async function fetchData() {
+      if (!isMounted) return;
+      
+      setLoading(true);
+      try {
+        console.log('🔄 Buscando dados com filtros:', filtros);
+        console.log('👤 Usuário:', usuario);
+        console.log('🎯 isPersonal:', isPersonal);
+        
+        const [dadosData, dadosIniciais] = await Promise.all([
+          carregarDadosComCache(filtros, isPersonal),
+          carregarDadosIniciais()
+        ]);
+        
+        if (!isMounted) return;
+
+        console.log('✅ Dados brutos da API:', dadosData);
+        console.log('✅ Tipo dos dados:', typeof dadosData);
+        console.log('✅ É array?', Array.isArray(dadosData));
+        
+        // 🔥 CORREÇÃO: Garantir que seja array
+        const dadosArray = Array.isArray(dadosData) ? dadosData : 
+                          (dadosData && Array.isArray(dadosData.data)) ? dadosData.data : 
+                          (dadosData && dadosData.success && Array.isArray(dadosData.data)) ? dadosData.data : [];
+
+        console.log('✅ Dados processados como array:', dadosArray);
+
+        // Remover duplicatas
+        const dadosUnicos = dadosArray.filter((item, index, array) => 
+          array.findIndex(i => 
+            (isPersonal ? i.idAluno === item.idAluno : i.idPersonal === item.idPersonal)
+          ) === index
+        );
+
+        console.log('✅ Dados únicos:', dadosUnicos);
+
+        setDados(dadosUnicos);
+        setAcademias(dadosIniciais.academiasData || []);
+        setModalidades(dadosIniciais.modalidadesData || []);
+
+        // Calcular distâncias se tivermos localização
+        if (localizacaoUsuario && dadosUnicos.length > 0) {
+          calcularDistanciasParaDados(dadosUnicos, localizacaoUsuario);
+        } else {
+          setDadosComDistancia(dadosUnicos);
+        }
+        
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          console.log('✅ Requisição cancelada');
+          return;
+        }
+        console.error("❌ Erro detalhado ao carregar dados:", {
+          error: err,
+          message: err.message,
+          response: err.response?.data
+        });
+        if (isMounted) {
+          setDados([]);
+          setDadosComDistancia([]);
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    
+    const timeoutId = setTimeout(fetchData, 300);
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [filtros, isPersonal, localizacaoUsuario, calcularDistanciasParaDados, carregarDadosComCache, carregarDadosIniciais]);
   // Cleanup
   useEffect(() => {
     return () => {
@@ -840,7 +891,10 @@ function ConectarPersonalPage() {
 
                     <div className="personalActions">
                       {item.convitePendente ? (
-                        <button className="btnConviteEnviado" disabled>Convite Enviado</button>
+                        <button className="btnConviteEnviado" disabled>
+                          <Clock size={16} />
+                          Convite Enviado
+                        </button>
                       ) : (
                         <button
                           className="btnConectar"

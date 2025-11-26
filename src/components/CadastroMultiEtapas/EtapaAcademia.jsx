@@ -6,7 +6,6 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
   const [academias, setAcademias] = useState([]);
   const [carregando, setCarregando] = useState(false);
   const [filtro, setFiltro] = useState("");
-  const [enviandoSolicitacao, setEnviandoSolicitacao] = useState(false);
 
   useEffect(() => {
     carregarAcademias();
@@ -27,48 +26,11 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
     }
   };
 
-  const enviarSolicitacaoVinculacao = async (idAcademia) => {
-    if (!idAcademia) return;
-    
-    setEnviandoSolicitacao(true);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}academia/solicitacao/enviar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          idAcademia: idAcademia,
-          // 🔥 IMPORTANTE: O idUsuario será preenchido no backend durante o cadastro completo
-          // Por enquanto enviamos apenas a academia selecionada
-          mensagem: "Solicitação enviada durante o cadastro"
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        console.log('✅ Solicitação de vinculação enviada para academia ID:', idAcademia);
-      } else {
-        console.warn('⚠️ Erro ao enviar solicitação:', result.error);
-        // Não impede a seleção se a solicitação falhar
-      }
-    } catch (error) {
-      console.error('❌ Erro ao enviar solicitação:', error);
-      // Não impede a seleção se a solicitação falhar
-    } finally {
-      setEnviandoSolicitacao(false);
-    }
-  };
-
-  const handleSelecionarAcademia = async (idAcademia) => {
-    // Atualiza os dados primeiro
+  // 🔥 CORREÇÃO: Remover função de envio de solicitação
+  // O envio será feito automaticamente pelo backend durante o cadastro completo
+  const handleSelecionarAcademia = (idAcademia) => {
+    // Apenas atualiza os dados - o backend cuidará do envio da solicitação
     onChange({ idAcademia: idAcademia });
-    
-    // 🔥 ENVIA SOLICITAÇÃO AUTOMATICAMENTE
-    if (idAcademia) {
-      await enviarSolicitacaoVinculacao(idAcademia);
-    }
   };
 
   const handleRemoverAcademia = () => {
@@ -78,10 +40,7 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
   const construirUrlFoto = (fotoUrl) => {
     if (!fotoUrl) return null;
     
-    // Extrai apenas o nome do arquivo
     const nomeArquivo = fotoUrl.split('/').pop();
-    
-    // URL absoluta direta
     const urlAbsoluta = `http://localhost/BackEnd/assets/images/uploads/${nomeArquivo}`;
     
     console.log('🎯 URL Absoluta:', urlAbsoluta);
@@ -94,7 +53,6 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
     academia.modalidades?.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  // Função para formatar telefone
   const formatarTelefone = (telefone) => {
     if (!telefone) return '';
     
@@ -109,14 +67,12 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
     return telefone;
   };
 
-  // Função para truncar texto longo
   const truncarTexto = (texto, maxLength) => {
     if (!texto) return '';
     if (texto.length <= maxLength) return texto;
     return texto.substring(0, maxLength) + '...';
   };
 
-  // Função para separar modalidades em array
   const separarModalidades = (modalidadesString) => {
     if (!modalidadesString) return [];
     return modalidadesString.split(', ').slice(0, 4);
@@ -129,7 +85,6 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
           const url = construirUrlFoto(academia.foto_url);
           console.log('🔍 TESTE DIRETO DA URL:', url);
           
-          // Cria uma imagem temporária para testar
           const testImage = new Image();
           testImage.onload = function() {
             console.log('🎉 IMAGEM CARREGADA COM SUCESSO VIA JavaScript!');
@@ -149,23 +104,19 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
       <h2>Vinculação com Academia</h2>
       <p>Selecione uma academia para se vincular (opcional)</p>
 
-      {/* 🔥 INDICADOR DE SOLICITAÇÃO */}
-      {enviandoSolicitacao && (
-        <div className="solicitacao-enviando">
-          <div className="loading-spinner-small"></div>
-          <span>Enviando solicitação para a academia...</span>
-        </div>
-      )}
-
-      {/* 🔥 INDICADOR DE ACADEMIA SELECIONADA */}
+      {/* 🔥 CORREÇÃO: Feedback simplificado */}
       {dados.idAcademia && (
         <div className="academia-selecionada-info">
           <div className="success-message">
-            ✅ Solicitação enviada para a academia selecionada
+            ✅ Academia selecionada
           </div>
           <p>
-            <strong>Status:</strong> Aguardando aprovação da academia. 
-            Você receberá uma notificação quando for aprovado.
+            <strong>Status:</strong> Uma solicitação será enviada automaticamente após o cadastro.
+          </p>
+          <p className="info-note">
+            <small>
+              💡 A academia receberá sua solicitação e poderá aprovar seu vínculo.
+            </small>
           </p>
         </div>
       )}
@@ -235,7 +186,7 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
                   <div className="academia-info-container">
                     <div className="academia-header">
                       <div className="academia-title-section">
-                        <h4>{academia.nome}</h4>
+                        <label>{academia.nome}</label>
                       </div>
                     </div>
 
@@ -327,7 +278,7 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
           onClick={handleRemoverAcademia}
         >
           <div className="academia-info-container">
-            <h4>Não vincular a nenhuma academia agora</h4>
+            <label>Não vincular a nenhuma academia agora</label>
             <p>Você poderá se vincular posteriormente</p>
           </div>
           <div className="selection-indicator">
@@ -337,10 +288,10 @@ const EtapaAcademia = ({ dados, onChange, tipoUsuario }) => {
       </div>
 
       <div className="academia-info-box">
-        <h4>💡 Como funciona a vinculação?</h4>
+        <label>💡 Como funciona a vinculação?</label>
         <ul>
           <li>A vinculação é <strong>opcional</strong></li>
-          <li>Ao selecionar uma academia, uma <strong>solicitação é enviada automaticamente</strong></li>
+          <li>Ao selecionar uma academia, uma <strong>solicitação será enviada automaticamente após seu cadastro</strong></li>
           <li>A academia precisa aprovar sua vinculação</li>
           <li>Você receberá uma notificação quando for aprovado</li>
           <li>Você pode se vincular posteriormente se preferir</li>
