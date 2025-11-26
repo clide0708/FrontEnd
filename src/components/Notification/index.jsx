@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import notificacoesService from "../../services/Notification/notificacoes";
 import { Bell, Check, X, CheckCircle, XCircle, User } from "lucide-react";
 import "./style.css";
+import ImageUrlHelper from "../../utils/imageUrls";
 
 export default function NotificacoesModal({ isOpen, onClose }) {
   const [notificacoes, setNotificacoes] = useState([]);
@@ -25,6 +26,13 @@ export default function NotificacoesModal({ isOpen, onClose }) {
       carregarNotificacoes();
     }
   }, [isOpen]);
+
+  const getFotoUrl = (fotoUrl) => {
+    if (!fotoUrl || fotoUrl === 'null' || fotoUrl === 'undefined' || fotoUrl === '') {
+      return ImageUrlHelper.getDefaultProfileImage();
+    }
+    return ImageUrlHelper.buildImageUrl(fotoUrl);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -193,9 +201,12 @@ export default function NotificacoesModal({ isOpen, onClose }) {
                   {notificacao.origem === 'convite' && notificacao.foto_remetente && (
                     <div className="remetente-info">
                       <img 
-                        src={notificacao.foto_remetente || "/assets/images/profilefoto.png"} 
+                        src={getFotoUrl(notificacao.foto_remetente)}
                         alt={notificacao.nome_remetente}
                         className="foto-remetente"
+                        onError={(e) => {
+                          e.target.src = ImageUrlHelper.getDefaultProfileImage();
+                        }}
                       />
                       <span className="nome-remetente">{notificacao.nome_remetente}</span>
                     </div>

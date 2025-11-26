@@ -7,6 +7,7 @@ import treinosService from "../../services/Treinos/treinos";
 import InviteModal from "../Personal/modalConvite.jsx";
 import EditarTreino from "../Treinos/editTreino";
 import ModalAddTreino from "../Treinos/addTreino";
+import ImageUrlHelper from "../../utils/imageUrls"; 
 
 function Personal() {
   const [alunos, setAlunos] = useState([]);
@@ -19,7 +20,6 @@ function Personal() {
   const [treinoSelecionado, setTreinoSelecionado] = useState(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
   
-  // 🔥 CORREÇÃO: Adicionar estados de loading e error
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -42,6 +42,14 @@ function Personal() {
       fetchTreinosPersonal();
     }
   }, [idPersonal]);
+
+  const getFotoUrl = (fotoUrl) => {
+    if (!fotoUrl || fotoUrl === 'null' || fotoUrl === 'undefined' || fotoUrl === '') {
+      return ImageUrlHelper.getDefaultProfileImage();
+    }
+    return ImageUrlHelper.buildImageUrl(fotoUrl);
+  };
+
 
   // carrega alunos do personal
   useEffect(() => {
@@ -206,11 +214,13 @@ function Personal() {
               {/* Informações detalhadas do aluno */}
               <div className="lnCliente">
                 <div className="ftCliente">
+                  {/* 🔥 CORREÇÃO: Usar getFotoUrl */}
                   <img
-                    src={
-                      clienteSelecionado.foto_perfil || "/assets/images/profilefoto.png"
-                    }
+                    src={getFotoUrl(clienteSelecionado.foto_perfil)}
                     alt="Perfil"
+                    onError={(e) => {
+                      e.target.src = ImageUrlHelper.getDefaultProfileImage();
+                    }}
                   />
                 </div>
                 <div className="infCliente">
@@ -386,8 +396,11 @@ function Personal() {
                   >
                     <img
                       className="imgpflpqn"
-                      src={aluno.foto_perfil || "/assets/images/profilefoto.png"}
+                      src={getFotoUrl(aluno.foto_perfil)}
                       alt="Perfil"
+                      onError={(e) => {
+                        e.target.src = ImageUrlHelper.getDefaultProfileImage();
+                      }}
                     />
                     <div className="aluno-info">
                       <span className="aluno-nome">{aluno.nome}</span>

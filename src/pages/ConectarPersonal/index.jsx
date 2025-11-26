@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./style.css";
 import connectService from "../../services/Personal/conectar";
-import convitesService from "../../services/Notification/convites"; // 🔥 ADICIONAR IMPORT
+import convitesService from "../../services/Notification/convites";
 import { MapPin, Filter, User, Navigation, Clock } from "lucide-react";
+import ImageUrlHelper from "../../utils/imageUrls"; 
 
 function ConectarPersonalPage() {
   const [dados, setDados] = useState([]);
@@ -45,6 +46,13 @@ function ConectarPersonalPage() {
     modalidades: null,
     timestamp: null
   });
+
+  const getFotoUrl = (fotoUrl) => {
+    if (!fotoUrl || fotoUrl === 'null' || fotoUrl === 'undefined' || fotoUrl === '') {
+      return ImageUrlHelper.getDefaultProfileImage();
+    }
+    return ImageUrlHelper.buildImageUrl(fotoUrl);
+  };
 
   // ⭐⭐ DEBOUNCE otimizado
   const atualizarFiltrosComDebounce = useCallback((novosFiltros) => {
@@ -809,9 +817,12 @@ function ConectarPersonalPage() {
                     {/* Resto do card permanece igual */}
                     <div className="personalHeader">
                       <img
-                        src={item.foto_perfil || "/assets/images/profilefoto.png"}
+                        src={getFotoUrl(item.foto_perfil)}
                         alt={item.nome}
                         className="personalFoto"
+                        onError={(e) => {
+                          e.target.src = ImageUrlHelper.getDefaultProfileImage();
+                        }}
                       />
                       <div className="personalInfo">
                         <h3>{item.nome}</h3>
