@@ -6,6 +6,7 @@ import EtapaEndereco from "./EtapaEndereco";
 import EtapaAcademia from "./EtapaAcademia";
 import EtapaLogin from "./EtapaLogin";
 import EtapaCREF from "./EtapaCREF";
+import EtapaDocumentoCREF from "./EtapaDocumentoCREF";
 import BarraProgresso from "./BarraProgresso";
 import { cadastrarAluno, cadastrarPersonal, cadastrarAcademia } from "../../services/Auth/cadastro";
 import academiaService from "../../services/Academia/academia";
@@ -113,11 +114,16 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     cref_categoria: "",
     cref_regional: "",
     idAcademia: "",
-  });
+    
+    // NOVOS CAMPOS: Documento CREF (Etapa 6 - apenas personal)
+    cref_foto_url: "",
+    cref_documento_nome: "",
+    cref_verificado: false
+    });
 
   const getTotalEtapas = () => {
     switch (selectedUserType) {
-      case "personal": return 6;
+      case "personal": return 7; // 🔥 MUDANÇA: de 6 para 7
       case "aluno": return 5;
       case "academia": return 4;
       default: return 4;
@@ -138,13 +144,16 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
       etapasBase.push({ numero: 4, titulo: "Academia", icone: "🏢" });
     }
 
-    // CREF vem ANTES do Login para personal
+    // CREF vem ANTES do Documento CREF para personal
     if (selectedUserType === "personal") {
-      etapasBase.push({ numero: 5, titulo: "CREF", icone: "📋" });
+      etapasBase.push(
+        { numero: 5, titulo: "CREF", icone: "📋" },
+        { numero: 6, titulo: "Documento", icone: "📄" } // 🔥 NOVA ETAPA
+      );
     }
 
-    // Adiciona etapa de login (sempre a última antes do cadastro)
-    const etapaLoginNumero = selectedUserType === "personal" ? 6 : 
+    // Adiciona etapa de login (sempre a última)
+    const etapaLoginNumero = selectedUserType === "personal" ? 7 : // 🔥 ATUALIZADO: de 6 para 7
                           selectedUserType === "aluno" ? 5 : 4;
     etapasBase.push({ numero: etapaLoginNumero, titulo: "Login", icone: "🔐" });
 
@@ -197,6 +206,8 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         cref_numero: "", 
         cref_categoria: "", 
         cref_regional: "",
+        cref_foto_url: "", // 🔥 NOVO CAMPO
+        cref_documento_nome: "", // 🔥 NOVO CAMPO
         cnpj: "", 
         nome_fantasia: "", 
         razao_social: "", 
@@ -207,10 +218,9 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         ...(type !== 'personal' && { sobre: "" })
       };
     });
-    
+  
     setSelectedUserType(type);
     
-    // Finalizar animação
     setTimeout(() => setIsSwitching(false), 300);
   };
 
@@ -290,7 +300,7 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
                 dadosFormulario.senha.length >= 6;
         }
       
-      case 5: // CREF para personal, Login para aluno
+        case 5: // CREF para personal, Login para aluno
         if (selectedUserType === "personal") {
           return dadosFormulario.cref_numero && 
                 dadosFormulario.cref_categoria && 
@@ -302,7 +312,13 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
                 dadosFormulario.senha.length >= 6;
         }
 
-      case 6: // Login apenas para personal
+      case 6: // 🔥 NOVA ETAPA: Documento CREF apenas para personal
+        if (selectedUserType === "personal") {
+          return dadosFormulario.cref_foto_url; // Apenas valida se tem documento
+        }
+        return false;
+
+      case 7: // Login apenas para personal (agora etapa 7)
         return dadosFormulario.email && 
               dadosFormulario.senha && 
               dadosFormulario.senha === dadosFormulario.confirmarSenha &&
@@ -408,29 +424,13 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
 
       if (resultado.success) {
         const usuarioId = selectedUserType === "aluno" ? resultado.idAluno : 
-                         selectedUserType === "personal" ? resultado.idPersonal : 
-                         resultado.idAcademia;
+                        selectedUserType === "personal" ? resultado.idPersonal : 
+                        resultado.idAcademia;
         
         setUsuarioCadastrado({
           id: usuarioId,
           tipo: selectedUserType
         });
-
-        // ENVIAR SOLICITAÇÃO DE VINCULAÇÃO SE ACADEMIA FOI SELECIONADA
-        if (dadosFormulario.idAcademia && selectedUserType !== "academia") {
-          try {
-            await academiaService.enviarSolicitacaoVinculacao({
-              idAcademia: dadosFormulario.idAcademia,
-              idUsuario: usuarioId,
-              tipoUsuario: selectedUserType,
-              mensagem: "Solicitação enviada durante o cadastro"
-            });
-            console.log('✅ Solicitação de vinculação enviada para a academia');
-          } catch (error) {
-            console.warn('⚠️ Erro ao enviar solicitação de vinculação:', error);
-            // Não impede o cadastro se a solicitação falhar
-          }
-        }
         
         // Avançar para completar perfil
         avancarEtapa();
@@ -665,8 +665,13 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
         }
         return null;
       
-      case 6:
-        // Etapa 6 é APENAS Login para personal
+      case 6: // 🔥 NOVA ETAPA: Documento CREF apenas para personal
+        if (selectedUserType === "personal") {
+          return <EtapaDocumentoCREF dados={dadosFormulario} onChange={atualizarDados} />;
+        }
+        return null;
+      
+      case 7: // Etapa 7 é APENAS Login para personal
         if (selectedUserType === "personal") {
           return <EtapaLogin dados={dadosFormulario} onChange={atualizarDados} />;
         }
@@ -690,6 +695,11 @@ const CadastroMultiEtapas = ({ tipoUsuario = "aluno" }) => {
     
     // Se é academia na etapa 4 (login) - última etapa para academia
     if (!usuarioCadastrado && selectedUserType === 'academia' && etapaAtual === 4) {
+      return 'cadastrar';
+    }
+    
+    // 🔥 ATUALIZADO: Para personal na etapa 7 (última)
+    if (!usuarioCadastrado && selectedUserType === 'personal' && etapaAtual === 7) {
       return 'cadastrar';
     }
     

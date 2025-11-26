@@ -2265,7 +2265,6 @@
 
 .academia-selecionada-info {
   padding: 15px;
-  background-color: #e8f5e8;
   border: 1px solid #4caf50;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -2291,7 +2290,6 @@
 
 .academia-card.selected {
   border-color: #4caf50;
-  background-color: #f8fff8;
 }
 
 .academia-card.selected::before {
@@ -2303,4 +2301,198 @@
   height: 3px;
   background-color: #4caf50;
   border-radius: 4px 4px 0 0;
+}
+
+
+
+
+
+
+
+
+
+.etapa-documento-cref {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.document-upload-area {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: #242424;
+}
+
+.upload-container {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.upload-label {
+  display: block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-label:hover {
+  transform: translateY(-2px);
+}
+
+.upload-placeholder {
+  padding: 2rem;
+  color: #666;
+}
+
+.upload-placeholder svg {
+  margin-bottom: 1rem;
+  color: #999;
+}
+
+.upload-loading {
+  padding: 2rem;
+  color: #666;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.document-preview {
+  position: relative;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.document-preview-placeholder {
+  padding: 2rem;
+  background: #363636;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+}
+
+.remove-document-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: rgb(77, 77, 77);
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.remove-document-btn:hover {
+  background: #5a5a5a;
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.upload-requirements {
+  background: #585858;
+  border: 1px solid #979797;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.upload-requirements h4 {
+  margin-top: 0;
+  color: #ffffff;
+}
+
+.upload-requirements ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.upload-requirements li {
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.upload-success {
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #155724;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.info-important {
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.info-important h4 {
+  margin-top: 0;
+  color: #e65100;
+}
+
+.info-important p {
+  margin-bottom: 0;
+  color: #e65100;
+}
+
+
+
+
+.solicitacao-enviando {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #368DD9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.info-note {
+  margin-top: 8px;
+  color: #666;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
