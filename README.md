@@ -1,13 +1,13 @@
-# ClideFit 🔥🔥
+# CLIDE Fit 🔥🔥
 
 Projeto React integrado com Axios e React-Query para consumir API REST de gestão de treinos, alimentos e usuários.
 
-![Logo ClideFit](/src/pages/Home/banner.jpg)
+![Logo CLIDE Fit](/src/pages/Home/banner.jpg)
 
 ## Hospedagens
 
-### [FrontEnd](https://clide-8vw8bdr3a-clidefits-projects.vercel.app) Vercel
-### [BackEnd]() Hostinger
+### [FrontEnd](https://clidefit.com.br) Hostinger
+### [BackEnd](https://api.clidefit.com.br) Hostinger
 
 
 ## Instalação e execução
